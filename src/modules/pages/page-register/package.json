@@ -1,0 +1,10 @@
+{
+  "name": "register",
+  "version": "0.0.1",
+  "main": "logic.js",
+  "private": true,
+  "plugin": {
+    "consumes": ["core-express", "core-socketio", "core-mongodb", "core-userauth"],
+    "provides": []
+  }
+}

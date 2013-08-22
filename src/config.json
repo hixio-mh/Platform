@@ -1,0 +1,43 @@
+{
+	"appname": "Adefy-Cloud",
+	"loglevel": 10,
+	"mode": "debug",
+	"domain": "localhost",
+	"port": 5000,
+
+	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
+	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
+	"admin": "cris.mihalache@spectrumit.eu",
+
+	"modes": {
+		"debug": {
+			"log-to-server": false,
+			"catch-critical": false,
+			"socket-log-level": 3
+		},
+		"release": {
+			"log-to-server": true,
+			"catch-critical": true,
+			"socket-log-level": 1
+		}
+	},
+
+	"logfile": "log",
+	"secure-cert": "certificate.pem",
+	"secure-key": "privatekey.pem",
+	"snapshot": ".saved_state.json",
+
+	"db": {
+		"user": "adefy_cloud",
+		"pass": "GFtEA468aF73nYZh",
+		"host": "localhost",
+		"port": "27017",
+		"db": "adefy_cloud"
+	},
+
+	"email": {
+		"host": "mail.spectrumcoding.com",
+		"port": "25",
+		"domain": "spectrumcoding.com"
+	}
+}
