@@ -26,86 +26,75 @@ module.exports = (grunt) ->
   srcDir = "src/"
   buildDir = "build/"
 
-  # Source paths
-  modelSrc = [ "models/*.js" ]
+  # Coffee source paths
+  modelSrc = [ "models/*.coffee" ]
   moduleSrc = [ "modules/**/**/*.coffee" ]
+  clientSrc = [
+    "client/*.coffee"
+    "client/**/*.coffee"
+  ]
 
-  # Settings objects, defined here to prevent redundancy (they share a bit)
-  client = { dev: {}, prod: {} } # Client has two targets
+  # Stylus paths
+  stylusMin = {}
+  stylusMin["#{buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
 
-  # Default settings
-  modules = models = client.dev = client.prod =
-    expand: true    # Wether source path is applied to target (inside dir)
-    options:
-      bare: true    # Remove file wrapping
-    ext: ".js"      # Ship files as .js
-    dest: buildDir  # Shouldn't change per-def, we can modify if needed
+  _prodSrc = []
+  for s in clientSrc
+    _prodSrc.push srcDir + s
 
-  # Server-side modules, build as they are (1 to 1)
-  modules.src = moduleSrc
-
-  # Database models, again build as they are
-  models.src = modelSrc
-
-  # Dev client settings, build files as they are
-  client.dev.src = clientSrc
-
-  # Production client settings, concat all files
-  client.prod.src = clientSrc
+  clientProdSrc = {}
+  clientProdSrc["#{buildDir}static/client/app.min.js"] = _prodSrc
 
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
+
+    # Proper source files (client and server-side logic)
     coffee:
 
-      # Settings defined above
-      modules: modules
-      models: models
-      client: client
-
-###
-    watch:
-      coffeescript:
-        files: srcFiles
-        tasks: ["coffee"]
-      less:
-        files: [
-          "./static/less/*.less",
-          "./static/less/**/*.less"
-        ]
-        tasks: ["less", "copy"]
-      jade:
-        files: "./views/*.jade"
-        tasks: ["copy"]
-    less:
-      app:
+      # Server-side modules, build as they are (1 to 1)
+      modules:
+        expand: true
         options:
-          yuicompress: true
-          compress: true
-        files:
-          "./static/css/style.css": "./static/less/style.less"
-    copy:
-      app:
-        files: [
-          expand: true
-          src: [
-            "./static/css/**/*",
-            "./static/font/**/*",
-            "./static/img/**/*",
-            "./static/js/**/*",
-            "./package.json",
-            "./config.json",
-            "./line/**/*.json",
-            "./modules/**/*.json"
-            "./ssl/*"
-            "./views/*"
-            "./views/**/*"
-          ]
-          dest: buildDir
-        ]
-###
+          bare: true
+        ext: ".js"
+        cwd: "src"
+        dest: buildDir
+        src: moduleSrc
+
+      # Database models, again build as they are
+      models:
+        expand: true
+        options:
+          bare: true
+        ext: ".js"
+        cwd: "src"
+        dest: buildDir
+        src: modelSrc
+
+      # Dev client settings, build files as they are
+      client_dev:
+        expand: true
+        options:
+          bare: true
+        ext: ".js"
+        cwd: "src"
+        dest: "#{buildDir}static"
+        src: clientSrc
+
+      # Production client settings, concat all files
+      client_prod:
+        expand: true
+        options:
+          bare: true
+        files: clientProdSrc
+
+    # Stylesheets
+    stylus:
+      full:
+        files: stylusMin
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-contrib-less"
+  grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-copy"
 
