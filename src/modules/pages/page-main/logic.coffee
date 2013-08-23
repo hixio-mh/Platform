@@ -2,10 +2,7 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
-  sockets = imports["core-socketio"]
-  auth = imports["core-userauth"]
-  db = imports["core-mongodb"]
+  server = imports["line-express"]
 
   server.server.get "/", (req, res) -> res.render "layout.jade"
   server.server.get "/dashboard", (req, res) -> res.render "layout.jade"

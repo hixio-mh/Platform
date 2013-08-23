@@ -9,10 +9,10 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
-  sockets = imports["core-socketio"]
-  snapshot = imports["core-snapshot"]
-  auth = imports["core-userauth"]
+  server = imports["line-express"]
+  sockets = imports["line-socketio"]
+  snapshot = imports["line-snapshot"]
+  auth = imports["line-userauth"]
 
   spew.info "Performing final initialization"
 

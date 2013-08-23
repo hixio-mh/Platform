@@ -148,7 +148,7 @@ module.exports = (grunt) ->
       serverCS:
         cwd: srcDir
         files: moduleSrc
-        tasks: "coffee:modules"
+        tasks: [ "coffee:modules" ]
       models:
         cwd: srcDir
         files: modelSrc
@@ -198,4 +198,4 @@ module.exports = (grunt) ->
     "stylus:full"
   ]
 
-  grunt.registerTask "default", ["coffee", "less"]
+  grunt.registerTask "default", ["full"]

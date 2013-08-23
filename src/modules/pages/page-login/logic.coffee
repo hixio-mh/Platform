@@ -2,10 +2,9 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
-  sockets = imports["core-socketio"]
-  auth = imports["core-userauth"]
-  db = imports["core-mongodb"]
+  server = imports["line-express"]
+  auth = imports["line-userauth"]
+  db = imports["line-mongodb"]
 
   server.registerPage "/login", "login.jade"
 

@@ -1,9 +1,9 @@
 module.exports = [
-  "./line/express",
-  "./line/mongodb",
-  "./line/snapshot",
-  "./line/socketio",
-  "./line/userauth",
+  "./modules/line/express",
+  "./modules/line/mongodb",
+  "./modules/line/snapshot",
+  "./modules/line/socketio",
+  "./modules/line/userauth",
 
   "./modules/core/core-init-start",
 

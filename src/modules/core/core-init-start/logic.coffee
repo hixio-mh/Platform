@@ -9,11 +9,10 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
-  sockets = imports["core-socketio"]
-  db = imports["core-mongodb"]
-  snapshot = imports["core-snapshot"]
-  auth = imports["core-userauth"]
+  server = imports["line-express"]
+  db = imports["line-mongodb"]
+  snapshot = imports["line-snapshot"]
+  auth = imports["line-userauth"]
 
   spew.init "Starting Initialization"
 

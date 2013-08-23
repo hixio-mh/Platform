@@ -4,7 +4,12 @@
   "main": "logic.js",
   "private": true,
   "plugin": {
-    "consumes": ["core-mongodb", "core-express", "core-socketio", "core-snapshot", "core-userauth"],
+    "consumes": [
+      "line-mongodb",
+      "line-express",
+      "line-snapshot",
+      "line-userauth"
+    ],
     "provides": []
   }
 }
