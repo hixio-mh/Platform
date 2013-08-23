@@ -13,30 +13,39 @@ module.exports = (grunt) ->
   # a single style.css. Followed by this comes our client scripts. They are
   # built as they are during development but concated in production.
 
-  srcFiles = [
-    "./line/**/*.coffee",
-    "./models/*.coffee",
-    "./modules/**/*.coffee",
-    "./static/**/*.coffee",
-    "./adefy.coffee",
-    "./architecture.coffee"
-  ]
-
   # Folder paths
   srcDir = "src/"
   buildDir = "build/"
+  lineSrcDir = "line/build/src/"
 
-  # Coffee source paths
+  # Source paths relative to srcDir/
   modelSrc = [ "models/*.coffee" ]
-  moduleSrc = [ "modules/**/**/*.coffee" ]
+  moduleSrc = [
+    "*.coffee"
+    "modules/**/*.coffee"
+  ]
   clientSrc = [
     "client/*.coffee"
     "client/**/*.coffee"
+  ]
+  stylusSrc = [
+    "stylus/*.styl"
+    "stylus/**/*.styl"
+  ]
+  jadeSrc = [
+    "views/*.jade"
+    "views/**/*.jade"
   ]
 
   # Stylus paths
   stylusMin = {}
   stylusMin["#{buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
+
+  # Module package.json paths
+  modulePackageJSON = [
+    "*.json"
+    "modules/**/*.json"
+  ]
 
   _prodSrc = []
   for s in clientSrc
@@ -57,7 +66,7 @@ module.exports = (grunt) ->
         options:
           bare: true
         ext: ".js"
-        cwd: "src"
+        cwd: srcDir
         dest: buildDir
         src: moduleSrc
 
@@ -67,7 +76,7 @@ module.exports = (grunt) ->
         options:
           bare: true
         ext: ".js"
-        cwd: "src"
+        cwd: srcDir
         dest: buildDir
         src: modelSrc
 
@@ -77,7 +86,7 @@ module.exports = (grunt) ->
         options:
           bare: true
         ext: ".js"
-        cwd: "src"
+        cwd: srcDir
         dest: "#{buildDir}static"
         src: clientSrc
 
@@ -93,11 +102,100 @@ module.exports = (grunt) ->
       full:
         files: stylusMin
 
+    copy:
+
+      # Copy module package.json files
+      packageJSON:
+        files: [
+          expand:true
+          src: modulePackageJSON
+          cwd: srcDir
+          dest: buildDir
+        ]
+
+      # Copy built line modules
+      line:
+        files: [
+          expand: true
+          cwd: lineSrcDir
+          src: "**"
+          dest: "#{buildDir}/modules/line"
+        ]
+
+      # True static files (images, fonts, etc)
+      static:
+        files: [
+          expand: true
+          cwd: "#{srcDir}/static"
+          src: "**"
+          dest: "#{buildDir}/static"
+        ]
+
+      # Jade templates
+      jade:
+        files: [
+          expand: true
+          cwd: srcDir
+          src: jadeSrc
+          dest: buildDir
+        ]
+
+    clean: [
+      buildDir
+    ]
+
+    watch:
+      serverCS:
+        cwd: srcDir
+        files: moduleSrc
+        tasks: "coffee:modules"
+      models:
+        cwd: srcDir
+        files: modelSrc
+        tasks: "coffee:models"
+      clientCS:
+        cwd: srcDir
+        files: clientSrc
+        tasks: "coffee:client_dev"
+      stylus:
+        cwd: srcDir
+        files: stylusSrc
+        tasks: "stylus:full"
+      lineSrc:
+        cwd: lineSrcDir
+        files: [ "**" ]
+        tasks: "copy:line"
+      packageJSON:
+        cwd: srcDir
+        files: modulePackageJSON
+        tasks: "copy:packageJSON"
+      static:
+        cwd: srcDir
+        files: [ "static/**" ]
+        tasks: "copy:static"
+      jade:
+        cwd: srcDir
+        files: jadeSrc
+        tasks: "copy:jade"
+
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-copy"
+  grunt.loadNpmTasks "grunt-contrib-clean"
 
   # Perform a full build
-  grunt.registerTask "full", ["copy", "coffee", "less"]
+  grunt.registerTask "full", [
+    "clean"
+    "copy:packageJSON"
+    "copy:line"
+    "copy:static"
+    "copy:jade"
+    "coffee:modules"
+    "coffee:models"
+    "coffee:client_dev"
+    "coffee:client_prod"
+    "stylus:full"
+  ]
+
   grunt.registerTask "default", ["coffee", "less"]
