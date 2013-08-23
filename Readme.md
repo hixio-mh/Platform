@@ -45,4 +45,11 @@ Loaded in order,
 
 Building
 --------
-Gruntfiles! To be continued.
+Gruntfiles! Run `grunt full` to build adefycloud into build/ After that, you
+can run it with `node build/adefy.js` assuming you've installed the dependencies
+for the project with a `npm install` in the root folder.
+
+During development, run `grunt dev` to spawn a nodemon instance and the watch
+task. Upon saving a file, watch will rebuild it and ship it to the build/
+folder, after which nodemon will restart the server (if a server file was
+modified).
