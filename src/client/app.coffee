@@ -5,6 +5,9 @@ widgetRouteChangeCBs = []
 widgetOnReadyCBs = []
 
 # Register widgets
+#
+# We attach them to the window under their own names. Specifically,
+# window[w.name] = w.logic
 for w in window.widgets
 
   # Check if widget is already registered
@@ -19,6 +22,9 @@ for w in window.widgets
     if window[w.name].setup then window[w.name].setup()
 
     # Keep track of widgets that implement certain methods
+    #
+    # For now, we have two events widgets can subscribe too. A successful
+    # route change, and the initial DOM ready event
     if window[w.name].routeChange then widgetRouteChangeCBs.push w.name
     if window[w.name].onReady then widgetOnReadyCBs.push w.name
 
@@ -65,9 +71,11 @@ window.Adefy.config ($routeProvider, $locationProvider) ->
 
 window.Adefy.run ($rootScope) ->
   $rootScope.$on "$routeChangeSuccess", (e, current, prev) ->
+
+    # Call the registered widget handlers
     for w in widgetRouteChangeCBs
       window[w].routeChange()
-      resizeHandler()
+    resizeHandler()
 
 # Resize various UI elements
 resizeHandler = ->
@@ -93,8 +101,8 @@ $(document).ready ->
   # Sidebar menus
   $("#main-list li").click ->
 
-    if $(this).hasClass("has-submenu")
-      if $(this).parent().find(".submenu").hasClass "open_submenu"
+    if $(@).hasClass("has-submenu")
+      if $(@).parent().find(".submenu").hasClass "open_submenu"
         return
 
     $(".open_submenu").animate

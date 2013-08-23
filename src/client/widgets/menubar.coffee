@@ -7,46 +7,53 @@ window.widgets.push
     uniqueID: 0
     clickListeners: []
     subMenuItems: []
-    sel: "#navbar-menu-action"
-    selSubMenu: "#navbar-submenu"
     speedMenuUnroll: 200
     currentOpen: null
 
-    routeChange: ->
-      @clear()
+    # Top-level container, holds the navbar itself
+    sel: "#navbar-menu-action"
+
+    #
+    selSubMenu: "#navbar-submenu"
+
+    routeChange: -> @clear()
 
     onReady: ->
+      me = @
 
-      _instance = this
-      _iterateListeners = (instance, clicked, e) ->
-        for l in instance.clickListeners
-          if String(l.id) == $(clicked).attr("data-id")
+      # Iterate over main navbar listeners
+      _iterateListeners = (clicked, e) ->
+        for l in me.clickListeners
+          if String(l.id) == $(clicked).attr "data-id"
 
             # Submenu
             if l.item.subItems
-              if not $(clicked).hasClass("has_submenu")
-                instance.subMenuItems = l.item.subItems
-                instance.showSubMenu clicked
+              if not $(clicked).hasClass "has_submenu"
+                me.subMenuItems = l.item.subItems
+                me.showSubMenu clicked
               else
-                instance.hideSubMenu()
+                me.hideSubMenu()
 
             # Callback
             l.cb(e)
 
-      _iterateSubMenuListeners = (instance, clicked, e) ->
-        instance.hideSubMenu()
-        for i in instance.subMenuItems
+      # Iterate over submenu listeners
+      _iterateSubMenuListeners = (clicked, e) ->
+        me.hideSubMenu()
+        for i in me.subMenuItems
           if i.cb
             if $(clicked).html() == i.name
               i.cb e
 
-      $(@sel).on "click", "li", (e) -> _iterateListeners(_instance, this, e)
-      $(@selSubMenu).on "click", "li", (e) -> _iterateSubMenuListeners(_instance, this, e)
+      # Listeners can be attached on any item, both in the menu and submenu
+      # The iterate functions go through and call all registered callbacks
+      $(@sel).on "click", "li", (e) -> _iterateListeners @, e
+      $(@selSubMenu).on "click", "li", (e) -> _iterateSubMenuListeners @, e
 
     showSubMenu: (below, cb) ->
 
       if @currentOpen
-        $(@sel).children(".has_submenu").each -> $(this).removeClass "has_submenu"
+        $(@sel).children(".has_submenu").each -> $(@).removeClass "has_submenu"
       @currentOpen = below
 
       $(below).addClass "has_submenu"
@@ -73,17 +80,18 @@ window.widgets.push
         opacity: 1
       , @speedMenuUnroll, "ease-in", -> if cb then cb()
 
+    # Hide the submenu if it is present, call the cb when done
     hideSubMenu: (cb) ->
-      _selMain = @sel
-      _sel = @selSubMenu
+      me = @
       @currentOpen = null
       $(@selSubMenu).animate
         opacity: 0
       , @speedMenuUnroll, "ease-out", ->
         if cb then cb()
-        $(_sel).hide()
-        $(_selMain).children(".has_submenu").each -> $(this).removeClass "has_submenu"
+        $(me.selSubMenu).hide()
+        $("#{me.sel} .has_submenu").removeClass "has_submenu"
 
+    # Clear the menu, removing all listeners and items
     clear: ->
       @subMenuItems = []
       @clickListeners = []
@@ -91,22 +99,25 @@ window.widgets.push
       $(@selSubMenu).html ""
       $(@selSubMenu).hide()
 
+    # Adds an item to the menu. New item has an addSubItem method, which takes
+    # identical parameters.
     addItem: (text, clickCB) ->
       @uniqueID++
-      $(@sel).append "<li data-id=\"#{@uniqueID}\" class=\"hoverable\">#{text}</li>"
 
+      $(@sel).append "<li data-id=\"#{@uniqueID}\" class=\"hoverable\">#{text}</li>"
       item = $("#{@sel} li[data-id=\"#{@uniqueID}\"]")
 
+      # Adds a sub-item with identical parameters
       item.addSubItem = (name, cb) ->
         if not @subItems then @subItems = []
         @subItems.push
           name: name
           cb: cb
 
+      # Add a listener for this item
       @clickListeners.push
         item: item
         id: @uniqueID
-        cb: (e) ->
-          if clickCB then clickCB e
+        cb: (e) -> if clickCB then clickCB e
 
       item

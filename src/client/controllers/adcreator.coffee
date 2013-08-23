@@ -13,7 +13,7 @@ window.Adefy.controller "adcreator", ($scope, $http, $route) ->
   help = window.Menubar.addItem "Help"
 
   # TODO: Setup to show only when no ad has been created
-  # window.Tooltip.showTooltip "Click here to get started!", file
+  window.Tooltip.showTooltip "Click here to get started!", file
 
   newAdFormHTML = "<form id=\"new-ad-form\">"
   newAdFormHTML += "<h1>Create new ad</h1>"
