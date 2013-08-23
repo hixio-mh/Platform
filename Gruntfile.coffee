@@ -155,10 +155,25 @@ module.exports = (grunt) ->
           dest: buildDir
         ]
 
+    # Node server, restarts when it detects changes
+    nodemon:
+      dev:
+        options:
+          file: "#{buildDir}adefy.js"
+          watchedExtensions: [ ".js" ]
+          watchedFolders: [ buildDir ]
+
+    # Our dev task, combines watch with nodemon (sexy!)
+    concurrent:
+      dev: [ "watch", "nodemon:dev" ]
+      options:
+        logConcurrentOutput: true
+
     clean: [
       buildDir
     ]
 
+    # Watch files for changes and ship updates to build folder
     watch:
       serverCS:
         files: WmoduleSrc
@@ -190,6 +205,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-clean"
+  grunt.loadNpmTasks "grunt-concurrent"
+  grunt.loadNpmTasks "grunt-nodemon"
 
   # Perform a full build
   grunt.registerTask "full", [
@@ -205,4 +222,5 @@ module.exports = (grunt) ->
     "stylus:full"
   ]
 
-  grunt.registerTask "default", ["full"]
+  grunt.registerTask "default", [ "full" ]
+  grunt.registerTask "dev", [ "concurrent:dev" ]

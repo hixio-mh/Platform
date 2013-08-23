@@ -23,7 +23,9 @@
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-contrib-stylus": "~0.8.0",
-    "grunt-contrib-clean": "~0.5.0"
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-nodemon": "~0.1.0",
+    "grunt-concurrent": "~0.3.0"
   },
   "private": true,
   "engine": "node >= 0.10.12"
