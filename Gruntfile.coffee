@@ -54,6 +54,21 @@ module.exports = (grunt) ->
   clientProdSrc = {}
   clientProdSrc["#{buildDir}static/client/app.min.js"] = _prodSrc
 
+  # Watch doesn't work properly with cwd, so tag on src path manually
+  _watchify = (paths) ->
+    ret = []
+    for p in paths
+      ret.push srcDir + p
+    ret
+
+  # Create watch versions of each src array
+  WmodelSrc = _watchify modelSrc
+  WmoduleSrc = _watchify moduleSrc
+  WclientSrc = _watchify clientSrc
+  WstylusSrc = _watchify stylusSrc
+  WjadeSrc = _watchify jadeSrc
+  WmodulePackageJSON = _watchify modulePackageJSON
+
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
 
@@ -146,37 +161,29 @@ module.exports = (grunt) ->
 
     watch:
       serverCS:
-        cwd: srcDir
-        files: moduleSrc
+        files: WmoduleSrc
         tasks: [ "coffee:modules" ]
       models:
-        cwd: srcDir
-        files: modelSrc
-        tasks: "coffee:models"
+        files: WmodelSrc
+        tasks: [ "coffee:models" ]
       clientCS:
-        cwd: srcDir
-        files: clientSrc
-        tasks: "coffee:client_dev"
+        files: WclientSrc
+        tasks: [ "coffee:client_dev" ]
       stylus:
-        cwd: srcDir
-        files: stylusSrc
-        tasks: "stylus:full"
+        files: WstylusSrc
+        tasks: [ "stylus:full" ]
       lineSrc:
-        cwd: lineSrcDir
-        files: [ "**" ]
-        tasks: "copy:line"
+        files: [ "#{lineSrcDir}/**" ]
+        tasks: [ "copy:line" ]
       packageJSON:
-        cwd: srcDir
-        files: modulePackageJSON
-        tasks: "copy:packageJSON"
+        files: WmodulePackageJSON
+        tasks: [ "copy:packageJSON" ]
       static:
-        cwd: srcDir
-        files: [ "static/**" ]
-        tasks: "copy:static"
+        files: [ "#{srcDir}static/**" ]
+        tasks: [ "copy:static" ]
       jade:
-        cwd: srcDir
-        files: jadeSrc
-        tasks: "copy:jade"
+        files: WjadeSrc
+        tasks: [ "copy:jade" ]
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"
