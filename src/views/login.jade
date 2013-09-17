@@ -1,0 +1,39 @@
+!!! 5
+html(lang="en", data-ng-app="Adefy")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+
+    title Login
+
+    meta(name="description", content="")
+    meta(name="author", content="Spectrum IT")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+
+    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+    link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
+    link(rel="stylesheet", href="/css/style.css")
+
+  body#page-login.dialog-page
+
+    .spacer-top
+
+    .dialog
+      h3 Login
+      form(method="POST")
+        .input-group
+          label(for="username") Username
+          input(name="username", type="text")
+        .input-group
+          label(for="password") Password
+          input(name="password", type="password")
+        .input-group
+          button Sign In
+
+    .spacer-bot
+
+    footer
+      script(type="text/javascript", src="/js/vendor/zepto.js")
+      script(type="text/javascript", src="/js/vendor/zepto-fancySlide.js")
+      script(type="text/javascript", src="/js/vendor/angular.js")
+      script(type="text/javascript", src="/socket.io/socket.io.js")

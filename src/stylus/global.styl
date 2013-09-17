@@ -22,9 +22,6 @@
 a
   text-decoration none
 
-button, input, textarea
-  font-family "Lato"
-
 .buttonhover, .hoverablehover
   cursor hand cursor pointer
 
@@ -50,13 +47,60 @@ h4
   font-size 25px
 
 body
-  background-color white
-  color $purple
   padding-top 40px
-  font-family "Lato"
 
 html, body
-  background transparent url(../img/pw_pattern.png) repeat
+  background-color $lgray
+  color $blue
+
+*
+  font-family "Roboto"
+
+.input-group
+  width 350px
+  margin 4px 0
+  display inline-block
+
+  label, input, button
+    display inline-block
+    vertical-align top
+    float left
+
+  label
+    width 100px
+    padding-top 4px
+
+  input
+    width 242px
+    margin 0
+    padding 4px
+    border 0
+    background-color $dgray
+    color white
+    outline none
+
+  input:focus
+    border 1px solid $blue
+    width 240px
+    margin-bottom -2px
+
+  button
+    margin-left 100px
+    background-color $blue
+    color white
+    padding 4px 8px
+    font-size 14px
+    border none
+
+  button:hover
+    cursor hand
+    cursor pointer
+
+.input-group:first-child
+  margin-top 0
+
+.input-group:last-child
+  margin-bottom 0
 
 #content
   float left
@@ -68,3 +112,4 @@ html, body
 @import "global/controlbar"
 @import "global/overlay"
 @import "global/statusbar"
+@import "global/dialog-page.styl"
