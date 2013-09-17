@@ -7,8 +7,7 @@ module.exports = [
 
   "./modules/core/core-init-start",
 
-  "./modules/pages/page-views",
-  "./modules/pages/page-main",
+  "./modules/pages/routes",
   "./modules/pages/page-login",
   "./modules/pages/page-register",
 
