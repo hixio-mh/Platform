@@ -20,7 +20,7 @@ html(lang="en", data-ng-app="Adefy")
 
     .dialog
       h3 Login
-      form(method="POST")
+      form(method="POST", action="/login")
         .input-group
           label(for="username") Username
           input(name="username", type="text")
@@ -31,6 +31,10 @@ html(lang="en", data-ng-app="Adefy")
           button Sign In
 
     .spacer-bot
+      if locals.error
+        a(href="/recover").recovery Having trouble?
+        .error= locals.error
+        a(href="/register").recovery Register
 
     footer
       script(type="text/javascript", src="/js/vendor/zepto.js")
