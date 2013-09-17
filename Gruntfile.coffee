@@ -215,6 +215,7 @@ module.exports = (grunt) ->
     "copy:line"
     "copy:static"
     "copy:jade"
+    "copy:line"
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"
