@@ -24,6 +24,14 @@ setup = (options, imports, register) ->
 
     res.render "admin/views/#{req.params.view}.jade"
 
+  # Standard user dashboard
+  dashboardPaths = [
+    "/dashboard"
+  ]
+  servePathsGET dashboardPaths, "dashboard/layout.jade"
+  server.server.get "/views/dashboard/:view", (req, res) ->
+    res.render "dashboard/views/#{req.params.view}.jade"
+
   register null, {}
 
 module.exports = setup

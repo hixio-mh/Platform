@@ -44,6 +44,8 @@ setup = (options, imports, register) ->
     "/admin/users",
     "/admin/invites",
 
+    "/dashboard",
+
     "/api/user/get/",
     "/api/user/all",
     "/api/invite/all"
