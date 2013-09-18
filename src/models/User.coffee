@@ -50,8 +50,6 @@ exports.createSchema = ->
 
       cb null, isMatch
 
-exports.createModel = ->
-  model = mongoose.model "Users", schema
-
+exports.createModel = -> model = mongoose.model "Users", schema
 exports.getModel = -> return model
 exports.getSchema = -> return schema

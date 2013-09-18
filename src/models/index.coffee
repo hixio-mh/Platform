@@ -4,3 +4,4 @@
 #
 # Assumes useage of line
 exports.User = require "./User.js"
+exports.Invite = require "./Invite.js"

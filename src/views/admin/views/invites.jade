@@ -1,1 +1,11 @@
-h1 Invites!
+#page-admin-invites
+  .mainbar
+    .title.only Invites
+  hr
+  table#invite-list
+    thead
+      td Email
+      td Invite Code
+    tr(data-ng-repeat="i in invites")
+      td(data-ng-bind="i.email")
+      td(data-ng-bind="i.code")
