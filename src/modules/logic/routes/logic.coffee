@@ -26,7 +26,10 @@ setup = (options, imports, register) ->
 
   # Standard user dashboard
   dashboardPaths = [
-    "/dashboard"
+    "/dashboard",
+    "/dashboard/ads",
+    "/dashboard/campaigns",
+    "/dashboard/account"
   ]
   servePathsGET dashboardPaths, "dashboard/layout.jade"
   server.server.get "/views/dashboard/:view", (req, res) ->

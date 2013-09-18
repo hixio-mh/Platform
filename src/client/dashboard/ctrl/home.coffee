@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "home", ($scope, $http, $route) ->

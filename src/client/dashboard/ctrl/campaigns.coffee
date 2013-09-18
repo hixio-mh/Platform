@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->

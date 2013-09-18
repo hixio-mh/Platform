@@ -1,9 +1,38 @@
 .mainbar
   width 100%
   background-color $gray
-  padding 4px 0
   font-size 14px
+  color $white
+
+  .title:not(.only)
+    width 7%
+    min-width 120px
+    display inline-block
+    vertical-align top
+    border-right 1px solid $dgray
+    padding 4px 8px
 
   .title.only
     width 100%
     text-align center
+    display block
+
+  ul, ul a
+    display inline-block
+    vertical-align top
+
+  ul a
+    padding 4px 16px
+    border-left 1px solid $lgray
+    border-right 1px solid $dgray
+
+  ul a:hover
+    background-color $dgray
+
+  ul a:last-child
+    border-right none
+    color transparent
+
+  ul a:last-child:hover
+    cursor default
+    background-color $gray

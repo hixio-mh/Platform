@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->

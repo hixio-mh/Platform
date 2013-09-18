@@ -35,21 +35,22 @@ setup = (options, imports, register) ->
   publicPages = [
     "/",
     "/login",
-    "/register",
-
-    # TODO: Move these to authorized section
-    "/views/admin/",
-
-    "/admin",
-    "/admin/users",
-    "/admin/invites",
-
-    "/dashboard",
-
-    "/api/user/get/",
-    "/api/user/all",
-    "/api/invite/all"
+    "/register"
   ]
+
+  # "/logout",
+  # "/views/admin/",
+  # "/views/dashboard/",
+
+  # "/admin",
+  # "/admin/users",
+  # "/admin/invites",
+
+  # "/dashboard",
+
+  # "/api/user/get/",
+  # "/api/user/all",
+  # "/api/invite/all"
 
   notWhenAuthorized = [
     "/login",

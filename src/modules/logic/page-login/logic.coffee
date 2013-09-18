@@ -13,7 +13,7 @@ setup = (options, imports, register) ->
 
     auth.deauthorize req.cookies.user
     res.clearCookie "user"
-    res.redirect "/"
+    res.redirect "/login"
 
   # Login POST [username, password]
   server.server.post "/login", (req, res) ->
