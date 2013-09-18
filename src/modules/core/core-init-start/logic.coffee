@@ -42,7 +42,9 @@ setup = (options, imports, register) ->
 
     "/admin",
     "/admin/users",
-    "/admin/invites"
+    "/admin/invites",
+
+    "/user/get/all"
   ]
 
   notWhenAuthorized = [

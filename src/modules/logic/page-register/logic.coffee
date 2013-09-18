@@ -1,9 +1,11 @@
 spew = require "spew"
+crypto = require "crypto"
 
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
   db = imports["line-mongodb"]
+  auth = imports["line-userauth"]
 
   server.registerPage "/register", "account/register.jade"
 
@@ -59,7 +61,7 @@ setup = (options, imports, register) ->
         return
 
       # Check if user exists [Don't trust client-side check]
-      if user.length > 0
+      if user != undefined
         spew.error "Username exists! Client-side check has been bypassed."
         throw server.InternalError
         # Not sure if this actually breaks execution
@@ -68,7 +70,7 @@ setup = (options, imports, register) ->
       time = new Date().getTime()
       h = crypto.createHash("md5").update(String(time)).digest "base64"
 
-      newUser = db.models.User.getModel()
+      newUser = db.models().User.getModel()
         username: req.body.username
         password: req.body.password
         fname: req.body.fname
@@ -87,9 +89,6 @@ setup = (options, imports, register) ->
 
       newUser.sess = userData.sess
 
-      res.cookie "user", userData
-      auth.authorize userData
-
       newUser.save (err) ->
         if err
           spew.error "Error saving user sess ID [#{err}]"
@@ -97,6 +96,9 @@ setup = (options, imports, register) ->
         else
           spew.info "Registered new user! #{userData.id}"
           spew.info "User #{userData.id} logged in"
+
+          res.cookie "user", userData
+          auth.authorize userData
           res.redirect "/dashboard"
 
   register null, {}
