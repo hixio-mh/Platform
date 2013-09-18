@@ -19,15 +19,29 @@ setup = (options, imports, register) ->
       res.redirect "/"
       spew.warning "No invite provided"
 
+  # Shortens post param verification, returns false if the param is not
+  # supplied (after rendering the register page with an error)
+  _regCheck = (param, name, res) ->
+
+    _err = false
+    if param == undefined or param == null then _err = true
+    if param.length <= 0 then _err = true
+
+    if _err
+      res.render "register.jade", { error: "#{name} needed for registration!" }
+
+    _err
+
   # Register POST [username, password, fname, lname, email]
   server.server.post "/register", (req, res) ->
 
     # Valid data check
-    if not req.body.username or not req.body.password or \
-    not req.body.fname or not req.body.lname or notreq.body.email
-
-      res.redirect "/"
-      return
+    if _regCheck(req.body.username, "Username", res) then return
+    if _regCheck(req.body.fname, "First name", res) then return
+    if _regCheck(req.body.lname, "Last name", res) then return
+    if _regCheck(req.body.company, "Company", res) then return
+    if _regCheck(req.body.email, "Email", res) then return
+    if _regCheck(req.body.password, "Password", res) then return
 
     db.fetch [ "Invite", "User" ],[ \
     { hash: req.query.invite }, \
@@ -76,11 +90,11 @@ setup = (options, imports, register) ->
 
       newUser.save (err) ->
         if err
-          spew.error "Error saving user sess ID [" + err + "]"
+          spew.error "Error saving user sess ID [#{err}]"
           throw server.InternalError
         else
-          spew.info "Registered new user! " + userData.id
-          spew.info "User " + userData.id + " logged in"
+          spew.info "Registered new user! #{userData.id}"
+          spew.info "User #{userData.id} logged in"
           res.redirect "/logger"
 
   register null, {}
