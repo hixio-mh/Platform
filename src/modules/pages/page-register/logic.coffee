@@ -36,6 +36,7 @@ setup = (options, imports, register) ->
   server.server.post "/register", (req, res) ->
 
     # Valid data check
+    if _regCheck(req.body.invitation, "Invitation", res) then return
     if _regCheck(req.body.username, "Username", res) then return
     if _regCheck(req.body.fname, "First name", res) then return
     if _regCheck(req.body.lname, "Last name", res) then return
@@ -43,8 +44,9 @@ setup = (options, imports, register) ->
     if _regCheck(req.body.email, "Email", res) then return
     if _regCheck(req.body.password, "Password", res) then return
 
+    # Check for an invite
     db.fetch [ "Invite", "User" ],[ \
-    { hash: req.query.invite }, \
+    { hash: req.body.invitation }, \
     { username: req.body.username } \
     ], (results) ->
 
@@ -52,12 +54,12 @@ setup = (options, imports, register) ->
       user = results[1]
 
       if inv.length <= 0
-        spew.warning "Invalid invite!"
-        res.redirect "/"
+        spew.warning "Invalid invite, email: #{req.body.email}"
+        res.render "register.jade", { error: "Not a valid invite ;(" }
         return
 
       # Check if user exists [Don't trust client-side check]
-      if user.length < 0
+      if user.length > 0
         spew.error "Username exists! Client-side check has been bypassed."
         throw server.InternalError
         # Not sure if this actually breaks execution
@@ -95,7 +97,7 @@ setup = (options, imports, register) ->
         else
           spew.info "Registered new user! #{userData.id}"
           spew.info "User #{userData.id} logged in"
-          res.redirect "/logger"
+          res.redirect "/dashboard"
 
   register null, {}
 
