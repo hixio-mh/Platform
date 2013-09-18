@@ -5,7 +5,7 @@ setup = (options, imports, register) ->
   server = imports["line-express"]
 
   # We have no homepage, just redirect to the login
-  server.server.get "/", (req, res) -> res.redirect "/login"
+  server.server.get "/", (req, res) -> res.redirect "/dashboard"
 
   servePathsGET = (paths, view) ->
     for p in paths
