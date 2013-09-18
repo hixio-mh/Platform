@@ -38,7 +38,7 @@ setup = (options, imports, register) ->
     "/register",
 
     # TODO: Move these to authorized section
-    "/views/angular/",
+    "/views/admin/",
 
     "/admin",
     "/admin/users",
@@ -66,7 +66,7 @@ setup = (options, imports, register) ->
 
       # Check if page is public
       for p in publicPages
-        if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0)
+        if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
           needsAuthorization = false
           break
 
