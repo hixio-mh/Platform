@@ -6,7 +6,7 @@ setup = (options, imports, register) ->
   auth = imports["line-userauth"]
   db = imports["line-mongodb"]
 
-  server.registerPage "/login", "login.jade"
+  server.registerPage "/login", "account/login.jade"
 
   # Logout
   server.registerPage "/logout", "layout.jade", {}, (render, req, res) ->

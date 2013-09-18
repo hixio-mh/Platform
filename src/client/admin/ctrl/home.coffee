@@ -1,0 +1,1 @@
+window.AdefyAdmin.controller "home", ($scope, $http, $route) ->

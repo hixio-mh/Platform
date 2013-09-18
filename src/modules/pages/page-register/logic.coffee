@@ -5,7 +5,7 @@ setup = (options, imports, register) ->
   server = imports["line-express"]
   db = imports["line-mongodb"]
 
-  server.registerPage "/register", "register.jade"
+  server.registerPage "/register", "account/register.jade"
 
   server.server.get "/register", (req, res) ->
     if req.query.invite

@@ -45,12 +45,19 @@ setup = (options, imports, register) ->
     "/adcreator",
     "/settings",
     "/campaigns"
+
+    "/admin",
+    "/admin/users",
+    "/admin/invites"
   ]
 
   notWhenAuthorized = [
     "/login",
     "/register"
   ]
+
+  # Set up error page paths
+  server.setErrorViews "error/500.jade", "error/404.jade"
 
   server.registerRule (req, res, next) ->
 

@@ -4,17 +4,25 @@ setup = (options, imports, register) ->
 
   server = imports["line-express"]
 
-  # Register base page routes, let angular do its thing
-  server.server.get "/", (req, res) -> res.render "layout.jade"
-  server.server.get "/dashboard", (req, res) -> res.render "layout.jade"
-  server.server.get "/ads", (req, res) -> res.render "layout.jade"
-  server.server.get "/adcreator", (req, res) -> res.render "layout.jade"
-  server.server.get "/campaigns", (req, res) -> res.render "layout.jade"
-  server.server.get "/settings", (req, res) -> res.render "layout.jade"
+  # We have no homepage, just redirect to the login
+  server.server.get "/", (req, res) -> res.redirect "/login"
 
-  # Angular view serving
-  server.server.get "/views/angular/:view", (req, res) ->
-    res.render "angular/#{req.params.view}.jade"
+  servePathsGET = (paths, view) ->
+    for p in paths
+      server.server.get p, (req, res) -> res.render view
+
+  # Admin area
+  adminPaths = [
+    "/admin",
+    "/admin/users",
+    "/admin/invites"
+  ]
+  servePathsGET adminPaths, "admin/layout.jade"
+  server.server.get "/views/admin/:view", (req, res) ->
+
+    # TODO: Sanitize req.params.view
+
+    res.render "admin/views/#{req.params.view}.jade"
 
   register null, {}
 

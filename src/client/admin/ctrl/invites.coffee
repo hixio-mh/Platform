@@ -1,0 +1,1 @@
+window.AdefyAdmin.controller "invites", ($scope, $http, $route) ->
