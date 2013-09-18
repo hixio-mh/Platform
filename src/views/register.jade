@@ -1,0 +1,58 @@
+!!! 5
+html(lang="en", data-ng-app="Adefy")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+
+    title Login
+
+    meta(name="description", content="")
+    meta(name="author", content="Spectrum IT")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+
+    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+    link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
+    link(rel="stylesheet", href="/css/style.css")
+
+  body#page-register.dialog-page
+
+    .spacer-top
+
+    .dialog
+      h3 Register
+      form(method="POST", action="/register")
+        .input-group
+          label(for="username") Username
+          input(name="username", type="text")
+        .input-group
+          label(for="fname") First name
+          input(name="fname", type="text")
+        .input-group
+          label(for="lname") Last name
+          input(name="lname", type="text")
+        hr
+        .input-group
+          label(for="company") Company
+          input(name="company", type="text")
+        .input-group
+          label(for="email") Email
+          input(name="email", type="email")
+        hr
+        .input-group
+          label(for="password") Password
+          input(name="password", type="password")
+        .input-group
+          label(for="password_verify") Confirm
+          input(name="password_verify", type="password")
+        .input-group
+          button Register
+
+    .spacer-bot
+      if locals.error
+        .error= locals.error
+
+    footer
+      script(type="text/javascript", src="/js/vendor/zepto.js")
+      script(type="text/javascript", src="/js/vendor/zepto-fancySlide.js")
+      script(type="text/javascript", src="/js/vendor/angular.js")
+      script(type="text/javascript", src="/socket.io/socket.io.js")
