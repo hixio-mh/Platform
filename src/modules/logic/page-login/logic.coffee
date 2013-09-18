@@ -22,7 +22,8 @@ setup = (options, imports, register) ->
       db.fetch "User", { username: req.body.username }, (user) ->
 
         if user.length <= 0
-          res.render "login.jade", { error: "wrong username or password" }
+          res.render "account/login.jade",
+            error: "wrong username or password"
           return
 
         user.comparePassword req.body.password, (err, isMatch) ->
@@ -32,7 +33,8 @@ setup = (options, imports, register) ->
             return
 
           if not isMatch
-            res.render "login.jade", { error: "Wrong Username or Password" }
+            res.render "account/login.jade",
+              error: "Wrong Username or Password"
             return
 
           userData =
@@ -51,9 +53,10 @@ setup = (options, imports, register) ->
               throw server.InternalError
             else
               spew.info "User #{userData.id} logged in"
-              res.redirect "/logger"
+              res.redirect "/dashboard"
 
-    else res.render "login.jade", { error: "Wrong Username or Password" }
+    else
+      res.render "account/login.jade", { error: "Wrong Username or Password" }
 
   register null, {}
 
