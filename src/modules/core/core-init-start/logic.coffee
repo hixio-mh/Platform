@@ -38,13 +38,7 @@ setup = (options, imports, register) ->
     "/register",
 
     # TODO: Move these to authorized section
-    "/views/angular",
-
-    "/dashboard",
-    "/ads",
-    "/adcreator",
-    "/settings",
-    "/campaigns"
+    "/views/angular/",
 
     "/admin",
     "/admin/users",
@@ -63,18 +57,16 @@ setup = (options, imports, register) ->
 
       redirected = false
       needsAuthorization = true
-
       subUrl = null
 
       # If url includes GET parameters, strip them
       if req.url.indexOf("?") >= 0
         subUrl = req.url.substring 0, req.url.indexOf("?")
-      else
-        subUrl = req.url
+      else subUrl = req.url
 
       # Check if page is public
       for p in publicPages
-        if subUrl.indexOf(p) >= 0
+        if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0)
           needsAuthorization = false
           break
 
@@ -98,8 +90,7 @@ setup = (options, imports, register) ->
         else # Credentials required and not avaliable
           spew.warning "Unauthorized user tried to access " + req.url
           res.redirect "/login"
-      else # Page doesn't need auth
-        next()
+      else next() # Page doesn't need auth
 
   # Initialize Express server
   server.setup \
