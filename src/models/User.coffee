@@ -25,13 +25,13 @@ exports.createSchema = ->
 
     if not @isModified "password" then return next()
 
-    bcrypt.genSalt 10, (err, salt) ->
+    bcrypt.genSalt 10, (err, salt) =>
 
       if err
         spew.error "Error when generating salt"
         return next err
 
-      bcrypt.hash @password, salt, (err, hash) ->
+      bcrypt.hash @password, salt, (err, hash) =>
 
         if err
           spew.error "Error when hashing password"
