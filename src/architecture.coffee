@@ -7,9 +7,10 @@ module.exports = [
 
   "./modules/core/core-init-start",
 
-  "./modules/pages/routes",
-  "./modules/pages/page-login",
-  "./modules/pages/page-register",
+  "./modules/logic/api",
+  "./modules/logic/routes",
+  "./modules/logic/page-login",
+  "./modules/logic/page-register",
 
   "./modules/core/core-init-end"
 ]
