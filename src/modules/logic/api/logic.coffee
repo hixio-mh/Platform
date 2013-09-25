@@ -4,6 +4,7 @@ setup = (options, imports, register) ->
 
   server = imports["line-express"]
   db = imports["line-mongodb"]
+  auth = imports["line-userauth"]
 
   ##
   ## Private API (locked down by core-init-start)
@@ -87,6 +88,39 @@ setup = (options, imports, register) ->
       res.json ret
 
     , (err) -> res.json { error: err }
+    , true
+
+  # Fetch user ad list - /api/ads/get/user
+  #
+  # Get ad information owned by the user identified in req.cookies.user
+  server.server.get "/api/ads/get/user", (req, res) ->
+
+    # Fetch user by session
+    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
+
+      if user == undefined
+        res.json { error: "Invalid user (shame, shame on you) " }
+        return
+
+      # Fetch data and reply
+      db.fetch "Ad", { owner: user._id }, (data) ->
+
+        ret = []
+
+        if data != undefined and data.length != undefined
+          for a in data
+            ad = {}
+            ad.name = a.name
+            ad.id = a._id.str
+
+            ret.push ad
+
+        res.json ret
+
+      , (err) -> res.json { error: err }
+      , true
+
+    , (err) -> res.json {error: err}
     , true
 
   register null, {}

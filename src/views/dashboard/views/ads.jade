@@ -5,14 +5,8 @@ table.basic-table
       button.create New Ad
     td
   tbody
-    tr
-      td Test Ad 1
-      td
-        button.edit Edit
-      td
-        button.delete Delete
-    tr
-      td Test Ad 2
+    tr(data-ng-repeat="ad in data")
+      td(data-ng-bind="ad.name")
       td
         button.edit Edit
       td
