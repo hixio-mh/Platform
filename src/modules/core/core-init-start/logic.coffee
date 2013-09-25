@@ -62,42 +62,42 @@ setup = (options, imports, register) ->
 
   server.registerRule (req, res, next) ->
 
-      redirected = false
-      needsAuthorization = true
-      subUrl = null
+    redirected = false
+    needsAuthorization = true
+    subUrl = null
 
-      # If url includes GET parameters, strip them
-      if req.url.indexOf("?") >= 0
-        subUrl = req.url.substring 0, req.url.indexOf("?")
-      else subUrl = req.url
+    # If url includes GET parameters, strip them
+    if req.url.indexOf("?") >= 0
+      subUrl = req.url.substring 0, req.url.indexOf("?")
+    else subUrl = req.url
 
-      # Check if page is public
-      for p in publicPages
-        if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
-          needsAuthorization = false
-          break
+    # Check if page is public
+    for p in publicPages
+      if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
+        needsAuthorization = false
+        break
 
-      # Check if page is not visitable when authorized
-      for p in notWhenAuthorized
-        if subUrl.indexOf(p) >= 0 and req.cookies.user
-          res.redirect "/"
-          redirected = true
+    # Check if page is not visitable when authorized
+    for p in notWhenAuthorized
+      if subUrl.indexOf(p) >= 0 and req.cookies.user
+        res.redirect "/"
+        redirected = true
 
-      if needsAuthorization
-        if req.cookies.user # If credentials are avaliable
+    if needsAuthorization
+      if req.cookies.user # If credentials are avaliable
 
-          # If page is visitable when authorized
-          if !redirected # No else clause, since redirection = page rendered
-            if auth.checkAuth req.cookies.user # If user is actually authorized
-              next() # Gogo
-            else
-              spew.warning "Unauthorized user tried to access " + req.url
-              res.clearCookie "user"
-              res.redirect "/login"
-        else # Credentials required and not avaliable
-          spew.warning "Unauthorized user tried to access " + req.url
-          res.redirect "/login"
-      else next() # Page doesn't need auth
+        # If page is visitable when authorized
+        if !redirected # No else clause, since redirection = page rendered
+          if auth.checkAuth req.cookies.user # If user is actually authorized
+            next() # Gogo
+          else
+            spew.warning "Unauthorized user tried to access " + req.url
+            res.clearCookie "user"
+            res.redirect "/login"
+      else # Credentials required and not avaliable
+        spew.warning "Unauthorized user tried to access " + req.url
+        res.redirect "/login"
+    else next() # Page doesn't need auth
 
   # Initialize Express server
   server.setup \
