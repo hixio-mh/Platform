@@ -41,7 +41,7 @@ setup = (options, imports, register) ->
 
       res.json ret
 
-  # Fetch user list - /user/all
+  # Fetch user list - /api/user/all
   server.server.get "/api/user/all", (req, res) ->
 
     # Fetch wide, result always an array

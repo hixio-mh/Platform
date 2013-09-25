@@ -33,8 +33,8 @@ setup = (options, imports, register) ->
 
   # Auth
   publicPages = [
-    "/",
-    "/login",
+    "/"
+    "/login"
     "/register"
   ]
 
@@ -51,9 +51,10 @@ setup = (options, imports, register) ->
   # "/api/user/get/",
   # "/api/user/all",
   # "/api/invite/all"
+  # "/api/ads/get/user"
 
   notWhenAuthorized = [
-    "/login",
+    "/login"
     "/register"
   ]
 
