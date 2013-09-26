@@ -22,6 +22,9 @@ html(lang="en")
           legend Register
           form.form-horizontal(method="post", action="/register")
 
+            if locals.error
+              .alert.alert-warning= locals.error
+
             .form-group
               label.col-lg-3(for="username") Username
               .col-lg-9
@@ -68,11 +71,3 @@ html(lang="en")
                   button.btn.btn-primary Register
                 .col-lg-3
                   a(href="/").btn.btn-default Cancel
-
-
-    .spacer-bot
-      if locals.error
-        .error= locals.error
-
-    footer
-      script(type="text/javascript", src="/js/vendor/zepto.js")

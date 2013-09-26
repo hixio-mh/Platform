@@ -16,7 +16,7 @@ setup = (options, imports, register) ->
           spew.warning "Invalid invite!"
           res.redirect "/"
         else
-          res.render "register.jade", { title : 'Register' }
+          res.render "account/register.jade", { title : 'Register' }
     else
       res.redirect "/"
       spew.warning "No invite provided"
@@ -30,7 +30,7 @@ setup = (options, imports, register) ->
     if param.length <= 0 then _err = true
 
     if _err
-      res.render "register.jade", { error: "#{name} needed for registration!" }
+      res.render "account/register.jade", { error: "#{name} needed for registration!" }
 
     _err
 
@@ -57,7 +57,7 @@ setup = (options, imports, register) ->
 
       if inv.length <= 0
         spew.warning "Invalid invite, email: #{req.body.email}"
-        res.render "register.jade", { error: "Not a valid invite ;(" }
+        res.render "account/register.jade", { error: "Not a valid invite ;(" }
         return
 
       # Check if user exists [Don't trust client-side check]
