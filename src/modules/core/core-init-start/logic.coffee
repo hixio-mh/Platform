@@ -36,6 +36,7 @@ setup = (options, imports, register) ->
     "/"
     "/login"
     "/register"
+    "/recover"
   ]
 
   # "/logout",
@@ -52,6 +53,7 @@ setup = (options, imports, register) ->
   # "/api/user/all",
   # "/api/invite/all"
   # "/api/ads/get/user"
+  # "/api/ads/create"
 
   notWhenAuthorized = [
     "/login"

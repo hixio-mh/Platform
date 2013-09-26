@@ -125,4 +125,15 @@ setup = (options, imports, register) ->
 
   register null, {}
 
+  # Request ad creation - /api/ads/create?name={name}
+  #
+  # @param [String] name New ad name
+  server.server.get "/api/ads/create", (req, res) ->
+
+    if req.query.name == undefined
+      res.json { err: "Ad name required" }
+      return
+
+    res.json { msg: "Created", ad: {} }
+
 module.exports = setup

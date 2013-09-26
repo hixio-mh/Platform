@@ -26,3 +26,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   $routeProvider.otherwise { redirectTo: "/dashboard" }
 
   true
+
+window.AdefyDashboard.run ($rootScope) ->
+
+  $rootScope.$on "$routeChangeSuccess", (e, current, old) ->
+    if current.loadedTemplateUrl != undefined
+      vals = current.loadedTemplateUrl.split "/"
+      $rootScope.tab = vals[vals.length - 1]
