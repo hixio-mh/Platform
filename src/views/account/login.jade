@@ -14,27 +14,33 @@ html(lang="en")
     link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
     link(rel="stylesheet", href="/css/style.css")
 
-  body#page-login.dialog-page
+  body#page-login
+    .row
+      .col-lg-offset-4.col-lg-4
+        .well
+          legend Login
+          form.form-horizontal(method="post", action="/login")
 
-    .spacer-top
+            if locals.error
+              .alert.alert-warning= locals.error
 
-    .dialog
-      h3 Login
-      form(method="post", action="/login")
-        .input-group
-          label(for="username") Username
-          input(name="username", type="text")
-        .input-group
-          label(for="password") Password
-          input(name="password", type="password")
-        .input-group
-          button Sign In
+            .form-group
+              label(for="username").col-lg-2 Username
+              .col-lg-10
+                input.form-control(name="username", type="text", placeholder="Enter username")
 
-    .spacer-bot
-      if locals.error
-        a(href="/recover").recovery Having trouble?
-        .error= locals.error
-      a(href="/register").recovery Register
+            .form-group
+              label(for="password").col-lg-2 Password
+              .col-lg-10
+                input.form-control(name="password", type="password", placeholder="Enter password")
 
-    footer
-      script(type="text/javascript", src="/js/vendor/zepto.js")
+            .form-group
+              .col-lg-offset-2
+                .col-lg-2
+                  button(type="submit").btn.btn-primary Sign In
+                .col-lg-2
+                  a(href="/register").btn.btn-default Register
+
+            if locals.error
+              .help-block
+                a(href="/recover").recovery Having trouble?

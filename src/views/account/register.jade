@@ -14,42 +14,61 @@ html(lang="en")
     link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
     link(rel="stylesheet", href="/css/style.css")
 
-  body#page-register.dialog-page
+  body#page-register
 
-    .spacer-top
+    .row
+      .col-lg-offset-4.col-lg-4
+        .well
+          legend Register
+          form.form-horizontal(method="post", action="/register")
 
-    .dialog
-      h3 Register
-      form(method="post", action="/register")
-        .input-group
-          label(for="username") Username
-          input(name="username", type="text")
-        .input-group
-          label(for="fname") First name
-          input(name="fname", type="text")
-        .input-group
-          label(for="lname") Last name
-          input(name="lname", type="text")
-        hr
-        .input-group
-          label(for="company") Company
-          input(name="company", type="text")
-        .input-group
-          label(for="email") Email
-          input(name="email", type="email")
-        hr
-        .input-group
-          label(for="password") Password
-          input(name="password", type="password")
-        .input-group
-          label(for="password_verify") Confirm
-          input(name="password_verify", type="password")
-        hr
-        .input-group
-          label(for="invitation") Invitation
-          input(name="invitation", type="text")
-        .input-group
-          button Register
+            .form-group
+              label.col-lg-3(for="username") Username
+              .col-lg-9
+                input(name="username", type="text", placeholder="Enter username").form-control
+
+            .form-group
+              label.col-lg-3(for="fname") First name
+              .col-lg-9
+                input(name="fname", type="text", placeholder="John").form-control
+
+            .form-group
+              label.col-lg-3(for="lname") Last name
+              .col-lg-9
+                input(name="lname", type="text", placeholder="Doe").form-control
+
+            .form-group
+              label.col-lg-3(for="company") Company
+              .col-lg-9
+                input(name="company", type="text", placeholder="Enter company name").form-control
+
+            .form-group
+              label.col-lg-3(for="email") Email
+              .col-lg-9
+                input(name="email", type="email", placeholder="john.doe@gmail.com").form-control
+
+            .form-group
+              label.col-lg-3(for="password") Password
+              .col-lg-9
+                input(name="password", type="password", placeholder="Enter password").form-control
+
+            .form-group
+              label.col-lg-3(for="password_verify") Confirm
+              .col-lg-9
+                input(name="password_verify", type="password", placeholder="Repeat password").form-control
+
+            .form-group
+              label.col-lg-3(for="invitation") Invitation
+              .col-lg-9
+                input(name="invitation", type="text", placeholder="Enter invitation code").form-control
+
+            .form-group
+              .col-lg-offset-3
+                .col-lg-3
+                  button.btn.btn-primary Register
+                .col-lg-3
+                  a(href="/").btn.btn-default Cancel
+
 
     .spacer-bot
       if locals.error

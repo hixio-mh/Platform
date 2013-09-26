@@ -17,25 +17,33 @@ html(lang="en", data-ng-app="AdefyDashboard")
     base(href="/dashboard")
 
   body#page-dashboard
-    .mainbar
-      .title Dashboard
-      ul
-        a(href="/dashboard/ads")
-          li Ads
-        a(href="/dashboard/campaigns")
-          li Campaigns
-        a(href="/dashboard/account")
-          li My Account
-        a(href="/logout", target="_self")
-          li Logout
-        a(href="javascript:void(0)")
-          li _
+    nav.navbar.navbar-default.navbar-static-top
+      .navbar-brand Dashboard
+
+      .collapse.navbar-collapse.nb-links
+        ul.nav.navbar-nav
+
+          li(data-ng-class="{ active: tab == \"home\" }")
+            a(href="/dashboard") Home
+
+          li(data-ng-class="{ active: tab == \"ads\" }")
+            a(href="/dashboard/ads") Ads
+
+          li(data-ng-class="{ active: tab == \"campaigns\" }")
+            a(href="/dashboard/campaigns") Campaigns
+
+          li(data-ng-class="{ active: tab == \"account\" }")
+            a(href="/dashboard/account") My Account
+
+          li
+            a(href="/logout", target="_self") Logout
 
     #content(data-ng-view="")
 
     footer
-      script(type="text/javascript", src="/js/vendor/zepto.js")
+      script(type="text/javascript", src="/js/vendor/jquery.js")
       script(type="text/javascript", src="/js/vendor/angular.js")
+      script(type="text/javascript", src="/js/vendor/bootstrap.min.js")
       script(type="text/javascript", src="/socket.io/socket.io.js")
 
       script(type="text/javascript", src="/client/dashboard/main.js")
