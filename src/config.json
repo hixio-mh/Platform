@@ -3,7 +3,7 @@
 	"loglevel": 10,
 	"mode": "debug",
 	"domain": "localhost",
-	"port": 5000,
+	"port": 6010,
 
 	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
 	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
