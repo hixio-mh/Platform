@@ -176,7 +176,7 @@ setup = (options, imports, register) ->
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
         if ad == undefined
-          res.json { err: "No such ad found" }
+          res.json { error: "No such ad found" }
           return
 
         ad.remove()
