@@ -8,6 +8,7 @@ exports.createSchema = ->
   schema = new mongoose.Schema
     owner: mongoose.Schema.ObjectId
     name: String
+    data: String
 
   model = null
 

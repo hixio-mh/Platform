@@ -1,11 +1,13 @@
 window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
 
+  generateEditorLink = (id) -> "/editor/#{id}"
+
   # Fetch owned ad list from server
   refreshAdList = ->
     $http.get("/logic/ads/get?filter=user").success (data) ->
 
       # Set up editor links
-      data[i].edit = "/editor/#{data[i].id}" for i in [0...data.length]
+      data[i].edit = generateEditorLink data[i].id for i in [0...data.length]
 
       $scope.data = data
 
@@ -23,6 +25,8 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
         $scope.newAdStatus = "Created!"
         setTimeout (-> $scope.$apply -> $scope.newAdStatus = ""), 500
         $("#newAd").modal "hide"
+
+        result.ad.edit = generateEditorLink result.ad.id
 
         $scope.data.push result.ad
 

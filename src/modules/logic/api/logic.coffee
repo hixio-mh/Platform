@@ -153,6 +153,7 @@ setup = (options, imports, register) ->
       newAd = db.models().Ad.getModel()
         owner: user._id
         name: req.query.name
+        data: ""
 
       newAd.save (err) ->
         if err
@@ -161,7 +162,7 @@ setup = (options, imports, register) ->
           return
 
         spew.info "Created new ad '#{req.query.name}' for #{user.username}"
-        res.json { ad: { id: newAd._id.str, name: newAd.name }}
+        res.json { ad: { id: newAd._id, name: newAd.name }}
 
   # Delete an ad, expects {id} in url and req.cookies.user to be valid
   deleteAd = (req, res) ->
@@ -202,21 +203,23 @@ setup = (options, imports, register) ->
 
         ret = []
 
-        if typeof data != "Array" then data = [ data ]
+        if not data instanceof Array
+          if data.name != undefined then data = [ data ] else data = []
 
-        for a in data
-          ad = {}
-          ad.name = a.name
-          ad.id = a._id
+        if data.length > 0
+          for a in data
+            ad = {}
+            ad.name = a.name
+            ad.id = a._id
 
-          ret.push ad
+            ret.push ad
 
         res.json ret
 
       , (err) -> res.json { error: err }
       , true
 
-    , (err) -> res.json {error: err}
+    , (err) -> res.json { error: err }
     , true
 
   register null, {}
