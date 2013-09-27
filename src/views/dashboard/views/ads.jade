@@ -16,13 +16,13 @@
       td
       td
     tbody
-      tr(data-ng-repeat="ad in data")
+      tr(data-ng-repeat="(i, ad) in data")
         td
           p(data-ng-bind="ad.name")
         td
           button.btn.btn-link Edit
         td
-          button.btn.btn-danger Delete
+          button.btn.btn-danger(data-ng-click="deleteAd({{ i }})") Delete
 
 #newAd.modal.fade
   .modal-dialog

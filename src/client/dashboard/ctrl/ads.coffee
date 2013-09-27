@@ -19,4 +19,17 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
         setTimeout (-> $scope.$apply -> $scope.newAdStatus = ""), 500
         $("#newAd").modal "hide"
 
+        $scope.data.push result.ad
+
+  $scope.deleteAd = (i) ->
+    bootbox.confirm "Are you sure?", (result) ->
+
+      if result then $scope.$apply ->
+        $http.get("/logic/ads/delete?id=#{$scope.data[i].id}").success (result) ->
+
+          if result.err != undefined
+            bootbox.alert "Failed to delete ad: #{result.err}"
+          else $scope.data.splice i, 1
+
+
   refreshAdList()
