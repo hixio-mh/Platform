@@ -7,6 +7,7 @@ module.exports = [
 
   "./modules/core/core-init-start",
 
+  "./modules/logic/utility",
   "./modules/logic/api",
   "./modules/logic/routes",
   "./modules/logic/page-login",

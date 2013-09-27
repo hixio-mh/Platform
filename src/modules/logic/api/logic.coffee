@@ -8,6 +8,7 @@ setup = (options, imports, register) ->
   server = imports["line-express"]
   db = imports["line-mongodb"]
   auth = imports["line-userauth"]
+  utility = imports["logic-utility"]
 
   # Top-level routing
 
@@ -35,7 +36,23 @@ setup = (options, imports, register) ->
   server.server.get "/logic/ads/:action", (req, res) ->
     if req.params.action == "get" then getAd req, res
     else if req.params.action == "create" then createAd req, res
+    else if req.params.action == "delete" then deleteAd req, res
     else res.json { error: "Unknown action #{req.params.action} "}
+
+  # Helpful security check (on its own since a request without a user shouldn't
+  # reach this point)
+  userCheck = (req, res) ->
+    if req.cookies.user == undefined
+      res.json { error: "Invalid user (CRITICAL - Check this)" }
+      return false
+    true
+
+  # Fails if the user result is empty
+  userValid = (user, res) ->
+    if user == undefined
+      res.json { error: "Invalid user (CRITICAL - Check this)" }
+      return false
+    true
 
   ##
   ## Invite manipulation
@@ -68,10 +85,7 @@ setup = (options, imports, register) ->
 
   # Retrieve use,  expects {filter}
   getUser = (req, res) ->
-
-    if req.query.filter == undefined
-      res.json { error: "No filter specified" }
-      return
+    if not utility.param filter, res, "Filter" then return
 
     if req.query.filter == "username" then _getUserByUsername req, res
     else if req.query.filter == "all" then _getAllUsers req, res
@@ -103,32 +117,21 @@ setup = (options, imports, register) ->
 
   # Expects {username}
   _getUserByUsername = (req, res) ->
-
-    # Sanity check
-    if req.params.username == undefined
-      res.json { error: "You must specify a username" }
-      return
+    if not utility.param req.params.username, res, "Username" then return
 
     # TODO: Sanitize
 
     # Fetch wide, result always an array
-    db.fetch "User", { username: req.params.username }, (data) ->
+    db.fetch "User", { username: req.params.username }, (user) ->
 
-      _valid = true
-
-      if data == undefined then _valid = false
-      else if data.username == undefined then _valid = false
-
-      if not _valid
-        res.json { error: "User #{req.params.username} not found" }
-        return
+      if not userValid user then return
 
       # Data fetched, send only what is needed
       ret = {}
-      ret.username = data.username
-      ret.fname = data.fname
-      ret.lname = data.lname
-      ret.email = data.email
+      ret.username = user.username
+      ret.fname = user.fname
+      ret.lname = user.lname
+      ret.email = user.email
 
       res.json ret
 
@@ -136,47 +139,77 @@ setup = (options, imports, register) ->
   ## Ad manipulation
   ##
 
-  # Create an ad, expects {name} in url
+  # Create an ad, expects {name} in url and req.cookies.user to be valid
   createAd = (req, res) ->
-    if req.query.name == undefined
-      res.json { err: "Ad name required" }
-      return
+    if not utility.param req.query.name, res, "Ad name" then return
+    if not userCheck req then return
 
-    res.json { msg: "Created", ad: {} }
-    # TODO
+    # Find user
+    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
+
+      if not userValid user then return
+
+      # Create new ad entry
+      newAd = db.models().Ad.getModel()
+        owner: user._id
+        name: req.query.name
+
+      newAd.save (err) ->
+        if err
+          spew.error "Error saving new ad [#{err}"
+          res.json { error: err }
+          return
+
+        spew.info "Created new ad '#{req.query.name}' for #{user.username}"
+        res.json { ad: { id: newAd._id.str, name: newAd.name }}
+
+  # Delete an ad, expects {id} in url and req.cookies.user to be valid
+  deleteAd = (req, res) ->
+    if not utility.param req.query.id, res, "Ad id" then return
+    if not userCheck req then return
+
+    # Find user
+    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
+      if not userValid user then return
+
+      db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
+
+        if ad == undefined
+          res.json { err: "No such ad found" }
+          return
+
+        ad.remove()
+        res.json { msg: "Deleted ad #{req.query.id}" }
 
   # Main GET method, expects {filter}
   getAd = (req, res) ->
-
-    if req.query.filter == undefined
-      res.json { error: "No filter specified" }
-      return
+    if not utility.param req.query.filter, res, "Filter" then return
 
     if req.query.filter == "user" then _getAdByUser req, res
     else res.json { error: "Invalid filter" }
 
   # Expects req.cookies.user to be valid
   _getAdByUser = (req, res) ->
+    if not userCheck req then return
 
     # Fetch user by session
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
 
-      if user == undefined
-        res.json { error: "Invalid user (shame, shame on you) " }
-        return
+      if not userValid user then return
 
       # Fetch data and reply
       db.fetch "Ad", { owner: user._id }, (data) ->
 
         ret = []
 
-        if data != undefined and data.length != undefined
-          for a in data
-            ad = {}
-            ad.name = a.name
-            ad.id = a._id.str
+        if typeof data != "Array" then data = [ data ]
 
-            ret.push ad
+        for a in data
+          ad = {}
+          ad.name = a.name
+          ad.id = a._id
+
+          ret.push ad
 
         res.json ret
 
