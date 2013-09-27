@@ -12,6 +12,7 @@ module.exports = [
   "./modules/logic/routes",
   "./modules/logic/page-login",
   "./modules/logic/page-register",
+  "./modules/logic/editor",
 
   "./modules/core/core-init-end"
 ]

@@ -2,7 +2,12 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
 
   # Fetch owned ad list from server
   refreshAdList = ->
-    $http.get("/logic/ads/get?filter=user").success (data) -> $scope.data = data
+    $http.get("/logic/ads/get?filter=user").success (data) ->
+
+      # Set up editor links
+      data[i].edit = "/editor/#{data[i].id}" for i in [0...data.length]
+
+      $scope.data = data
 
   $scope.data = []
   $scope.newAdStatus = ""

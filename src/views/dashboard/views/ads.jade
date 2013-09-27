@@ -20,7 +20,7 @@
         td
           p(data-ng-bind="ad.name")
         td
-          button.btn.btn-link Edit
+          a(data-ng-href="{{ ad.edit }}", target="_blank").btn.btn-link Edit
         td
           button.btn.btn-danger(data-ng-click="deleteAd({{ i }})") Delete
 
