@@ -10,6 +10,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
     meta(name="author", content="Spectrum IT")
     meta(name="viewport", content="width=device-width, initial-scale=1")
 
+    script(type="text/javascript", src="/js/vendor/pace.min.js")
+
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
     link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
     link(rel="stylesheet", href="/css/style.css")
@@ -18,7 +20,13 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
   body#page-dashboard
     nav.navbar.navbar-default.navbar-static-top
-      .navbar-brand Dashboard
+
+      .navbar-header
+        button(type="button", data-toggle="collapse", data-target=".nb-links").navbar-toggle
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        .navbar-brand Dashboard
 
       .collapse.navbar-collapse.nb-links
         ul.nav.navbar-nav
