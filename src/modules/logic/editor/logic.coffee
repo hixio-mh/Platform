@@ -1,4 +1,6 @@
 spew = require "spew"
+fs = require "fs"
+mongoose = require "mongoose"
 
 ##
 ## Editor routes (locked down by core-init-start)
@@ -10,6 +12,8 @@ setup = (options, imports, register) ->
   auth = imports["line-userauth"]
   utility = imports["logic-utility"]
 
+  staticDir = "#{__dirname}/../../../static"
+
   # Helpful security check (on its own since a request without a user shouldn't
   # reach this point)
   userCheck = (req, res) ->
@@ -18,9 +22,16 @@ setup = (options, imports, register) ->
       return false
     true
 
+  validCheck = (dbRes, res) ->
+    if dbRes == undefined or (dbRes instanceof Array and dbRes.length == 0)
+      res.json { error: "Something wasn't found ;(" }
+      return false
+    true
+
   # Fails if the user result is empty
+  # (slightly modified version of the above, nicer error)
   userValid = (user, res) ->
-    if user == undefined
+    if user == undefined or (user instanceof Array and user.length == 0)
       res.json { error: "Invalid user (CRITICAL - Check this)" }
       return false
     true
@@ -32,7 +43,7 @@ setup = (options, imports, register) ->
   # Main editor ad serving, assumes a valid req.cookies.user
   server.server.get "/editor/:ad", (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
-    if not userCheck req then return
+    if not userCheck req, res then return
 
     res.render "editor.jade", { ad: req.params.ad }, (err, html) ->
       if err
@@ -44,11 +55,53 @@ setup = (options, imports, register) ->
   # Editor load/save, expects a valid user
   server.server.post "/logic/editor/:action", (req, res) ->
     if not utility.param req.params.action, res, "Action" then return
-    if not userCheck req then return
+    if not userCheck req, res then return
 
     if req.params.action == "load" then loadAd req, res
     else if req.params.action == "save" then saveAd req, res
+    else if req.params.action == "export" then exportAd req, res
     else res.json { error: "Unknown action #{req.params.action}" }
+
+  # Exports
+  server.server.get "/exports/:folder/:file", (req, res) ->
+    if not userCheck req, res then return
+
+    # TODO: Validation?
+    folder = req.params.folder
+    file = req.params.file
+
+    db.fetch [ "Export", "User" ], [
+      { folder: folder, file: file },
+      { session: req.cookies.user.sess, username: req.cookies.user.id }
+    ], (data) ->
+
+      ex = data[0]
+      user = data[1]
+
+      if not userValid user, res then return
+      if not validCheck ex, res then return
+
+      if ex.owner.toString() != user._id.toString()
+        res.json { error: "Unauthorized!" }
+        return
+
+      expired = new Date() > ex.expiration
+
+      if expired
+        ex.remove()
+        server.throw404()
+        return
+
+      folder = ex.folder
+      file = ex.file
+
+      path = "#{staticDir}/_exports/#{folder}/#{file}"
+
+      if req.query.download == undefined
+        res.set "Content-Type", "text/html"
+        res.send fs.readFileSync path
+      else
+        res.send fs.readFileSync path
 
   ##
   ## Logic
@@ -58,7 +111,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not userValid then return
+      if not userValid user, res then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -71,7 +124,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not userValid then return
+      if not userValid user, res then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -80,6 +133,42 @@ setup = (options, imports, register) ->
           ad.data = req.query.data
           ad.save()
           res.json { msg: "Saved" }
+
+  exportAd = (req, res) ->
+    if not utility.param req.query.id, res, "Id" then return
+    if not utility.param req.query.data, res, "Data" then return
+    if not userCheck req, res then return
+
+    # Find the requesting user
+    db.fetch "User", { session: req.cookies.user.sess}, (user) ->
+      if not userValid user, res then return
+
+      # Make a folder within /exports specific for us, then ship the data as a
+      # new html file in that folder. Both get randomized names
+      folderName = utility.randomString 16
+      fileName = "#{utility.randomString 8}.html"
+
+      # Create an export entry for it
+      #
+      # exports expire after 72 hours
+      db.models().Export.getModel()
+        folder: folderName
+        file: fileName
+        expiration: new Date(new Date().getTime() + (1000 * 60 * 60 * 72))
+        owner: user._id
+      .save()
+
+      localPath = "#{staticDir}/_exports/#{folderName}"
+      remotePath = "http://cloud.adefy.eu/exports/#{folderName}/#{fileName}"
+
+      # Create _exports directory if it doesn't already exist
+      if not fs.existsSync "#{staticDir}/_exports"
+        fs.mkdirSync "#{staticDir}/_exports"
+
+      fs.mkdirSync localPath
+      fs.writeFileSync "#{localPath}/#{fileName}", req.query.data
+
+      res.json { link: remotePath }
 
   register null, {}
 
