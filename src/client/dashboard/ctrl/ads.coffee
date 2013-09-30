@@ -18,8 +18,8 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
   $scope.createAd = ->
     $scope.newAdStatus = "Creating..."
     $http.get("/logic/ads/create?name=#{$scope.newAdName}").success (result) ->
-      if result.err != undefined
-        $scope.newAdError = result.err
+      if result.error != undefined
+        $scope.newAdError = result.error
         $scope.newAdStatus = ""
       else
         $scope.newAdStatus = "Created!"
@@ -36,8 +36,8 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
       if result then $scope.$apply ->
         $http.get("/logic/ads/delete?id=#{$scope.data[i].id}").success (result) ->
 
-          if result.err != undefined
-            bootbox.alert "Failed to delete ad: #{result.err}"
+          if result.error != undefined
+            bootbox.alert "Failed to delete ad: #{result.error}"
           else $scope.data.splice i, 1
 
 

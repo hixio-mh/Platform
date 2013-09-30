@@ -3,37 +3,46 @@ spew = require "spew"
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
+  utility = imports["logic-utility"]
 
-  # We have no homepage, just redirect to the login
+  # We have no homepage, just redirect to the login (unauth dash -> login)
   server.server.get "/", (req, res) -> res.redirect "/dashboard"
 
   servePathsGET = (paths, view) ->
     for p in paths
-      server.server.get p, (req, res) -> res.render view
-
-  # Admin area
-  adminPaths = [
-    "/admin",
-    "/admin/users",
-    "/admin/invites"
-  ]
-  servePathsGET adminPaths, "admin/layout.jade"
-  server.server.get "/views/admin/:view", (req, res) ->
-
-    # TODO: Sanitize req.params.view
-
-    res.render "admin/views/#{req.params.view}.jade"
+      server.server.get p, (req, res) ->
+        if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
+        res.render view, auth
 
   # Standard user dashboard
   dashboardPaths = [
-    "/dashboard",
-    "/dashboard/ads",
-    "/dashboard/campaigns",
+    "/dashboard"
+    "/dashboard/ads"
+    "/dashboard/campaigns"
     "/dashboard/account"
+
+    "/dashboard/admin"
+    "/dashboard/admin/users"
+    "/dashboard/admin/invites"
   ]
+
   servePathsGET dashboardPaths, "dashboard/layout.jade"
+
   server.server.get "/views/dashboard/:view", (req, res) ->
-    res.render "dashboard/views/#{req.params.view}.jade"
+    if not utility.param req.params.view, res, "View" then return
+
+    # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
+    if req.params.view.indexOf(":") != -1
+      req.params.view = req.params.view.split(":").join "/"
+
+    # Sanitize req.params.view
+    # TODO: figure out if this is enough
+    if req.params.view.indexOf("..") != -1
+      req.params.view = req.params.view.split("..").join ""
+
+    if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
+
+    res.render "dashboard/views/#{req.params.view}.jade", auth
 
   register null, {}
 

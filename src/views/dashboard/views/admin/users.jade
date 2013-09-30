@@ -1,0 +1,30 @@
+.col-lg-2
+  ul.nav.nav-pills.nav-stacked
+    li
+      a(href="/dashboard/admin") Home
+    li.active
+      a(href="/dashboard/admin/users") Users
+    li
+      a(href="/dashboard/admin/invites") Invites
+
+.col-lg-8
+
+  table.table.table-striped.table-hover
+    thead
+      td Username
+      td First Name
+      td Last Name
+      td Email
+      td
+    tbody
+      tr(data-ng-repeat="(i, u) in userlist")
+        td
+          p(data-ng-bind="u.username")
+        td
+          p(data-ng-bind="u.fname")
+        td
+          p(data-ng-bind="u.lname")
+        td
+          p(data-ng-bind="u.email")
+        td
+          button.btn.btn-danger(data-ng-click="delete({{ i }})") Delete

@@ -37,6 +37,9 @@ setup = (options, imports, register) ->
     "/login"
     "/register"
     "/recover"
+
+    # Public invite request
+    "/logic/invite/add"
   ]
 
   # "/logout",

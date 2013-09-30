@@ -1,8 +1,3 @@
-socket = io.connect "", { secure: false }
-
-window.AdefyDashboard = angular.module "AdefyDashboard", []
-
-# Routing
 window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
 
   $locationProvider.html5Mode true
@@ -23,13 +18,18 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "account"
     templateUrl: "/views/dashboard/account"
 
+  $routeProvider.when "/dashboard/admin",
+    controller: "adminHome"
+    templateUrl: "/views/dashboard/admin:home"
+
+  $routeProvider.when "/dashboard/admin/users",
+    controller: "adminUsers"
+    templateUrl: "/views/dashboard/admin:users"
+
+  $routeProvider.when "/dashboard/admin/invites",
+    controller: "adminInvites"
+    templateUrl: "/views/dashboard/admin:invites"
+
   $routeProvider.otherwise { redirectTo: "/dashboard" }
 
   true
-
-window.AdefyDashboard.run ($rootScope) ->
-
-  $rootScope.$on "$routeChangeSuccess", (e, current, old) ->
-    if current.loadedTemplateUrl != undefined
-      vals = current.loadedTemplateUrl.split "/"
-      $rootScope.tab = vals[vals.length - 1]

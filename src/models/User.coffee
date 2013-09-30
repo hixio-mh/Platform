@@ -19,6 +19,13 @@ exports.createSchema = ->
     address1: String
     address2: String
 
+    # 0 - admin (root)
+    # 1 - unassigned
+    # 2 - unassigned
+    # ...
+    # 7 - normal user
+    permissions: Number
+
   model = null
 
   schema.pre "save", (next) ->

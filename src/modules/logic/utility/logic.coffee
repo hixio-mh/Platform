@@ -12,6 +12,15 @@ setup = (options, imports, register) ->
         return false
       true
 
+    randomString: (length) ->
+      code = ""
+      map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+      for i in [0...length]
+        code += map.charAt Math.floor(Math.random() * map.length)
+
+      code
+
   register null,
     "logic-utility": utility
 

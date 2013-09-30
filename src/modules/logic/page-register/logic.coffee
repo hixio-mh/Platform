@@ -11,7 +11,7 @@ setup = (options, imports, register) ->
 
   server.server.get "/register", (req, res) ->
     if req.query.invite
-      db.fetch "Invite", { hash: req.query.invite }, (inv) ->
+      db.fetch "Invite", { code: req.query.invite }, (inv) ->
         if inv.length <= 0
           spew.warning "Invalid invite!"
           res.redirect "/"
@@ -48,7 +48,7 @@ setup = (options, imports, register) ->
 
     # Check for an invite
     db.fetch [ "Invite", "User" ],[ \
-    { hash: req.body.invitation }, \
+    { code: req.body.invitation }, \
     { username: req.body.username } \
     ], (results) ->
 
@@ -61,7 +61,7 @@ setup = (options, imports, register) ->
         return
 
       # Check if user exists [Don't trust client-side check]
-      if user != undefined
+      if user.length > 0
         spew.error "Username exists! Client-side check has been bypassed."
         throw server.InternalError
         # Not sure if this actually breaks execution
@@ -78,6 +78,7 @@ setup = (options, imports, register) ->
         email: req.body.email
         hash: h
         limit: "0"
+        permissions: 7 # Normal user, default
 
       inv.remove()
 

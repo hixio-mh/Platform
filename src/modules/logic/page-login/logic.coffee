@@ -12,7 +12,10 @@ setup = (options, imports, register) ->
   server.registerPage "/logout", "layout.jade", {}, (render, req, res) ->
 
     auth.deauthorize req.cookies.user
+
     res.clearCookie "user"
+    res.clearCookie "admin"
+
     res.redirect "/login"
 
   # Login POST [username, password]
@@ -44,6 +47,12 @@ setup = (options, imports, register) ->
 
           # Actual authorization
           res.cookie "user", userData
+
+          # Set the admin flag if necessary. Note that we verify admin status
+          # upon each admin-qualified API call!
+          if user.permissions == 0 then res.cookie "admin", true
+          else res.clearCookie "admin"
+
           auth.authorize userData
           user.session = userData.sess
 

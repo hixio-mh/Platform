@@ -46,6 +46,11 @@ html(lang="en", data-ng-app="AdefyDashboard")
           li
             a(href="/logout", target="_self") Logout
 
+        if locals.admin
+          ul.nav.navbar-nav.pull-right
+            li(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
+              a(href="/dashboard/admin") Admin
+
     #content(data-ng-view="")
 
     footer
@@ -55,8 +60,33 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(type="text/javascript", src="/js/vendor/bootbox.min.js")
       script(type="text/javascript", src="/socket.io/socket.io.js")
 
-      script(type="text/javascript", src="/client/dashboard/main.js")
+      script(type="text/javascript")
+        var socket = io.connect("", { secure: false });
+        window.AdefyDashboard = angular.module("AdefyDashboard", []);
+
+      if locals.admin
+        script(type="text/javascript", src="/client/dashboard/admin-config.js")
+      else
+        script(type="text/javascript", src="/client/dashboard/normal-config.js")
+
+      script(type="text/javascript")
+        window.AdefyDashboard.run(function($rootScope) {
+
+          $rootScope.$on("$routeChangeSuccess", function(e, current, old) {
+            if(current.loadedTemplateUrl !== undefined) {
+
+              var vals = current.loadedTemplateUrl.split("/");
+              $rootScope.tab = vals[vals.length - 1];
+            }
+          });
+        });
+
       script(type="text/javascript", src="/client/dashboard/ctrl/home.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/ads.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/campaigns.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/account.js")
+
+      if locals.admin
+        script(type="text/javascript", src="/client/dashboard/ctrl/admin/home.js")
+        script(type="text/javascript", src="/client/dashboard/ctrl/admin/invites.js")
+        script(type="text/javascript", src="/client/dashboard/ctrl/admin/users.js")
