@@ -26,9 +26,6 @@ setup = (options, imports, register) ->
     config.db.port,\
     config.db.db
 
-  # Snapshot
-  snapshot.setup __dirname + "/../../../" + config.snapshot
-
   ## Set up middleware
 
   # Auth

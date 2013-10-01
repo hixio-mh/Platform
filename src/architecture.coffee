@@ -3,6 +3,9 @@ module.exports = [
   "./modules/line/mongodb",
   "./modules/line/snapshot",
   "./modules/line/socketio",
+
+  "./modules/core/core-init-snapshot",
+
   "./modules/line/userauth",
 
   "./modules/core/core-init-start",
