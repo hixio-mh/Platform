@@ -216,7 +216,7 @@ setup = (options, imports, register) ->
     # Fetch wide, result always an array
     db.fetch "User", { username: req.params.username }, (user) ->
 
-      if not userValid user then return
+      if not userValid user, res then return
 
       # Data fetched, send only what is needed
       ret = {}
@@ -239,7 +239,7 @@ setup = (options, imports, register) ->
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
 
-      if not userValid user then return
+      if not userValid user, res then return
 
       # Create new ad entry
       newAd = db.models().Ad.getModel()
@@ -263,7 +263,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not userValid user then return
+      if not userValid user, res then return
 
       # If we have admin privs, then delete the ad even without ownership
       query = { _id: req.query.id, owner: user._id }
@@ -292,7 +292,7 @@ setup = (options, imports, register) ->
     # Fetch user by session
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
 
-      if not userValid user then return
+      if not userValid user, res then return
 
       # Bail if attempting to fetch an un-owned ad, and we are not the
       # administrator
