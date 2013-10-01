@@ -1,6 +1,7 @@
 spew = require "spew"
 fs = require "fs"
 mongoose = require "mongoose"
+http = require "http"
 
 ##
 ## Editor routes (locked down by core-init-start)
@@ -13,6 +14,17 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   staticDir = "#{__dirname}/../../../static"
+
+  exportHeader =  ""
+  exportHeader += "<!DOCTYPE html>"
+  exportHeader += "<html lang=\"en\">"
+  exportHeader += "<head>"
+  exportHeader +=   "<meta charest=\"utf-8\">"
+  exportHeader +=   "<title>Ad Export</title>"
+  exportHeader += "</head>"
+  exportHeader += "<body>"
+
+  exportFooter = "</body></html>"
 
   # Helpful security check (on its own since a request without a user shouldn't
   # reach this point)
@@ -143,32 +155,80 @@ setup = (options, imports, register) ->
     db.fetch "User", { session: req.cookies.user.sess}, (user) ->
       if not userValid user, res then return
 
-      # Make a folder within /exports specific for us, then ship the data as a
-      # new html file in that folder. Both get randomized names
-      folderName = utility.randomString 16
-      fileName = "#{utility.randomString 8}.html"
+      # Compile a working export
+      finalExport =  ""
+      finalExport += exportHeader
 
-      # Create an export entry for it
-      #
-      # exports expire after 72 hours
-      db.models().Export.getModel()
-        folder: folderName
-        file: fileName
-        expiration: new Date(new Date().getTime() + (1000 * 60 * 60 * 72))
-        owner: user._id
-      .save()
+      # Takes a full AWGL source and AJS min
+      buildExport = (awgl, ajs) ->
 
-      localPath = "#{staticDir}/_exports/#{folderName}"
-      remotePath = "http://cloud.adefy.eu/exports/#{folderName}/#{fileName}"
+        # Add opening script tag, and pull in the full version of AWGL,
+        # followed by the min AJS
+        finalExport += "<script type=\"text/javascript\">"
+        finalExport += awgl
+        finalExport += ajs
 
-      # Create _exports directory if it doesn't already exist
-      if not fs.existsSync "#{staticDir}/_exports"
-        fs.mkdirSync "#{staticDir}/_exports"
+        # Now instantiate a new AWGLEngine, and ship our code in the post-init
+        # callback
+        finalExport += "window.ajax = microAjax;"
+        finalExport += "var ad = new AWGLEngine(\"\", 1, function(){"
+        finalExport +=   req.query.data
 
-      fs.mkdirSync localPath
-      fs.writeFileSync "#{localPath}/#{fileName}", req.query.data
+        # Close the callback, and the script tag
+        finalExport += "});"
+        finalExport += "</script>"
 
-      res.json { link: remotePath }
+        finalExport += exportFooter
+
+        # Make a folder within /exports specific for us, then ship the data
+        # as a new html file in that folder. Both get randomized names
+        folder = utility.randomString 16
+        file = "#{utility.randomString 8}.html"
+
+        # Create an export entry for it
+        #
+        # exports expire after 72 hours
+        db.models().Export.getModel()
+          folder: folder
+          file: file
+          expiration: new Date(new Date().getTime() + (1000 * 60 * 60 * 72))
+          owner: user._id
+        .save()
+
+        localPath = "#{staticDir}/_exports/#{folder}"
+        remotePath = "http://cloud.adefy.eu/exports/#{folder}/#{file}"
+
+        # Create _exports directory if it doesn't already exist
+        if not fs.existsSync "#{staticDir}/_exports"
+          fs.mkdirSync "#{staticDir}/_exports"
+
+        fs.mkdirSync localPath
+        fs.writeFileSync "#{localPath}/#{file}", finalExport
+
+        res.json { link: remotePath }
+
+      CDN_awgl = "http://cdn.adefy.eu/awgl/awgl-full.js"
+      CDN_ajs = "http://cdn.adefy.eu/ajs/ajs.js"
+
+      # Fetch CDN files
+      # TODO: Cache these, fetch only a version # request, and update as needed
+      http.get CDN_awgl, (awgl_res) ->
+
+        awglSrc = ""
+
+        # Build awglSrc, then fetch ajsSrc
+        awgl_res.on "data", (chunk) -> awglSrc += chunk
+        awgl_res.on "end", ->
+          http.get CDN_ajs, (ajs_res) ->
+
+            ajsSrc = ""
+
+            # Build ajsSrc, and on end create the export
+            ajs_res.on "data", (chunk) -> ajsSrc += chunk
+            ajs_res.on "end", -> buildExport awglSrc, ajsSrc
+
+          .on "error", (e) -> res.json { error: "AJS request error: #{e}" }
+      .on "error", (e) -> res.json { error: "AWGL request error: #{e}" }
 
   register null, {}
 
