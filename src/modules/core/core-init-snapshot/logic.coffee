@@ -1,5 +1,5 @@
 # A tad ugly, called first to ensure the snapshot is loaded as required
-config = require "../../../config.json"\
+config = require "../../../config.json"
 spew = require "spew"
 
 setup = (options, imports, register) ->
