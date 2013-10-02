@@ -168,14 +168,9 @@ setup = (options, imports, register) ->
         finalExport += awgl
         finalExport += ajs
 
-        # Now instantiate a new AWGLEngine, and ship our code in the post-init
-        # callback
-        finalExport += "window.ajax = microAjax;"
-        finalExport += "var ad = new AWGLEngine(\"\", 1, function(){"
-        finalExport +=   req.query.data
+        # Ship our ad code (takes care of instantiation)
+        finalExport += req.query.data
 
-        # Close the callback, and the script tag
-        finalExport += "});"
         finalExport += "</script>"
 
         finalExport += exportFooter
