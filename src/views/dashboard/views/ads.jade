@@ -1,13 +1,13 @@
 .col-lg-2
   ul.nav.nav-pills.nav-stacked
     li
-      a(data-toggle="modal", href="#newAd", target="_self") New Ad
+      a(data-toggle="modal", href="#newCat", target="_self") New Ad
 
 .col-lg-8
 
   .col-lg-6(data-ng-if="data.length == 0")
     h1 You don't have any ads...
-    button.btn.btn-primary(data-toggle="modal", href="#newAd") Create one!
+    button.btn.btn-primary(data-toggle="modal", href="#newCat") Create one!
 
   table.table.table-striped(data-ng-if="data.length > 0")
     thead
@@ -24,7 +24,7 @@
         td
           button.btn.btn-danger(data-ng-click="deleteAd({{ i }})") Delete
 
-#newAd.modal.fade
+#newCat.modal.fade
   .modal-dialog
 
     .modal-content

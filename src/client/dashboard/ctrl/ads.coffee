@@ -24,7 +24,7 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route) ->
       else
         $scope.newAdStatus = "Created!"
         setTimeout (-> $scope.$apply -> $scope.newAdStatus = ""), 500
-        $("#newAd").modal "hide"
+        $("#newCat").modal "hide"
 
         result.ad.edit = generateEditorLink result.ad.id
 
