@@ -10,6 +10,7 @@ spew = require "spew"
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
+  sockets = imports["line-socketio"]
   db = imports["line-mongodb"]
   snapshot = imports["line-snapshot"]
   auth = imports["line-userauth"]
@@ -105,14 +106,32 @@ setup = (options, imports, register) ->
         res.redirect "/login"
     else next() # Page doesn't need auth
 
+  if config.secure then port = config["port-https"]
+  else port = config["port-http"]
+
   # Initialize Express server
   server.setup \
-    __dirname + "/../../../views/",\  # JADE Views
-    __dirname + "/../../../static/",\ # Static files
-    config.port,\
-    true, # SSL
+    __dirname + "/../../../views/",  # JADE Views
+    __dirname + "/../../../static/", # Static files
+    port,
+    false,
     key: "#{__dirname}/../../../#{config['secure-key']}"
     cert: "#{__dirname}/../../../#{config['secure-cert']}"
+
+  if config.secure
+    sockets.secure = true
+    sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
+    sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
+    sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
+
+    # Start http server to forward to https
+    httpForward = express()
+    httpForward.get "*", (req, res) ->
+      domain = config["modes"][config["mode"]]["domain"]
+      res.status(403).redirect "https://#{domain}#{req.url}"
+
+    httpForward.listen config["port-http"]
+    spew.init "HTTP -> HTTPS redirect on port #{config['port-http']}"
 
   register null, {}
 

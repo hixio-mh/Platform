@@ -3,7 +3,8 @@
 	"loglevel": 10,
 	"mode": "debug",
 	"domain": "localhost",
-	"port": 6010,
+	"port-http": 9010,
+	"port-https": 9011,
 
 	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
 	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
@@ -13,19 +14,24 @@
 		"debug": {
 			"log-to-server": false,
 			"catch-critical": false,
-			"socket-log-level": 3
+			"socket-log-level": 3,
+			"domain": "cloud.adefy.eu"
 		},
 		"release": {
 			"log-to-server": true,
 			"catch-critical": true,
-			"socket-log-level": 1
+			"socket-log-level": 1,
+			"domain": "cloud.adefy.eu"
 		}
 	},
 
 	"logfile": "log",
+	"snapshot": ".saved_state.json",
+
+	"secure": true,
 	"secure-cert": "ssl/certificate.pem",
 	"secure-key": "ssl/privatekey.pem",
-	"snapshot": ".saved_state.json",
+	"secure-csr": "ssl/certrequest.csr",
 
 	"db": {
 		"user": "adefy_cloud",

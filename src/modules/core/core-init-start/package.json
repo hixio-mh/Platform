@@ -8,7 +8,8 @@
       "line-mongodb",
       "line-express",
       "line-snapshot",
-      "line-userauth"
+      "line-userauth",
+      "line-socketio"
     ],
     "provides": []
   }
