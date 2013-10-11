@@ -13,4 +13,18 @@ setup = (options, imports, register) ->
 
   register null, {}
 
+  server.server.get "/api/r", (req, res) -> adRequest req.query, res
+  server.server.post "/api/r", (req, res) -> adRequest req.body, res
+
+  adRequest = (args, res) ->
+
+    if args.id == undefined then args.id = "test"
+    if args.id.indexOf("..") != -1 then args.id = args.id.split("..").join ""
+
+    # TODO: Add api key and tracking
+
+    res.sendfile "#{args.id}.zip",
+      root: "#{__dirname}/../../../static/ads/"
+
+
 module.exports = setup

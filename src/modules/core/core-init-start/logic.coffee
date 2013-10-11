@@ -37,6 +37,9 @@ setup = (options, imports, register) ->
 
     # Public invite request
     "/logic/invite/add"
+
+    # Ad request
+    "/api/r"
   ]
 
   # "/logout",
