@@ -11,4 +11,6 @@ setup = (options, imports, register) ->
   auth = imports["line-userauth"]
   utility = imports["logic-utility"]
 
+  register null, {}
+
 module.exports = setup
