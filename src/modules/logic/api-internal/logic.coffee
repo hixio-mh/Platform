@@ -95,10 +95,14 @@ setup = (options, imports, register) ->
   #   /delete   deleteAd
   #
   server.server.get "/logic/ads/:action", (req, res) ->
+
+    spew.info "adssdfdf"
+    spew.info req.params.action
+
     if req.params.action == "get" then getAd req, res
     else if req.params.action == "create" then createAd req, res
     else if req.params.action == "delete" then deleteAd req, res
-    else res.json { error: "Unknown action #{req.params.action} "}
+    else res.json { error: "Unknown action #{req.params.action} " }
 
   ##
   ## Invite manipulation
