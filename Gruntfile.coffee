@@ -155,6 +155,14 @@ module.exports = (grunt) ->
           dest: buildDir
         ]
 
+      ssl:
+        files: [
+          expand: true
+          cwd: "#{srcDir}/ssl"
+          src: "**"
+          dest: "#{buildDir}/ssl"
+        ]
+
     # Node server, restarts when it detects changes
     nodemon:
       dev:

@@ -107,7 +107,9 @@ setup = (options, imports, register) ->
     __dirname + "/../../../views/",\  # JADE Views
     __dirname + "/../../../static/",\ # Static files
     config.port,\
-    false # SSL
+    true, # SSL
+    key: "#{__dirname}/../../../#{config['secure-key']}"
+    cert: "#{__dirname}/../../../#{config['secure-cert']}"
 
   register null, {}
 

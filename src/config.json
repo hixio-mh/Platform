@@ -23,8 +23,8 @@
 	},
 
 	"logfile": "log",
-	"secure-cert": "certificate.pem",
-	"secure-key": "privatekey.pem",
+	"secure-cert": "ssl/certificate.pem",
+	"secure-key": "ssl/privatekey.pem",
 	"snapshot": ".saved_state.json",
 
 	"db": {
