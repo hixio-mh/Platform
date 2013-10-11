@@ -25,20 +25,19 @@ html(lang="en")
               .alert.alert-warning= locals.error
 
             .form-group
-              label(for="username").col-lg-2 Username
-              .col-lg-10
+              label(for="username").col-lg-3 Username
+              .col-lg-9
                 input.form-control(name="username", type="text", placeholder="Enter username")
 
             .form-group
-              label(for="password").col-lg-2 Password
-              .col-lg-10
+              label(for="password").col-lg-3 Password
+              .col-lg-9
                 input.form-control(name="password", type="password", placeholder="Enter password")
 
             .form-group
-              .col-lg-offset-2
-                .col-lg-2
+              .col-lg-offset-3
+                .col-lg-9
                   button(type="submit").btn.btn-primary Sign In
-                .col-lg-2
                   a(href="/register").btn.btn-default Register
 
             if locals.error
