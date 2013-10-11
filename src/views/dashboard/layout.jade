@@ -61,7 +61,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(type="text/javascript", src="/socket.io/socket.io.js")
 
       script(type="text/javascript")
-        var socket = io.connect("", { secure: false });
+        var socket = io.connect("", { secure: true });
         window.AdefyDashboard = angular.module("AdefyDashboard", []);
 
       if locals.admin
