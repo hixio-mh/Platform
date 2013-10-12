@@ -21,7 +21,7 @@ h1,h2,h3,h4,h5,h6{
 }
 
 /* alerts */
-.alert [class^="icon-"], 
+.alert [class^="icon-"],
 .alert [class*=" icon-"] {
 	font-size: 27px;
 	position: relative;
@@ -31,15 +31,15 @@ h1,h2,h3,h4,h5,h6{
 	display: inline-block;
 	color: #f1c359;
 }
-.alert-success [class^="icon-"], 
+.alert-success [class^="icon-"],
 .alert-success [class*=" icon-"] {
 	color: #81ad53;
 }
-.alert-info [class^="icon-"], 
+.alert-info [class^="icon-"],
 .alert-info [class*=" icon-"] {
 	color: #4993c6;
 }
-.alert-danger [class^="icon-"], 
+.alert-danger [class^="icon-"],
 .alert-danger [class*=" icon-"] {
 	color: #d5393e;
 }
@@ -60,7 +60,7 @@ textarea {
 }
 input[type="text"],
 input[type="password"],
-textarea {	
+textarea {
 	font-size: 13px;
 	-webkit-box-shadow: inset 0 0px 1px rgba(0, 0, 0, 0.075);
 	   -moz-box-shadow: inset 0 0px 1px rgba(0, 0, 0, 0.075);
@@ -105,7 +105,7 @@ input[type="password"].inline-input:hover {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-textarea:focus{	
+textarea:focus{
 	border-color: #A2CEF0;
 	-webkit-box-shadow: inset 0 0px 1px rgba(0, 0, 0, 0.075), 0 0 4px rgba(82, 168, 236, 0.6);
 	   -moz-box-shadow: inset 0 0px 1px rgba(0, 0, 0, 0.075), 0 0 4px rgba(82, 168, 236, 0.6);
@@ -170,9 +170,9 @@ textarea::-webkit-input-placeholder {
 
 
 /* PREPEND & APPEND INPUT */
-.input-group input, 
-.input-group input, 
-.input-group .uneditable-input, 
+.input-group input,
+.input-group input,
+.input-group .uneditable-input,
 .input-group .uneditable-input {
 	border: 1px solid #d6e2eb;
 }
@@ -188,16 +188,9 @@ textarea::-webkit-input-placeholder {
 	min-height: 48px;
 	margin-bottom: 0px;
 	border-radius: 0px;
-	border-bottom: 1px solid #191e23;
+	border: none;
 
-	background: #2c3742; /* Old browsers */
-	background: -moz-linear-gradient(top,  #2c3742 0%, #28303a 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2c3742), color-stop(100%,#28303a)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #2c3742 0%,#28303a 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #2c3742 0%,#28303a 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #2c3742 0%,#28303a 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #2c3742 0%,#28303a 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c3742', endColorstr='#28303a',GradientType=0 ); /* IE6-9 */
+	background: #33b5e5;
 }
 /* navbar-nav*/
 .navbar-inverse .navbar-nav {
@@ -210,11 +203,14 @@ textarea::-webkit-input-placeholder {
 	margin-left: 15px;
 }
 /* navbar brand*/
+.navbar-brand {
+	font-family: "Oleo Script";
+}
 .navbar-inverse .navbar-brand {
 	color: #ffffff;
-	text-transform: uppercase;
 	font-weight: lighter;
-	padding: 11px 20px;
+	padding: 14px 20px;
+	font-size: 24px;
 }
 .navbar-inverse .navbar-brand strong {
 	font-weight: normal;
@@ -222,8 +218,8 @@ textarea::-webkit-input-placeholder {
 /* navbar links */
 .navbar-inverse .nav > li > a {
 	padding: 13px 15px 8px;
-	border-left: 1px solid #101417;
-	color: rgb(214, 214, 214);
+	border-left: 1px solid #0099cc;
+	color: #f3f3f3;
 	outline: 0px;
 	height: 46px;
 	transition: background .1s linear;
@@ -231,17 +227,28 @@ textarea::-webkit-input-placeholder {
 	-webkit-transition: background .1s linear; /* Safari and Chrome */
 	-o-transition: background .1s linear;  /* Opera */
 }
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus {
+	background-color: #1894c2;
+	border: none;
+}
+.navbar-inverse .navbar-nav > .dropdown > a .caret {
+	border-top-color: #0099cc;
+	border-bottom-color: #0099cc;
+	margin-left: 8px;
+}
 .navbar-inverse .nav > li > a:hover {
-	background: rgba(25, 31, 36,0.6);
+	background: #0099cc;
 }
 /* dropdown caret */
 .dropdown .caret {
 	position: relative;
-	top: -1px;	
+	top: -1px;
 }
 /* dropdown active */
-.dropdown.open > a, 
-.dropdown.open > a:hover, 
+.dropdown.open > a,
+.dropdown.open > a:hover,
 .dropdown.open > a:focus {
 	border-color: #101417;
 }
@@ -254,7 +261,7 @@ textarea::-webkit-input-placeholder {
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
-	background: rgb(60, 91, 121) !important;
+	background: #1894c2 !important;
 }
 
 
@@ -270,7 +277,7 @@ textarea::-webkit-input-placeholder {
 	border-bottom-color: #333e4a;
 	border-right-color: #566676;
 	border-left-color: #566676;
-} 
+}
 .pagination.inverse a:hover,
 .pagination.inverse span:hover {
 	background-color: #000;

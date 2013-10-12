@@ -1,1 +1,0 @@
-window.AdefyDashboard.controller "account", ($scope, $http, $route) ->

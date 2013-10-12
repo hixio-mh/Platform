@@ -11,62 +11,45 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1")
 
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
-    link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
-    link(rel="stylesheet", href="/css/style.css")
+
+    link(rel="stylesheet", href="/css/vendor/bootstrap.css")
+    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
+
+    link(rel="stylesheet", href="/css/compiled/layout.css")
+    link(rel="stylesheet", href="/css/compiled/elements.css")
+    link(rel="stylesheet", href="/css/compiled/icons.css")
+
+    link(rel="stylesheet", href="/css/compiled/signup.css")
+
+    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700|Oleo+Script|")
+
+    | <!--[if lt IE 9]>
+    |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    | <![endif]-->
 
   body#page-register
+    .header
+      a(href="/") Adefy
 
-    .row
-      .col-lg-offset-4.col-lg-4
-        .well
-          legend Register
-          form.form-horizontal(method="post", action="/register")
+    .login-wrapper
+      form.box(method="post", action="/register")
+        .content-wrap
+          h6 Register
 
-            if locals.error
-              .alert.alert-warning= locals.error
+          if locals.error
+            .alert.alert-warning= locals.error
 
-            .form-group
-              label.col-lg-3(for="username") Username
-              .col-lg-9
-                input(name="username", type="text", placeholder="Enter username").form-control
+          input.form-control(type="text", name="username", placeholder="Username")
+          input.form-control(name="fname", type="text", placeholder="First name")
+          input.form-control(name="lname", type="text", placeholder="Last name")
+          input.form-control(name="company", type="text", placeholder="Company name")
+          input.form-control(name="email", type="text", placeholder="Email")
+          input.form-control(type="password", name="password", placeholder="Password")
+          input.form-control(name="password_verify", type="password", placeholder="Repeat password")
+          input.form-control(name="invitation", type="text", placeholder="Invitation code")
 
-            .form-group
-              label.col-lg-3(for="fname") First name
-              .col-lg-9
-                input(name="fname", type="text", placeholder="John").form-control
+          .action
+            button(type="submit").btn-glow.primary.signup Register
 
-            .form-group
-              label.col-lg-3(for="lname") Last name
-              .col-lg-9
-                input(name="lname", type="text", placeholder="Doe").form-control
-
-            .form-group
-              label.col-lg-3(for="company") Company
-              .col-lg-9
-                input(name="company", type="text", placeholder="Enter company name").form-control
-
-            .form-group
-              label.col-lg-3(for="email") Email
-              .col-lg-9
-                input(name="email", type="email", placeholder="john.doe@gmail.com").form-control
-
-            .form-group
-              label.col-lg-3(for="password") Password
-              .col-lg-9
-                input(name="password", type="password", placeholder="Enter password").form-control
-
-            .form-group
-              label.col-lg-3(for="password_verify") Confirm
-              .col-lg-9
-                input(name="password_verify", type="password", placeholder="Repeat password").form-control
-
-            .form-group
-              label.col-lg-3(for="invitation") Invitation
-              .col-lg-9
-                input(name="invitation", type="text", placeholder="Enter invitation code").form-control
-
-            .form-group
-              .col-lg-offset-3
-                .col-lg-9
-                  button.btn.btn-primary Register
-                  a(href="/").btn.btn-default Cancel
+      .already
+        a(href="/login") Have an account?

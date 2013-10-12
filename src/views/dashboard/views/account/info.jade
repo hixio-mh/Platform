@@ -1,0 +1,55 @@
+#pad-wrapper
+  .row.header
+    .col-md-12
+      h3 Account Information
+
+  .row.form-wrapper
+    .col-md-8.column
+      .container
+        form
+          .field-box
+            label Username:
+            .col-md-7
+              input.form-control.inline-input(type="text", readonly="readonly", value="Mirceam94")
+          .field-box
+            label Name:
+            .col-md-7
+              input.form-control.inline-input.small(type="text", readonly="readonly", value="Mircea")
+              input.form-control.inline-input.small(type="text", readonly="readonly", value="Mihalache")
+          .field-box
+            label API Key:
+            .col-md-7
+              input.form-control.inline-input(type="text", readonly="readonly", value="adsfsdf")
+          .field-box
+            label Email:
+            .col-md-7
+              input.form-control(type="email", value="cris.mihalache@spectrumit.eu")
+          .field-box
+            label Company Name:
+            .col-md-7
+              input.form-control(type="text", value="Spectrum IT Solutions GmbH")
+          .field-box
+            label Phone Number:
+            .col-md-7
+              input.form-control(type="tel", value="Spectrum IT Solutions GmbH")
+          .field-box
+            label Fax Number:
+            .col-md-7
+              input.form-control(type="tel", value="Spectrum IT Solutions GmbH")
+          .field-box
+            label Address:
+            .col-md-7
+              .address-fields
+                input.form-control(type="text", placeholder="Street address")
+                input.form-control.small(type="text", placeholder="City")
+                input.form-control.small(type="text", placeholder="State")
+                input.form-control.small.last(type="text", placeholder="Postal Code")
+          .field-box
+            label Country:
+            .col-md-7
+              .ui-select
+                country-select(data-ng-model="selectedCountry")
+          .field-box
+            label
+            .col-md-7
+              button.btn-glow.btn-lg.primary Save

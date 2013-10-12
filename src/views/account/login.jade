@@ -4,42 +4,47 @@ html(lang="en")
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
 
-    title Login
+    title Sign In
 
     meta(name="description", content="")
     meta(name="author", content="Spectrum IT")
     meta(name="viewport", content="width=device-width, initial-scale=1")
 
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
-    link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
-    link(rel="stylesheet", href="/css/style.css")
+
+    link(rel="stylesheet", href="/css/vendor/bootstrap.css")
+    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
+
+    link(rel="stylesheet", href="/css/compiled/layout.css")
+    link(rel="stylesheet", href="/css/compiled/elements.css")
+    link(rel="stylesheet", href="/css/compiled/icons.css")
+
+    link(rel="stylesheet", href="/css/compiled/signin.css")
+
+    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700|Oleo+Script|")
+
+    | <!--[if lt IE 9]>
+    |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    | <![endif]-->
 
   body#page-login
-    .row
-      .col-lg-offset-4.col-lg-4
-        .well
-          legend Login
-          form.form-horizontal(method="post", action="/login")
+    .header
+      a(href="/") Adefy
 
-            if locals.error
-              .alert.alert-warning= locals.error
+    .login-wrapper
+      form.box(method="post", action="/login")
+        .content-wrap
+          h6 Sign In
 
-            .form-group
-              label(for="username").col-lg-3 Username
-              .col-lg-9
-                input.form-control(name="username", type="text", placeholder="Enter username")
+          if locals.error
+            .alert.alert-warning= locals.error
 
-            .form-group
-              label(for="password").col-lg-3 Password
-              .col-lg-9
-                input.form-control(name="password", type="password", placeholder="Enter password")
+          input.form-control(type="text", name="username", placeholder="Username")
+          input.form-control(type="password", name="password", placeholder="Password")
+          .action
+            button(type="submit").btn-glow.primary.signin Sign In
 
-            .form-group
-              .col-lg-offset-3
-                .col-lg-9
-                  button(type="submit").btn.btn-primary Sign In
-                  a(href="/register").btn.btn-default Register
+      if locals.error
+        .already
+          a(href="/recover").recovery Having trouble?
 
-            if locals.error
-              .help-block
-                a(href="/recover").recovery Having trouble?

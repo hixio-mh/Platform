@@ -1,28 +1,26 @@
-.col-lg-2
-  ul.nav.nav-pills.nav-stacked
-    li
-      a(href="/dashboard/admin") Home
-    li
-      a(href="/dashboard/admin/users") Users
-    li.active
-      a(href="/dashboard/admin/invites") Invites
-
-.col-lg-8
-
-  .col-lg-6(data-ng-if="invites.length == 0")
-    h1 No invites exist
+#pad-wrapper(data-ng-if="invites.length == 0")
+  .row.header
+    .col-md-12
+      h3 No invites exist
+  .row.section
     button.btn.btn-primary(data-toggle="modal", href="#newInvite") Create one!
 
-  table.table.table-striped.table-hover(data-ng-if="invites.length > 0")
-    thead
-      td Email
-      td Invite Code
-    tbody
-      tr(data-ng-repeat="(i, invite) in invites", data-ng-click="showModal({{ i }})")
-        td
-          p(data-ng-bind="invite.email")
-        td
-          p(data-ng-bind="invite.code")
+#pad-wrapper
+  .row.header
+    .col-md-12
+      h3 Invites
+
+  .table-wrapper.section
+    .row
+      table.table.table-striped.table-hover(data-ng-if="invites.length > 0")
+        thead
+          tr
+            th.col-md-6 Email
+            th.col-md-6 Invite Code
+        tbody
+          tr(data-ng-repeat="(i, invite) in invites", data-ng-click="showModal({{ i }})")
+            td(data-ng-bind="invite.email")
+            td(data-ng-bind="invite.code")
 
 #inviteInfo.modal.fade
   .modal-dialog

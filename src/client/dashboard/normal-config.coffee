@@ -6,17 +6,29 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "home"
     templateUrl: "/views/dashboard/home"
 
-  $routeProvider.when "/dashboard/ads",
-    controller: "ads"
-    templateUrl: "/views/dashboard/ads"
+  $routeProvider.when "/dashboard/ads/listing",
+    controller: "adsListing"
+    templateUrl: "/views/dashboard/ads:listing"
 
-  $routeProvider.when "/dashboard/campaigns",
-    controller: "campaigns"
-    templateUrl: "/views/dashboard/campaigns"
+  $routeProvider.when "/dashboard/ads/campaigns",
+    controller: "adsCampaigns"
+    templateUrl: "/views/dashboard/ads:campaigns"
 
-  $routeProvider.when "/dashboard/account",
-    controller: "account"
-    templateUrl: "/views/dashboard/account"
+  $routeProvider.when "/dashboard/acc/info",
+    controller: "accInformation"
+    templateUrl: "/views/dashboard/account:info"
+
+  $routeProvider.when "/dashboard/acc/billing",
+    controller: "accBilling"
+    templateUrl: "/views/dashboard/account:billing"
+
+    $routeProvider.when "/dashboard/acc/funds",
+    controller: "accFunds"
+    templateUrl: "/views/dashboard/account:funds"
+
+    $routeProvider.when "/dashboard/acc/feedback",
+    controller: "accFeedback"
+    templateUrl: "/views/dashboard/account:feedback"
 
   $routeProvider.otherwise { redirectTo: "/dashboard" }
 

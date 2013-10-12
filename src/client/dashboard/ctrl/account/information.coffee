@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "accInformation", ($scope, $http, $route) ->

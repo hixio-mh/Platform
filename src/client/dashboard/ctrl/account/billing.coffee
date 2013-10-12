@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "accBilling", ($scope, $http, $route) ->

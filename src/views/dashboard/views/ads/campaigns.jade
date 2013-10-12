@@ -1,0 +1,125 @@
+#pad-wrapper(data-ng-if="mode == \"listing\"")
+  .row.header
+    .col-md-12
+      h3 Campaigns
+
+  .table-wrapper.section
+    .row
+      table.table.table-striped.table-hover
+        thead
+          tr
+            th Name
+            th Type
+            th Status
+            th Daily Budget
+            th Avg. CPC
+            th Impressions
+            th CTR
+            th Conversions
+            th Cost
+            th Action
+        tbody
+  .row.section
+    a.btn-flat.success(href="#newCat", target="_self", data-toggle="modal")
+      span &#43; 
+      |  New Campaign
+
+#pad-wrapper(data-ng-if="mode == \"new\"")
+  .row.header
+    .col-md-12
+      h3 New Campaign
+
+  .row
+    .col-md-12.col-xs-12
+      #fuelux-wizard.wizard.row
+
+        ul.wizard-steps
+          li(data-target="#step1").active
+            span.step 1
+            span.title Details
+          li(data-target="#step2")
+            span.step 2
+            span.title Targeting
+          li(data-target="#step3")
+            span.step 3
+            span.title Stuff
+
+      .step-content
+        #step1.step-pane.active
+          .row.form-wrapper
+            .col-md-8
+              form
+                .field-box
+                  label Campaign Name
+                  .col-md-7
+                    input.form-control(type="text", placeholder="Enter a name for your campaign")
+                .field-box
+                  label Campaign Description (optional)
+                  .col-md-5
+                    textarea.form-control(row="16", col="4")
+                .field-box
+                  label Campaign Category
+                  .col-md-7
+                    .ui-select
+                      select
+                        option Cat 1
+                        option Cat 2
+                        option Cat 3
+                        option Cat 4
+                        option Cat 5
+                .field-box
+                  label Daily Budget
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text")
+                .field-box
+                  label Total Budget
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text")
+
+        #step2.step-pane
+          .row.form-wrapper
+            .col-md-8
+              form
+                .field-box
+                  label Campaign Name
+                  .col-md-7
+                    input.form-control(type="text", placeholder="Enter a name for your campaign")
+                .field-box
+                  label Campaign Description (optional)
+                  .col-md-5
+                    textarea.form-control(row="16", col="4")
+                .field-box
+                  label Campaign Category
+                  .col-md-7
+                    .ui-select
+                      select
+                        option Cat 1
+                        option Cat 2
+                        option Cat 3
+                        option Cat 4
+                        option Cat 5
+                .field-box
+                  label Daily Budget
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text")
+                .field-box
+                  label Total Budget
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text")
+
+        .wizard-actions
+          button.btn-flat.primary.btn-prev(type="button", disabled="disabled")
+            i.icon-chevron-left 
+            | Prev
+          button.btn-flat.primary.btn-next(type="button", data-last="Finish")
+            | Next 
+            i.icon-chevron-right
+          button.btn-glow.success.btn-finish(type="button") Create Campaign

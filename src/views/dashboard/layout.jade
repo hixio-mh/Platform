@@ -4,7 +4,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
 
-    title Adefy - Dashboard
+    title Dashboard
 
     meta(name="description", content="")
     meta(name="author", content="Spectrum IT")
@@ -13,56 +13,158 @@ html(lang="en", data-ng-app="AdefyDashboard")
     script(type="text/javascript", src="/js/vendor/pace.min.js")
 
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
-    link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Roboto|Oleo+Script|")
-    link(rel="stylesheet", href="/css/style.css")
+
+    link(rel="stylesheet", href="/css/vendor/bootstrap.css")
+    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
+
+    link(rel="stylesheet", href="/css/vendor/font-awesome.css")
+
+    link(rel="stylesheet", href="/css/compiled/layout.css")
+    link(rel="stylesheet", href="/css/compiled/elements.css")
+    link(rel="stylesheet", href="/css/compiled/icons.css")
+    link(rel="stylesheet", href="/css/compiled/pages.css")
+
+    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800|Oleo+Script|Lato:300,400,700,900,300italic,400italic,700italic,900italic")
+
+    | <!--[if lt IE 9]>
+    |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    | <![endif]-->
 
     base(href="/dashboard")
 
   body#page-dashboard
-    nav.navbar.navbar-default.navbar-static-top
 
+    header.navbar.navbar-inverse
       .navbar-header
         button(type="button", data-toggle="collapse", data-target=".nb-links").navbar-toggle
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        .navbar-brand Dashboard
+        a.navbar-brand(href="/dashboard") Adefy
+      ul.nav.navbar-nav.pull-right.hidden-xs
+        li
+          a(href="/dashboard/acc/funds") $0.00 Advertising Credit
+        li
+          a(href="/dashboard/acc/funds") $0.00 Publisher Balance
+        li.dropdown
+          a(href="#", data-toggle="dropdown").dropdown-toggle.hidden-xs.hidden-sm
+            | My Account
+            b.caret
+          ul.dropdown-menu
+            li
+              a(href="/dashboard/acc/info") Account Information
+            li
+              a(href="/dashboard/acc/billing") Billing and Payments
+            li
+              a(href="/dashboard/acc/funds") Add Funds
+            li
+              a(href="/dashboard/acc/feedback") Send Feedback
+        li.logout.hidden-x.hidden-sm
+          a(href="/logout", target="_self")
+            i.icon-signout
 
-      .collapse.navbar-collapse.nb-links
-        ul.nav.navbar-nav
+    #sidebar-nav
+      ul#dashboard-menu
 
-          li(data-ng-class="{ active: tab == \"home\" }")
-            a(href="/dashboard") Home
+        li(data-ng-class="{ active: tab == \"home\" }")
+          .pointer(data-ng-if="tab == \"home\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard")
+            i.icon-home
+            span Dashboard
 
-          li(data-ng-class="{ active: tab == \"ads\" }")
-            a(href="/dashboard/ads") Ads
+        li(data-ng-class="{ active: tab == \"reporting\" }")
+          .pointer(data-ng-if="tab == \"reporting\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard/reports")
+            i.icon-signal
+            span Reports
 
-          li(data-ng-class="{ active: tab == \"campaigns\" }")
-            a(href="/dashboard/campaigns") Campaigns
+        li(data-ng-class="{ active: tab == \"ads\" }")
+          .pointer(data-ng-if="tab == \"ads\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard/ads/listing").dropdown-toggle
+            i.icon-sitemap
+            span Ads
+            i.icon-chevron-down
 
-          li(data-ng-class="{ active: tab == \"account\" }")
-            a(href="/dashboard/account") My Account
+          ul.submenu(data-ng-class="{ active: tab == \"ads:listing\" || tab == \"ads:campaigns\" }")
+            li(data-ng-class="{ active: tab == \"ads:listing\" }")
+              a(href="/dashboard/ads/listing") Ad Listing
+            li(data-ng-class="{ active: tab == \"ads:campaigns\" }")
+              a(href="/dashboard/ads/campaigns") Campaigns
 
-          li
-            a(href="/logout", target="_self") Logout
+        li(data-ng-class="{ active: tab == \"apps\" }")
+          .pointer(data-ng-if="tab == \"apps\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard/apps")
+            i.icon-rocket
+            span Apps
+
+        li(data-ng-class="{ active: tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\" }")
+          .pointer(data-ng-if="tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard/acc/info").dropdown-toggle
+            i.icon-cogs
+            span Account
+            i.icon-chevron-down
+
+          ul.submenu(data-ng-class="{ active: tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\" }")
+            li(data-ng-class="{ active: tab == \"account:info\" }")
+              a(href="/dashboard/acc/info") Account Information
+            li(data-ng-class="{ active: tab == \"account:billing\" }")
+              a(href="/dashboard/acc/billing") Billing and Payments
+            li(data-ng-class="{ active: tab == \"account:funds\" }")
+              a(href="/dashboard/acc/funds") Add Funds
+            li(data-ng-class="{ active: tab == \"account:feedback\" }")
+              a(href="/dashboard/acc/feedback") Send Feedback
+
+        li(data-ng-class="{ active: tab == \"support\" }")
+          .pointer(data-ng-if="tab == \"support\"")
+            .arrow
+            .arrow_border
+          a(href="/dashboard/support")
+            i.icon-question
+            span Support
 
         if locals.admin
-          ul.nav.navbar-nav.pull-right
-            li(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
-              a(href="/dashboard/admin") Admin
+          li(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
+            .pointer(data-ng-if="tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\"")
+              .arrow
+              .arrow_border
+            a(href="/dashboard/admin").dropdown-toggle
+              i.icon-fighter-jet
+              span Admin
+              i.icon-chevron-down
 
-    #content(data-ng-view="")
+            ul.submenu(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
+              li(data-ng-class="{ active: tab == \"admin:home\" }")
+                a(href="/dashboard/admin") Dashboard
+              li(data-ng-class="{ active: tab == \"admin:users\" }")
+                a(href="/dashboard/admin/users") Users
+              li(data-ng-class="{ active: tab == \"admin:invites\" }")
+                a(href="/dashboard/admin/invites") Invites
+
+    .content(data-ng-view="")
 
     footer
       script(type="text/javascript", src="/js/vendor/jquery.js")
       script(type="text/javascript", src="/js/vendor/angular.js")
+      script(type="text/javascript", src="/js/vendor/angular-route.min.js")
+      script(type="text/javascript", src="/js/vendor/angular-country-select.min.js")
       script(type="text/javascript", src="/js/vendor/bootstrap.min.js")
       script(type="text/javascript", src="/js/vendor/bootbox.min.js")
+      script(type="text/javascript", src="/js/vendor/fuelux.wizard.js")
       script(type="text/javascript", src="/socket.io/socket.io.js")
 
       script(type="text/javascript")
         var socket = io.connect("", { secure: true });
-        window.AdefyDashboard = angular.module("AdefyDashboard", []);
+        window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "countrySelect"]);
 
       if locals.admin
         script(type="text/javascript", src="/client/dashboard/admin-config.js")
@@ -70,21 +172,41 @@ html(lang="en", data-ng-app="AdefyDashboard")
         script(type="text/javascript", src="/client/dashboard/normal-config.js")
 
       script(type="text/javascript")
+
+        $(document).ready(function() {
+
+          // Sidebar menu dropdown toggle
+          $("#dashboard-menu .dropdown-toggle").click(function (e) {
+            $(this).parent().find(".submenu").slideDown("fast", function() {
+              $(this).addClass("down");
+            });
+          });
+        });
+
         window.AdefyDashboard.run(function($rootScope) {
 
           $rootScope.$on("$routeChangeSuccess", function(e, current, old) {
             if(current.loadedTemplateUrl !== undefined) {
 
+              // Update tab
               var vals = current.loadedTemplateUrl.split("/");
               $rootScope.tab = vals[vals.length - 1];
             }
+
+            // Slide up menus after a brief delay to give things a chance to settle down
+            setTimeout(function() {
+              $("#dashboard-menu .submenu.down:not(.active)").removeClass("down").slideUp("fast");
+            }, 100);
           });
         });
 
-      script(type="text/javascript", src="/client/dashboard/ctrl/home.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/ads.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/campaigns.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/account.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/dashboard.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/ads/listing.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/ads/campaigns.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/account/information.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/account/billing.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/account/funds.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/account/feedback.js")
 
       if locals.admin
         script(type="text/javascript", src="/client/dashboard/ctrl/admin/home.js")

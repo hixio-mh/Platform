@@ -17,9 +17,14 @@ setup = (options, imports, register) ->
   # Standard user dashboard
   dashboardPaths = [
     "/dashboard"
-    "/dashboard/ads"
-    "/dashboard/campaigns"
-    "/dashboard/account"
+
+    "/dashboard/ads/listing"
+    "/dashboard/ads/campaigns"
+
+    "/dashboard/acc/info"
+    "/dashboard/acc/billing"
+    "/dashboard/acc/funds"
+    "/dashboard/acc/feedback"
 
     "/dashboard/admin"
     "/dashboard/admin/users"

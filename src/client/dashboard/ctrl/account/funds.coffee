@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "accFunds", ($scope, $http, $route) ->
