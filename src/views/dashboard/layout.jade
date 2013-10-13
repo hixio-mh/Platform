@@ -18,6 +18,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
     link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
 
     link(rel="stylesheet", href="/css/vendor/font-awesome.css")
+    link(rel="stylesheet", href="/css/vendor/uniform.default.css")
+    link(rel="stylesheet", href="/css/vendor/select2.css")
 
     link(rel="stylesheet", href="/css/compiled/layout.css")
     link(rel="stylesheet", href="/css/compiled/elements.css")
@@ -154,12 +156,14 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
     footer
       script(type="text/javascript", src="/js/vendor/jquery.js")
+      script(type="text/javascript", src="/js/vendor/jquery.uniform.min.js")
       script(type="text/javascript", src="/js/vendor/angular.js")
       script(type="text/javascript", src="/js/vendor/angular-route.min.js")
       script(type="text/javascript", src="/js/vendor/angular-country-select.min.js")
       script(type="text/javascript", src="/js/vendor/bootstrap.min.js")
       script(type="text/javascript", src="/js/vendor/bootbox.min.js")
       script(type="text/javascript", src="/js/vendor/fuelux.wizard.js")
+      script(type="text/javascript", src="/js/vendor/select2.min.js")
       script(type="text/javascript", src="/socket.io/socket.io.js")
 
       script(type="text/javascript")
@@ -186,6 +190,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
         window.AdefyDashboard.run(function($rootScope) {
 
           $rootScope.$on("$routeChangeSuccess", function(e, current, old) {
+
             if(current.loadedTemplateUrl !== undefined) {
 
               // Update tab

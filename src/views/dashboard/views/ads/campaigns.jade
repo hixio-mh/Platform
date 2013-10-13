@@ -25,95 +25,218 @@
       |  New Campaign
 
 #pad-wrapper(data-ng-if="mode == \"new\"")
-  .row.header
-    .col-md-12
+  .col-md-8.with-sidebar
+    .row.header
       h3 New Campaign
 
-  .row
-    .col-md-12.col-xs-12
+    .row
       #fuelux-wizard.wizard.row
 
         ul.wizard-steps
           li(data-target="#step1").active
             span.step 1
-            span.title Details
+            span.title Information
           li(data-target="#step2")
             span.step 2
-            span.title Targeting
+            span.title Bidding
           li(data-target="#step3")
             span.step 3
-            span.title Stuff
+            span.title Targeting
 
       .step-content
         #step1.step-pane.active
           .row.form-wrapper
-            .col-md-8
+            .col-md-12
               form
                 .field-box
-                  label Campaign Name
+                  label Name
                   .col-md-7
                     input.form-control(type="text", placeholder="Enter a name for your campaign")
                 .field-box
-                  label Campaign Description (optional)
+                  label Description (optional)
                   .col-md-5
                     textarea.form-control(row="16", col="4")
                 .field-box
-                  label Campaign Category
+                  label Category
                   .col-md-7
-                    .ui-select
-                      select
-                        option Cat 1
-                        option Cat 2
-                        option Cat 3
-                        option Cat 4
-                        option Cat 5
-                .field-box
-                  label Daily Budget
-                  .col-md-7
-                    .predefined
-                      span.value $
-                      input.form-control.inline-input(type="text")
-                .field-box
-                  label Total Budget
-                  .col-md-7
-                    .predefined
-                      span.value $
-                      input.form-control.inline-input(type="text")
+                    .ui-select.wide
+                      select.wide
+                        option(data-ng-repeat="(i, cat) in categories", value="{{ i }}", data-ng-bind="cat")
 
         #step2.step-pane
           .row.form-wrapper
-            .col-md-8
+            .col-md-12
               form
                 .field-box
-                  label Campaign Name
-                  .col-md-7
-                    input.form-control(type="text", placeholder="Enter a name for your campaign")
-                .field-box
-                  label Campaign Description (optional)
-                  .col-md-5
-                    textarea.form-control(row="16", col="4")
-                .field-box
-                  label Campaign Category
+                  label Pricing
                   .col-md-7
                     .ui-select
-                      select
-                        option Cat 1
-                        option Cat 2
-                        option Cat 3
-                        option Cat 4
-                        option Cat 5
-                .field-box
-                  label Daily Budget
-                  .col-md-7
-                    .predefined
-                      span.value $
-                      input.form-control.inline-input(type="text")
+                      select(data-ng-model="campaign.pricing")
+                        option(selected="selected", value="cpm") CPM
+                        option(value="cpc") CPC
                 .field-box
                   label Total Budget
                   .col-md-7
                     .predefined
                       span.value $
+                      input.form-control.inline-input(type="text", placeholder="(min $25)")
+                .field-box
+                  label Daily Budget (optional)
+                  .col-md-7
+                    .predefined
+                      span.value $
                       input.form-control.inline-input(type="text")
+                .field-box
+                  label Bid System
+                  .col-md-7
+                    .ui-select
+                      select(data-ng-model="campaign.system")
+                        option(selected="selected", value="auto") Automatic
+                        option(value="manual") Manual
+                .field-box(data-ng-if="campaign.system == \"manual\"")
+                  label Bid
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})")
+                .field-box(data-ng-if="campaign.system == \"auto\"")
+                  label Maximum bid
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})")
+
+        #step3.step-pane
+          .row.form-wrapper
+            .col-md-12
+              form
+                .field-box
+                  label Geographical Targeting
+                  .col-md-3
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tcountry", checked="checked", value="all", data-ng-model="select2Filters.tcountry")
+                      | All Countries
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tcountry", value="specific", data-ng-model="select2Filters.tcountry")
+                      | Specific Countries
+                    div(data-ng-class="{ hidden: select2Filters.tcountry != \"specific\" }")
+                      select#select2Country(multiple="multiple", style="width:250px")
+                        option(value="0")
+                        option(value="1") cat 1
+                        option(value="2") cat 2
+                        option(value="3") cat 3
+                        option(value="4") cat 4
+                        option(value="5") cat 5
+                        option(value="6") cat 6
+
+                .field-box
+                  label Network Targeting
+                  .col-md-3
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="target_traffic", checked="checked")
+                      | All Traffic
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="target_traffic")
+                      | Mobile Data Traffic
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="target_traffic")
+                      | Wifi Traffic
+
+                .field-box
+                  label Platform Targeting
+                  .col-md-3
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tplatform", checked="checked", value="all", data-ng-model="select2Filters.tplatform")
+                      | All Platforms
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tplatform", value="specific", data-ng-model="select2Filters.tplatform")
+                      | Specific Platforms
+                    div(data-ng-class="{ hidden: select2Filters.tplatform != \"specific\" }")
+                      select#select2Platform(multiple="multiple", style="width:250px")
+                        option(value="0")
+                        option(value="1") plat 1
+                        option(value="2") plat 2
+                        option(value="3") plat 3
+                        option(value="4") plat 4
+                        option(value="5") plat 5
+                        option(value="6") plat 6
+
+                .field-box
+                  label Device Targeting
+                  .col-md-5
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tdevice", checked="checked", data-ng-model="select2Filters.tdevice", value="all")
+                      | All Devices
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tdevice", data-ng-model="select2Filters.tdevice", value="specific")
+                      | Specific Devices
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tdevice", data-ng-model="select2Filters.tdevice", value="exclude")
+                      | Exclude Devices
+                    div(data-ng-class="{ hidden: select2Filters.tdevice != \"specific\" && select2Filters.tdevice != \"exclude\" }")
+                      select#select2Device(multiple="multiple", style="width:250px")
+                        option(value="0")
+                        option(value="1") devi 1
+                        option(value="2") devi 2
+                        option(value="3") devi 3
+                        option(value="4") devi 4
+                        option(value="5") devi 5
+                        option(value="6") devi 6
+
+                  .col-md-5
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tmanufacturer", checked="checked", data-ng-model="select2Filters.tmanufacturer", value="all")
+                      | All Manufacturers
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="tmanufacturer", data-ng-model="select2Filters.tmanufacturer", value="specific")
+                      | Specific Manufacturers
+                    div(data-ng-class="{ hidden: select2Filters.tmanufacturer != \"specific\" }")
+                      select#select2Manufacturer(multiple="multiple", style="width:250px")
+                        option(value="0")
+                        option(value="1") manu 1
+                        option(value="2") manu 2
+                        option(value="3") manu 3
+                        option(value="4") manu 4
+                        option(value="5") manu 5
+                        option(value="6") manu 6
+
+                .field-box
+                  label Scheduling
+                  .col-md-9
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="target_schedule", checked="checked")
+                      | No Scheduling
+                    label.radio
+                      .radio
+                        span
+                          input(type="radio", name="target_schedule")
+                      | Custom Scheduling
 
         .wizard-actions
           button.btn-flat.primary.btn-prev(type="button", disabled="disabled")
@@ -123,3 +246,28 @@
             | Next 
             i.icon-chevron-right
           button.btn-glow.success.btn-finish(type="button") Create Campaign
+
+  .col-md-4.form-sidebar
+    .row.header
+      .col-md-12
+        h3 Information
+
+    .row
+      .col-md-12
+        h5 Describe your campaign, setup targeting and select an ad unit. The name, category, and pricing are permanent once set, whereas the other options can be modified later. You can set budget, bid, and targeting options both on a per-campaign and a per-ad basis.
+        br
+        h5 Bid system settings are a bit special, in that you may alter them for specific targeting options. As an example, you may choose to run one of your ads with our automatic bidding system and a max bid of $0.50, and switch to manual bidding with a bid of $1.00 every monday between 1pm and 5pm in Germany.
+
+    br
+
+    .row
+      .col-md-12
+        h4 Manual Bidding
+        h5 We select ads to fill inventory by running an internal round of bidding. The ad that best matches the target and wins the bidding is delivered. The final bid is often lower than the maximum bid the ad may place, as our network selects the lowest bid possible to fill the space. Manual bidding offers you fine-grain control over your bidding; you need to set a campaign-wide bid, which is used for all ads within that campaign, at which point you may set specific bids for each individual ad unit.
+
+    br
+
+    .row
+      .col-md-12
+        h4 Automatic Bidding
+        h5 Our automatic bidding system selects the optimal bid for your budget and campaign length. You set the maximum bid our system may place, and we do the rest. Note that you can modify bid system selection and system settings on a very specific per-target basis.

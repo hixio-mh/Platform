@@ -402,6 +402,9 @@
   background-position: 94%;
   background-repeat: no-repeat;
 }
+.ui-select.wide {
+  width: 250px;
+}
 .ui-select select {
   line-height: inherit;
   width: 135%;

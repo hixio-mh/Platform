@@ -69,8 +69,8 @@
   display: block;
   text-align: center;
   float: left;
-  min-width: 25%;
-  max-width: 25%;
+  min-width: 33%;
+  max-width: 33%;
 }
 .wizard-steps li:before {
   display: block;
@@ -223,3 +223,4 @@
     width: 200px;
   }
 }
+.hidden { display: none; }
