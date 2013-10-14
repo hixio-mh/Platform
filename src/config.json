@@ -28,10 +28,13 @@
 	"logfile": "log",
 	"snapshot": ".saved_state.json",
 
-	"secure": true,
-	"secure-cert": "ssl/certificate.pem",
-	"secure-key": "ssl/privatekey.pem",
-	"secure-csr": "ssl/certrequest.csr",
+	"secure": false,
+	"secure-cert": [
+		"ssl/adefy.eu.crt",
+		"ssl/gd_bundle.crt"
+	],
+	"secure-key": "ssl/adefy.key",
+	"secure-csr": "ssl/adefy.csr",
 
 	"db": {
 		"user": "adefy_cloud",
