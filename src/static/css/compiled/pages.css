@@ -229,14 +229,16 @@
 
 /* form input validation */
 .form-wrapper .field-box.error label,
-.form-wrapper .field-box.error .alert-msg {
+.form-wrapper .field-box.error .alert-msg,
+.alert-msg-red {
   color: #c73939;
 }
 .form-wrapper .field-box.error input {
   border-color: #c73939;
 }
 .form-wrapper .field-box.success label,
-.form-wrapper .field-box.success .alert-msg {
+.form-wrapper .field-box.success .alert-msg,
+.alert-msg-green {
   color: #379e48;
 }
 .form-wrapper .field-box.success input {

@@ -26,20 +26,21 @@ setup = (options, imports, register) ->
       return false
     true
 
-  verifyAdmin = (req, res) ->
+  # Calls the cb with admin status
+  verifyAdmin = (req, res, cb) ->
     if req.cookies.admin != "true"
       res.json { error: "Unauthorized" }
-      return false
+      cb false
 
-    if not userCheck req, res then return false
+    if not userCheck req, res then cb false
 
     db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-      if not userValid user, res then return false
+      if not userValid user, res then cb false
 
       if user.permissions != 0
         res.json { error: "Unauthorized" }
-        return false
-      else return true
+        cb false
+      else cb true
 
   # Top-level routing
 
@@ -69,23 +70,37 @@ setup = (options, imports, register) ->
   #
   # admin only
   server.server.get "/logic/invite/:action", (req, res) ->
-    if not verifyAdmin req, res then return
+    verifyAdmin req, res, (admin) ->
+      if not admin then return
 
-    if req.params.action == "all" then _getAllInvites req, res
-    else if req.params.action == "update" then _updateInvite req, res
-    else if req.params.action == "delete" then _deleteInvite req, res
-    else res.json { error: "Unknown action #{req.params.action} "}
+      if req.params.action == "all" then _getAllInvites req, res
+      else if req.params.action == "update" then _updateInvite req, res
+      else if req.params.action == "delete" then _deleteInvite req, res
+      else res.json { error: "Unknown action #{req.params.action} "}
 
   # User manipulation - /logic/user/:action
   #
   #   /get      getUser
   #
-  # admin only
+  # Some routes are admin only
   server.server.get "/logic/user/:action", (req, res) ->
-    if not verifyAdmin req, res then return
 
-    if req.params.action == "get" then getUser req, res
-    else if req.params.action == "delete" then deleteUser req, res
+    # Admin-only
+    if req.params.action == "get"
+      verifyAdmin req, res, (admin) ->
+        if not admin then return else getUser req, res
+
+    # Admin-only
+    else if req.params.action == "delete"
+      verifyAdmin req, res, (admin) ->
+        if not admin then return else deleteUser req, res
+
+    else if req.params.action == "self"
+      if not userCheck req, res then return else getUserSelf req, res
+
+    else if req.params.action == "save"
+      if not userCheck req, res then return else saveUser req, res
+
     else res.json { error: "Unknown action #{req.params.action} "}
 
   # Ad manipulation - /logic/ads/:action
@@ -175,12 +190,72 @@ setup = (options, imports, register) ->
         user.remove()
         res.json { msg: "OK" }
 
-  # Retrieve use,  expects {filter}
+  # Retrieve use, expects {filter}
   getUser = (req, res) ->
     if not utility.param req.query.filter, res, "Filter" then return
 
     if req.query.filter == "username" then _getUserByUsername req, res
     else if req.query.filter == "all" then _getAllUsers req, res
+
+  # Retrieve the user represented by the cookies on the request. Used on
+  # the backend account page
+  getUserSelf = (req, res) ->
+
+    _username = req.cookies.user.id
+    _session = req.cookies.user.sess
+
+    db.fetch "User", { username: _username, session: _session }, (user) ->
+
+      ret =
+        username: user.username
+        fname: user.fname
+        lname: user.lname
+        email: user.email
+        company: user.company
+        apikey: user.apikey
+        address: user.address
+        city: user.city
+        state: user.state
+        postalCode: user.postalCode
+        country: user.country
+        phone: user.phone
+        fax: user.fax
+
+      res.json ret
+
+    , (err) -> res.json { error: err }
+
+  # Saves both the user signed in, and any user if we are an admin
+  #
+  # If we are admin, expect a username and apikey
+  saveUser = (req, res) ->
+    verifyAdmin req, res, (admin) ->
+
+      # Query current user
+      if admin == false
+        query = { username: req.cookies.id, session: req.cookies.sess }
+      else
+        query = { username: req.query.username, apikey: req.query.apikey }
+
+      db.fetch "User", query, (user) ->
+        if user == undefined or user.length == 0
+          res.json { error: "No such user" }
+          return
+
+        user.fname = req.query.fname
+        user.lname = req.query.lname
+        user.email = req.query.email
+        user.company = req.query.company
+        user.address = req.query.address
+        user.city = req.query.city
+        user.state = req.query.state
+        user.postalCode = req.query.postalCode
+        user.country = req.query.country
+        user.phone = req.query.phone
+        user.fax = req.query.fax
+
+        user.save()
+        res.json { msg: "OK" }
 
   # Retrieves all users for list rendering
   _getAllUsers = (req, res) ->
@@ -268,16 +343,22 @@ setup = (options, imports, register) ->
 
       # If we have admin privs, then delete the ad even without ownership
       query = { _id: req.query.id, owner: user._id }
-      if verifyAdmin req, res then query = { _id: req.query.id }
 
-      db.fetch "Ad", query, (ad) ->
+      verifyAdmin req, res, (admin) ->
+        if admin then query = { _id: req.query.id }
 
-        if ad == undefined
-          res.json { error: "No such ad found" }
-          return
+        db.fetch "Ad", query, (ad) ->
 
-        ad.remove()
-        res.json { msg: "Deleted ad #{req.query.id}" }
+          if ad == undefined or ad.length == 0
+            res.json { error: "No such ad found" }
+            return
+
+          if !admin and ad.owner != user._id
+            res.json { error: "Unauthorized" }
+            return
+
+          ad.remove()
+          res.json { msg: "Deleted ad #{req.query.id}" }
 
   # Main GET method, expects {filter}
   getAd = (req, res) ->
@@ -297,26 +378,26 @@ setup = (options, imports, register) ->
 
       # Bail if attempting to fetch an un-owned ad, and we are not the
       # administrator
-      if req.cookies.user.id != user.username
-        if not verifyAdmin req, res then return
+      verifyAdmin req, res, (admin) ->
+        if req.cookies.user.id != user.username and not admin then return
 
-      # Fetch data and reply
-      db.fetch "Ad", { owner: user._id }, (data) ->
+        # Fetch data and reply
+        db.fetch "Ad", { owner: user._id }, (data) ->
 
-        ret = []
+          ret = []
 
-        if not data instanceof Array
-          if data.name != undefined then data = [ data ] else data = []
+          if not data instanceof Array
+            if data.name != undefined then data = [ data ] else data = []
 
-        if data.length > 0
-          for a in data
-            ad = {}
-            ad.name = a.name
-            ad.id = a._id
+          if data.length > 0
+            for a in data
+              ad = {}
+              ad.name = a.name
+              ad.id = a._id
 
-            ret.push ad
+              ret.push ad
 
-        res.json ret
+          res.json ret
 
       , (err) -> res.json { error: err }
       , true

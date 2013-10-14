@@ -11,13 +11,24 @@ exports.createSchema = ->
     username: String
     email: String
     password: String
+
     session: String
-    fname: String
-    lname: String
     hash: String
     limit: String
-    address1: String
-    address2: String
+    apikey: String
+
+    fname: String
+    lname: String
+
+    address: String
+    city: String
+    state: String
+    postalCode: String
+    country: String
+
+    company: String
+    phone: String
+    fax: String
 
     # 0 - admin (root)
     # 1 - unassigned

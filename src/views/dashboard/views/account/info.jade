@@ -10,46 +10,49 @@
           .field-box
             label Username:
             .col-md-7
-              input.form-control.inline-input(type="text", readonly="readonly", value="Mirceam94")
+              input.form-control.inline-input(type="text", readonly="readonly", data-ng-model="me.username")
           .field-box
             label Name:
             .col-md-7
-              input.form-control.inline-input.small(type="text", readonly="readonly", value="Mircea")
-              input.form-control.inline-input.small(type="text", readonly="readonly", value="Mihalache")
+              input.form-control.inline-input.small(type="text", readonly="readonly", data-ng-model="me.fname")
+              input.form-control.inline-input.small(type="text", readonly="readonly", data-ng-model="me.lname")
           .field-box
             label API Key:
             .col-md-7
-              input.form-control.inline-input(type="text", readonly="readonly", value="adsfsdf")
+              input.form-control.inline-input(type="text", readonly="readonly", data-ng-model="me.apikey")
           .field-box
             label Email:
             .col-md-7
-              input.form-control(type="email", value="cris.mihalache@spectrumit.eu")
+              input.form-control(type="email", data-ng-model="me.email")
           .field-box
             label Company Name:
             .col-md-7
-              input.form-control(type="text", value="Spectrum IT Solutions GmbH")
+              input.form-control(type="text", data-ng-model="me.company")
           .field-box
             label Phone Number:
             .col-md-7
-              input.form-control(type="tel", value="Spectrum IT Solutions GmbH")
+              input.form-control(type="tel", data-ng-model="me.phone")
           .field-box
             label Fax Number:
             .col-md-7
-              input.form-control(type="tel", value="Spectrum IT Solutions GmbH")
+              input.form-control(type="tel", data-ng-model="me.fax")
           .field-box
             label Address:
             .col-md-7
               .address-fields
-                input.form-control(type="text", placeholder="Street address")
-                input.form-control.small(type="text", placeholder="City")
-                input.form-control.small(type="text", placeholder="State")
-                input.form-control.small.last(type="text", placeholder="Postal Code")
+                input.form-control(type="text", placeholder="Street address", data-ng-model="me.address")
+                input.form-control.small(type="text", placeholder="City", data-ng-model="me.city")
+                input.form-control.small(type="text", placeholder="State", data-ng-model="me.state")
+                input.form-control.small.last(type="text", placeholder="Postal Code", data-ng-model="me.postalCode")
           .field-box
             label Country:
             .col-md-7
               .ui-select
-                country-select(data-ng-model="selectedCountry")
+                country-select(data-ng-model="me.country")
           .field-box
             label
             .col-md-7
-              button.btn-glow.btn-lg.primary Save
+              .col-md-3
+                button.btn-glow.btn-lg.primary(data-ng-click="save()") Save
+              .col-md-3(data-ng-if="saveMessage.length > 0")
+                .alert(data-ng-bind="saveMessage", data-ng-class="{ 'alert-danger': saveMessage != \"Saved\", 'alert-success': saveMessage == \"Saved\" }")
