@@ -2,14 +2,131 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
   # Controls which main element is shown; the campaign listing, or the
   # new campaign wizard
-  $scope.mode = "new"
+  $scope.mode = "listing"
 
-  # Select 2 filters
-  $scope.select2Filters =
-    tcountry: "all"
-    tplatform: "all"
-    tmanufacturer: "all"
-    tdevice: "all"
+  ##
+  ## Reset campaign form fields and internal objects
+  ##
+  campaignNewReset = ->
+
+    $scope.campaign =
+      name: ""
+      description: ""
+      category: ""
+
+      pricing: "cpm"
+      budgetTotal: ""
+      budgetDaily: ""
+      system: "manual"
+      bid: ""
+      bidMax: ""
+
+      # Note that we need to grab the values from the select2Filters object!
+      tcountry: "all"
+      tnetwork: "all"
+      tplatform: "all"
+      tmanufacturer: "all"
+      tdevice: "all"
+      tschedule: "none"
+
+    $scope.validation =
+      name:
+        valid: true
+        error: ""
+      pricing:
+        valid: true
+        error: ""
+      budgetTotal:
+        valid: true
+        error: ""
+      budgetDaily:
+        valid: true
+        error: ""
+      bid:
+        valid: true
+        error: ""
+      bidMax:
+        valid: true
+        error: ""
+
+    # Select 2 filters
+    $scope.select2Filters =
+      tcountry: "all"
+      tplatform: "all"
+      tmanufacturer: "all"
+      tdevice: "all"
+
+  # Build initial objects
+  campaignNewReset()
+
+  ##
+  ## Input validation
+  ##
+
+  # Validation Helpers
+  errReset = (err) -> err.valid = true; err.error = ""
+  validate = (name, val, validationVal, number, string) ->
+    if number == undefined then number = false
+    if string == undefined then string = false
+
+    if val == undefined or val.length == 0
+      validationVal.valid = false
+      validationVal.error = "#{name} required"
+    else if number and isNaN val
+      validationVal.valid = false
+      validationVal.error = "#{name} must be a number"
+    else if string and typeof val != "string"
+      validationVal.valid = false
+      validationVal.error = "#{name} must be a string"
+    else errReset validationVal
+
+  # Actual validation
+  $scope.$watch "campaign.name", (newVal, oldVal) ->
+    validate "Campaign name", newVal, $scope.validation.name, false, true
+
+  $scope.$watch "campaign.pricing", (newVal, oldVal) ->
+    validate "Campaign pricing", newVal, $scope.validation.pricing, true, false
+
+  $scope.$watch "campaign.budgetTotal", (newVal, oldVal) ->
+    validate "Total budget", newVal, $scope.validation.budgetTotal, true, false
+
+  $scope.$watch "campaign.budgetDaily", (newVal, oldVal) ->
+    if newVal == undefined or newVal.length == 0 then newVal = "0.00"
+    validate "Daily budget", newVal, $scope.validation.budgetDaily, true, false
+
+  $scope.$watch "campaign.bid", (newVal, oldVal) ->
+    if $scope.campaign.system == "auto"
+      if newVal == undefined or newVal.length == 0 then newVal = "0.00"
+    validate "Bid", newVal, $scope.validation.bid, true, false
+
+  $scope.$watch "campaign.bidMax", (newVal, oldVal) ->
+    if $scope.campaign.system == "manual"
+      if newVal == undefined or newVal.length == 0 then newVal = "0.00"
+    validate "Maximum bid", newVal, $scope.validation.bidMax, true, false
+
+  ##
+  ## Form action methods
+  ##
+
+  # Triggers campaign creation
+  $scope.createCampaign = ->
+    campaignNewReset()
+    $scope.mode = "new"
+
+  $scope.cancelCampaign = ->
+    $scope.mode = "listing"
+    campaignNewReset()
+
+  # Called when the new campaign is submitted. Note that we need to copy values
+  # over from select2Filters, since tcountry/tplatform/etc models are bound
+  # in that object for Select2 to work, not in $scope.campaign.
+  $scope.createCampaignSubmit = ->
+
+    # Copy values
+    $scope.campaign.tcountry = $scope.select2Filters.tcountry
+    $scope.campaign.tplatform = $scope.select2Filters.tplatform
+    $scope.campaign.tmanufacturer = $scope.select2Filters.tmanufacturer
+    $scope.campaign.tdevice = $scope.select2Filters.tdevice
 
   $scope.$watchCollection "select2Filters", (newFilters, oldFilters) ->
 
@@ -19,11 +136,6 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
       $("#select2Device").parent().find(".select2-input").trigger "blur"
       $("#select2Manufacturer").parent().find(".select2-input").trigger "blur"
     , 100
-
-  $scope.campaign = {
-    pricing: "cpm"
-    system: "manual"
-  }
 
   $scope.minPricings = {
     "cpm": "1.00"
@@ -101,7 +213,7 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
       if step.step == 1
         $(btnPrev).attr "disabled", "disabled"
-      else if step.step == 4
+      else if step.step == 3
         $(btnNext).hide()
         $(btnFinish).show()
 

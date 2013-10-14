@@ -20,7 +20,7 @@
             th Action
         tbody
   .row.section
-    a.btn-flat.success(href="#newCat", target="_self", data-toggle="modal")
+    button.btn-flat.success(type="button", data-ng-click="createCampaign()")
       span &#43; 
       |  New Campaign
 
@@ -48,63 +48,81 @@
           .row.form-wrapper
             .col-md-12
               form
-                .field-box
+                .field-box(data-ng-class="{ error: !validation.name.valid }")
                   label Name
                   .col-md-7
-                    input.form-control(type="text", placeholder="Enter a name for your campaign")
+                    input.form-control(type="text", placeholder="Enter a name for your campaign", data-ng-model="campaign.name", required="required")
+                  .col-md-7(data-ng-show="!validation.name.valid")
+                    .alert-msg(data-ng-bind="validation.name.error")
                 .field-box
                   label Description (optional)
                   .col-md-5
-                    textarea.form-control(row="16", col="4")
+                    textarea.form-control(row="16", col="4", data-ng-model="campaign.description")
                 .field-box
                   label Category
                   .col-md-7
                     .ui-select.wide
-                      select.wide
+                      select.wide(data-ng-model="campaign.category", required="required")
                         option(data-ng-repeat="(i, cat) in categories", value="{{ i }}", data-ng-bind="cat")
 
         #step2.step-pane
           .row.form-wrapper
             .col-md-12
               form
-                .field-box
+
+                .field-box(data-ng-class="{ error: !validation.pricing.valid }")
                   label Pricing
                   .col-md-7
                     .ui-select
-                      select(data-ng-model="campaign.pricing")
+                      select(data-ng-model="campaign.pricing", required="required")
                         option(selected="selected", value="cpm") CPM
                         option(value="cpc") CPC
-                .field-box
+                  .col-md-7(data-ng-show="!validation.pricing.valid")
+                    .alert-msg(data-ng-bind="validation.pricing.error")
+
+                .field-box(data-ng-class="{ error: !validation.budgetTotal.valid }")
                   label Total Budget
                   .col-md-7
                     .predefined
                       span.value $
-                      input.form-control.inline-input(type="text", placeholder="(min $25)")
-                .field-box
+                      input.form-control.inline-input(type="text", placeholder="(min $25)", data-ng-model="campaign.budgetTotal", required="required")
+                  .col-md-7(data-ng-show="!validation.budgetTotal.valid")
+                    .alert-msg(data-ng-bind="validation.budgetTotal.error")
+
+                .field-box(data-ng-class="{ error: !validation.budgetDaily.valid }")
                   label Daily Budget (optional)
                   .col-md-7
                     .predefined
                       span.value $
-                      input.form-control.inline-input(type="text")
+                      input.form-control.inline-input(type="text", data-ng-model="campaign.budgetDaily")
+                  .col-md-7(data-ng-show="!validation.budgetDaily.valid")
+                    .alert-msg(data-ng-bind="validation.budgetDaily.error")
+
                 .field-box
                   label Bid System
                   .col-md-7
                     .ui-select
-                      select(data-ng-model="campaign.system")
+                      select(data-ng-model="campaign.system", required="required")
                         option(selected="selected", value="auto") Automatic
                         option(value="manual") Manual
-                .field-box(data-ng-if="campaign.system == \"manual\"")
+
+                .field-box(data-ng-if="campaign.system == \"manual\"", data-ng-model="campaign.system", data-ng-class="{ error: !validation.bid.valid }")
                   label Bid
                   .col-md-7
                     .predefined
                       span.value $
-                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})")
-                .field-box(data-ng-if="campaign.system == \"auto\"")
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})", data-ng-model="campaign.bid")
+                  .col-md-7(data-ng-show="!validation.bid.valid")
+                    .alert-msg(data-ng-bind="validation.bid.error")
+
+                .field-box(data-ng-if="campaign.system == \"auto\"", data-ng-class="{ error: !validation.bidMax.valid }")
                   label Maximum bid
                   .col-md-7
                     .predefined
                       span.value $
-                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})")
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaign.pricing] }})", data-ng-model="campaign.bidMax")
+                  .col-md-7(data-ng-show="!validation.bidMax.valid")
+                    .alert-msg(data-ng-bind="validation.bidMax.error")
 
         #step3.step-pane
           .row.form-wrapper
@@ -239,13 +257,14 @@
                       | Custom Scheduling
 
         .wizard-actions
+          button.btn-flat.white(type="button", data-ng-click="cancelCampaign()") Cancel
           button.btn-flat.primary.btn-prev(type="button", disabled="disabled")
             i.icon-chevron-left 
             | Prev
           button.btn-flat.primary.btn-next(type="button", data-last="Finish")
             | Next 
             i.icon-chevron-right
-          button.btn-glow.success.btn-finish(type="button") Create Campaign
+          button.btn-flat.success.btn-finish(type="button") Create Campaign
 
   .col-md-4.form-sidebar
     .row.header

@@ -200,12 +200,14 @@
 }
 
 /* actions */
-.wizard-actions .btn-next {
+.wizard-actions button {
   margin-left: 15px;
+}
+.wizard-actions button:first-child {
+  margin-left: 0;
 }
 .wizard-actions .btn-finish {
   display: none;
-  margin-left: 15px;
 }
 
 /* responsive */
@@ -224,3 +226,19 @@
   }
 }
 .hidden { display: none; }
+
+/* form input validation */
+.form-wrapper .field-box.error label,
+.form-wrapper .field-box.error .alert-msg {
+  color: #c73939;
+}
+.form-wrapper .field-box.error input {
+  border-color: #c73939;
+}
+.form-wrapper .field-box.success label,
+.form-wrapper .field-box.success .alert-msg {
+  color: #379e48;
+}
+.form-wrapper .field-box.success input {
+  border-color: #379e48;
+}
