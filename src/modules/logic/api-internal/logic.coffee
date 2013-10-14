@@ -15,18 +15,18 @@ setup = (options, imports, register) ->
   # reach this point)
   userCheck = (req, res) ->
     if req.cookies.user == undefined
-      res.json { error: "Invalid user (CRITICAL - Check this)" }
+      res.json { error: "Invalid user [uc] (CRITICAL - Check this)" }
       return false
     true
 
   # Fails if the user result is empty
   userValid = (user, res) ->
     if (user instanceof Array and user.length <= 0) or user == undefined
-      res.json { error: "Invalid user (CRITICAL - Check this)" }
+      res.json { error: "Invalid user [uv] (CRITICAL - Check this)" }
       return false
     true
 
-  # Calls the cb with admin status
+  # Calls the cb with admin status, and the fetched user
   verifyAdmin = (req, res, cb) ->
     if req.cookies.admin != "true"
       res.json { error: "Unauthorized" }
@@ -40,7 +40,7 @@ setup = (options, imports, register) ->
       if user.permissions != 0
         res.json { error: "Unauthorized" }
         cb false
-      else cb true
+      else cb true, user
 
   # Top-level routing
 
@@ -115,6 +115,17 @@ setup = (options, imports, register) ->
     else if req.params.action == "create" then createAd req, res
     else if req.params.action == "delete" then deleteAd req, res
     else res.json { error: "Unknown action #{req.params.action} " }
+
+  # Campaign manipulation - /logic/campaigns/:action
+  #
+  #   /create   createCampaign
+  #
+  server.server.get "/logic/campaigns/:action", (req, res) ->
+
+    if req.params.action == "create" then createCampaign req, res
+    else if req.params.action == "get" then fetchCampaigns req, res
+    else if req.params.action == "delete" then deleteCampaign req, res
+    else res.json { error: "Unknown action #{req.params.action}" }
 
   ##
   ## Invite manipulation
@@ -386,8 +397,7 @@ setup = (options, imports, register) ->
 
           ret = []
 
-          if not data instanceof Array
-            if data.name != undefined then data = [ data ] else data = []
+          if not data instanceof Array then data = [ data ]
 
           if data.length > 0
             for a in data
@@ -404,6 +414,118 @@ setup = (options, imports, register) ->
 
     , (err) -> res.json { error: err }
     , true
+
+  ##
+  ## Campaign manipulation
+  ##
+  createCampaign = (req, res) ->
+    if not userCheck req, res then return
+
+    query =
+      username: req.cookies.user.id
+      session: req.cookies.user.sess
+
+    # Fetch user
+    db.fetch "User", query, (user) ->
+      if not userValid user, res then return
+
+      # Create new campaign
+      newAd = db.models().Campaign.getModel()
+        owner: user._id
+        name: req.query.name
+        description: req.query.description
+        category: req.query.category
+        pricing: req.query.pricing
+        totalBudget: Number req.query.budgetTotal
+        dailyBudget: Number req.query.budgetDaily
+        bidSystem: req.query.system
+        bid: Number req.query.bid
+        maxBid: Number req.query.bidMax
+
+        status: 0 # 0 is created, no ads
+        avgCPC: 0
+        clicks: 0
+        impressions: 0
+        spent: 0
+
+      # Pass placeholder for daily if none provided
+      if newAd.dailyBudget.length == 0 then newAd.dailyBudget = "-"
+
+      newAd.save()
+      res.json { msg: "OK" }
+
+  # Fetch campaigns owned by the user identified by the cookie
+  fetchCampaigns = (req, res) ->
+    if not userCheck req, res then return
+
+    query =
+      username: req.cookies.user.id
+      session: req.cookies.user.sess
+
+    db.fetch "User", query, (user) ->
+      if not userValid user, res then return
+
+      db.fetch "Campaign", { owner: user._id }, (campaigns) ->
+
+        if campaigns not instanceof Array then campaigns = [ campaigns ]
+
+        ret = []
+
+        # Remove the owner id, and refactor the id field
+        for c in campaigns
+
+          ret.push
+            id: c._id
+            name: c.name
+            description: c.description
+            category: c.category
+            pricing: c.pricing
+            totalBudget: c.totalBudget
+            dailyBudget: c.dailyBudget
+            bidSystem: c.bidSystem
+            bid: c.bid
+            maxBid: c.maxBid
+
+            status: c.status
+            avgCPC: c.avgCPC
+            clicks: c.clicks
+            impressions: c.impressions
+            spent: c.spent
+
+        res.json ret
+
+      , (err) -> res.json { error: err}
+      , true
+
+  # Delete the campaign identified by req.query.id
+  #
+  # If we are not the administrator, we must own the campaign!
+  deleteCampaign = (req, res) ->
+    if not userCheck req, res then return
+
+    if req.query.id == undefined
+      res.json { error: "id not specified" }
+      return
+
+    verifyAdmin req, res, (admin, user) ->
+
+      # Fetch campaign
+      db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
+
+        if campaign == undefined or campaign.length == 0
+          res.json { error: "No such campaign!" }
+          return
+
+        if not admin
+          if campaign.owner != user._id
+            res.json { error: "Unauthorized!" }
+            return
+
+        # Assuming we've gotten to this point, we are authorized to perform
+        # the delete
+        campaign.remove()
+
+        res.json { msg: "OK" }
 
   register null, {}
 

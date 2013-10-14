@@ -1,8 +1,72 @@
 window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
-  # Controls which main element is shown; the campaign listing, or the
-  # new campaign wizard
+  # Controls which main element is shown
+  #
+  #   listing - campaign list, default
+  #   new     - new campaign form, takes up entire view
+  #   details - listing + detail view
   $scope.mode = "listing"
+
+  $scope.createCampaignError = ""
+
+  # Campaign list to fill listing
+  $scope.campaigns = []
+
+  # View/Edit campaign data
+  $scope.campaignView = {}
+
+  ##
+  ## Pulls in a fresh campaign list from the server
+  ##
+  refreshCampaigns = ->
+
+    $http.get("/logic/campaigns/get").success (list) ->
+
+      if list.error != undefined then alert list.error
+      else
+
+        # Go through the list - calculate ctr and set status text
+        for c, i in list
+
+          # CTR
+          list[i].ctr = (list[i].clicks / list[i].impressions) * 100
+
+          # Status
+          if list[i].status == 0
+            list[i].statusText = "No ads"
+            list[i].statusClass = "label-danger"
+          else if list[i].status == 1
+            list[i].statusText = "Scheduled"
+            list[i].statusClass = "label-primary"
+          else if list[i].status == 2
+            list[i].statusText = "Running"
+            list[i].statusClass = "label-success"
+          else if list[i].status == 3
+            list[i].statusText = "Paused"
+            list[i].statusClass = "label-warning"
+
+        $scope.campaigns = list
+  ##
+  ## Delete the campaign. Prompt for confirmation first
+  ##
+  $scope.deleteCampaign = (index) ->
+    bootbox.confirm "Are you sure?", (result) ->
+
+      if result then $scope.$apply ->
+        c = $scope.campaigns[index]
+        alert JSON.stringify c
+        $http.get("/logic/campaigns/delete?id=#{c.id}").success (result) ->
+          if result.error != undefined then alert result.error
+          else $scope.campaigns.splice index, 1
+
+  ##
+  ## View/Edit the campaign. Setup the view data, and change our mode
+  ##
+  viewCampaign = (index) ->
+    $scope.campaignView = $scope.campaigns[index]
+    $scope.mode = "details"
+
+  refreshCampaigns()
 
   ##
   ## Reset campaign form fields and internal objects
@@ -85,7 +149,7 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
     validate "Campaign name", newVal, $scope.validation.name, false, true
 
   $scope.$watch "campaign.pricing", (newVal, oldVal) ->
-    validate "Campaign pricing", newVal, $scope.validation.pricing, true, false
+    validate "Campaign pricing", newVal, $scope.validation.pricing, false, true
 
   $scope.$watch "campaign.budgetTotal", (newVal, oldVal) ->
     validate "Total budget", newVal, $scope.validation.budgetTotal, true, false
@@ -113,6 +177,16 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
     campaignNewReset()
     $scope.mode = "new"
 
+    setTimeout ->
+      $("input[type=\"checkbox\"], input[type=\"radio\"]").uniform()
+
+      $("#select2Country").select2 { placeholder: "Select Countries" }
+      $("#select2Platform").select2 { placeholder: "Select Platforms" }
+      $("#select2Device").select2 { placeholder: "Select Devices" }
+      $("#select2Manufacturer").select2 { placeholder: "Select Manufacturers" }
+
+    , 500
+
   $scope.cancelCampaign = ->
     $scope.mode = "listing"
     campaignNewReset()
@@ -128,6 +202,23 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
     $scope.campaign.tmanufacturer = $scope.select2Filters.tmanufacturer
     $scope.campaign.tdevice = $scope.select2Filters.tdevice
 
+    # Request save
+    args = ""
+    args += "&#{name}=#{val}" for name, val of $scope.campaign
+
+    $http.get("/logic/campaigns/create?#{args}").success (result) ->
+      if result.error != undefined
+        $scope.createCampaignError = result.error
+        setTimeout (-> $scope.$apply -> $scope.createCampaignError = ""), 1000
+      else
+        $scope.mode = "listing"
+        campaignNewReset()
+        refreshCampaigns()
+
+  ##
+  ## Fixes select2 selectbox placeholder
+  ##
+
   $scope.$watchCollection "select2Filters", (newFilters, oldFilters) ->
 
     setTimeout ->
@@ -137,13 +228,16 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
       $("#select2Manufacturer").parent().find(".select2-input").trigger "blur"
     , 100
 
+  ##
+  ## Form constants
+  ##
+
   $scope.minPricings = {
     "cpm": "1.00"
     "cpc": "0.10"
   }
 
   $scope.categories = [
-    ""
     "Alcohol"
     "Automotive"
     "Books & Reference"
@@ -183,17 +277,11 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
     "Travel"
   ]
 
+  ##
+  ## Wizard form handling
+  ##
+
   $(document).ready ->
-
-    setTimeout ->
-      $("input[type=\"checkbox\"], input[type=\"radio\"]").uniform()
-
-      $("#select2Country").select2 { placeholder: "Select Countries" }
-      $("#select2Platform").select2 { placeholder: "Select Platforms" }
-      $("#select2Device").select2 { placeholder: "Select Devices" }
-      $("#select2Manufacturer").select2 { placeholder: "Select Manufacturers" }
-
-    , 500
 
     wiz = "#fuelux-wizard"
     btnPrev = ".wizard-actions .btn-prev"
@@ -218,11 +306,9 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
         $(btnFinish).show()
 
     $("body").on "click", btnNext, ->
-      console.log "click"
       $(wiz).wizard "next"
       wizzChange()
 
     $("body").on "click", btnPrev, ->
       $(wiz).wizard "previous"
-      console.log "click"
       wizzChange()

@@ -244,3 +244,13 @@
 .form-wrapper .field-box.success input {
   border-color: #379e48;
 }
+#pad-wrapper .separator {
+  border-top: 1px solid #edeff1;
+  margin-top: 100px;
+  padding-top: 45px;
+  box-shadow: inset 0px 3px 4px -1px #fafafa;
+}
+a:hover {
+  cursor: hand;
+  cursor: pointer;
+}
