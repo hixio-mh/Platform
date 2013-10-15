@@ -14,7 +14,8 @@
     "httpreq": "0.2.9",
     "nodemailer": "0.4.1",
     "request": "2.21.0",
-    "spew": "0.0.2"
+    "spew": "0.0.2",
+    "gzippo": "0.2.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
