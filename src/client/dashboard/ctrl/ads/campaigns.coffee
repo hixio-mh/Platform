@@ -7,6 +7,13 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   #   details - listing + detail view
   $scope.mode = "listing"
 
+  # Controls with mode the campaign detail view is in.
+  #
+  #   details    - Budget, bid system, and included ads
+  #   targeting  - Targeting settings per campaign and ad
+  #   metrics    - Graphs both on campaign, and individual ad performance
+  $scope.detailMode = "details"
+
   $scope.createCampaignError = ""
 
   # Campaign list to fill listing
@@ -14,6 +21,14 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
   # View/Edit campaign data
   $scope.campaignView = {}
+  $scope.campaignViewIndex = 0    # Used later to ensure changes exist on save
+
+  # Campaign event list, fetched once a campaign is viewed.
+  # TODO: Consider caching this
+  $scope.campaignView.events = null
+
+  # Text on the Save button in the campaign view
+  $scope.saveCampaignText = "Save"
 
   ##
   ## Pulls in a fresh campaign list from the server
@@ -21,33 +36,31 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   refreshCampaigns = ->
 
     $http.get("/logic/campaigns/get").success (list) ->
+      if list.error != undefined then alert list.error; return
 
-      if list.error != undefined then alert list.error
-      else
+      # Go through the list - calculate ctr and set status text
+      for c, i in list
 
-        # Go through the list - calculate ctr and set status text
-        for c, i in list
+        # CTR
+        list[i].ctr = (list[i].clicks / list[i].impressions) * 100
 
-          # CTR
-          list[i].ctr = (list[i].clicks / list[i].impressions) * 100
+        if isNaN list[i].ctr then list[i].ctr = 0
 
-          if isNaN list[i].ctr then list[i].ctr = 0
+        # Status
+        if list[i].status == 0
+          list[i].statusText = "No ads"
+          list[i].statusClass = "label-danger"
+        else if list[i].status == 1
+          list[i].statusText = "Scheduled"
+          list[i].statusClass = "label-primary"
+        else if list[i].status == 2
+          list[i].statusText = "Running"
+          list[i].statusClass = "label-success"
+        else if list[i].status == 3
+          list[i].statusText = "Paused"
+          list[i].statusClass = "label-warning"
 
-          # Status
-          if list[i].status == 0
-            list[i].statusText = "No ads"
-            list[i].statusClass = "label-danger"
-          else if list[i].status == 1
-            list[i].statusText = "Scheduled"
-            list[i].statusClass = "label-primary"
-          else if list[i].status == 2
-            list[i].statusText = "Running"
-            list[i].statusClass = "label-success"
-          else if list[i].status == 3
-            list[i].statusText = "Paused"
-            list[i].statusClass = "label-warning"
-
-        $scope.campaigns = list
+      $scope.campaigns = list
   ##
   ## Delete the campaign. Prompt for confirmation first
   ##
@@ -65,8 +78,64 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   ## View/Edit the campaign. Setup the view data, and change our mode
   ##
   $scope.viewCampaign = (index) ->
-    $scope.campaignView = $scope.campaigns[index]
+
+    # Switch to view mode
+    $scope.campaignView = {}
+
+    $scope.campaignView[k] = val for k, val of $scope.campaigns[index]
+
+    $scope.campaignViewIndex = index
     $scope.mode = "details"
+
+    # Fetch event list
+    fetchEventList $scope.campaigns[index].id
+
+  # Helper method, refreshes our event list
+  fetchEventList = (id) ->
+    $http.get("/logic/campaigns/events?id=#{id}").success (events) ->
+      if events.error != undefined then alert events.error; return
+      $scope.campaignView.events = events
+
+  ##
+  ## Save campaign currently being viewed
+  ##
+  $scope.saveCampaign = ->
+
+    # First check for changes
+    changes = []
+
+    for key, val of $scope.campaignView
+
+      # Skip certain keys
+      if key != "events" && key != "statusText" && key != "statusClass"
+        if $scope.campaigns[$scope.campaignViewIndex][key] != val
+
+          changes.push
+            name: key
+            pre: $scope.campaigns[$scope.campaignViewIndex][key]
+            post: val
+
+    if changes.length == 0
+      $scope.saveCampaignText = "Nothing to save"
+      setTimeout (-> $scope.$apply -> $scope.saveCampaignText = "Save"), 1000
+      return
+
+    id = $scope.campaigns[$scope.campaignViewIndex].id
+    mod = JSON.stringify changes
+
+    $scope.saveCampaignText = "Saving..."
+
+    # At this point changes exist. Commit only those.
+    $http.get("/logic/campaigns/save?id=#{id}&mod=#{mod}").success (result) ->
+      if result.error != undefined
+        alert result.error
+        $scope.saveCampaignText = "Save"
+      else
+        $scope.saveCampaignText = "Saved!"
+        setTimeout (-> $scope.$apply -> $scope.saveCampaignText = "Save"), 1000
+
+        # Refresh events
+        fetchEventList $scope.campaigns[$scope.campaignViewIndex].id
 
   refreshCampaigns()
 
@@ -81,8 +150,8 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
       category: ""
 
       pricing: "cpm"
-      budgetTotal: ""
-      budgetDaily: ""
+      totalBudget: ""
+      dailyBudget: ""
       system: "manual"
       bid: ""
       bidMax: ""
@@ -102,10 +171,10 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
       pricing:
         valid: true
         error: ""
-      budgetTotal:
+      totalBudget:
         valid: true
         error: ""
-      budgetDaily:
+      dailyBudget:
         valid: true
         error: ""
       bid:
@@ -153,12 +222,12 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   $scope.$watch "campaign.pricing", (newVal, oldVal) ->
     validate "Campaign pricing", newVal, $scope.validation.pricing, false, true
 
-  $scope.$watch "campaign.budgetTotal", (newVal, oldVal) ->
-    validate "Total budget", newVal, $scope.validation.budgetTotal, true, false
+  $scope.$watch "campaign.totalBudget", (newVal, oldVal) ->
+    validate "Total budget", newVal, $scope.validation.totalBudget, true, false
 
-  $scope.$watch "campaign.budgetDaily", (newVal, oldVal) ->
+  $scope.$watch "campaign.dailyBudget", (newVal, oldVal) ->
     if newVal == undefined or newVal.length == 0 then newVal = "0.00"
-    validate "Daily budget", newVal, $scope.validation.budgetDaily, true, false
+    validate "Daily budget", newVal, $scope.validation.dailyBudget, true, false
 
   $scope.$watch "campaign.bid", (newVal, oldVal) ->
     if $scope.campaign.system == "auto"

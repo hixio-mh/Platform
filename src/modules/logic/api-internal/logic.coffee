@@ -13,32 +13,38 @@ setup = (options, imports, register) ->
 
   # Helpful security check (on its own since a request without a user shouldn't
   # reach this point)
-  userCheck = (req, res) ->
+  userCheck = (req, res, passive) ->
+    if passive != true then passive = false
+
     if req.cookies.user == undefined
-      res.json { error: "Invalid user [uc] (CRITICAL - Check this)" }
+      if not passive then res.json { error: "Invalid user [uc] (CRITICAL)" }
       return false
     true
 
   # Fails if the user result is empty
-  userValid = (user, res) ->
+  userValid = (user, res, passive) ->
+    if passive != true then passive = false
+
     if (user instanceof Array and user.length <= 0) or user == undefined
-      res.json { error: "Invalid user [uv] (CRITICAL - Check this)" }
+      if not passive then res.json { error: "Invalid user [uv] (CRITICAL)" }
       return false
     true
 
   # Calls the cb with admin status, and the fetched user
-  verifyAdmin = (req, res, cb) ->
+  verifyAdmin = (req, res, cb, passive) ->
+    if passive != true then passive = false
+
     if req.cookies.admin != "true"
-      res.json { error: "Unauthorized" }
+      if not passive then res.json { error: "Unauthorized" }
       cb false
 
-    if not userCheck req, res then cb false
+    if not userCheck req, res, passive then cb false
 
     db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-      if not userValid user, res then cb false
+      if not userValid user, res, passive then cb false
 
       if user.permissions != 0
-        res.json { error: "Unauthorized" }
+        if not passive then res.json { error: "Unauthorized" }
         cb false
       else cb true, user
 
@@ -84,6 +90,7 @@ setup = (options, imports, register) ->
   #
   # Some routes are admin only
   server.server.get "/logic/user/:action", (req, res) ->
+    if not userCheck req, res then return
 
     # Admin-only
     if req.params.action == "get"
@@ -110,6 +117,7 @@ setup = (options, imports, register) ->
   #   /delete   deleteAd
   #
   server.server.get "/logic/ads/:action", (req, res) ->
+    if not userCheck req, res then return
 
     if req.params.action == "get" then getAd req, res
     else if req.params.action == "create" then createAd req, res
@@ -121,10 +129,13 @@ setup = (options, imports, register) ->
   #   /create   createCampaign
   #
   server.server.get "/logic/campaigns/:action", (req, res) ->
+    if not userCheck req, res then return
 
     if req.params.action == "create" then createCampaign req, res
     else if req.params.action == "get" then fetchCampaigns req, res
     else if req.params.action == "delete" then deleteCampaign req, res
+    else if req.params.action == "events" then fetchCampaignEvents req, res
+    else if req.params.action == "save" then saveCampaign req, res
     else res.json { error: "Unknown action #{req.params.action}" }
 
   ##
@@ -268,6 +279,8 @@ setup = (options, imports, register) ->
         user.save()
         res.json { msg: "OK" }
 
+    , true
+
   # Retrieves all users for list rendering
   _getAllUsers = (req, res) ->
 
@@ -321,7 +334,6 @@ setup = (options, imports, register) ->
   # Create an ad, expects {name} in url and req.cookies.user to be valid
   createAd = (req, res) ->
     if not utility.param req.query.name, res, "Ad name" then return
-    if not userCheck req then return
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
@@ -346,7 +358,6 @@ setup = (options, imports, register) ->
   # Delete an ad, expects {id} in url and req.cookies.user to be valid
   deleteAd = (req, res) ->
     if not utility.param req.query.id, res, "Ad id" then return
-    if not userCheck req then return
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
@@ -370,6 +381,7 @@ setup = (options, imports, register) ->
 
           ad.remove()
           res.json { msg: "Deleted ad #{req.query.id}" }
+      , true
 
   # Main GET method, expects {filter}
   getAd = (req, res) ->
@@ -380,7 +392,6 @@ setup = (options, imports, register) ->
 
   # Expects req.cookies.user to be valid
   _getAdByUser = (req, res) ->
-    if not userCheck req then return
 
     # Fetch user by session
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
@@ -397,8 +408,6 @@ setup = (options, imports, register) ->
 
           ret = []
 
-          if not data instanceof Array then data = [ data ]
-
           if data.length > 0
             for a in data
               ad = {}
@@ -409,17 +418,23 @@ setup = (options, imports, register) ->
 
           res.json ret
 
-      , (err) -> res.json { error: err }
-      , true
-
-    , (err) -> res.json { error: err }
-    , true
+        , ((err) -> res.json { error: err }), true # db fetch Ad
+      , true # verifyAdmin (passive)
+    , ((err) -> res.json { error: err }), true # db fetch User
 
   ##
   ## Campaign manipulation
   ##
   createCampaign = (req, res) ->
-    if not userCheck req, res then return
+    if not utility.param req.query.name, res, "Campaign name" then return
+    if not utility.param req.query.description, res, "Description" then return
+    if not utility.param req.query.category, res, "Category" then return
+    if not utility.param req.query.pricing, res, "Pricing" then return
+    if not utility.param req.query.totalBudget, res, "Total budget" then return
+    if not utility.param req.query.dailyBudget, res, "Daily budget" then return
+    if not utility.param req.query.system, res, "Bid system" then return
+    if not utility.param req.query.bid, res, "Bid" then return
+    if not utility.param req.query.bidMax, res, "Max bid" then return
 
     query =
       username: req.cookies.user.id
@@ -436,8 +451,8 @@ setup = (options, imports, register) ->
         description: req.query.description
         category: req.query.category
         pricing: req.query.pricing
-        totalBudget: Number req.query.budgetTotal
-        dailyBudget: Number req.query.budgetDaily
+        totalBudget: Number req.query.totalBudget
+        dailyBudget: Number req.query.dailyBudget
         bidSystem: req.query.system
         bid: Number req.query.bid
         maxBid: Number req.query.bidMax
@@ -456,7 +471,6 @@ setup = (options, imports, register) ->
 
   # Fetch campaigns owned by the user identified by the cookie
   fetchCampaigns = (req, res) ->
-    if not userCheck req, res then return
 
     query =
       username: req.cookies.user.id
@@ -497,15 +511,121 @@ setup = (options, imports, register) ->
       , (err) -> res.json { error: err}
       , true
 
+  # Fetches events associated with the campaign. If not admin, user must own
+  # the campaign
+  fetchCampaignEvents = (req, res) ->
+    if not utility.param req.query.id, res, "Campaign id" then return
+
+    # Build campaign event fetch function first so we can skip campaign
+    # ownership verification for admins
+    fetchAndReplyWithEvents = (res, id) ->
+
+      db.fetch "CampaignEvent", { campaign: id }, (events) ->
+
+        # Go through and send only affected list, along with a timestamp
+        ret = []
+
+        for e in events
+
+          affected = []
+          for a in e.affected
+            affected.push
+              name: a.name
+              valuePre: a.valuePre
+              valuePost: a.valuePost
+
+              # TODO: Send target type (ad), and target name instead of id
+
+          ret.push
+            time: Date.parse e._id.getTimestamp()
+            affected: affected
+
+        res.json ret
+      , ((error) -> res.json { error: error }), true
+
+    verifyAdmin req, res, (admin, user) ->
+
+      # If admin, fetch
+      if admin then fetchAndReplyWithEvents res, req.query.id
+      else
+
+        # If not, verify ownership before fetching
+        db.fetch "Campaign", { owner: user._id }, (campaign) ->
+
+          if campaign == undefined or campaign.length == 0
+            res.json { error: "No such campaign" }
+            return
+
+          if campaign.owner != user._id
+            res.json { error: "Unauthorized!" }
+            return
+
+          # Verified, fetch
+          fetchAndReplyWithEvents res, req.query.id
+
+    , true
+
+  # Saves the campaign and generates new campaign events. User must either be
+  # admin or own the campaign in question!
+  saveCampaign = (req, res) ->
+    if not utility.param req.query.id, res, "Campaign id" then return
+    if not utility.param req.query.mod, res, "Modifications" then return
+
+    verifyAdmin req, res, (admin, user) ->
+
+      # Fetch campaign
+      db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
+
+        if campaign == undefined or campaign.length == 0
+          res.json { error: "No such campaign!" }
+          return
+
+        if not admin
+          if campaign.owner != user._id
+            res.json { error: "Unauthorized!" }
+            return
+
+        # Go through and apply changes
+        mod = JSON.parse req.query.mod
+        affected = []
+
+        for diff in mod
+
+          # Make sure we aren't setting a value that doesn't exist, or one
+          # that doesn't match our expected pre value
+          if String(campaign[diff.name]) != diff.pre
+
+            # Figure out target based on what is being saved
+            # For now, no target. Sneaky sneaky.
+
+            # Add to our affected array
+            affected.push
+              name: diff.name
+              valuePre: campaign[diff.name]
+              valuePost: diff.post
+
+            # Apply change
+            campaign[diff.name] = diff.post
+
+        if affected.length > 0
+
+          # Now create the campaign event
+          newEvent = db.models().CampaignEvent.getModel()
+            campaign: campaign._id
+            affected: affected
+
+          campaign.save()
+          newEvent.save()
+
+        res.json { msg: "OK" }
+
+    , true
+
   # Delete the campaign identified by req.query.id
   #
   # If we are not the administrator, we must own the campaign!
   deleteCampaign = (req, res) ->
-    if not userCheck req, res then return
-
-    if req.query.id == undefined
-      res.json { error: "id not specified" }
-      return
+    if not utility.param req.query.id, res, "Campaign id" then return
 
     verifyAdmin req, res, (admin, user) ->
 
@@ -526,6 +646,8 @@ setup = (options, imports, register) ->
         campaign.remove()
 
         res.json { msg: "OK" }
+
+    , true
 
   register null, {}
 

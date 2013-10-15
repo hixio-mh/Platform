@@ -1,10 +1,10 @@
 #pad-wrapper
-  div(data-ng-if="data.length == 0")
+  div(data-ng-if="data.length == 0 && mode != \"new\"")
     .row.header
       .col-md-12
         h3 You don't have any ads...
     .row.section
-      button.btn.btn-primary(data-toggle="modal", href="#newCat") Create one!
+      button.btn.btn-primary(data-ng-click="newAdShow()") Create one!
 
   div(data-ng-if="data.length > 0")
     .col-md-7.with-sidebar
@@ -37,37 +37,37 @@
                   td
                   td
 
-    .col-md-5.form-sidebar(data-ng-if="mode == \"edit\"")
-      .row.header
-        .col-md-12
-          h3 Edit Ad
+  .col-md-5.form-sidebar(data-ng-if="mode == \"edit\"")
+    .row.header
+      .col-md-12
+        h3 Edit Ad
 
-      .row.form-wrapper
-        .col-md-12.column
-          .container
-            form
-              .field-box
-                label Name
-                input.form-control(type="text", data-ng-model="data[current].name")
-              .field-box
-                button.btn-glow.primary Save
+    .row.form-wrapper
+      .col-md-12.column
+        .container
+          form
+            .field-box
+              label Name
+              input.form-control(type="text", data-ng-model="data[current].name")
+            .field-box
+              button.btn-glow.primary Save
 
-    .col-md-5.form-sidebar(data-ng-if="mode == \"new\"")
-      .row.header
-        .col-md-3
-          h3 New Ad
-        .col-md-3(data-ng-if="newAdStatus.length > 0")
-          .alert.alert-info(data-ng-bind="newAdStatus")
-        .col-md-3(data-ng-if="newAdError.length > 0")
-          .alert.alert-danger(data-ng-bind="newAdError")
+  .col-md-5.form-sidebar(data-ng-if="mode == \"new\"")
+    .row.header
+      .col-md-3
+        h3 New Ad
+      .col-md-3(data-ng-if="newAdStatus.length > 0")
+        .alert.alert-info(data-ng-bind="newAdStatus")
+      .col-md-3(data-ng-if="newAdError.length > 0")
+        .alert.alert-danger(data-ng-bind="newAdError")
 
-      .row.form-wrapper
-        .col-md-12.column
-          .container
-            form
-              .field-box
-                label Name
-                input.form-control(name="adName", type="text", placeholder="Enter a name for your ad", data-ng-model="newAd.name")
-              .field-box
-                button.btn-glow.primary(data-ng-click="newAdSubmit()") Create
-                button.btn-glow.default(data-ng-click="newAdCancel()") Cancel
+    .row.form-wrapper
+      .col-md-12.column
+        .container
+          form
+            .field-box
+              label Name
+              input.form-control(name="adName", type="text", placeholder="Enter a name for your ad", data-ng-model="newAd.name")
+            .field-box
+              button.btn-glow.primary(data-ng-click="newAdSubmit()") Create
+              button.btn-glow.default(data-ng-click="newAdCancel()") Cancel

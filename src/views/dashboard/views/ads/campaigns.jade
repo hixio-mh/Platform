@@ -51,10 +51,10 @@
                 | $ {{ campaign.spent | number:2 }}
 
               td
-                a.btn.btn-flat.success.btn-sm(data-ng-if="campaign.status == 1 || campaign.status == 3") Start
-                a.btn.btn-flat.gray.btn-sm(data-ng-if="campaign.status == 2") Pause
-                a.btn.btn-flat.primary.btn-sm(data-ng-click="viewCampaign({{ i }})") View / Edit
-                a.btn.btn-flat.danger.btn-sm(data-ng-click="deleteCampaign({{ i }})") Delete
+                a.btn.btn-flat.success.small(data-ng-if="campaign.status == 1 || campaign.status == 3") Start
+                a.btn.btn-flat.gray.small(data-ng-if="campaign.status == 2") Pause
+                a.btn.btn-flat.primary.small(data-ng-click="viewCampaign({{ i }})") View / Edit
+                a.btn.btn-flat.danger.small(data-ng-click="deleteCampaign({{ i }})") Delete
 
     .row.section
       button.btn-flat.success(type="button", data-ng-click="createCampaign()")
@@ -67,41 +67,119 @@
       .col-md-12
         h3(data-ng-bind="campaignView.name")
         .btn-group
-          button.glow.left.active Details
-          button.glow.middle Targeting
-          button.glow.right Metrics
+          button.glow.left(data-ng-click="detailMode=\"details\"", data-ng-class="{ active: detailMode == \"details\" }") Details
+          button.glow.middle(data-ng-click="detailMode=\"targeting\"", data-ng-class="{ active: detailMode == \"targeting\" }") Targeting
+          button.glow.right(data-ng-click="detailMode=\"metrics\"", data-ng-class="{ active: detailMode == \"metrics\" }") Metrics
+        .btn-group
+          button.btn-flat.small.primary(data-ng-click="saveCampaign()", data-ng-bind="saveCampaignText")
 
-    .row.section
+      br
+
       .col-md-12
-        h4 Campaign Details
+        span.label(data-ng-bind="campaignView.statusText", data-ng-class="campaignView.statusClass")
 
-    br
-    br
+    div(data-ng-if="detailMode == \"details\"")
+      .row.section
+        .col-md-12
+          h4 Campaign Details
 
-    .row.section
-      .col-md-5.form-sidebar.with-sidebar
-        .form-wrapper
-          .container
-            form
-              .field-box
-                label Description
-                textarea.form-control(row="16", col="4", data-ng-model="campaignView.description")
-              .field-box
-                label Daily Budget
-                .col-md-5
-                  .predefined
-                    span.value $
-                    input.form-control.inline-input(type="text", data-ng-model="campaignView.dailyBudget")
-              .field-box
-                button.btn-glow.primary Save
+      br
+      br
 
-      .col-md-7
-        h5 Events
+      .row.section
+        .col-md-5.form-sidebar.with-sidebar
+          .form-wrapper
+            .container
+              form
+                .field-box
+                  label Description
+                  textarea.form-control(row="16", col="4", data-ng-model="campaignView.description")
+                .field-box
+                  label Daily Budget
+                  .col-md-5
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text", data-ng-model="campaignView.dailyBudget")
+                .field-box
+                  label Bid System
+                  .col-md-7
+                    .ui-select
+                      select(data-ng-model="campaignView.bidSystem")
+                        option(value="auto") Automatic
+                        option(value="manual") Manual
+                .field-box(data-ng-if="campaignView.bidSystem == \"manual\"")
+                  label Bid
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaignView.pricing] }})", data-ng-model="campaignView.bid")
+                .field-box(data-ng-if="campaignView.bidSystem == \"auto\"")
+                  label Maximum bid
+                  .col-md-7
+                    .predefined
+                      span.value $
+                      input.form-control.inline-input(type="text", placeholder="(min ${{ minPricings[campaignView.pricing] }})", data-ng-model="campaignView.bidMax")
 
-    .row.section
-      .separator.small
-      .col-md-12
-        h4 Ads
+        .col-md-7
+          h5(data-ng-if="campaignView.events == null") Fetching events...
+          h5(data-ng-if="campaignView.events != null && campaignView.events.length == 0") No events to show
+          div(data-ng-if="campaignView.events != null && campaignView.events.length > 0")
+            h5 Events
+            br
+            br
+            table.table.table-striped.table-hover
+              thead
+                tr
+                  th Date
+              tbody
+                tr(data-ng-repeat="e in campaignView.events")
+                  td
+                    | {{ e.time | date:short }}
+
+      .row.section
+        .separator.small
+        .col-md-12
+          h4 Ads
+
+      br
+      br
+
+      .row.section
+        .col-md-12
+          table.table.table-striped.table-hover
+            thead
+              tr
+                th Name
+                th Status
+                th Daily Budget
+                th Avg. CPC
+                th Impressions
+                th Conversions
+                th CTR
+                th Cost
+                th Action
+            tbody
+
+      .row.section
+        button.btn-flat.success(type="button", data-ng-click="addAd()")
+          span &#43; 
+          |  Add existing ad
+
+    div(data-ng-if="detailMode == \"targeting\"")
+      .row.section
+        .col-md-12
+          h4 Campaign Targeting
+
+      br
+      br
+
+    div(data-ng-if="detailMode == \"metrics\"")
+      .row.section
+        .col-md-12
+          h4 Campaign Metrics
+
+      br
+      br
 
   div(data-ng-if="mode == \"new\"")
     .col-md-8.with-sidebar
@@ -159,23 +237,23 @@
                     .col-md-7(data-ng-show="!validation.pricing.valid")
                       .alert-msg(data-ng-bind="validation.pricing.error")
 
-                  .field-box(data-ng-class="{ error: !validation.budgetTotal.valid }")
+                  .field-box(data-ng-class="{ error: !validation.totalBudget.valid }")
                     label Total Budget
                     .col-md-7
                       .predefined
                         span.value $
-                        input.form-control.inline-input(type="text", placeholder="(min $25)", data-ng-model="campaign.budgetTotal", required="required")
-                    .col-md-7(data-ng-show="!validation.budgetTotal.valid")
-                      .alert-msg(data-ng-bind="validation.budgetTotal.error")
+                        input.form-control.inline-input(type="text", placeholder="(min $25)", data-ng-model="campaign.totalBudget", required="required")
+                    .col-md-7(data-ng-show="!validation.totalBudget.valid")
+                      .alert-msg(data-ng-bind="validation.totalBudget.error")
 
-                  .field-box(data-ng-class="{ error: !validation.budgetDaily.valid }")
+                  .field-box(data-ng-class="{ error: !validation.dailyBudget.valid }")
                     label Daily Budget (optional)
                     .col-md-7
                       .predefined
                         span.value $
-                        input.form-control.inline-input(type="text", data-ng-model="campaign.budgetDaily")
-                    .col-md-7(data-ng-show="!validation.budgetDaily.valid")
-                      .alert-msg(data-ng-bind="validation.budgetDaily.error")
+                        input.form-control.inline-input(type="text", data-ng-model="campaign.dailyBudget")
+                    .col-md-7(data-ng-show="!validation.dailyBudget.valid")
+                      .alert-msg(data-ng-bind="validation.dailyBudget.error")
 
                   .field-box
                     label Bid System

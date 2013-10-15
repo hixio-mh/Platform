@@ -28,7 +28,6 @@ window.AdefyDashboard.controller "adsListing", ($scope, $http, $route, $rootScop
 
   # New ad request; prompt for confirmation if currently editing an ad
   $scope.newAdShow = ->
-
     $scope.mode = "new"
 
   # Resets and hides the sidebar
