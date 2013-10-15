@@ -12,6 +12,7 @@ module.exports = [
 
   "./modules/logic/api-internal",
   "./modules/logic/api-ad",
+  "./modules/logic/api-analytics",
 
   "./modules/logic/routes",
   "./modules/logic/page-login",

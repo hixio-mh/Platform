@@ -1,4 +1,38 @@
+#main-stats
+  .row.stats-row
+    .col-md-3.col-sm-3.stat
+      .data
+        span.number(data-ng-bind="userCount")
+        | Users
+      span.date Total
+    .col-md-3.col-sm-3.stat
+      .data
+        span.number 0
+        | Publishers Active
+      span.date Total
+    .col-md-3.col-sm-3.stat
+      .data
+        span.number 0
+        | Campaigns Running
+      span.date Total
+    .col-md-3.col-sm-3.stat
+      .data
+        span.number 0
+        | Impressions
+      span.date Past Week
+
 #pad-wrapper
-  .row.section
+  .row.header
     .col-md-12
-      h1 Nothing here yet.
+      h3 Dashboard
+
+  .row.section
+    .col-md-6
+      h5 Users
+      br
+      #chart-userCount(style="height: 250px")
+
+    .col-md-6
+      h5 Invites
+      br
+      #chart-inviteCount(style="height: 250px")

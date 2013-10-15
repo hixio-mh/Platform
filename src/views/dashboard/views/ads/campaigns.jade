@@ -18,6 +18,7 @@
               th Pricing
               th Total Budget
               th Daily Budget
+              th Remaining Budget
               th Avg. CPC
               th Impressions
               th Conversions
@@ -36,6 +37,8 @@
                 | $ {{ campaign.totalBudget | number:2 }}
               td
                 | $ {{ campaign.dailyBudget | number:2 }}
+              td
+                | $ {{ campaign.totalBudget - campaign.spent | number:2 }}
               td
                 | $ {{ campaign.avgCPC | number:2 }}
 
@@ -62,7 +65,43 @@
     .separator
     .row.header
       .col-md-12
-        h3 Campaign Details
+        h3(data-ng-bind="campaignView.name")
+        .btn-group
+          button.glow.left.active Details
+          button.glow.middle Targeting
+          button.glow.right Metrics
+
+    .row.section
+      .col-md-12
+        h4 Campaign Details
+
+    br
+    br
+
+    .row.section
+      .col-md-5.form-sidebar.with-sidebar
+        .form-wrapper
+          .container
+            form
+              .field-box
+                label Description
+                textarea.form-control(row="16", col="4", data-ng-model="campaignView.description")
+              .field-box
+                label Daily Budget
+                .col-md-5
+                  .predefined
+                    span.value $
+                    input.form-control.inline-input(type="text", data-ng-model="campaignView.dailyBudget")
+              .field-box
+                button.btn-glow.primary Save
+
+      .col-md-7
+        h5 Events
+
+    .row.section
+      .separator.small
+      .col-md-12
+        h4 Ads
 
   div(data-ng-if="mode == \"new\"")
     .col-md-8.with-sidebar
