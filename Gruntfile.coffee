@@ -163,6 +163,15 @@ module.exports = (grunt) ->
           dest: "#{buildDir}/ssl"
         ]
 
+    # CSS Minifier
+    cssmin:
+      minify:
+        expand: true
+        cwd: "#{buildDir}/static/css/"
+        src: ["*.css", "!*.min.css", "**/*.css", "!**/*.min.css"]
+        dest: "#{buildDir}/static/css"
+        ext: ".min.css"
+
     # Node server, restarts when it detects changes
     nodemon:
       dev:
@@ -213,6 +222,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-clean"
+  grunt.loadNpmTasks "grunt-contrib-cssmin"
   grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-nodemon"
 
@@ -230,6 +240,7 @@ module.exports = (grunt) ->
     "coffee:client_dev"
     "coffee:client_prod"
     "stylus:full"
+    "cssmin:minify"
   ]
 
   grunt.registerTask "default", [ "full" ]

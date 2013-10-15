@@ -1,5 +1,8 @@
 /* THIS ARE ALL NEW EXTRA ELEMENTS BESIDE TWITTER BOOTSTRAP */
 /* glow btn group */
+.btn-group {
+  margin: 8px 0 0 32px;
+}
 .btn-group.large button.glow {
   padding: 6px 15px;
   font-size: 13px;

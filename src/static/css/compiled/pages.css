@@ -37,8 +37,7 @@
 
 #main-stats .stat .date {
   color: #b4b8bb;
-  font-weight: lighter;
-  font-family: 'Lato', 'Open Sans';
+  font-weight: 400;
   font-style: italic;
   font-size: 13px;
   position: absolute;
@@ -249,6 +248,9 @@
   margin-top: 100px;
   padding-top: 45px;
   box-shadow: inset 0px 3px 4px -1px #fafafa;
+}
+#pad-wrapper .separator.small {
+  margin-top: 20px;
 }
 a:hover {
   cursor: hand;

@@ -31,6 +31,8 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
           # CTR
           list[i].ctr = (list[i].clicks / list[i].impressions) * 100
 
+          if isNaN list[i].ctr then list[i].ctr = 0
+
           # Status
           if list[i].status == 0
             list[i].statusText = "No ads"
@@ -62,7 +64,7 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   ##
   ## View/Edit the campaign. Setup the view data, and change our mode
   ##
-  viewCampaign = (index) ->
+  $scope.viewCampaign = (index) ->
     $scope.campaignView = $scope.campaigns[index]
     $scope.mode = "details"
 
