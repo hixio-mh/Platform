@@ -35,7 +35,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body#page-dashboard
+  body#page-dashboard(data-ng-controller="rootController")
 
     header.navbar.navbar-inverse
       .navbar-header
@@ -46,9 +46,9 @@ html(lang="en", data-ng-app="AdefyDashboard")
         a.navbar-brand(href="/dashboard") Adefy
       ul.nav.navbar-nav.pull-right.hidden-xs
         li
-          a(href="/dashboard/acc/funds") $0.00 Advertising Credit
+          a(href="/dashboard/acc/funds", data-ng-bind="me.acText")
         li
-          a(href="/dashboard/acc/funds") $0.00 Publisher Balance
+          a(href="/dashboard/acc/funds", data-ng-bind="me.pbText")
         li.dropdown
           a(href="javascript:void(0)", data-toggle="dropdown").dropdown-toggle.hidden-xs.hidden-sm
             | My Account
@@ -145,13 +145,15 @@ html(lang="en", data-ng-app="AdefyDashboard")
               span Admin
               i.icon-chevron-down
 
-            ul.submenu(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
+            ul.submenu(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" || tab == \"admin:publishers\" }")
               li(data-ng-class="{ active: tab == \"admin:home\" }")
                 a(href="/dashboard/admin") Dashboard
               li(data-ng-class="{ active: tab == \"admin:users\" }")
                 a(href="/dashboard/admin/users") Users
               li(data-ng-class="{ active: tab == \"admin:invites\" }")
                 a(href="/dashboard/admin/invites") Invites
+              li(data-ng-class="{ active: tab == \"admin:publishers\" }")
+                a(href="/dashboard/admin/publishers") Publishers
 
     .content(data-ng-view="")
 
@@ -209,7 +211,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
         });
 
-        window.AdefyDashboard.run(function($rootScope) {
+        window.AdefyDashboard.run(function($rootScope, $http) {
 
           $rootScope.$on("$routeChangeSuccess", function(e, current, old) {
 
@@ -227,6 +229,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
           });
         });
 
+      script(type="text/javascript", src="/client/dashboard/ctrl/root.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/dashboard.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/apps.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/ads/listing.js")
@@ -240,3 +243,4 @@ html(lang="en", data-ng-app="AdefyDashboard")
         script(type="text/javascript", src="/client/dashboard/ctrl/admin/home.js")
         script(type="text/javascript", src="/client/dashboard/ctrl/admin/invites.js")
         script(type="text/javascript", src="/client/dashboard/ctrl/admin/users.js")
+        script(type="text/javascript", src="/client/dashboard/ctrl/admin/publishers.js")

@@ -12,29 +12,29 @@
 
       .table-wrapper.section
         .row
-            table.table.table-striped.table-hover
-              thead
-                tr
-                  th.col-md-3 Name
-                  th.col-md-2 Type
-                  th.col-md-2 Active
-                  th.col-md-5 Actions
-              tbody
-                tr(data-ng-repeat="(i, ad) in data", data-ng-class="{ first: i == 0 }", data-ng-click="rowClick({{ i }})")
-                  td(data-ng-bind="ad.name")
-                  td Adefy Native
-                  td No
-                  td
-                    a.btn.btn-primary.btn-sm(data-ng-href="{{ ad.edit }}", target="_blank") Edit
-                    a.btn.btn-danger.btn-sm(data-ng-click="deleteAd({{ i }})") Delete
-                tr
-                  td
-                    button.btn-flat.success(data-ng-click="newAdShow()")
-                      span &#43; 
-                      |  New Ad
-                  td
-                  td
-                  td
+          table.table.table-striped.table-hover
+            thead
+              tr
+                th.col-md-3 Name
+                th.col-md-2 Type
+                th.col-md-2 Active
+                th.col-md-5 Actions
+            tbody
+              tr(data-ng-repeat="(i, ad) in data", data-ng-class="{ first: i == 0 }", data-ng-click="rowClick({{ i }})")
+                td(data-ng-bind="ad.name")
+                td Adefy Native
+                td No
+                td
+                  a.btn.btn-primary.btn-sm(data-ng-href="{{ ad.edit }}", target="_blank") Edit
+                  a.btn.btn-danger.btn-sm(data-ng-click="deleteAd({{ i }})") Delete
+              tr
+                td
+                  button.btn-flat.success(data-ng-click="newAdShow()")
+                    span &#43; 
+                    |  New Ad
+                td
+                td
+                td
 
   .col-md-5.form-sidebar(data-ng-if="mode == \"edit\"")
     .row.header

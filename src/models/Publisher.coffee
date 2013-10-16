@@ -20,7 +20,7 @@ exports.createSchema = ->
     # 2 - Approved
     # 3 - Awaiting approval request response
     status: Number
-    approvalMessage: String
+    approvalMessage: [{ msg: String, timestamp: Date }]
 
     # 0 - Android
     # (unsupported) 1 - iOS

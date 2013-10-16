@@ -47,6 +47,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "adminInvites"
     templateUrl: "/views/dashboard/admin:invites"
 
+  $routeProvider.when "/dashboard/admin/publishers",
+    controller: "adminPublishers"
+    templateUrl: "/views/dashboard/admin:publishers"
+
   $routeProvider.otherwise { redirectTo: "/dashboard" }
 
   true

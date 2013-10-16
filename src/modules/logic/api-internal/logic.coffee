@@ -150,8 +150,10 @@ setup = (options, imports, register) ->
     if req.params.action == "create" then createPublisher req, res
     else if req.params.action == "save" then savePublisher req, res
     else if req.params.action == "delete" then deletePublisher req, res
-    else if req.params.action == "get" then getPublishers req, res
+    else if req.params.action == "get" then getPublishers req, res, false
+    else if req.params.action == "all" then getPublishers req, res, true
     else if req.params.action == "approve" then approvePublisher req, res
+    else if req.params.action == "dissaprove" then dissaprovePublisher req, res
     else res.json { error: "Unknown action #{req.params.action}"}
 
   ##
@@ -236,7 +238,8 @@ setup = (options, imports, register) ->
     else if req.query.filter == "all" then _getAllUsers req, res
 
   # Retrieve the user represented by the cookies on the request. Used on
-  # the backend account page
+  # the backend account page, and for rendering advertising credit and
+  # publisher balance
   getUserSelf = (req, res) ->
 
     _username = req.cookies.user.id
@@ -257,6 +260,8 @@ setup = (options, imports, register) ->
         country: user.country
         phone: user.phone
         fax: user.fax
+        publisherBalance: user.publisherBalance
+        advertiserCredit: user.advertiserCredit
 
       res.json ret
 
@@ -314,6 +319,8 @@ setup = (options, imports, register) ->
         user.lname = u.lname
         user.email = u.email
         user.id = u._id
+        user.publisherBalance = u.publisherBalance
+        user.advertiserCredit = u.advertiserCredit
         ret.push user
 
       res.json ret
@@ -755,16 +762,23 @@ setup = (options, imports, register) ->
     , true
 
   # Fetches owned publisher list
-  getPublishers = (req, res) ->
+  #
+  # Admin privileges are required to fetch all
+  getPublishers = (req, res, all) ->
+    if all != true then all = false
+
     verifyAdmin req, res, (admin, user) ->
       if user == undefined then res.json { error: "No such user!" }; return
+      if all and not admin then res.json { error: "Unauthorized!" }; return
 
-      db.fetch "Publisher", { owner: user._id }, (publishers) ->
+      if all then query = {} else query = { owner: user._id }
+
+      db.fetch "Publisher", query, (publishers) ->
 
         ret = []
 
         for p in publishers
-          ret.push
+          pub =
             id: p._id
             name: p.name
             url: p.url
@@ -780,6 +794,10 @@ setup = (options, imports, register) ->
             status: p.status
             approvalMessage: p.approvalMessage
 
+          if admin then pub.username = user.username
+
+          ret.push pub
+
         res.json ret
 
       , ((error) -> res.json { error: error }), true
@@ -788,8 +806,8 @@ setup = (options, imports, register) ->
 
   # Updates publisher status if applicable
   #
-  # We abuse the verifyAdmin method since it fetches the user for us, which we
-  # use to check for ownership. Admins don't get any special treatment here
+  # If we are not an administator, an admin approval is requested. Otherwise,
+  # the publisher is approved directly.
   approvePublisher = (req, res) ->
     if not utility.param req.query.id, res, "Publisher id" then return
 
@@ -804,12 +822,35 @@ setup = (options, imports, register) ->
         if pub[0].status == 0 or pub[0].status == 1
           pub[0].status = 3
           pub[0].save()
+        else if admin and (pub[0].status == 3 or pub[0].status == 1)
+          pub[0].status = 2
+          pub[0].save()
 
         res.json { msg: "OK" }
 
       , ((error) -> res.json { error: error }), true
 
     , true
+
+  # Disapproves the publisher
+  dissaprovePublisher = (req, res) ->
+    if not utility.param req.query.id, res, "Publisher id" then return
+    if not utility.param req.query.msg, res, "Disapproval message" then return
+
+    verifyAdmin req, res, (admin) ->
+
+      db.fetch "Publisher", { _id: req.query.id }, (pub) ->
+        if pub == undefined or pub.length == 0
+          res.json { error: "No such publisher!" }
+          return
+
+        pub.status = 1
+        pub.approvalMessage.push
+          msg: req.query.msg
+          timestamp: new Date().getTime()
+
+        pub.save()
+        res.json { msg: "OK" }
 
   register null, {}
 

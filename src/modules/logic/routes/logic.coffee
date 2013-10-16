@@ -31,6 +31,7 @@ setup = (options, imports, register) ->
     "/dashboard/admin"
     "/dashboard/admin/users"
     "/dashboard/admin/invites"
+    "/dashboard/admin/publishers"
   ]
 
   servePathsGET dashboardPaths, "dashboard/layout.jade"

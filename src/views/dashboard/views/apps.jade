@@ -108,7 +108,7 @@
           div(data-ng-if="appView.status == 1")
             h5.alert.alert-danger.small.tcenter Approval request rejected
             br
-            h4.alert.alert-danger.small(data-ng-bind="appView.approvalMessage")
+            h4.alert.alert-danger.small(data-ng-bind="appView.approvalMessage[appView.approvalMessage.length - 1].msg")
             br
 
           div(data-ng-if="appView.status == 2")
