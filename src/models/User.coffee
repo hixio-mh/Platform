@@ -15,7 +15,6 @@ exports.createSchema = ->
     session: String
     hash: String
     limit: String
-    apikey: String
 
     fname: String
     lname: String

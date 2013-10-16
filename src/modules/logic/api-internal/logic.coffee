@@ -234,7 +234,6 @@ setup = (options, imports, register) ->
         lname: user.lname
         email: user.email
         company: user.company
-        apikey: user.apikey
         address: user.address
         city: user.city
         state: user.state
@@ -249,15 +248,14 @@ setup = (options, imports, register) ->
 
   # Saves both the user signed in, and any user if we are an admin
   #
-  # If we are admin, expect a username and apikey
+  # If we are admin, expect a username
   saveUser = (req, res) ->
     verifyAdmin req, res, (admin) ->
 
       # Query current user
       if admin == false
         query = { username: req.cookies.id, session: req.cookies.sess }
-      else
-        query = { username: req.query.username, apikey: req.query.apikey }
+      else query = { username: req.query.username }
 
       db.fetch "User", query, (user) ->
         if user == undefined or user.length == 0
