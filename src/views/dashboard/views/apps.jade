@@ -1,0 +1,80 @@
+#pad-wrapper
+  div(data-ng-if="mode == \"view\"")
+    .row.header
+      .col-md-3
+        h3 Apps
+        a.below-header(data-ng-click="addApp()", data-ng-if="apps.length == 0") No apps? Add one!
+
+  div(data-ng-if="apps.length > 0 && mode == \"view\"")
+    .table-wrapper.section
+      .row
+        table.table.table-striped.table-hover
+          thead
+            tr
+              th Name
+              th Status
+              th Requests
+              th Impressions
+              th Clicks
+              th CTR
+              th Earnings
+              th Actions
+          tbody
+            tr(data-ng-repeat="(i, pub) in apps")
+              td(data-ng-bind="pub.name")
+
+              td
+                span.label(data-ng-bind="pub.statusText", data-ng-class="pub.statusClass")
+                .spacer
+                span.label(data-ng-bind="pub.activeText", data-ng-class="pub.activeClass")
+
+              td(data-ng-bind="pub.requests")
+              td(data-ng-bind="pub.impressions")
+              td(data-ng-bind="pub.clicks")
+
+              td
+                | {{ pub.ctr | number:2 }}%
+              td
+                | $ {{ pub.earnings | number:2 }}
+              td
+
+  div(data-ng-if="mode == \"new\"")
+    .col-md-12
+      .row.header
+        h3 New Application
+
+      .row.form-wrapper
+        .col-md-8.column
+          .container
+            form(novalidate="novalidate")
+              .field-box(data-ng-class="{ error: !validation.name.valid }")
+                label App Name:
+                .col-md-7
+                  input.form-control(type="text", data-ng-model="newApp.name", required="required")
+                .col-md-7(data-ng-show="!validation.name.valid")
+                  .alert-msg(data-ng-bind="validation.name.error")
+              .field-box
+                label App Type:
+                .col-md-7
+                  input.form-control(type="text", disabled="disabled", value="Android")
+              .field-box
+                label App URL:
+                .col-md-7
+                  input.form-control(type="text", data-ng-model="newApp.url")
+              .field-box
+                label App Category:
+                .col-md-7
+                  .ui-select
+                    select(data-ng-model="newApp.category", required="required")
+                      option(data-ng-repeat="(i, cat) in categories", value="{{ i }}", data-ng-bind="cat")
+              .field-box
+                label Description
+                .col-md-7
+                  textarea.form-control(row="16", col="4", data-ng-model="newApp.description")
+              .field-box
+                label
+                .col-md-4
+                  button.btn-flat.btn-lg.primary(data-ng-click="createAppFinal()") Create
+                  button.btn-flat.btn-lg.white(data-ng-click="cancelAdd()") Cancel
+                .col-md-3(data-ng-if="createAppError.length > 0")
+                  .alert.alert-danger.tcenter(data-ng-bind="createAppError")

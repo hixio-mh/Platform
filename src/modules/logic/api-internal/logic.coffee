@@ -138,6 +138,21 @@ setup = (options, imports, register) ->
     else if req.params.action == "save" then saveCampaign req, res
     else res.json { error: "Unknown action #{req.params.action}" }
 
+  # Publisher manipulation - /logic/publishers/:action
+  #
+  #   /create   createPublisher
+  #   /edit     editPublisher
+  #   /delete   deletePublisher
+  #
+  server.server.get "/logic/publishers/:action", (req, res) ->
+    if not userCheck req, res then return
+
+    if req.params.action == "create" then createPublisher req, res
+    else if req.params.action == "edit" then editPublisher req, res
+    else if req.params.action == "delete" then deletePublisher req, res
+    else if req.params.action == "get" then getPublishers req, res
+    else res.json { error: "Unknown action #{req.params.action}"}
+
   ##
   ## Invite manipulation
   ##
@@ -630,6 +645,81 @@ setup = (options, imports, register) ->
         campaign.remove()
 
         res.json { msg: "OK" }
+
+    , true
+
+  ##
+  ## Publisher manipulation
+  ##
+
+  # Create new publisher on identified user
+  createPublisher = (req, res) ->
+    if not utility.param req.query.name, res, "Application name" then return
+
+    # Validate type
+    if Number(req.query.type) == undefined then type = 0
+    else if Number(req.query.type) == 1 then type = 1
+    else if Number(req.query.type) == 2 then type = 2
+    else type = 0
+
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      newPublisher = db.models().Publisher.getModel()
+        owner: user._id
+        name: String req.query.name
+        type: type
+        url: String req.query.url
+        category: String req.query.category
+        description: String req.query.description
+
+        status: 0
+        active: false
+        apikey: utility.randomString 32
+        impressions: 0
+        clicks: 0
+        requests: 0
+        earnings: 0
+
+      newPublisher.save()
+      res.json { msg: "OK" }
+
+    , true
+
+  # Edit existing publisher, user must either own the publisher or be an admin
+  editPublisher = (req, res) -> res.json { error: "Un-implemented" }
+
+  # Delete publisher, user must either own the publisher or be an admin
+  deletePublisher = (req, res) -> res.json { error: "Un-implemented" }
+
+  # Fetches owned publisher list
+  getPublishers = (req, res) ->
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      db.fetch "Publisher", { owner: user._id }, (publishers) ->
+
+        ret = []
+
+        for p in publishers
+          ret.push
+            id: p._id
+            name: p.name
+            url: p.url
+            description: p.description
+            category: p.category
+            active: p.active
+            apikey: p.apikey
+            type: p.type
+            impressions: p.impressions
+            requests: p.requests
+            clicks: p.clicks
+            earnings: p.earnings
+            status: p.status
+
+        res.json ret
+
+      , ((error) -> res.json { error: error }), true
 
     , true
 

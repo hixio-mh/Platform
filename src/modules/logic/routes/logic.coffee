@@ -18,6 +18,8 @@ setup = (options, imports, register) ->
   dashboardPaths = [
     "/dashboard"
 
+    "/dashboard/apps"
+
     "/dashboard/ads/listing"
     "/dashboard/ads/campaigns"
 

@@ -6,6 +6,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "home"
     templateUrl: "/views/dashboard/home"
 
+  $routeProvider.when "/dashboard/apps",
+    controller: "apps"
+    templateUrl: "/views/dashboard/apps"
+
   $routeProvider.when "/dashboard/ads/listing",
     controller: "adsListing"
     templateUrl: "/views/dashboard/ads:listing"
