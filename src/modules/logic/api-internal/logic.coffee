@@ -591,7 +591,7 @@ setup = (options, imports, register) ->
 
           # Make sure we aren't setting a value that doesn't exist, or one
           # that doesn't match our expected pre value
-          if String(campaign[diff.name]) != diff.pre
+          if String(campaign[diff.name]) == diff.pre
 
             # Figure out target based on what is being saved
             # For now, no target. Sneaky sneaky.
@@ -664,6 +664,9 @@ setup = (options, imports, register) ->
 
     verifyAdmin req, res, (admin, user) ->
       if user == undefined then res.json { error: "No such user!" }; return
+
+      req.query.url = req.query.url || ""
+      req.query.description = req.query.description || ""
 
       newPublisher = db.models().Publisher.getModel()
         owner: user._id
