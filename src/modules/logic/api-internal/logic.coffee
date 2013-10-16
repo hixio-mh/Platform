@@ -141,16 +141,17 @@ setup = (options, imports, register) ->
   # Publisher manipulation - /logic/publishers/:action
   #
   #   /create   createPublisher
-  #   /edit     editPublisher
+  #   /save     savePublisher
   #   /delete   deletePublisher
   #
   server.server.get "/logic/publishers/:action", (req, res) ->
     if not userCheck req, res then return
 
     if req.params.action == "create" then createPublisher req, res
-    else if req.params.action == "edit" then editPublisher req, res
+    else if req.params.action == "save" then savePublisher req, res
     else if req.params.action == "delete" then deletePublisher req, res
     else if req.params.action == "get" then getPublishers req, res
+    else if req.params.action == "approve" then approvePublisher req, res
     else res.json { error: "Unknown action #{req.params.action}"}
 
   ##
@@ -689,11 +690,69 @@ setup = (options, imports, register) ->
 
     , true
 
-  # Edit existing publisher, user must either own the publisher or be an admin
-  editPublisher = (req, res) -> res.json { error: "Un-implemented" }
+  # Save edits to existing publisher, user must either own the publisher or be
+  # an admin
+  savePublisher = (req, res) ->
+    if not utility.param req.query.id, res, "Publisher id" then return
+    if not utility.param req.query.mod, res, "Modifications" then return
+
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      # Fetch publisher
+      db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
+
+        if publisher == undefined or publisher.length == 0
+          res.json { error: "No such publisher!" }
+          return
+
+        if not admin
+          if publisher.owner != user._id
+            res.json { error: "Unauthorized!" }
+            return
+
+        # Go through and apply changes
+        mod = JSON.parse req.query.mod
+        affected = []
+
+        for diff in mod
+
+          # Make sure we aren't setting a value that doesn't exist, or one
+          # that doesn't match our expected pre value
+          if String(publisher[diff.name]) == String diff.pre
+            publisher[diff.name] = diff.post
+
+        publisher.save()
+        res.json { msg: "OK" }
+
+    , true
 
   # Delete publisher, user must either own the publisher or be an admin
-  deletePublisher = (req, res) -> res.json { error: "Un-implemented" }
+  deletePublisher = (req, res) ->
+    if not utility.param req.query.id, res, "Publisher id" then return
+
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      # Fetch campaign
+      db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
+
+        if publisher == undefined or publisher.length == 0
+          res.json { error: "No such campaign!" }
+          return
+
+        if not admin
+          if publisher.owner != user._id
+            res.json { error: "Unauthorized!" }
+            return
+
+        # Assuming we've gotten to this point, we are authorized to perform
+        # the delete
+        publisher.remove()
+
+        res.json { msg: "OK" }
+
+    , true
 
   # Fetches owned publisher list
   getPublishers = (req, res) ->
@@ -719,8 +778,34 @@ setup = (options, imports, register) ->
             clicks: p.clicks
             earnings: p.earnings
             status: p.status
+            approvalMessage: p.approvalMessage
 
         res.json ret
+
+      , ((error) -> res.json { error: error }), true
+
+    , true
+
+  # Updates publisher status if applicable
+  #
+  # We abuse the verifyAdmin method since it fetches the user for us, which we
+  # use to check for ownership. Admins don't get any special treatment here
+  approvePublisher = (req, res) ->
+    if not utility.param req.query.id, res, "Publisher id" then return
+
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      db.fetch "Publisher", { _id: req.query.id, owner: user._id }, (pub) ->
+        if pub == undefined or pub.length == 0
+          res.json { error: "No such publication" }
+          return
+
+        if pub[0].status == 0 or pub[0].status == 1
+          pub[0].status = 3
+          pub[0].save()
+
+        res.json { msg: "OK" }
 
       , ((error) -> res.json { error: error }), true
 

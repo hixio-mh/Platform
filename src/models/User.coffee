@@ -36,6 +36,9 @@ exports.createSchema = ->
     # 7 - normal user
     permissions: Number
 
+    publisherBalance: Number
+    advertiserCredit: Number
+
   model = null
 
   schema.pre "save", (next) ->

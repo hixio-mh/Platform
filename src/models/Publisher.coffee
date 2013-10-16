@@ -18,7 +18,9 @@ exports.createSchema = ->
     # 0 - Awaiting approval request
     # 1 - Rejected
     # 2 - Approved
+    # 3 - Awaiting approval request response
     status: Number
+    approvalMessage: String
 
     # 0 - Android
     # (unsupported) 1 - iOS
