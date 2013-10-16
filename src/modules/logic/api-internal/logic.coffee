@@ -390,35 +390,25 @@ setup = (options, imports, register) ->
 
   # Expects req.cookies.user to be valid
   _getAdByUser = (req, res) ->
-
-    # Fetch user by session
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-
       if not userValid user, res then return
 
-      # Bail if attempting to fetch an un-owned ad, and we are not the
-      # administrator
-      verifyAdmin req, res, (admin) ->
-        if req.cookies.user.id != user.username and not admin then return
+      # Fetch data and reply
+      db.fetch "Ad", { owner: user._id }, (data) ->
 
-        # Fetch data and reply
-        db.fetch "Ad", { owner: user._id }, (data) ->
+        ret = []
 
-          ret = []
+        if data.length > 0
+          for a in data
+            ad = {}
+            ad.name = a.name
+            ad.id = a._id
 
-          if data.length > 0
-            for a in data
-              ad = {}
-              ad.name = a.name
-              ad.id = a._id
+            ret.push ad
 
-              ret.push ad
+        res.json ret
 
-          res.json ret
-
-        , ((err) -> res.json { error: err }), true # db fetch Ad
-      , true # verifyAdmin (passive)
-    , ((err) -> res.json { error: err }), true # db fetch User
+      , ((err) -> res.json { error: err }), true # db fetch Ad
 
   ##
   ## Campaign manipulation
@@ -443,7 +433,7 @@ setup = (options, imports, register) ->
       if not userValid user, res then return
 
       # Create new campaign
-      newAd = db.models().Campaign.getModel()
+      newCampaign = db.models().Campaign.getModel()
         owner: user._id
         name: req.query.name
         description: req.query.description
@@ -462,24 +452,17 @@ setup = (options, imports, register) ->
         spent: 0
 
       # Pass placeholder for daily if none provided
-      if newAd.dailyBudget.length == 0 then newAd.dailyBudget = "-"
+      if newCampaign.dailyBudget.length == 0 then newCampaign.dailyBudget = "-"
 
-      newAd.save()
+      newCampaign.save()
       res.json { msg: "OK" }
 
   # Fetch campaigns owned by the user identified by the cookie
   fetchCampaigns = (req, res) ->
-
-    query =
-      username: req.cookies.user.id
-      session: req.cookies.user.sess
-
-    db.fetch "User", query, (user) ->
-      if not userValid user, res then return
+    verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
 
       db.fetch "Campaign", { owner: user._id }, (campaigns) ->
-
-        if campaigns not instanceof Array then campaigns = [ campaigns ]
 
         ret = []
 
@@ -506,8 +489,8 @@ setup = (options, imports, register) ->
 
         res.json ret
 
-      , (err) -> res.json { error: err}
-      , true
+      , ((err) -> res.json { error: err }), true
+    , true
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign
@@ -542,6 +525,7 @@ setup = (options, imports, register) ->
       , ((error) -> res.json { error: error }), true
 
     verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
 
       # If admin, fetch
       if admin then fetchAndReplyWithEvents res, req.query.id
@@ -570,6 +554,7 @@ setup = (options, imports, register) ->
     if not utility.param req.query.mod, res, "Modifications" then return
 
     verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
 
       # Fetch campaign
       db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
@@ -626,6 +611,7 @@ setup = (options, imports, register) ->
     if not utility.param req.query.id, res, "Campaign id" then return
 
     verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
 
       # Fetch campaign
       db.fetch "Campaign", { _id: req.query.id }, (campaign) ->

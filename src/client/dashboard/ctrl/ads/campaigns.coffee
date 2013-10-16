@@ -69,10 +69,11 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
       if result then $scope.$apply ->
         c = $scope.campaigns[index]
-        alert JSON.stringify c
         $http.get("/logic/campaigns/delete?id=#{c.id}").success (result) ->
           if result.error != undefined then alert result.error
           else $scope.campaigns.splice index, 1
+
+          $scope.mode = "listing"
 
   ##
   ## View/Edit the campaign. Setup the view data, and change our mode
@@ -166,23 +167,29 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
 
     $scope.validation =
       name:
-        valid: true
+        valid: false
         error: ""
+        name: "Campaign name"
       pricing:
-        valid: true
+        valid: false
         error: ""
+        name: "Campaign pricing"
       totalBudget:
-        valid: true
+        valid: false
         error: ""
+        name: "Total budget"
       dailyBudget:
-        valid: true
+        valid: false
         error: ""
+        name: "Daily budget"
       bid:
-        valid: true
+        valid: false
         error: ""
+        name: "bid"
       bidMax:
-        valid: true
+        valid: false
         error: ""
+        name: "Maximum bid"
 
     # Select 2 filters
     $scope.select2Filters =
@@ -266,6 +273,13 @@ window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
   # over from select2Filters, since tcountry/tplatform/etc models are bound
   # in that object for Select2 to work, not in $scope.campaign.
   $scope.createCampaignSubmit = ->
+
+    # Ensure everything is valid. If not, bail
+    for key, val of $scope.validation
+      if not val.valid
+        $scope.createCampaignError = "#{val.name} not valid"
+        setTimeout (-> $scope.$apply -> $scope.createCampaignError = ""), 5000
+        return
 
     # Copy values
     $scope.campaign.tcountry = $scope.select2Filters.tcountry

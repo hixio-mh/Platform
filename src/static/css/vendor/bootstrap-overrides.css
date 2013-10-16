@@ -43,7 +43,9 @@ h1,h2,h3,h4,h5,h6{
 .alert-danger [class*=" icon-"] {
 	color: #d5393e;
 }
-
+.alert {
+	padding: 8px;
+}
 
 /* code*/
 code {
