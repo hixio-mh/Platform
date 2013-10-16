@@ -2,14 +2,13 @@
   div(data-ng-if="data.length == 0 && mode != \"new\"")
     .row.header
       .col-md-12
-        h3 You don't have any ads...
-    .row.section
-      button.btn.btn-primary(data-ng-click="newAdShow()") Create one!
+        h3 Ads
+        a.below-header(data-ng-click="newAdShow()") No ads? Create one!
 
   div(data-ng-if="data.length > 0")
     .col-md-7.with-sidebar
       .row.header
-        h3 Ad Listing
+        h3 Ads
 
       .table-wrapper.section
         .row

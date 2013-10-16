@@ -1,13 +1,11 @@
 #pad-wrapper
   div(data-ng-if="mode == \"listing\" || mode == \"details\"")
     .row.header
-      .col-md-3
+      .col-md-12
         h3 Campaigns
-      .col-md-3(data-ng-if="campaigns.length == 0")
-        .alert.alert-success
-          | No campaigns? 
-          a.alert-link(data-ng-click="createCampaign()") Create one!
+        a.below-header(data-ng-click="createCampaign()", data-ng-if="campaigns.length == 0") No campaigns? Create one!
 
+  div(data-ng-if="campaigns.length > 0 && (mode == \"listing\" || mode == \"details\")")
     .table-wrapper.section
       .row
         table.table.table-striped.table-hover
@@ -24,7 +22,7 @@
               th Conversions
               th CTR
               th Cost
-              th Action
+              th Actions
           tbody
             tr(data-ng-repeat="(i, campaign) in campaigns", data-ng-click="viewCampaign({{ i }})")
               td(data-ng-bind="campaign.name")
@@ -204,7 +202,7 @@
           #step1.step-pane.active
             .row.form-wrapper
               .col-md-12
-                form
+                form(novalidate="novalidate")
                   .field-box(data-ng-class="{ error: !validation.name.valid }")
                     label Name
                     .col-md-7
@@ -225,8 +223,7 @@
           #step2.step-pane
             .row.form-wrapper
               .col-md-12
-                form
-
+                form(novalidate="novalidate")
                   .field-box(data-ng-class="{ error: !validation.pricing.valid }")
                     label Pricing
                     .col-md-7
@@ -284,7 +281,7 @@
           #step3.step-pane
             .row.form-wrapper
               .col-md-12
-                form
+                form(novalidate="novalidate")
                   .field-box
                     label Geographical Targeting
                     .col-md-3
@@ -424,7 +421,7 @@
                 i.icon-chevron-right
               button.btn-flat.success.btn-finish(type="button", data-ng-click="createCampaignSubmit()") Create Campaign
             .col-md-3(data-ng-if="createCampaignError.length > 0")
-              .alert.alert-danger(data-ng-bind="createCampaignError")
+              .alert.alert-danger.tcenter(data-ng-bind="createCampaignError")
 
     .col-md-4.form-sidebar
       .row.header

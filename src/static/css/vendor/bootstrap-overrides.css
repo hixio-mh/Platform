@@ -219,7 +219,7 @@ textarea::-webkit-input-placeholder {
 .navbar-inverse .nav > li > a {
 	padding: 13px 15px 8px;
 	border-left: 1px solid #0099cc;
-	color: #f3f3f3;
+	color: white;
 	outline: 0px;
 	height: 46px;
 	transition: background .1s linear;
@@ -348,4 +348,11 @@ table th span.line{
   }
 }
 
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+	background-color: #0099cc;
+}
 
+.navbar-inverse .navbar-toggle {
+	border-color: #0099cc;
+}
