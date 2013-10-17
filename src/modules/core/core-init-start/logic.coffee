@@ -114,9 +114,10 @@ setup = (options, imports, register) ->
     __dirname + "/../../../views/",  # JADE Views
     __dirname + "/../../../static/", # Static files
     port,
-    false,
+    config.secure,
     key: "#{__dirname}/../../../#{config['secure-key']}"
     cert: "#{__dirname}/../../../#{config['secure-cert']}"
+    ca: "#{__dirname}/../../../#{config['secure-ca']}"
 
   if config.secure
     sockets.secure = true
