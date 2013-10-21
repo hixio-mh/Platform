@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "dashPublisher", ($scope, $http, $route) ->

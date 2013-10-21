@@ -16,7 +16,10 @@ setup = (options, imports, register) ->
 
   # Standard user dashboard
   dashboardPaths = [
+
     "/dashboard"
+    "/dashboard/home/advertiser"
+    "/dashboard/home/publisher"
 
     "/dashboard/apps"
 

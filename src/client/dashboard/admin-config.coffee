@@ -3,9 +3,13 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
-  $routeProvider.when "/dashboard",
-    controller: "home"
-    templateUrl: "/views/dashboard/home"
+  $routeProvider.when "/dashboard/home/publisher",
+    controller: "dashPublisher"
+    templateUrl: "/views/dashboard/home:publisher"
+
+  $routeProvider.when "/dashboard/home/advertiser",
+    controller: "dashAdvertiser"
+    templateUrl: "/views/dashboard/home:advertiser"
 
   $routeProvider.when "/dashboard/apps",
     controller: "apps"
@@ -51,6 +55,6 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "adminPublishers"
     templateUrl: "/views/dashboard/admin:publishers"
 
-  $routeProvider.otherwise { redirectTo: "/dashboard" }
+  $routeProvider.otherwise { redirectTo: "/dashboard/home/publisher" }
 
   true

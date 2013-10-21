@@ -43,7 +43,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.navbar-brand(href="/dashboard") Adefy
+        a.navbar-brand(href="/dashboard/home/publisher") Adefy
       ul.nav.navbar-nav.pull-right.hidden-xs
         li
           a(href="/dashboard/acc/funds", data-ng-bind="me.acText")
@@ -69,13 +69,20 @@ html(lang="en", data-ng-app="AdefyDashboard")
     #sidebar-nav
       ul#dashboard-menu
 
-        li(data-ng-class="{ active: tab == \"home\" }")
-          .pointer(data-ng-if="tab == \"home\"")
+        li(data-ng-class="{ active: tab == \"home:publisher\" || tab == \"home:advertiser\" }")
+          .pointer(data-ng-if="tab == \"home:publisher\" || tab == \"home:advertiser\"")
             .arrow
             .arrow_border
-          a(href="/dashboard")
+          a(href="/dashboard/home/publisher")
             i.icon-home
             span Dashboard
+            i.icon-chevron-down
+
+          ul.submenu(data-ng-class="{ active: tab == \"home:publisher\" || tab == \"home:advertiser\" }")
+            li(data-ng-class="{ active: tab == \"home:publisher\" }")
+              a(href="/dashboard/home/publisher") Publisher Dashboard
+            li(data-ng-class="{ active: tab == \"home:advertiser\" }")
+              a(href="/dashboard/home/advertiser") Advertiser Dashboard
 
         li(data-ng-class="{ active: tab == \"reporting\" }")
           .pointer(data-ng-if="tab == \"reporting\"")
@@ -230,7 +237,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
         });
 
       script(type="text/javascript", src="/client/dashboard/ctrl/root.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/dashboard.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/dashAdvertiser.js")
+      script(type="text/javascript", src="/client/dashboard/ctrl/dashPublisher.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/apps.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/ads/listing.js")
       script(type="text/javascript", src="/client/dashboard/ctrl/ads/campaigns.js")

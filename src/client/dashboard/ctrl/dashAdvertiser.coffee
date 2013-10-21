@@ -1,0 +1,1 @@
+window.AdefyDashboard.controller "dashAdvertiser", ($scope, $http, $route) ->
