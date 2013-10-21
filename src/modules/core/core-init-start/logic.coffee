@@ -43,22 +43,6 @@ setup = (options, imports, register) ->
     "/api/r"
   ]
 
-  # "/logout",
-  # "/views/admin/",
-  # "/views/dashboard/",
-
-  # "/admin",
-  # "/admin/users",
-  # "/admin/invites",
-
-  # "/dashboard",
-
-  # "/api/user/get/",
-  # "/api/user/all",
-  # "/api/invite/all"
-  # "/api/ads/get/user"
-  # "/api/ads/create"
-
   notWhenAuthorized = [
     "/login"
     "/register"

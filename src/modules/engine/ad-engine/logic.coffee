@@ -1,8 +1,8 @@
 spew = require "spew"
-crypto = require "crypto"
+admZip = require "adm-zip"
 
 ##
-## Public ad-request endpoint
+## Handles ad packaging and fetching
 ##
 setup = (options, imports, register) ->
 
@@ -10,8 +10,6 @@ setup = (options, imports, register) ->
   db = imports["line-mongodb"]
   auth = imports["line-userauth"]
   utility = imports["logic-utility"]
-
-  register null, {}
 
   server.server.get "/api/r", (req, res) -> adRequest req.query, res
   server.server.post "/api/r", (req, res) -> adRequest req.body, res
@@ -26,5 +24,15 @@ setup = (options, imports, register) ->
     res.sendfile "#{args.id}.zip",
       root: "#{__dirname}/../../../static/ads/"
 
+  # Requests are routed here from elsewhere. Regardless of the origin, we reply
+  # with a packaged ad ready for rendering by our engine.
+  #
+  # Targeting happens elsewhere! As does live-ad enabling!
+  fetch = (req, res) ->
+
+  register null,
+
+    "ad-engine":
+      fetch: fetch
 
 module.exports = setup
