@@ -90,20 +90,23 @@ setup = (options, imports, register) ->
         res.redirect "/login"
     else next() # Page doesn't need auth
 
-  if config.secure then port = config["port-https"]
-  else port = config["port-http"]
+  _secure = config["modes"][config["mode"]].secure
+  _portHTTP = config["modes"][config["mode"]]["port-http"]
+  _postHTTPS = config["modes"][config["mode"]]["port-https"]
+
+  if _secure then port = _postHTTPS else port = _portHTTP
 
   # Initialize Express server
   server.setup \
     __dirname + "/../../../views/",  # JADE Views
     __dirname + "/../../../static/", # Static files
     port,
-    config.secure,
+    _secure,
     key: "#{__dirname}/../../../#{config['secure-key']}"
     cert: "#{__dirname}/../../../#{config['secure-cert']}"
     ca: "#{__dirname}/../../../#{config['secure-ca']}"
 
-  if config.secure
+  if _secure
     sockets.secure = true
     sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
     sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
@@ -115,8 +118,8 @@ setup = (options, imports, register) ->
       domain = config["modes"][config["mode"]]["domain"]
       res.status(403).redirect "https://#{domain}#{req.url}"
 
-    httpForward.listen config["port-http"]
-    spew.init "HTTP -> HTTPS redirect on port #{config['port-http']}"
+    httpForward.listen _portHTTP
+    spew.init "HTTP -> HTTPS redirect on port #{_portHTTP}"
 
   register null, {}
 

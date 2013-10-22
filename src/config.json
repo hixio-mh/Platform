@@ -1,26 +1,44 @@
 {
 	"appname": "Adefy-Cloud",
 	"loglevel": 10,
-	"mode": "debug",
-	"domain": "localhost",
-	"port-http": 8080,
-	"port-https": 8443,
+	"mode": "development",
 
 	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
 	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
 	"admin": "cris.mihalache@spectrumit.eu",
 
 	"modes": {
-		"debug": {
+		"development": {
 			"log-to-server": false,
 			"catch-critical": false,
 			"socket-log-level": 3,
-			"domain": "app.adefy.eu"
+
+			"secure": false,
+			"port-http": 8080,
+			"port-https": 8443,
+
+			"domain": "localhost"
 		},
-		"release": {
+		"staging": {
+			"log-to-server": false,
+			"catch-critical": false,
+			"socket-log-level": 3,
+
+			"secure": false,
+			"port-http": 8080,
+			"port-https": 8443,
+
+			"domain": "staging-adefy.spectrumit.eu"
+		},
+		"production": {
 			"log-to-server": false,
 			"catch-critical": true,
 			"socket-log-level": 1,
+
+			"secure": true,
+			"port-http": 8080,
+			"port-https": 8443,
+
 			"domain": "app.adefy.eu"
 		}
 	},
@@ -28,7 +46,6 @@
 	"logfile": "log",
 	"snapshot": ".saved_state.json",
 
-	"secure": true,
 	"secure-key": "ssl/adefy.key",
 	"secure-cert": "ssl/adefy.eu.crt",
 	"secure-ca": "ssl/gd_bundle.crt",
