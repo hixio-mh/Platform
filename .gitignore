@@ -1,3 +1,4 @@
 build/
 node_modules/
-sftp-config.jsonsrc/config.json
+sftp-config.json
+src/config.json
