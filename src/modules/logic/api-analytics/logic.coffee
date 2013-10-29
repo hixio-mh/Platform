@@ -72,9 +72,9 @@ setup = (options, imports, register) ->
           # Figure out week we are in
           created = new Date Date.parse(@_id.getTimestamp())
 
-          if created.getDay() < 8 then week = 0
-          else if created.getDay() < 15 then week = 1
-          else if created.getDay() < 22 then week = 2
+          if created.getDate() < 8 then week = 0
+          else if created.getDate() < 15 then week = 1
+          else if created.getDate() < 22 then week = 2
           else week = 3
 
           # We return a key representing our creation span, and a value
@@ -99,9 +99,9 @@ setup = (options, imports, register) ->
           # Figure out week we are in
           created = new Date Date.parse(@_id.getTimestamp())
 
-          if created.getDay() < 8 then week = 0
-          else if created.getDay() < 15 then week = 1
-          else if created.getDay() < 22 then week = 2
+          if created.getDate() < 8 then week = 0
+          else if created.getDate() < 15 then week = 1
+          else if created.getDate() < 22 then week = 2
           else week = 3
 
           emit "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}", 1
