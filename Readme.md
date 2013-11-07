@@ -1,4 +1,4 @@
-Adefy Cloud [ http://cloud.adefy.eu ]
+Adefy Platform
 =====================================
 
 Cloud interface and customer backend for Adefy. This repo contains the site as
