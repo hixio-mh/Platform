@@ -28,7 +28,7 @@
 			"port-http": 43342,
 			"port-https": 43343,
 
-			"domain": "staging-adefy.spectrumit.eu"
+			"domain": "staging.adefy.eu"
 		},
 		"production": {
 			"log-to-server": false,
