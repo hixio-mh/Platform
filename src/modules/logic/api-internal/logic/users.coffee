@@ -12,18 +12,21 @@ module.exports = (db, utility) ->
   delete: (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
-    db.fetch "User", { _id: req.query.id }, (user) ->
-      if user.length = 0 then res.json { error: "No such user" }
-      else
+    utility.verifyAdmin req, res, (admin) ->
+      if not admin then return
 
-        if req.cookies.user.sess == user.session
-          res.json { error: "You can't delete yourself!" }
-          return
+      db.fetch "User", { _id: req.query.id }, (user) ->
+        if user.length = 0 then res.json { error: "No such user" }
+        else
 
-        spew.info "Deleted user #{user.username}"
+          if req.cookies.user.sess == user.session
+            res.json { error: "You can't delete yourself!" }
+            return
 
-        user.remove()
-        res.json { msg: "OK" }
+          spew.info "Deleted user #{user.username}"
+
+          user.remove()
+          res.json { msg: "OK" }
 
   # Retrieve user, expects {filter}
   #
@@ -32,50 +35,53 @@ module.exports = (db, utility) ->
   get: (req, res) ->
     if not utility.param req.query.filter, res, "Filter" then return
 
-    if req.query.filter == "all"
+    utility.verifyAdmin req, res, (admin) ->
+      if not admin then return
 
-      # Fetch wide, result always an array
-      db.fetch "User", {}, (data) ->
+      if req.query.filter == "all"
 
-        # TODO: Figure out why result is not wide
-        if data not instanceof Array then data = [ data ]
+        # Fetch wide, result always an array
+        db.fetch "User", {}, (data) ->
 
-        # Data fetched, send only what is needed
-        ret = []
+          # TODO: Figure out why result is not wide
+          if data not instanceof Array then data = [ data ]
 
-        for u in data
-          user = {}
-          user.username = u.username
-          user.fname = u.fname
-          user.lname = u.lname
-          user.email = u.email
-          user.id = u._id
-          user.publisherBalance = u.publisherBalance
-          user.advertiserCredit = u.advertiserCredit
-          ret.push user
+          # Data fetched, send only what is needed
+          ret = []
 
-        res.json ret
+          for u in data
+            user = {}
+            user.username = u.username
+            user.fname = u.fname
+            user.lname = u.lname
+            user.email = u.email
+            user.id = u._id
+            user.publisherBalance = u.publisherBalance
+            user.advertiserCredit = u.advertiserCredit
+            ret.push user
 
-      , (err) -> res.json { error: err }
-      , true
+          res.json ret
 
-    else if req.query.filter == "username"
-      if not utility.param req.params.username, res, "Username" then return
+        , (err) -> res.json { error: err }
+        , true
 
-      # TODO: Sanitize
+      else if req.query.filter == "username"
+        if not utility.param req.params.username, res, "Username" then return
 
-      # Fetch wide, result always an array
-      db.fetch "User", { username: req.params.username }, (user) ->
-        if not utility.verifyDBResponse user, res, "User" then return
+        # TODO: Sanitize
 
-        # Data fetched, send only what is needed
-        ret = {}
-        ret.username = user.username
-        ret.fname = user.fname
-        ret.lname = user.lname
-        ret.email = user.email
+        # Fetch wide, result always an array
+        db.fetch "User", { username: req.params.username }, (user) ->
+          if not utility.verifyDBResponse user, res, "User" then return
 
-        res.json ret
+          # Data fetched, send only what is needed
+          ret = {}
+          ret.username = user.username
+          ret.fname = user.fname
+          ret.lname = user.lname
+          ret.email = user.email
+
+          res.json ret
 
   # Retrieve the user represented by the cookies on the request. Used on
   # the backend account page, and for rendering advertising credit and
