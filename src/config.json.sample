@@ -24,11 +24,11 @@
 			"catch-critical": false,
 			"socket-log-level": 3,
 
-			"secure": false,
+			"secure": true,
 			"port-http": 43342,
 			"port-https": 43343,
 
-			"domain": "staging.adefy.eu"
+			"domain": "staging.adefy.eu:43343"
 		},
 		"production": {
 			"log-to-server": false,
