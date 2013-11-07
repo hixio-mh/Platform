@@ -1,6 +1,8 @@
 spew = require "spew"
 crypto = require "crypto"
 
+methods = require "./methods.js"
+
 ##
 ## Private API (locked down by core-init-start)
 ##
@@ -59,16 +61,20 @@ setup = (options, imports, register) ->
       res.json { error: "Invalid key" }
       return
 
-    invite = db.models().Invite.getModel()
-      email: req.query.email
-      code: utility.randomString 32
+    email = req.query.email
 
-    invite.save()
+    # Register user to our MailChimp list, continue in callback
+    methods.sendInviteToMailChimp email, ->
 
-    if req.query.key == "WtwkqLBTIMwslKnc"
-      res.json { msg: "Added" }
-    else if req.query.key == "T13S7UESiorFUWMI"
-      res.json { email: invite.email, code: invite.code, id: invite._id }
+      # Save invite in db
+      invite = methods.createInvite db, email, utility.randomString 32
+
+      if req.query.key == "WtwkqLBTIMwslKnc" then res.json { msg: "Added" }
+      else if req.query.key == "T13S7UESiorFUWMI"
+        res.json { email: email, code: invite.code, id: invite._id }
+
+    # Error callback
+    , (error) -> res.json { error: error }
 
   # Invite manipulation - /logic/invite/:action
   #
