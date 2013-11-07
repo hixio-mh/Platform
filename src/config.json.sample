@@ -25,8 +25,8 @@
 			"socket-log-level": 3,
 
 			"secure": false,
-			"port-http": 8080,
-			"port-https": 8443,
+			"port-http": 43342,
+			"port-https": 43343,
 
 			"domain": "staging-adefy.spectrumit.eu"
 		},
