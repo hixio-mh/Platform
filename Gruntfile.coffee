@@ -33,6 +33,9 @@ module.exports = (grunt) ->
     config.mode = mode
     fs.writeFileSync "#{__dirname}/#{srcDir}config.json", JSON.stringify config
 
+  # Generate default config
+  genConfig "development"
+
   # Source paths relative to srcDir/
   modelSrc = [ "models/*.coffee" ]
   moduleSrc = [
