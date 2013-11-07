@@ -5,7 +5,7 @@ spew = require "spew"
 
 module.exports = (db, utility) ->
 
-  # Create an ad, expects {name} in url and req.cookies.user to be valid
+  # Create an ad, expects "name" in url and req.cookies.user to be valid
   #
   # @param [Object] req request
   # @param [Object] res response
@@ -31,7 +31,10 @@ module.exports = (db, utility) ->
         spew.info "Created new ad '#{req.query.name}' for #{user.username}"
         res.json { ad: { id: newAd._id, name: newAd.name }}
 
-  # Delete an ad, expects {id} in url and req.cookies.user to be valid
+  # Delete an ad, expects "id" in url and req.cookies.user to be valid
+  #
+  # @param [Object] req request
+  # @param [Object] res response
   delete: (req, res) ->
     if not utility.param req.query.id, res, "Ad id" then return
 
@@ -60,31 +63,35 @@ module.exports = (db, utility) ->
       , true
 
   # Main GET method, expects {filter}
+  #
+  # Currently only a filter of "user" is supported, returning all ads
+  # owned by a user in an array, with "name" and "id" keys.
+  #
+  # @param [Object] req request
+  # @param [Object] res response
   get: (req, res) ->
     if not utility.param req.query.filter, res, "Filter" then return
 
-    if req.query.filter == "user" then _getAdByUser db, utility, req, res
+    if req.query.filter == "user"
+      db.fetch "User", { session: req.cookies.user.sess }, (user) ->
+
+        if not utility.verifyDBResponse user, res, "User" then return
+
+        # Fetch data and reply
+        db.fetch "Ad", { owner: user._id }, (data) ->
+
+          ret = []
+
+          if data.length > 0
+            for a in data
+              ad = {}
+              ad.name = a.name
+              ad.id = a._id
+
+              ret.push ad
+
+          res.json ret
+
+        , ((err) -> res.json { error: err }), true # db fetch Ad
+
     else res.json { error: "Invalid filter" }
-
-# Expects req.cookies.user to be valid
-_getAdByUser = (db, utility, req, res) ->
-  db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-
-    if not utility.verifyDBResponse user, res, "User" then return
-
-    # Fetch data and reply
-    db.fetch "Ad", { owner: user._id }, (data) ->
-
-      ret = []
-
-      if data.length > 0
-        for a in data
-          ad = {}
-          ad.name = a.name
-          ad.id = a._id
-
-          ret.push ad
-
-      res.json ret
-
-    , ((err) -> res.json { error: err }), true # db fetch Ad

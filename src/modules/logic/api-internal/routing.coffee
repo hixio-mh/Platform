@@ -1,6 +1,3 @@
-spew = require "spew"
-crypto = require "crypto"
-
 ##
 ## Private API (locked down by core-init-start)
 ##
@@ -8,7 +5,6 @@ setup = (options, imports, register) ->
 
   server = imports["line-express"]
   db = imports["line-mongodb"]
-  auth = imports["line-userauth"]
   utility = imports["logic-utility"]
 
   publishers = require("./logic/publishers.js") db, utility
@@ -41,9 +37,11 @@ setup = (options, imports, register) ->
     # Error callback
     , (error) -> res.json { error: error }
 
-  # Invite manipulation - /logic/invite/:action
+  # Invite manipulation [admin only] - /logic/invite/:action
   #
-  #   /get      getInvite
+  #   /get      fetch all invites
+  #   /update   update a single invite
+  #   /delete   delete an invite
   #
   # admin only
   server.server.get "/logic/invite/:action", (req, res) ->
@@ -57,7 +55,10 @@ setup = (options, imports, register) ->
 
   # User manipulation - /logic/user/:action
   #
-  #   /get      getUser
+  #   /get      [admin-only] fetch a single, or all users
+  #   /delete   [admin-only] delete a single user
+  #   /self     fetch own user information
+  #   /save     save a single user
   #
   # Some routes are admin only
   server.server.get "/logic/user/:action", (req, res) ->
@@ -66,15 +67,8 @@ setup = (options, imports, register) ->
     action = req.params.action
 
     # Admin-only
-    if action == "get"
-      utility.verifyAdmin req, res, (admin) ->
-        if not admin then return else users.get req, res
-
-    # Admin-only
-    else if action == "delete"
-      utility.verifyAdmin req, res, (admin) ->
-        if not admin then return else users.delete req, res
-
+    if action == "get" then users.get req, res
+    else if action == "delete" then users.delete req, res
     else if action == "self" then users.getSelf req, res
     else if action == "save" then users.save req, res
 
@@ -82,9 +76,9 @@ setup = (options, imports, register) ->
 
   # Ad manipulation - /logic/ads/:action
   #
-  #   /get      getAd
-  #   /create   createAd
-  #   /delete   deleteAd
+  #   /get      fetch ads owned by a user
+  #   /create   create an ad
+  #   /delete   delete an ad
   #
   server.server.get "/logic/ads/:action", (req, res) ->
     if not utility.userCheck req, res then return
@@ -96,7 +90,11 @@ setup = (options, imports, register) ->
 
   # Campaign manipulation - /logic/campaigns/:action
   #
-  #   /create   createCampaign
+  #   /create   create a campaign owned by the current user
+  #   /get      fetch campaigns owned by the current user
+  #   /delete   delete a single campaign
+  #   /events   fetch events for a campaign
+  #   /save     save a single campaign
   #
   server.server.get "/logic/campaigns/:action", (req, res) ->
     if not utility.userCheck req, res then return
@@ -110,9 +108,13 @@ setup = (options, imports, register) ->
 
   # Publisher manipulation - /logic/publishers/:action
   #
-  #   /create   createPublisher
-  #   /save     savePublisher
-  #   /delete   deletePublisher
+  #   /create      create a publisher owned by the current user
+  #   /save        save a single publisher
+  #   /delete      delete a single publisher
+  #   /get         fetch owned publishers
+  #   /all         [admin-only] fetch all publishers
+  #   /approve     [admin-only] approve a publisher
+  #   /dissapprove [admin-only] disapprove a publisher
   #
   server.server.get "/logic/publishers/:action", (req, res) ->
     if not utility.userCheck req, res then return
