@@ -1,3 +1,6 @@
+exec = require("child_process").exec
+fs = require "fs"
+
 module.exports = (grunt) ->
 
   # To build the site, we must do a few things
@@ -15,8 +18,20 @@ module.exports = (grunt) ->
 
   # Folder paths
   srcDir = "src/"
-  buildDir = "build/"
   lineSrcDir = "line/build/src/"
+  _buildDir = "build/"     # Modified internally
+
+  # Deployment paths
+  buildDir = "build/"
+  stagingDir = "staging/"
+  productionDir = "production/"
+
+  # Config file generation
+  genConfig = (mode) ->
+    config = fs.readFileSync "#{__dirname}/#{srcDir}config.json.sample"
+    config = JSON.parse config
+    config.mode = mode
+    fs.writeFileSync "#{__dirname}/#{srcDir}config.json", JSON.stringify config
 
   # Source paths relative to srcDir/
   modelSrc = [ "models/*.coffee" ]
@@ -37,9 +52,8 @@ module.exports = (grunt) ->
     "views/**/*.jade"
   ]
 
-  # Stylus paths
   stylusMin = {}
-  stylusMin["#{buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
+  clientProdSrc = {}
 
   # Module package.json paths
   modulePackageJSON = [
@@ -48,26 +62,47 @@ module.exports = (grunt) ->
   ]
 
   _prodSrc = []
-  for s in clientSrc
-    _prodSrc.push srcDir + s
-
-  clientProdSrc = {}
-  clientProdSrc["#{buildDir}static/client/app.min.js"] = _prodSrc
+  _prodSrc.push "#{srcDir}#{s}" for s in clientSrc
 
   # Watch doesn't work properly with cwd, so tag on src path manually
   _watchify = (paths) ->
     ret = []
-    for p in paths
-      ret.push srcDir + p
+    ret.push "#{srcDir}#{p}" for p in paths
     ret
 
-  # Create watch versions of each src array
-  WmodelSrc = _watchify modelSrc
-  WmoduleSrc = _watchify moduleSrc
-  WclientSrc = _watchify clientSrc
-  WstylusSrc = _watchify stylusSrc
-  WjadeSrc = _watchify jadeSrc
-  WmodulePackageJSON = _watchify modulePackageJSON
+  # Filled in by buildPaths()
+  WmodelSrc = []
+  WmoduleSrc = []
+  WclientSrc = []
+  WstylusSrc = []
+  WjadeSrc = []
+  WmodulePackageJSON = []
+
+  # Build fresh paths with our current build target
+  buildPaths = ->
+
+    stylusMin = {}
+    stylusMin["#{_buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
+
+    clientProdSrc = {}
+    clientProdSrc["#{_buildDir}static/client/app.min.js"] = _prodSrc
+
+    # Create watch versions of each src array
+    WmodelSrc = _watchify modelSrc
+    WmoduleSrc = _watchify moduleSrc
+    WclientSrc = _watchify clientSrc
+    WstylusSrc = _watchify stylusSrc
+    WjadeSrc = _watchify jadeSrc
+    WmodulePackageJSON = _watchify modulePackageJSON
+
+  # Set build paths as needed according to task
+  if process.argv[2] == "deploy"
+    _buildDir = productionDir
+  else if process.argv[2] == "stage"
+    _buildDir = stagingDir
+
+  # Execute here, with default build path
+  buildPaths()
 
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
@@ -82,7 +117,7 @@ module.exports = (grunt) ->
           bare: true
         ext: ".js"
         cwd: srcDir
-        dest: buildDir
+        dest: _buildDir
         src: moduleSrc
 
       # Database models, again build as they are
@@ -92,7 +127,7 @@ module.exports = (grunt) ->
           bare: true
         ext: ".js"
         cwd: srcDir
-        dest: buildDir
+        dest: _buildDir
         src: modelSrc
 
       # Dev client settings, build files as they are
@@ -102,7 +137,7 @@ module.exports = (grunt) ->
           bare: true
         ext: ".js"
         cwd: srcDir
-        dest: "#{buildDir}static"
+        dest: "#{_buildDir}static"
         src: clientSrc
 
       # Production client settings, concat all files
@@ -125,7 +160,7 @@ module.exports = (grunt) ->
           expand:true
           src: modulePackageJSON
           cwd: srcDir
-          dest: buildDir
+          dest: _buildDir
         ]
 
       # Copy built line modules
@@ -134,7 +169,7 @@ module.exports = (grunt) ->
           expand: true
           cwd: lineSrcDir
           src: "**"
-          dest: "#{buildDir}/modules/line"
+          dest: "#{_buildDir}/modules/line"
         ]
 
       # True static files (images, fonts, etc)
@@ -143,7 +178,7 @@ module.exports = (grunt) ->
           expand: true
           cwd: "#{srcDir}/static"
           src: "**"
-          dest: "#{buildDir}/static"
+          dest: "#{_buildDir}/static"
         ]
 
       # Jade templates
@@ -152,7 +187,7 @@ module.exports = (grunt) ->
           expand: true
           cwd: srcDir
           src: jadeSrc
-          dest: buildDir
+          dest: _buildDir
         ]
 
       ssl:
@@ -160,25 +195,25 @@ module.exports = (grunt) ->
           expand: true
           cwd: "#{srcDir}/ssl"
           src: "**"
-          dest: "#{buildDir}/ssl"
+          dest: "#{_buildDir}/ssl"
         ]
 
     # CSS Minifier
     cssmin:
       minify:
         expand: true
-        cwd: "#{buildDir}/static/css/"
+        cwd: "#{_buildDir}/static/css/"
         src: ["*.css", "!*.min.css", "**/*.css", "!**/*.min.css"]
-        dest: "#{buildDir}/static/css"
+        dest: "#{_buildDir}/static/css"
         ext: ".min.css"
 
     # Node server, restarts when it detects changes
     nodemon:
       dev:
         options:
-          file: "#{buildDir}adefy.js"
+          file: "#{_buildDir}adefy.js"
           watchedExtensions: [ ".js" ]
-          watchedFolders: [ buildDir ]
+          watchedFolders: [ _buildDir ]
 
     # Our dev task, combines watch with nodemon (sexy!)
     concurrent:
@@ -187,7 +222,7 @@ module.exports = (grunt) ->
         logConcurrentOutput: true
 
     clean: [
-      buildDir
+      _buildDir
     ]
 
     # Watch files for changes and ship updates to build folder
@@ -227,8 +262,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-nodemon"
 
   # Perform a full build
-  grunt.registerTask "full", [
-    "clean"
+  grunt.registerTask "persistentFull", [
     "copy:packageJSON"
     "copy:line"
     "copy:static"
@@ -242,6 +276,26 @@ module.exports = (grunt) ->
     "stylus:full"
     "cssmin:minify"
   ]
+  grunt.registerTask "full", [
+    "clean"
+    "persistentFull"
+  ]
 
   grunt.registerTask "default", [ "full" ]
   grunt.registerTask "dev", [ "concurrent:dev" ]
+
+  # Generate a production config file, then build to the production folder
+  grunt.registerTask "deploy", "Build to production folder", ->
+
+    genConfig "production"      # Generate config
+    _buildDir = productionDir   # Switch folders
+    buildPaths()                # Rebuild paths
+    grunt.task.run "persistentFull"       # Build
+
+  # Generate a staging config file, then build to the staging folder
+  grunt.registerTask "stage", "Build to staging folder", ->
+
+    genConfig "staging"     # Generate config
+    _buildDir = stagingDir  # Switch folders
+    buildPaths()            # Rebuild paths
+    grunt.task.run "persistentFull"   # Build
