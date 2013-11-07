@@ -13,6 +13,10 @@ On debian-based systems:
 * pip: `sudo apt-get install python-pip`
 * fabric: `sudo pip install fabric`
 
+On arch:
+* pip: `sudo pacman -S python2-pip`
+* fabric: `sudo pip install fabric`
+
 On windows:
 * `No idea, google around`
 
@@ -26,6 +30,7 @@ The fabfile is invoked with `fab [command]`. Available commands are:
 * `deploy`: Update & rebuild production branch on all production servers
 * `stage`: Update & rebuild staging branch on all staging servers
 
+* `status`: Check the status of node processes on all servers
 * `update_servers`: Check for and install package updates on all servers
 
 * `stage_up`: Start the node process on all staging servers
