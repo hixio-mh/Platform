@@ -182,7 +182,7 @@ setup = (options, imports, register) ->
         .save()
 
         localPath = "#{staticDir}/_exports/#{folder}"
-        remotePath = "http://cloud.adefy.eu/exports/#{folder}/#{file}"
+        remotePath = "https://app.adefy.eu/exports/#{folder}/#{file}"
 
         # Create _exports directory if it doesn't already exist
         if not fs.existsSync "#{staticDir}/_exports"
