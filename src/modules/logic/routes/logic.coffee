@@ -13,6 +13,7 @@
 ##
 
 spew = require "spew"
+routes = require "../../../routes.json"
 
 setup = (options, imports, register) ->
 
@@ -22,36 +23,11 @@ setup = (options, imports, register) ->
   # We have no homepage, just redirect to the login (unauth dash -> login)
   server.server.get "/", (req, res) -> res.redirect "/dashboard"
 
-  servePathsGET = (paths, view) ->
-    for p in paths
-      server.server.get p, (req, res) ->
-        if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
-        res.render view, auth
-
-  # Standard user dashboard
-  dashboardPaths = [
-
-    "/dashboard"
-    "/dashboard/home/advertiser"
-    "/dashboard/home/publisher"
-
-    "/dashboard/apps"
-
-    "/dashboard/ads/listing"
-    "/dashboard/ads/campaigns"
-
-    "/dashboard/acc/info"
-    "/dashboard/acc/billing"
-    "/dashboard/acc/funds"
-    "/dashboard/acc/feedback"
-
-    "/dashboard/admin"
-    "/dashboard/admin/users"
-    "/dashboard/admin/invites"
-    "/dashboard/admin/publishers"
-  ]
-
-  servePathsGET dashboardPaths, "dashboard/layout.jade"
+  # Serve layout to each path
+  for p in routes.views
+    server.server.get p, (req, res) ->
+      if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
+      res.render "dashboard/layout.jade", auth
 
   server.server.get "/views/dashboard/:view", (req, res) ->
     if not utility.param req.params.view, res, "View" then return
