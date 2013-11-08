@@ -38,9 +38,15 @@ module.exports = (db, utility) ->
   # Add the email to our user list in MailChimp
   #
   # @param [String] email
+  # @param [Boolean] testing if true, no email is sent (succesCB is called)
   # @param [Function] successCB called on success
   # @param [Function] errorCB called on error with message
-  sendToMailChimp: (email, successCB, errorCB) ->
+  sendToMailChimp: (email, testing, successCB, errorCB) ->
+
+    # Bail early if testing
+    if testing == true
+      successCB()
+      return
 
     mailChimpOptions = JSON.stringify
       apikey: "f74e47649e4e5d56bd769ab62c4f3131-us3"

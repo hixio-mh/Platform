@@ -32,6 +32,12 @@ setup = (options, imports, register) ->
     if not utility.param req.query.key, res, "Key" then return
     if not utility.param req.query.email, res, "Email" then return
 
+    testing = false
+
+    # If in test mode, don't contact mailchimp
+    if req.query.test != undefined
+      if req.query.test == "true" then testing = true
+
     if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
       res.json { error: "Invalid key" }
       return
@@ -39,7 +45,7 @@ setup = (options, imports, register) ->
     email = req.query.email
 
     # Register user to our MailChimp list, continue in callback
-    invites.sendToMailChimp email, ->
+    invites.sendToMailChimp email, testing, ->
 
       # Save invite in db
       invite = invites.create email, utility.randomString 32
