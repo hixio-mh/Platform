@@ -8,3 +8,5 @@ sftp-config.json
 src/config.json
 
 .vagrant
+.ssh/
+*.pyc
