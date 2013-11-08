@@ -81,8 +81,8 @@ setup = (options, imports, register) ->
       ex = data[0]
       user = data[1]
 
-      if not verifyDBResponse user, res, "User" then return
-      if not verifyDBResponse ex, res, "Export" then return
+      if not utility.verifyDBResponse user, res, "User" then return
+      if not utility.verifyDBResponse ex, res, "Export" then return
 
       if ex.owner.toString() != user._id.toString()
         res.json { error: "Unauthorized!" }
@@ -114,7 +114,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not verifyDBResponse user, res, "User" then return
+      if not utility.verifyDBResponse user, res, "User" then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -127,7 +127,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not verifyDBResponse user, res, "User" then return
+      if not utility.verifyDBResponse user, res, "User" then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -144,7 +144,7 @@ setup = (options, imports, register) ->
 
     # Find the requesting user
     db.fetch "User", { session: req.cookies.user.sess}, (user) ->
-      if not verifyDBResponse user, res, "User" then return
+      if not utility.verifyDBResponse user, res, "User" then return
 
       # Compile a working export
       finalExport =  ""
