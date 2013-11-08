@@ -10,43 +10,21 @@ setup = (options, imports, register) ->
 
   server = imports["line-express"]
   db = imports["line-mongodb"]
-  auth = imports["line-userauth"]
   utility = imports["logic-utility"]
 
   staticDir = "#{__dirname}/../../../static"
 
-  exportHeader =  ""
-  exportHeader += "<!DOCTYPE html>"
-  exportHeader += "<html lang=\"en\">"
-  exportHeader += "<head>"
-  exportHeader +=   "<meta charest=\"utf-8\">"
-  exportHeader +=   "<title>Ad Export</title>"
-  exportHeader += "</head>"
-  exportHeader += "<body>"
+  exportHeader =  """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charest="utf-8">
+      <title>Ad Export</title>
+    </head>
+    <body>
+  """
 
   exportFooter = "</body></html>"
-
-  # Helpful security check (on its own since a request without a user shouldn't
-  # reach this point)
-  userCheck = (req, res) ->
-    if req.cookies.user == undefined
-      res.json { error: "Invalid user (CRITICAL - Check this)" }
-      return false
-    true
-
-  validCheck = (dbRes, res) ->
-    if dbRes == undefined or (dbRes instanceof Array and dbRes.length == 0)
-      res.json { error: "Something wasn't found ;(" }
-      return false
-    true
-
-  # Fails if the user result is empty
-  # (slightly modified version of the above, nicer error)
-  userValid = (user, res) ->
-    if user == undefined or (user instanceof Array and user.length == 0)
-      res.json { error: "Invalid user (CRITICAL - Check this)" }
-      return false
-    true
 
   ##
   ## Routing
@@ -55,19 +33,18 @@ setup = (options, imports, register) ->
   # Main editor ad serving, assumes a valid req.cookies.user
   server.server.get "/editor/:ad", (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
-    if not userCheck req, res then return
+    if not utility.userCheck req, res then return
 
     res.render "editor.jade", { ad: req.params.ad }, (err, html) ->
       if err
         spew.error
         server.throw500 err
-      else
-        res.send html
+      else res.send html
 
   # Editor load/save, expects a valid user
   server.server.post "/logic/editor/:action", (req, res) ->
     if not utility.param req.params.action, res, "Action" then return
-    if not userCheck req, res then return
+    if not utility.userCheck req, res then return
 
     if req.params.action == "load" then loadAd req, res
     else if req.params.action == "save" then saveAd req, res
@@ -76,7 +53,7 @@ setup = (options, imports, register) ->
 
   # Exports
   server.server.get "/exports/:folder/:file", (req, res) ->
-    if not userCheck req, res then return
+    if not utility.userCheck req, res then return
 
     # TODO: Validation?
     folder = req.params.folder
@@ -90,8 +67,8 @@ setup = (options, imports, register) ->
       ex = data[0]
       user = data[1]
 
-      if not userValid user, res then return
-      if not validCheck ex, res then return
+      if not verifyDBResponse user, res, "User" then return
+      if not verifyDBResponse ex, res, "Export" then return
 
       if ex.owner.toString() != user._id.toString()
         res.json { error: "Unauthorized!" }
@@ -123,7 +100,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not userValid user, res then return
+      if not verifyDBResponse user, res, "User" then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -136,7 +113,7 @@ setup = (options, imports, register) ->
 
     # Find user
     db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not userValid user, res then return
+      if not verifyDBResponse user, res, "User" then return
 
       db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
 
@@ -149,11 +126,11 @@ setup = (options, imports, register) ->
   exportAd = (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
-    if not userCheck req, res then return
+    if not utility.userCheck req, res then return
 
     # Find the requesting user
     db.fetch "User", { session: req.cookies.user.sess}, (user) ->
-      if not userValid user, res then return
+      if not verifyDBResponse user, res, "User" then return
 
       # Compile a working export
       finalExport =  ""

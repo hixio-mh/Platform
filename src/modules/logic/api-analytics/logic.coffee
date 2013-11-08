@@ -8,50 +8,10 @@ setup = (options, imports, register) ->
 
   server = imports["line-express"]
   db = imports["line-mongodb"]
-  auth = imports["line-userauth"]
   utility = imports["logic-utility"]
 
-  ##
-  ## Utilities
-  ##
-
-  # Helpful security check (on its own since a request without a user shouldn't
-  # reach this point)
-  userCheck = (req, res) ->
-    if req.cookies.user == undefined
-      res.json { error: "Invalid user [uc] (CRITICAL - Check this)" }
-      return false
-    true
-
-  # Fails if the user result is empty
-  userValid = (user, res) ->
-    if (user instanceof Array and user.length <= 0) or user == undefined
-      res.json { error: "Invalid user [uv] (CRITICAL - Check this)" }
-      return false
-    true
-
-  # Calls the cb with admin status, and the fetched user
-  verifyAdmin = (req, res, cb) ->
-    if req.cookies.admin != "true"
-      res.json { error: "Unauthorized" }
-      cb false
-
-    if not userCheck req, res then cb false
-
-    db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-      if not userValid user, res then cb false
-
-      if user.permissions != 0
-        res.json { error: "Unauthorized" }
-        cb false
-      else cb true, user
-
-  ##
-  ## Actual request handling
-  ##
-
   server.server.get "/logic/analytics/:request", (req, res) ->
-    if not userCheck req, res then return
+    if not utility.userCheck req, res then return
 
     if req.params.request == "users" then getUserData req, res
     else if req.params.request == "invites" then getInviteData req, res
@@ -62,7 +22,7 @@ setup = (options, imports, register) ->
   #
   # admin-only
   getUserData = (req, res) ->
-    verifyAdmin req, res, (admin, user) ->
+    utility.verifyAdmin req, res, (admin, user) ->
       if not admin then return
 
       # Map reduce!
@@ -89,7 +49,7 @@ setup = (options, imports, register) ->
 
   # Retrieves invite data in a similar format to getUserdata
   getInviteData = (req, res) ->
-    verifyAdmin req, res, (admin, user) ->
+    utility.verifyAdmin req, res, (admin, user) ->
       if not admin then return
 
       # Map reduce!

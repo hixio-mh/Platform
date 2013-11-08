@@ -90,7 +90,7 @@ setup = (options, imports, register) ->
       verifyDBResponse: (obj, res, label, passive) ->
         if passive != true then passive = false
 
-        if obj == undefined and (obj.length != undefined and obj.length = 0)
+        if obj == undefined and (obj.length != undefined and obj.length == 0)
           if not passive then res.json { error: "#{label} not found" }
           return false
         else return true
