@@ -16,7 +16,7 @@ wget http://nodejs.org/dist/v0.10.21/node-v0.10.21-linux-x86.tar.gz
 cd /usr/local && sudo tar --strip-components 1 -xzf /home/vagrant/node-v0.10.21-linux-x86.tar.gz
 
 # Setup node modules
-sudo npm install -g grunt-cli codo
+sudo npm install -g grunt-cli codo coffee-script mocha
 
 ##
 ## Setup database
