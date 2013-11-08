@@ -1,0 +1,40 @@
+{
+  "api": [
+
+    "/login",
+    "/register",
+
+    "/editor/:ad",
+    "/exports/:folder/:file",
+    "/logic/invite/add",
+
+    "/logic/analytics/:request",
+    "/logic/editor/:action",
+    "/logic/invite/:action",
+    "/logic/user/:action",
+    "/logic/ads/:action",
+    "/logic/campaigns/:action",
+    "/logic/publishers/:action"
+  ],
+
+  "views": [
+    "/dashboard",
+    "/dashboard/home/advertiser",
+    "/dashboard/home/publisher",
+
+    "/dashboard/apps",
+
+    "/dashboard/ads/listing",
+    "/dashboard/ads/campaigns",
+
+    "/dashboard/acc/info",
+    "/dashboard/acc/billing",
+    "/dashboard/acc/funds",
+    "/dashboard/acc/feedback",
+
+    "/dashboard/admin",
+    "/dashboard/admin/users",
+    "/dashboard/admin/invites",
+    "/dashboard/admin/publishers"
+  ]
+}
