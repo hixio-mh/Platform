@@ -1,4 +1,10 @@
 build/
+staging/
+production/
+
 node_modules/
+
 sftp-config.json
 src/config.json
+
+.vagrant
