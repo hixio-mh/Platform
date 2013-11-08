@@ -68,6 +68,9 @@ def deploy():
     # Deploy
     run("grunt deploy")
 
+    # Restart
+    run("forever restart production/adefy.js")
+
 # Staging
 @roles("staging")
 def setup_staging():
@@ -97,6 +100,9 @@ def stage():
 
     # Stage
     run("grunt stage")
+
+    # Restart
+    run("forever restart staging/adefy.js")
 
 # Forever controls
 @roles("staging")
