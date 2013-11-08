@@ -30,7 +30,8 @@ setup = (options, imports, register) ->
     if param.length <= 0 then _err = true
 
     if _err
-      res.render "account/register.jade", { error: "#{name} needed for registration!" }
+      res.render "account/register.jade",
+        error: "#{name} needed for registration!"
 
     _err
 
@@ -55,7 +56,7 @@ setup = (options, imports, register) ->
       inv = results[0]
       user = results[1]
 
-      if inv.length <= 0
+      if inv == undefined or (inv.length != undefined and inv.length == 0)
         spew.warning "Invalid invite, email: #{req.body.email}"
         res.render "account/register.jade", { error: "Not a valid invite ;(" }
         return
