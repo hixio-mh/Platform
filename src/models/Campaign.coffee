@@ -41,10 +41,8 @@ exports.createSchema = ->
     #   2 - running
     #   3 - paused
     status: Number
-    avgCPC: Number
-    clicks: Number
-    impressions: Number
-    spent: Number
+
+    ads: [mongoose.Schema.ObjectId]
 
   model = null
 
