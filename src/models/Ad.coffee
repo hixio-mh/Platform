@@ -22,7 +22,27 @@ exports.createSchema = ->
   schema = new mongoose.Schema
     owner: mongoose.Schema.ObjectId
     name: String
-    data: String
+    data: String # @todo: Store binary data
+
+    test: Boolean
+
+    # Creative dimensions
+    width: Number
+    height: Number
+
+    # 0 - Static
+    # 1 - Animated
+    # 2 - Physics
+    # 3 - Native UI
+    type: Number
+
+    # Metrics
+    avgCPC: Number
+    clicks: Number
+    impressions: Number
+
+    # Amount spent in each campaign
+    spent: [{ id: mongoose.Schema.ObjectId, amount: Number }]
 
   model = null
 
