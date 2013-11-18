@@ -75,10 +75,6 @@ setup = (options, imports, register) ->
       verifyAdmin: (req, res, cb, passive) ->
         if passive != true then passive = false
 
-        if req.cookies.admin != "true"
-          if not passive then res.json { error: "Unauthorized" }
-          cb false
-
         if req.cookies.user == undefined
           if not passive then res.json { error: "Not a user!" }
           cb false
