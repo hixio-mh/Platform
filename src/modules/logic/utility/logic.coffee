@@ -86,11 +86,11 @@ setup = (options, imports, register) ->
         db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
           if user == undefined or user.length = 0
             if not passive then res.json { error: "No such user" }
-            cb false
+            cb false, user
 
           if user.permissions != 0
             if not passive then res.json { error: "Unauthorized" }
-            cb false
+            cb false, user
           else cb true, user
 
       # Verify db response, send an error response if necessary
