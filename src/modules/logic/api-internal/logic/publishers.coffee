@@ -78,10 +78,9 @@ module.exports = (db, utility) ->
           res.json { error: "No such publisher!" }
           return
 
-        if not admin
-          if publisher.owner != user._id
-            res.json { error: "Unauthorized!" }
-            return
+        if not admin and not publisher.owner.equals user._id
+          res.json { error: "Unauthorized!" }
+          return
 
         # Go through and apply changes
         mod = JSON.parse req.query.mod
@@ -116,10 +115,9 @@ module.exports = (db, utility) ->
           res.json { error: "No such campaign!" }
           return
 
-        if not admin
-          if publisher.owner != user._id
-            res.json { error: "Unauthorized!" }
-            return
+        if not admin and not publisher.owner.equals user._id
+          res.json { error: "Unauthorized!" }
+          return
 
         # Assuming we've gotten to this point, we are authorized to perform
         # the delete
