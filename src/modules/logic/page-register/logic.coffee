@@ -95,6 +95,7 @@ setup = (options, imports, register) ->
         limit: "0"
         permissions: 7 # Normal user, default
         funds: 0
+        version: 1 # Current version. Used in /migrate
 
       inv.remove()
 
