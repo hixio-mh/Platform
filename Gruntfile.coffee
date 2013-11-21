@@ -99,7 +99,7 @@ module.exports = (grunt) ->
   buildPaths = ->
 
     stylusMin = {}
-    stylusMin["#{_buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
+    stylusMin["#{_buildDir}static/css/styles.css"] = "#{srcDir}stylus/styles.styl"
 
     clientProdSrc = {}
     clientProdSrc["#{_buildDir}static/client/app.min.js"] = _prodSrc

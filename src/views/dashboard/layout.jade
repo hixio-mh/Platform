@@ -12,7 +12,7 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-!!! 5
+!!!
 html(lang="en", data-ng-app="AdefyDashboard")
   head
     meta(charset="utf-8")
@@ -26,211 +26,80 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
 
-    script(type="text/javascript", src="/js/vendor/pace.min.js")
+    script(src="/js/vendor/pace.min.js")
+
+    script(src="http://code.jquery.com/jquery-2.0.3.min.js")
+    script(src='/js/vendor/Chart.min.js')
+    script(src='/js/vendor/chosen.jquery.min.js')
 
     link(rel="stylesheet", href="/css/vendor/pace-flash.min.css")
-    link(rel="stylesheet", href="/css/vendor/bootstrap.min.css")
-    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.min.css")
 
-    link(rel="stylesheet", href="/css/vendor/font-awesome.min.css")
-    link(rel="stylesheet", href="/css/vendor/uniform.default.css")
-    link(rel="stylesheet", href="/css/vendor/select2.min.css")
-    link(rel="stylesheet", href="/css/vendor/morris.min.css")
-
-    link(rel="stylesheet", href="/css/theme/layout.min.css")
-    link(rel="stylesheet", href="/css/theme/elements.min.css")
-    link(rel="stylesheet", href="/css/theme/icons.min.css")
-    link(rel="stylesheet", href="/css/theme/pages.min.css")
-
-    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:400italic,400,600,700")
-    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Oleo+Script&text=Adefy")
+    link(rel="stylesheet", href="/css/reset.css")
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="/css/vendor/chosen.min.css")
+    link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900')
+    link(rel='stylesheet', href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
 
     | <!--[if lt IE 9]>
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body#page-dashboard(data-ng-controller="rootController")
+  body(data-ng-controller="rootController")
+    header.navbar.cf
+      #logo Adefy
+      .menu.left.full
+        a(href="/")
+          i.fa.fa-fw.fa-home
+          | Dashboard
+        a.active(href="/reports")
+          i.fa.fa-fw.fa-signal
+          | Reports
+        a(href="/campaigns")
+          i.fa.fa-fw.fa-bullhorn
+          | Campaigns
+        a(href="/ads")
+          i.fa.fa-fw.fa-sitemap
+          | Ads
+        a(href="/apps")
+          i.fa.fa-fw.fa-rocket
+          | Apps
 
-    header.navbar.navbar-inverse
-      .navbar-header
-        button(type="button", data-toggle="collapse", data-target=".nb-links").navbar-toggle
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        a.navbar-brand(href="/dashboard/home/publisher") Adefy
-      ul.nav.navbar-nav.pull-right.hidden-xs
-        li
-          a(href="/dashboard/acc/funds", data-ng-bind="me.acText")
-        li
-          a(href="/dashboard/acc/funds", data-ng-bind="me.pbText")
-        li.dropdown
-          a(href="javascript:void(0)", data-toggle="dropdown").dropdown-toggle.hidden-xs.hidden-sm
-            | My Account
-            b.caret
-          ul.dropdown-menu
-            li
-              a(href="/dashboard/acc/info") Account Information
-            li
-              a(href="/dashboard/acc/billing") Billing and Payments
-            li
-              a(href="/dashboard/acc/funds") Add Funds
-            li
-              a(href="/dashboard/acc/feedback") Send Feedback
-        li.logout.hidden-x.hidden-sm
-          a(href="/logout", target="_self")
-            i.icon-signout
-
-    #sidebar-nav
-      ul#dashboard-menu
-
-        li(data-ng-class="{ active: tab == \"home:publisher\" || tab == \"home:advertiser\" }")
-          .pointer(data-ng-if="tab == \"home:publisher\" || tab == \"home:advertiser\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/home/publisher")
-            i.icon-home
-            span Dashboard
-            i.icon-chevron-down
-
-          ul.submenu(data-ng-class="{ active: tab == \"home:publisher\" || tab == \"home:advertiser\" }")
-            li(data-ng-class="{ active: tab == \"home:publisher\" }")
-              a(href="/dashboard/home/publisher") Publisher Dashboard
-            li(data-ng-class="{ active: tab == \"home:advertiser\" }")
-              a(href="/dashboard/home/advertiser") Advertiser Dashboard
-
-        li(data-ng-class="{ active: tab == \"reporting\" }")
-          .pointer(data-ng-if="tab == \"reporting\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/reports")
-            i.icon-signal
-            span Reports
-
-        li(data-ng-class="{ active: tab == \"ads\" }")
-          .pointer(data-ng-if="tab == \"ads\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/ads/listing").dropdown-toggle
-            i.icon-sitemap
-            span Ads
-            i.icon-chevron-down
-
-          ul.submenu(data-ng-class="{ active: tab == \"ads:listing\" || tab == \"ads:campaigns\" }")
-            li(data-ng-class="{ active: tab == \"ads:listing\" }")
-              a(href="/dashboard/ads/listing") Ad Listing
-            li(data-ng-class="{ active: tab == \"ads:campaigns\" }")
-              a(href="/dashboard/ads/campaigns") Campaigns
-
-        li(data-ng-class="{ active: tab == \"apps\" }")
-          .pointer(data-ng-if="tab == \"apps\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/apps")
-            i.icon-rocket
-            span Apps
-
-        li(data-ng-class="{ active: tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\" }")
-          .pointer(data-ng-if="tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/acc/info").dropdown-toggle
-            i.icon-cogs
-            span Account
-            i.icon-chevron-down
-
-          ul.submenu(data-ng-class="{ active: tab == \"account:info\" || tab == \"account:billing\" || tab == \"account:funds\" || tab == \"account:feedback\" }")
-            li(data-ng-class="{ active: tab == \"account:info\" }")
-              a(href="/dashboard/acc/info") Account Information
-            li(data-ng-class="{ active: tab == \"account:billing\" }")
-              a(href="/dashboard/acc/billing") Billing and Payments
-            li(data-ng-class="{ active: tab == \"account:funds\" }")
-              a(href="/dashboard/acc/funds") Add Funds
-            li(data-ng-class="{ active: tab == \"account:feedback\" }")
-              a(href="/dashboard/acc/feedback") Send Feedback
-
-        li(data-ng-class="{ active: tab == \"support\" }")
-          .pointer(data-ng-if="tab == \"support\"")
-            .arrow
-            .arrow_border
-          a(href="/dashboard/support")
-            i.icon-question
-            span Support
-
-        if locals.admin
-          li(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" }")
-            .pointer(data-ng-if="tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\"")
-              .arrow
-              .arrow_border
-            a(href="/dashboard/admin").dropdown-toggle
-              i.icon-fighter-jet
-              span Admin
-              i.icon-chevron-down
-
-            ul.submenu(data-ng-class="{ active: tab == \"admin:home\" || tab == \"admin:users\" || tab == \"admin:invites\" || tab == \"admin:publishers\" }")
-              li(data-ng-class="{ active: tab == \"admin:home\" }")
-                a(href="/dashboard/admin") Dashboard
-              li(data-ng-class="{ active: tab == \"admin:users\" }")
-                a(href="/dashboard/admin/users") Users
-              li(data-ng-class="{ active: tab == \"admin:invites\" }")
-                a(href="/dashboard/admin/invites") Invites
-              li(data-ng-class="{ active: tab == \"admin:publishers\" }")
-                a(href="/dashboard/admin/publishers") Publishers
+      .menu.right
+        a(href="/funds"): $0.00 Funds
+        .da
+          i.fa.fa-fw.fa-cogs
+          .dropdown
+            a
+              i.fa.fa-fw.fa-user
+              | Admin
+            a(href="/settings")
+              i.fa.fa-fw.fa-wrench
+              | Settings
+            a
+              i.fa.fa-fw.fa-question
+              | Support
+            a
+              i.fa.fa-fw.fa-sign-out
+              | Sign out
 
     .content(data-ng-view="")
 
     footer
-      script(type="text/javascript", src="/js/vendor/jquery.js")
-      script(type="text/javascript", src="/js/vendor/jquery.uniform.min.js")raphael
-      script(type="text/javascript", src="/js/vendor/raphael.js")
-      script(type="text/javascript", src="/js/vendor/morris.min.js")
-      script(type="text/javascript", src="/js/vendor/angular.js")
-      script(type="text/javascript", src="/js/vendor/angular-route.min.js")
-      script(type="text/javascript", src="/js/vendor/angular-country-select.min.js")
-      script(type="text/javascript", src="/js/vendor/bootstrap.min.js")
-      script(type="text/javascript", src="/js/vendor/bootbox.min.js")
-      script(type="text/javascript", src="/js/vendor/fuelux.wizard.js")
-      script(type="text/javascript", src="/js/vendor/select2.min.js")
-      script(type="text/javascript", src="/socket.io/socket.io.js")
+      script(src="/js/vendor/angular.js")
+      script(src="/js/vendor/angular-route.min.js")
+      script(src="/js/vendor/angular-country-select.min.js")
+      script(src="/socket.io/socket.io.js")
 
       script(type="text/javascript")
         var socket = io.connect("", { secure: true });
         window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "countrySelect"]);
 
       if locals.admin
-        script(type="text/javascript", src="/client/dashboard/admin-config.js")
+        script(src="/client/dashboard/admin-config.js")
       else
-        script(type="text/javascript", src="/client/dashboard/normal-config.js")
+        script(src="/client/dashboard/normal-config.js")
 
       script(type="text/javascript")
-
-        $(document).ready(function() {
-
-          // Sidebar menu dropdown toggle
-          $("#dashboard-menu .dropdown-toggle").click(function (e) {
-            $(this).parent().find(".submenu").slideDown("fast", function() {
-              $(this).addClass("down");
-            });
-          });
-
-          // Mobile side-menu slide toggle
-          var menu = $("#sidebar-nav");
-
-          $("body").click(function () {
-            if ($(this).hasClass("menu")) { $(this).removeClass("menu"); }
-          });
-
-          menu.click(function(e) { e.stopPropagation(); });
-
-          $(".navbar-toggle").click(function (e) {
-            e.stopPropagation();
-            $("body").toggleClass("menu");
-          });
-
-          $(window).resize(function() {
-            $(this).width() > 769 && $("body.menu").removeClass("menu")
-          });
-
-        });
 
         window.AdefyDashboard.run(function($rootScope, $http) {
 
@@ -250,19 +119,19 @@ html(lang="en", data-ng-app="AdefyDashboard")
           });
         });
 
-      script(type="text/javascript", src="/client/dashboard/ctrl/root.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/dashAdvertiser.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/dashPublisher.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/apps.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/ads/listing.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/ads/campaigns.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/account/information.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/account/billing.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/account/funds.js")
-      script(type="text/javascript", src="/client/dashboard/ctrl/account/feedback.js")
+      script(src="/client/dashboard/ctrl/root.js")
+      script(src="/client/dashboard/ctrl/dashAdvertiser.js")
+      script(src="/client/dashboard/ctrl/dashPublisher.js")
+      script(src="/client/dashboard/ctrl/apps.js")
+      script(src="/client/dashboard/ctrl/ads/listing.js")
+      script(src="/client/dashboard/ctrl/ads/campaigns.js")
+      script(src="/client/dashboard/ctrl/account/information.js")
+      script(src="/client/dashboard/ctrl/account/billing.js")
+      script(src="/client/dashboard/ctrl/account/funds.js")
+      script(src="/client/dashboard/ctrl/account/feedback.js")
 
       if locals.admin
-        script(type="text/javascript", src="/client/dashboard/ctrl/admin/home.js")
-        script(type="text/javascript", src="/client/dashboard/ctrl/admin/invites.js")
-        script(type="text/javascript", src="/client/dashboard/ctrl/admin/users.js")
-        script(type="text/javascript", src="/client/dashboard/ctrl/admin/publishers.js")
+        script(src="/client/dashboard/ctrl/admin/home.js")
+        script(src="/client/dashboard/ctrl/admin/invites.js")
+        script(src="/client/dashboard/ctrl/admin/users.js")
+        script(src="/client/dashboard/ctrl/admin/publishers.js")
