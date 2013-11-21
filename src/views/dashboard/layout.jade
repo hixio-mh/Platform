@@ -65,7 +65,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
           | Apps
 
       .menu.right
-        a(href="/funds"): $0.00 Funds
+        a(href="/funds", data-ng-bind="me.fundsText")
         .da
           i.fa.fa-fw.fa-cogs
           .dropdown

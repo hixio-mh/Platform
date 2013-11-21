@@ -94,8 +94,7 @@ setup = (options, imports, register) ->
         hash: h
         limit: "0"
         permissions: 7 # Normal user, default
-        publisherBalance: 0
-        advertiserCredit: 0
+        funds: 0
 
       inv.remove()
 

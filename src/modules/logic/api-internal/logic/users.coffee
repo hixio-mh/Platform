@@ -70,8 +70,7 @@ module.exports = (db, utility) ->
             user.lname = u.lname
             user.email = u.email
             user.id = u._id
-            user.publisherBalance = u.publisherBalance
-            user.advertiserCredit = u.advertiserCredit
+            user.funds = u.funds
             ret.push user
 
           res.json ret
@@ -104,7 +103,6 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   getSelf: (req, res) ->
-
     _username = req.cookies.user.id
     _session = req.cookies.user.sess
 
@@ -123,8 +121,7 @@ module.exports = (db, utility) ->
         country: user.country
         phone: user.phone
         fax: user.fax
-        publisherBalance: user.publisherBalance
-        advertiserCredit: user.advertiserCredit
+        funds: user.funds
 
       res.json ret
 
