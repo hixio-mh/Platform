@@ -1,0 +1,559 @@
+* {-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+.cf:after {
+  clear:both;
+  content:".";
+  display:block;
+  font-size:0;
+  height:0;
+  line-height:0;
+  visibility:hidden
+}
+.cf{zoom:1}
+
+body
+  font-family: Source Sans Pro
+  color: #333
+  background: #f7f7f7
+  line-height: 1.6
+  padding-top: 52px // navbar
+
+a
+  color: hsl(196, 77%, 55%)
+  text-decoration: none
+  &:hover
+    color: red
+
+.center
+  margin: 0 auto
+
+button 
+  background: -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%);
+  border: 1px solid #bbb;
+  box-shadow: inset 0 1px rgba(255,255,255,.2)
+  color: #555;
+  text-shadow: 0 1px white;
+  padding: 7px;
+  border-radius: 5px;
+  &:hover, &:active
+    background-image: linear-gradient(#eee 20%,#fff 80%);
+    box-shadow: 0 1px 0 #fff inset;
+
+button.blue
+  color: #fff;
+  background:  -webkit-linear-gradient(top,#34b5e5,#5897fb);
+  border: 1px solid #1597c7
+  border-bottom: 1px solid rgba(0,0,0,.2)
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3)
+  box-shadow: inset 0 -1px rgba(255,255,255,0.15);
+  &:hover, &:active
+    box-shadow: 0 1px 0 rgba(255,255,255,.2) inset;
+    background: #5897fb
+  &:focus
+    border-color: #385FDA;
+
+input[type="text"], input[type="email"], input[type="password"], textarea
+  font-family: Source Sans Pro
+  display: block
+  padding: 7px
+  border: 1px solid #ccc
+  border-radius: 4px
+
+  border:1px solid #aaa;
+  box-shadow: inset 0 15px 15px -15px rgba(0,0,0,.1)
+input:focus, textarea:focus, button:focus
+  outline: none
+  border: 1px solid #5897fb
+label
+  font-weight: 600
+legend
+  display: block
+  width: 100%
+  margin-bottom: 10px
+  font-weight: 300
+  color: #aaa
+  font-size: 32px
+  border-bottom: 1px solid #ddd
+  text-shadow: 0 1px white
+fieldset:nth-of-type(n+2)
+  margin-top: 25px
+
+
+header
+  width 100%
+  top: 0
+  left: 0
+  right: 0
+  height 52px
+  line-height 52px
+  color #fff
+  background-color hsl(196, 77%, 55%)
+  border-bottom 1px solid rgb(21, 151, 199)
+  padding: 0 20px
+  text-shadow: 0 1px 1px rgba(0,0,0,.3)
+  box-shadow: 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
+  position: fixed
+  z-index: 1
+  .menu
+    box-shadow: -1px 0 rgba(0,0,0,.17), 1px 0 rgba(255,255,255,.2) // outer border on first and last element
+  .menu > a, .menu > .da
+    border-left: 1px solid rgba(255,255,255,.2)
+    border-right: 1px solid rgba(0,0,0,.17)
+    &:hover, &.active
+      border-left-color: transparent
+      box-shadow: -1px 0 rgba(0,0,0,0.2), -2px 0 rgba(255,255,255,0.2)
+
+#logo
+  font-family Oleo Script
+  font-size 32px
+  float left
+  line-height 50px // font's x-height is fucked up, manually push up
+  margin-right: 25px;
+
+.menu
+  position: relative
+  display: inline-block
+  vertical-align: top
+  font-size: 14px;
+
+.menu.left
+  float: left
+.menu.right
+  float: right;
+.menu.full i // a "full" menu has text + icons
+  margin-right: 10px
+
+.menu li 
+  list-style-type: none
+
+.menu a, .menu .da // .da -> dropdown link
+  color: inherit
+  display: inline-block
+  padding: 0 20px
+  &.active, &:hover
+    background-color: rgba(0,0,0,.1)
+
+.titlebar
+  background-color: #333
+  color: #fff
+  text-shadow 0 2px 3px rgba(0,0,0,.3)
+  border-bottom: 1px solid #111
+  height: 44px
+  line-height: 44px
+  padding: 0 25px
+  width: 100%
+  vertical-align: top
+
+  .menu a, .menu .da
+    &:hover, &.active
+      background-color: #111
+
+  .name
+    display: inline-block
+    font-size: 20px
+    font-weight: bold
+  .label
+    vertical-align: bottom
+
+.label
+  color: #fff
+  display:inline
+  font-size:12px
+  font-weight:bold
+  padding: 2px 6px
+  margin-left: 15px
+  margin-right: 25px
+  border-radius: 4px
+  text-shadow: 0 1px rgba(0,0,0,.2)
+  &.green
+    background-color: #2ecc71
+  &.red
+    background-color: #e74c3c
+  &.gray
+    background-color: #95a5a6
+
+.stats
+  border-bottom 1px solid #ccc
+.stats.app
+  background-color: #fcfcfc
+
+.stat 
+  width: 25%
+  height: 100px
+  line-height: 100px
+  border-right: 1px solid #ccc
+  display: inline-block
+  vertical-align: middle
+  padding: 0 25px
+  text-align: right
+  &:last-of-type
+    border-right: none
+
+.graph 
+  //width: calc(50% - 50px)
+  margin: 25px
+  padding: 15px
+  //height: 300px
+  display: inline-block
+  border: 1px solid #ccc
+  background-color: #fcfcfc
+  vertical-align: middle
+  border-radius: 5px
+  border: 1px solid #c7c7c7
+  box-shadow: 0 0 1px rgba(0,0,0,.2)
+
+
+.wrap 
+  display: inline-block
+  vertical-align: middle
+  line-height: 1
+
+.amount
+  font-size: 22px;
+  line-height: 1.2
+  font-weight: bold
+  &.large
+    font-size: 40px
+
+.desc
+  font-size: 14px;
+  color: #999;
+
+.inner
+  padding: 25px
+
+/* form styling */
+
+dl.form 
+  max-width: 760px
+  &.single // sometimes we wrap a single input line
+    padding: 10px 0
+    border-bottom: 1px solid #e9e9e9
+  .description
+    margin-bottom: 15px
+
+  p
+    color: #666
+    //font-size: .85em
+  h3
+    font-weight: 600
+
+  label
+    display: block
+    margin: 7px 0
+
+  dt
+    vertical-align: top
+    display:inline-block
+    width: 40%
+    padding-right: 15px
+    span
+      display: block
+      color: #999
+      font-size: .85em
+
+  dd
+    vertical-align: top
+    display:inline-block
+    width: 60%
+
+  .radio
+    label // labels for radios
+      display: inline-block
+      margin: 0
+      margin-left: 5px
+      font-weight: 400
+      font-size: .85em
+
+  input[type="text"], input[type="email"], textarea
+    width: 100%
+  select
+    width: 50%
+
+  .chosen-container-single .chosen-single
+    height: auto // things get seriously fucked up without this
+  .chosen-container-multi .chosen-choices li.search-field input[type=text]
+    height: auto // things get seriously fucked up without this
+
+  textarea
+    min-height: 120px
+
+  .ad-rule
+    margin: 10px 0
+    select
+      width: auto
+
+/* billing form */
+.form.thin {
+  max-width: 500px
+}
+.field
+  margin: 5px 0
+  display: inline-block;
+  width: 100%;
+
+.field.margin
+  padding-right: 15px;
+
+.field.w25
+  width: 25%;
+.field.w50
+  width: 50%;
+  select
+    width: 100%
+.field.w75
+  width: 75%;
+
+.funds
+  .actions
+    display: inline-block
+    text-align: center
+    margin-top: 25px
+
+/* dropdown */
+.dropdown
+  //display: none
+  background-color: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1)
+  border-radius: 5px
+  position: absolute
+  right: 4px;
+  top: 100%;
+  color: #333;
+  text-shadow: none
+  line-height: 40px
+  width: 160px // needed?
+  &.active 
+    display: block
+  a
+    border-bottom: 1px solid #eee;
+    display: block
+    i
+      margin-right: 10px
+    &:first-of-type
+      border-radius: 5px 5px 0 0
+    &:last-of-type
+      border-radius: 0 0 5px 5px 
+      border: none;
+    &:hover
+      background-color: #333
+      color: #fff
+
+  &:after
+    bottom: 100%;
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+
+    border-color: rgba(136, 183, 213, 0)
+    border-bottom-color: #fff;
+    border-width: 10px;
+    right: 16px;
+    margin-left: -10px;
+
+/* apps/campaigns grid */
+.grid
+  text-align: center
+.item
+  margin: 20px
+  padding: 12px 0
+  background: white
+  max-width: 337px // <canvas> is actually 3px smaller than 340px
+  min-height: 250px
+  border-radius: 5px
+  border: 1px solid #c7c7c7
+  display: inline-block
+  box-shadow: 0 0 1px rgba(0,0,0,.2)
+  text-align: left;
+  vertical-align: top
+  .icon
+    max-width: 100%;
+    max-width: 48px;
+    vertical-align: middle;
+    margin: 0 15px;
+    border-radius: 4px;
+  .name
+    display: inline-block;
+    font-weight: 600;
+  .metrics
+    position: relative;
+    canvas
+      margin-left: -2px; // it's slightly displaced
+  .wrap
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 15px
+    text-align: center
+    background-color: rgba(255,255,255,.5)
+    line-height: 180px; // probably a better way to do this, set line height to <canvas> graph height
+    // a lil' bit less, to center it properly
+  .text
+    display: inline-block
+    vertical-align: middle
+    line-height: 1
+.item
+  .text .amount
+    line-height: inherit
+  .desc
+    text-shadow: 0 1px white
+  .stats
+    margin-top: -15px;
+    border-bottom: none; // temp: cleanup
+    .tab
+      width: 50%
+      text-align: center
+      display: inline-block
+
+
+.new-item
+  line-height: 1
+  display: inline-block
+  margin: 20px 40px 0
+  color: #aaa
+  text-shadow: 0 1px white
+  //background-color: #333
+  //border-radius: 7px
+  padding: 5px
+  border-bottom: 1px dashed transparent
+  &:hover
+    color: #999
+    border-bottom: 1px dotted
+  i
+    margin-right: 10px
+
+.new-ad
+  display: block
+  margin: 0 auto
+  max-width: 720px
+  margin-bottom: 20px // needs margin
+
+
+/* item lists: ad list */
+.list
+  margin: 0 auto
+  max-width: 720px
+  border: 1px solid #ccc
+  border-bottom: none
+
+  .ad
+    padding: 10px 20px
+    border-bottom: 1px solid #ccc
+    background-color: #fff
+    .name
+      display: inline-block
+      font-weight: 600
+      font-size: 22px
+    .edit
+      float: right
+      text-shadow: 0 1px white
+      color: #999
+      display: none
+
+    &:hover
+      color: #333
+  li:hover .edit
+    display: block
+
+  .campaigns
+    width: 100%
+    th
+      vertical-align: middle
+      text-align: right
+      padding-right: 20px
+    tr
+      border-bottom: 1px solid #e0e0e0
+    td
+      padding: 10px 15px
+    .amount
+      font-size: 20px
+    .desc
+      font-size: 12px
+
+
+/* Login styles */
+.login
+  text-align: center;
+  form
+    display: inline-block;
+    text-align: center;
+
+/* modal styles -- ugly */
+.overlay
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: rgba(0,0,0,.7);
+  
+.modal-wrap
+  display: table;
+  height: 100%;
+  width: 100%;
+.modal-cell
+  display: table-cell;
+  vertical-align: middle;
+.modal
+  max-width: 520px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 5px
+  border: 1px solid rgba(0,0,0,.1);
+  box-shadow: 0 1px 105px 15px rgba(0,0,0,.1);
+  .header
+    border-bottom: 1px dotted #ccc
+    padding: 3px 15px
+    font-size: 22px
+    text-align: center
+    font-weight: 600
+  .content
+    padding: 15px
+  .actions
+    border-top: 1px solid #ddd
+    text-align: right
+    padding: 5px
+  input
+    width: 100%
+
+.narrow
+  max-width: 760px
+/* main page */
+.news
+  li
+    border-bottom: 1px solid #ccc
+    padding: 15px
+  li:first-of-type
+    border-top: 1px solid #ccc
+
+.index
+  margin: 0 auto
+  max-width: 920px
+.graph2
+  background-color: #fff
+  border-bottom: 1px solid #ccc
+  padding: 0 30px 30px
+  canvas
+    display: block
+    margin: 0 auto
+  .stats
+    max-width: 920px
+    margin: 0 auto
+    margin-bottom: 30px
+  .stat
+    border-right: none
+.news
+  width: 50%
+  display: inline-block
+  padding: 25px
+  .title
+    font-weight: 600
+  .date
+    color: #999
+    margin-left: 15px
+  p
+    font-size: .85em
