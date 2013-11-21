@@ -59,10 +59,6 @@ setup = (options, imports, register) ->
             # Add funds field
             u.funds = 0
 
-            # Remove old balances
-            if u.publisherBalance != undefined then delete u.publisherBalance
-            if u.advertiserCredit != undefined then delete u.advertiserCredit
-
             u.save()
 
           # Add more version checks...
