@@ -52,6 +52,9 @@ exports.createSchema = ->
 
     funds: Number
 
+    # Schema version, used by /migrate
+    version: Number
+
   model = null
 
   schema.pre "save", (next) ->
