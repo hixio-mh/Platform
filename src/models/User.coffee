@@ -50,8 +50,7 @@ exports.createSchema = ->
     # 7 - normal user
     permissions: Number
 
-    publisherBalance: Number
-    advertiserCredit: Number
+    funds: Number
 
   model = null
 
