@@ -14,13 +14,7 @@
 
 window.AdefyDashboard.controller "apps", ($scope, $http, $route) ->
 
-  $scope.mode = "listing"        # Page mode
-  $scope.detailMode = "details"  # App view detail mode
   $scope.apps = []               # Application data for table
-  $scope.newApp = {}             # Model for new app form
-  $scope.appView = {}            # Model for current application
-  $scope.appViewIndex = 0        # Index of current application
-  $scope.saveAppText = "Save"    # Save button in app view
 
   # Application categories
   $scope.categories = [
@@ -103,29 +97,6 @@ window.AdefyDashboard.controller "apps", ($scope, $http, $route) ->
           else $scope.apps.splice i, 1
 
           $scope.mode = "listing"
-
-  ##
-  ## App creation
-  ##
-  resetNewAppForm = ->
-
-    # Validation structure for error information
-    $scope.validation =
-      name:
-        valid: false
-        error: ""
-        name: "Application name"
-
-    $scope.newApp = {}
-  resetNewAppForm()
-
-  # Triggers new application creation. Sets mode and resets form
-  $scope.addApp = ->
-    $scope.mode = "new"
-    resetNewAppForm()
-
-  # Cancels the new app form. Just set the mode back
-  $scope.cancelAdd = -> $scope.mode = "view"
 
   # Called when the form is complete and ready to submit
   $scope.createAppFinal = ->
