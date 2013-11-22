@@ -18,23 +18,23 @@
   ],
 
   "views": [
-    "/dashboard",
-    "/dashboard/home/advertiser",
-    "/dashboard/home/publisher",
+    "/",
+    "/home/advertiser",
+    "/home/publisher",
 
-    "/dashboard/apps",
+    "/apps",
 
-    "/dashboard/ads",
-    "/dashboard/campaigns",
+    "/ads",
+    "/campaigns",
 
-    "/dashboard/acc/info",
-    "/dashboard/acc/billing",
-    "/dashboard/acc/funds",
-    "/dashboard/acc/feedback",
+    "/acc/info",
+    "/acc/billing",
+    "/acc/funds",
+    "/acc/feedback",
 
-    "/dashboard/admin",
-    "/dashboard/admin/users",
-    "/dashboard/admin/invites",
-    "/dashboard/admin/publishers"
+    "/admin",
+    "/admin/users",
+    "/admin/invites",
+    "/admin/publishers"
   ]
 }
