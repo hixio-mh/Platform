@@ -49,7 +49,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
   ##
   refreshCampaigns = ->
 
-    $http.get("/logic/campaigns/get").success (list) ->
+    $http.get("/api/v1/campaigns/get").success (list) ->
       if list.error != undefined then alert list.error; return
 
       # Go through the list - calculate ctr and set status text
@@ -83,7 +83,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
 
       if result then $scope.$apply ->
         c = $scope.campaigns[index]
-        $http.get("/logic/campaigns/delete?id=#{c.id}").success (result) ->
+        $http.get("/api/v1/campaigns/delete?id=#{c.id}").success (result) ->
           if result.error != undefined then alert result.error
           else $scope.campaigns.splice index, 1
 
@@ -107,7 +107,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
 
   # Helper method, refreshes our event list
   fetchEventList = (id) ->
-    $http.get("/logic/campaigns/events?id=#{id}").success (events) ->
+    $http.get("/api/v1/campaigns/events?id=#{id}").success (events) ->
       if events.error != undefined then alert events.error; return
       $scope.campaignView.events = events
 
@@ -141,7 +141,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
     $scope.saveCampaignText = "Saving..."
 
     # At this point changes exist. Commit only those.
-    $http.get("/logic/campaigns/save?id=#{id}&mod=#{mod}").success (result) ->
+    $http.get("/api/v1/campaigns/save?id=#{id}&mod=#{mod}").success (result) ->
       if result.error != undefined
         alert result.error
         $scope.saveCampaignText = "Save"
@@ -305,7 +305,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
     args = ""
     args += "&#{name}=#{val}" for name, val of $scope.campaign
 
-    $http.get("/logic/campaigns/create?#{args}").success (result) ->
+    $http.get("/api/v1/campaigns/create?#{args}").success (result) ->
       if result.error != undefined
         $scope.createCampaignError = result.error
         setTimeout (-> $scope.$apply -> $scope.createCampaignError = ""), 1000

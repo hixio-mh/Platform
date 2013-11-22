@@ -15,7 +15,7 @@
 window.AdefyDashboard.controller "adminInvites", ($scope, $http, $route) ->
 
   # Fetch invite list
-  $http.get("/logic/invite/all").success (data) -> $scope.invites = data
+  $http.get("/api/v1/invite/all").success (data) -> $scope.invites = data
 
   $scope.inviteStatus = ""
   $scope.inviteError = ""
@@ -31,7 +31,7 @@ window.AdefyDashboard.controller "adminInvites", ($scope, $http, $route) ->
     $scope.inviteStatus = "Updating..."
     i = $scope.invites[$scope.current]
 
-    $http.get("/logic/invite/update?id=#{i.id}&email=#{i.email}&code=#{i.code}").success (result) ->
+    $http.get("/api/v1/invite/update?id=#{i.id}&email=#{i.email}&code=#{i.code}").success (result) ->
       if result.error != undefined
         $scope.inviteError = result.error
         $scope.inviteStatus = ""
@@ -47,7 +47,7 @@ window.AdefyDashboard.controller "adminInvites", ($scope, $http, $route) ->
         $scope.inviteStatus = "Deleting..."
         i = $scope.invites[$scope.current]
 
-        $http.get("/logic/invite/delete?id=#{i.id}").success (result) ->
+        $http.get("/api/v1/invite/delete?id=#{i.id}").success (result) ->
           if result.error != undefined
             $scope.inviteError = result.error
             $scope.inviteStatus = ""
@@ -62,7 +62,7 @@ window.AdefyDashboard.controller "adminInvites", ($scope, $http, $route) ->
     if $scope.newInvite == undefined
       $scope.newInviteStatus = "Email required"
     else
-      $http.get("/logic/invite/add?key=T13S7UESiorFUWMI&email=#{$scope.newInviteEmail}").success (result) ->
+      $http.get("/api/v1/invite/add?key=T13S7UESiorFUWMI&email=#{$scope.newInviteEmail}").success (result) ->
         if result.error != undefined
           $scope.newInviteError = result.error
           $scope.newInviteStatus = ""

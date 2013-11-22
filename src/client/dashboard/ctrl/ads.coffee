@@ -52,7 +52,7 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route, $rootScope) ->
   # Submits the sidebar
   $scope.newAdSubmit = ->
     $scope.newAdStatus = "Creating..."
-    $http.get("/logic/ads/create?name=#{$scope.newAd.name}").success (result) ->
+    $http.get("/api/v1/ads/create?name=#{$scope.newAd.name}").success (result) ->
       if result.error != undefined
         $scope.newAdError = result.error
         $scope.newAdStatus = ""
@@ -70,7 +70,7 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route, $rootScope) ->
 
   # Fetch owned ad list from server
   refreshAdList = ->
-    $http.get("/logic/ads/get?filter=user").success (data) ->
+    $http.get("/api/v1/ads/get?filter=user").success (data) ->
 
       # Set up editor links
       data[i].edit = generateEditorLink data[i].id for i in [0...data.length]
@@ -81,7 +81,7 @@ window.AdefyDashboard.controller "ads", ($scope, $http, $route, $rootScope) ->
     bootbox.confirm "Are you sure?", (result) ->
 
       if result then $scope.$apply ->
-        $http.get("/logic/ads/delete?id=#{$scope.data[i].id}").success (result) ->
+        $http.get("/api/v1/ads/delete?id=#{$scope.data[i].id}").success (result) ->
 
           if result.error != undefined
             bootbox.alert "Failed to delete ad: #{result.error}"

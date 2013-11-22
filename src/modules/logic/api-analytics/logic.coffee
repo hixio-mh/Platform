@@ -24,7 +24,7 @@ setup = (options, imports, register) ->
   db = imports["line-mongodb"]
   utility = imports["logic-utility"]
 
-  server.server.get "/logic/analytics/:request", (req, res) ->
+  server.server.get "/api/v1/analytics/:request", (req, res) ->
     if not utility.userCheck req, res then return
 
     if req.params.request == "users" then getUserData req, res
