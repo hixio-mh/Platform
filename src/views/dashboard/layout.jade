@@ -66,7 +66,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
       .menu.right
         a(href="/funds", data-ng-bind="me.fundsText")
-        .da(dropdown ng-click="toggleSelect()")
+        .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
             a
