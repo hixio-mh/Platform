@@ -8,8 +8,10 @@ window.AdefyDashboard.directive 'dropdown', ['$document', ($document) ->
         scope.isPopupVisible = !scope.isPopupVisible
 
       $document.bind 'click', (event) ->
+        if(element[0] == event.target)
+          return
         for el in element.find(event.target.tagName)
-          if (el == event.target) 
+          if (el == event.target)
             return
         scope.isPopupVisible = false
         scope.$apply()
