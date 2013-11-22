@@ -22,7 +22,7 @@ describe "Authentication", ->
 describe "Invites", ->
 
   it "Should reject invalid invite key", (done) ->
-    req = api.get("/logic/invite/add?key=adfsdf&email=t@t.com&test=true")
+    req = api.get("/api/v1/invite/add?key=adfsdf&email=t@t.com&test=true")
     req.expect(200).expect("Content-Type", /json/).end (err, res) ->
       res.body.should.have.property "error", "Invalid key"
       done()
@@ -31,13 +31,13 @@ describe "Invites", ->
 
     actuallyDone = -> if @i == undefined then @i = 0 else done()
 
-    req = api.get("/logic/invite/add?key=WtwkqLBTIMwslKnc&email=t1@t.com&test=true")
+    req = api.get("/api/v1/invite/add?key=WtwkqLBTIMwslKnc&email=t1@t.com&test=true")
     req.expect(200).expect("Content-Type", /json/).end (err, res) ->
       res.body.should.not.have.property "error"
       res.body.should.have.property "msg", "Added"
       actuallyDone()
 
-    req = api.get("/logic/invite/add?key=T13S7UESiorFUWMI&email=t1@t.com&test=true")
+    req = api.get("/api/v1/invite/add?key=T13S7UESiorFUWMI&email=t1@t.com&test=true")
     req.expect(200).expect("Content-Type", /json/).end (err, res) ->
       res.body.should.not.have.property "error"
       res.body.should.have.property "msg"
