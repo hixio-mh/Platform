@@ -17,58 +17,58 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
-  $routeProvider.when "/dashboard/home/publisher",
+  $routeProvider.when "/home/publisher",
     controller: "dashPublisher"
     templateUrl: "/views/dashboard/home:publisher"
 
-  $routeProvider.when "/dashboard/home/advertiser",
+  $routeProvider.when "/home/advertiser",
     controller: "dashAdvertiser"
     templateUrl: "/views/dashboard/home:advertiser"
 
-  $routeProvider.when "/dashboard/apps",
+  $routeProvider.when "/apps",
     controller: "apps"
     templateUrl: "/views/dashboard/apps"
 
-  $routeProvider.when "/dashboard/ads/listing",
-    controller: "adsListing"
-    templateUrl: "/views/dashboard/ads:listing"
+  $routeProvider.when "/ads",
+    controller: "ads"
+    templateUrl: "/views/dashboard/ads"
 
-  $routeProvider.when "/dashboard/ads/campaigns",
-    controller: "adsCampaigns"
-    templateUrl: "/views/dashboard/ads:campaigns"
+  $routeProvider.when "/campaigns",
+    controller: "campaigns"
+    templateUrl: "/views/dashboard/campaigns"
 
-  $routeProvider.when "/dashboard/acc/info",
+  $routeProvider.when "/acc/info",
     controller: "accInformation"
     templateUrl: "/views/dashboard/account:info"
 
-  $routeProvider.when "/dashboard/acc/billing",
+  $routeProvider.when "/acc/billing",
     controller: "accBilling"
     templateUrl: "/views/dashboard/account:billing"
 
-  $routeProvider.when "/dashboard/acc/funds",
+  $routeProvider.when "/acc/funds",
     controller: "accFunds"
     templateUrl: "/views/dashboard/account:funds"
 
-  $routeProvider.when "/dashboard/acc/feedback",
+  $routeProvider.when "/acc/feedback",
     controller: "accFeedback"
     templateUrl: "/views/dashboard/account:feedback"
 
-  $routeProvider.when "/dashboard/admin",
+  $routeProvider.when "/admin",
     controller: "adminHome"
     templateUrl: "/views/dashboard/admin:home"
 
-  $routeProvider.when "/dashboard/admin/users",
+  $routeProvider.when "/admin/users",
     controller: "adminUsers"
     templateUrl: "/views/dashboard/admin:users"
 
-  $routeProvider.when "/dashboard/admin/invites",
+  $routeProvider.when "/admin/invites",
     controller: "adminInvites"
     templateUrl: "/views/dashboard/admin:invites"
 
-  $routeProvider.when "/dashboard/admin/publishers",
+  $routeProvider.when "/admin/publishers",
     controller: "adminPublishers"
     templateUrl: "/views/dashboard/admin:publishers"
 
-  $routeProvider.otherwise { redirectTo: "/dashboard/home/publisher" }
+  $routeProvider.otherwise { redirectTo: "/home/publisher" }
 
   true

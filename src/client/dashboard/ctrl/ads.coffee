@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "adsListing", ($scope, $http, $route, $rootScope) ->
+window.AdefyDashboard.controller "ads", ($scope, $http, $route, $rootScope) ->
 
   $scope.data = []
 

@@ -17,42 +17,42 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
-  $routeProvider.when "/dashboard/home/publisher",
+  $routeProvider.when "/home/publisher",
     controller: "dashPublisher"
     templateUrl: "/views/dashboard/home:publisher"
 
-  $routeProvider.when "/dashboard/home/advertiser",
+  $routeProvider.when "/home/advertiser",
     controller: "dashAdvertiser"
     templateUrl: "/views/dashboard/home:advertiser"
 
-  $routeProvider.when "/dashboard/apps",
+  $routeProvider.when "/apps",
     controller: "apps"
     templateUrl: "/views/dashboard/apps"
 
-  $routeProvider.when "/dashboard/ads/listing",
+  $routeProvider.when "/ads",
     controller: "adsListing"
-    templateUrl: "/views/dashboard/ads:listing"
+    templateUrl: "/views/dashboard/ads"
 
-  $routeProvider.when "/dashboard/ads/campaigns",
+  $routeProvider.when "/campaigns",
     controller: "adsCampaigns"
-    templateUrl: "/views/dashboard/ads:campaigns"
+    templateUrl: "/views/dashboard/campaigns"
 
-  $routeProvider.when "/dashboard/acc/info",
+  $routeProvider.when "/acc/info",
     controller: "accInformation"
     templateUrl: "/views/dashboard/account:info"
 
-  $routeProvider.when "/dashboard/acc/billing",
+  $routeProvider.when "/acc/billing",
     controller: "accBilling"
     templateUrl: "/views/dashboard/account:billing"
 
-  $routeProvider.when "/dashboard/acc/funds",
+  $routeProvider.when "/acc/funds",
     controller: "accFunds"
     templateUrl: "/views/dashboard/account:funds"
 
-  $routeProvider.when "/dashboard/acc/feedback",
+  $routeProvider.when "/acc/feedback",
     controller: "accFeedback"
     templateUrl: "/views/dashboard/account:feedback"
 
-  $routeProvider.otherwise { redirectTo: "/dashboard/home/publisher" }
+  $routeProvider.otherwise { redirectTo: "/home/publisher" }
 
   true
