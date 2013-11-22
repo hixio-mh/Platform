@@ -20,9 +20,6 @@ setup = (options, imports, register) ->
   server = imports["line-express"]
   utility = imports["logic-utility"]
 
-  # We have no homepage, just redirect to the login (unauth dash -> login)
-  server.server.get "/", (req, res) -> res.redirect "/dashboard"
-
   # Serve layout to each path
   for p in routes.views
     server.server.get p, (req, res) ->
