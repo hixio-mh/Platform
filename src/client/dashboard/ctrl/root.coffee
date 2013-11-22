@@ -15,6 +15,5 @@
 window.AdefyDashboard.controller "rootController", ($scope, $http, $route) ->
 
   $http.get("/logic/user/self").success (me) ->
-
     me.fundsText = "$#{me.funds.toFixed 2} Funds"
     $scope.me = me

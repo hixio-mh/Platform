@@ -48,24 +48,24 @@ html(lang="en", data-ng-app="AdefyDashboard")
     header.navbar.cf
       #logo Adefy
       .menu.left.full
-        a(href="/")
+        a(href="/dashboard/home/publisher", tab)
           i.fa.fa-fw.fa-home
           | Dashboard
-        a.active(href="/reports")
+        a(href="/reports", tab)
           i.fa.fa-fw.fa-signal
           | Reports
-        a(href="/campaigns")
+        a(href="/campaigns", tab)
           i.fa.fa-fw.fa-bullhorn
           | Campaigns
-        a(href="/ads")
+        a(href="/dashboard/ads/listing", tab)
           i.fa.fa-fw.fa-sitemap
           | Ads
-        a(href="/apps")
+        a(href="/apps", tab)
           i.fa.fa-fw.fa-rocket
           | Apps
 
       .menu.right
-        a(href="/funds", data-ng-bind="me.fundsText")
+        a(href="/funds", data-ng-bind="me.fundsText", tab)
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
@@ -90,7 +90,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(src="/js/vendor/angular-country-select.min.js")
       script(src="/socket.io/socket.io.js")
 
-      script(type="text/javascript")
+      script
         var socket = io.connect("", { secure: true });
         window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "countrySelect"]);
 
@@ -98,26 +98,6 @@ html(lang="en", data-ng-app="AdefyDashboard")
         script(src="/client/dashboard/admin-config.js")
       else
         script(src="/client/dashboard/normal-config.js")
-
-      script(type="text/javascript")
-
-        window.AdefyDashboard.run(function($rootScope, $http) {
-
-          $rootScope.$on("$routeChangeSuccess", function(e, current, old) {
-
-            if(current.loadedTemplateUrl !== undefined) {
-
-              // Update tab
-              var vals = current.loadedTemplateUrl.split("/");
-              $rootScope.tab = vals[vals.length - 1];
-            }
-
-            // Slide up menus after a brief delay to give things a chance to settle down
-            setTimeout(function() {
-              $("#dashboard-menu .submenu.down:not(.active)").removeClass("down").slideUp("fast");
-            }, 100);
-          });
-        });
 
       script(src="/client/dashboard/ctrl/root.js")
       script(src="/client/dashboard/ctrl/dashAdvertiser.js")
@@ -131,6 +111,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(src="/client/dashboard/ctrl/account/feedback.js")
 
       script(src="/client/dashboard/modules/dropdown.js")
+      script(src="/client/dashboard/modules/tab.js")
 
       if locals.admin
         script(src="/client/dashboard/ctrl/admin/home.js")
