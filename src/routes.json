@@ -24,8 +24,8 @@
 
     "/dashboard/apps",
 
-    "/dashboard/ads/listing",
-    "/dashboard/ads/campaigns",
+    "/dashboard/ads",
+    "/dashboard/campaigns",
 
     "/dashboard/acc/info",
     "/dashboard/acc/billing",

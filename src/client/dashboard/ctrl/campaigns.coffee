@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "adsCampaigns", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "campaigns", ($scope, $http, $route) ->
 
   # Controls which main element is shown
   #
