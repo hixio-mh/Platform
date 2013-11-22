@@ -28,7 +28,7 @@ setup = (options, imports, register) ->
   users = require("./logic/users.js") db, utility
 
   ## ** Unprotected ** - public invite add request!
-  server.server.get "/logic/invite/add", (req, res) ->
+  server.server.get "/api/v1/invite/add", (req, res) ->
     if not utility.param req.query.key, res, "Key" then return
     if not utility.param req.query.email, res, "Email" then return
 
@@ -57,14 +57,14 @@ setup = (options, imports, register) ->
     # Error callback
     , (error) -> res.json { error: error }
 
-  # Invite manipulation [admin only] - /logic/invite/:action
+  # Invite manipulation [admin only] - /api/v1/invite/:action
   #
   #   /get      fetch all invites
   #   /update   update a single invite
   #   /delete   delete an invite
   #
   # admin only
-  server.server.get "/logic/invite/:action", (req, res) ->
+  server.server.get "/api/v1/invite/:action", (req, res) ->
     utility.verifyAdmin req, res, (admin) ->
       if not admin then return
 
@@ -73,7 +73,7 @@ setup = (options, imports, register) ->
       else if req.params.action == "delete" then invites.delete req, res
       else res.json { error: "Unknown action #{req.params.action} "}
 
-  # User manipulation - /logic/user/:action
+  # User manipulation - /api/v1/user/:action
   #
   #   /get      [admin-only] fetch a single, or all users
   #   /delete   [admin-only] delete a single user
@@ -81,7 +81,7 @@ setup = (options, imports, register) ->
   #   /save     save a single user
   #
   # Some routes are admin only
-  server.server.get "/logic/user/:action", (req, res) ->
+  server.server.get "/api/v1/user/:action", (req, res) ->
     if not utility.userCheck req, res then return
 
     action = req.params.action
@@ -94,13 +94,13 @@ setup = (options, imports, register) ->
 
     else res.json { error: "Unknown action #{req.params.action} "}
 
-  # Ad manipulation - /logic/ads/:action
+  # Ad manipulation - /api/v1/ads/:action
   #
   #   /get      fetch ads owned by a user
   #   /create   create an ad
   #   /delete   delete an ad
   #
-  server.server.get "/logic/ads/:action", (req, res) ->
+  server.server.get "/api/v1/ads/:action", (req, res) ->
     if not utility.userCheck req, res then return
 
     if req.params.action == "get" then ads.get req, res
@@ -108,7 +108,7 @@ setup = (options, imports, register) ->
     else if req.params.action == "delete" then ads.delete req, res
     else res.json { error: "Unknown action #{req.params.action} " }
 
-  # Campaign manipulation - /logic/campaigns/:action
+  # Campaign manipulation - /api/v1/campaigns/:action
   #
   #   /create   create a campaign owned by the current user
   #   /get      fetch campaigns owned by the current user
@@ -116,7 +116,7 @@ setup = (options, imports, register) ->
   #   /events   fetch events for a campaign
   #   /save     save a single campaign
   #
-  server.server.get "/logic/campaigns/:action", (req, res) ->
+  server.server.get "/api/v1/campaigns/:action", (req, res) ->
     if not utility.userCheck req, res then return
 
     if req.params.action == "create" then campaigns.create req, res
@@ -126,7 +126,7 @@ setup = (options, imports, register) ->
     else if req.params.action == "save" then campaigns.save req, res
     else res.json { error: "Unknown action #{req.params.action}" }
 
-  # Publisher manipulation - /logic/publishers/:action
+  # Publisher manipulation - /api/v1/publishers/:action
   #
   #   /create      create a publisher owned by the current user
   #   /save        save a single publisher
@@ -136,7 +136,7 @@ setup = (options, imports, register) ->
   #   /approve     [admin-only] approve a publisher
   #   /dissapprove [admin-only] disapprove a publisher
   #
-  server.server.get "/logic/publishers/:action", (req, res) ->
+  server.server.get "/api/v1/publishers/:action", (req, res) ->
     if not utility.userCheck req, res then return
 
     if req.params.action == "create" then publishers.create req, res

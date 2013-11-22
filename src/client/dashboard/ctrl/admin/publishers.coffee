@@ -24,7 +24,7 @@ window.AdefyDashboard.controller "adminPublishers", ($scope, $http, $route) ->
   ## Publisher listing
   ##
   refreshPublisherListing = ->
-    $http.get("/logic/publishers/all").success (list) ->
+    $http.get("/api/v1/publishers/all").success (list) ->
       if list.error != undefined then alert list.error; return
 
       # Calculate CTR, status, and active text
@@ -82,7 +82,7 @@ window.AdefyDashboard.controller "adminPublishers", ($scope, $http, $route) ->
       if not result then return
       id = $scope.pubView.id
 
-      $http.get("/logic/publishers/approve?id=#{id}").success (reply) ->
+      $http.get("/api/v1/publishers/approve?id=#{id}").success (reply) ->
         if reply.error != undefined then alert reply.error
 
         refreshPublisherListing()
@@ -97,7 +97,7 @@ window.AdefyDashboard.controller "adminPublishers", ($scope, $http, $route) ->
       msg = $scope.pubView.newApprovalMessage
       id = $scope.pubView.id
 
-      $http.get("/logic/publishers/dissaprove?id=#{id}&msg=#{msg}").success (reply) ->
+      $http.get("/api/v1/publishers/dissaprove?id=#{id}&msg=#{msg}").success (reply) ->
         if reply.error != undefined then alert reply.error
 
         refreshPublisherListing()

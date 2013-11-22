@@ -41,7 +41,7 @@ window.AdefyDashboard.controller "adminHome", ($scope, $http, $route) ->
   ##
 
   # Fetch data for user graph
-  $http.get("/logic/analytics/users").success (data) ->
+  $http.get("/api/v1/analytics/users").success (data) ->
     if data.error != undefined then alert data.error; return
 
     result = computeTotals data
@@ -49,7 +49,7 @@ window.AdefyDashboard.controller "adminHome", ($scope, $http, $route) ->
     $scope.userCount = result.largest
 
   # Fetch data for invite graph
-  $http.get("/logic/analytics/invites").success (data) ->
+  $http.get("/api/v1/analytics/invites").success (data) ->
     if data.error != undefined then alert data.error; return
 
     result = computeTotals data

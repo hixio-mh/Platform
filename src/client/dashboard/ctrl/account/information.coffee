@@ -17,13 +17,13 @@ window.AdefyDashboard.controller "accInformation", ($scope, $http, $route) ->
   # Fetch data!
   $scope.me = {}
   $scope.saveMessage = ""
-  $http.get("/logic/user/self").success (me) -> $scope.me = me
+  $http.get("/api/v1/user/self").success (me) -> $scope.me = me
 
   $scope.save = ->
     args = ""
     args += "&#{name}=#{val}" for name, val of $scope.me
 
-    $http.get("/logic/user/save?#{args.substring 1}").success (msg) ->
+    $http.get("/api/v1/user/save?#{args.substring 1}").success (msg) ->
       if msg.error != undefined
         $scope.saveMessage = msg.error
         setTimeout (-> $scope.$apply -> $scope.saveMessage = ""), 1000

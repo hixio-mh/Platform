@@ -6,15 +6,15 @@
 
     "/editor/:ad",
     "/exports/:folder/:file",
-    "/logic/invite/add",
+    "/api/v1/invite/add",
 
-    "/logic/analytics/:request",
-    "/logic/editor/:action",
-    "/logic/invite/:action",
-    "/logic/user/:action",
-    "/logic/ads/:action",
-    "/logic/campaigns/:action",
-    "/logic/publishers/:action"
+    "/api/v1/analytics/:request",
+    "/api/v1/editor/:action",
+    "/api/v1/invite/:action",
+    "/api/v1/user/:action",
+    "/api/v1/ads/:action",
+    "/api/v1/campaigns/:action",
+    "/api/v1/publishers/:action"
   ],
 
   "views": [

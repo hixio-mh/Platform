@@ -43,7 +43,7 @@ window.AdefyDashboard.controller "apps", ($scope, $http, $route) ->
   ## App listing
   ##
   refreshAppListing = ->
-    $http.get("/logic/publishers/get").success (list) ->
+    $http.get("/api/v1/publishers/get").success (list) ->
       if list.error != undefined then alert list.error; return
 
       # Calculate CTR, status, and active text
