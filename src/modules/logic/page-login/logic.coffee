@@ -76,7 +76,7 @@ setup = (options, imports, register) ->
               throw server.InternalError
             else
               spew.info "User #{userData.id} logged in"
-              res.redirect "/dashboard"
+              res.redirect "/"
 
     else
       res.status(401).render "account/login.jade",
