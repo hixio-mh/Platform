@@ -138,7 +138,7 @@ module.exports = (db, utility) ->
 
     utility.verifyAdmin req, res, (admin, user) ->
       if user == undefined then res.json { error: "No such user!" }; return
-      if all and not admin then res.json { error: "Unauthorized!" }; return
+      if all and not admin then res.json(403); return
 
       if all then query = {} else query = { owner: user._id }
 

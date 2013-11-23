@@ -84,7 +84,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(src="http://code.jquery.com/jquery-2.0.3.min.js")
       script(src='/js/vendor/chosen.jquery.min.js')
       script(src='/js/vendor/Chart.min.js')
-      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js")
+      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js")
+      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js")
       script(src="/js/vendor/angular-route.min.js")
       script(src="/js/vendor/angular-country-select.min.js")
       script(src="/js/vendor/angles.js")
@@ -93,7 +94,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
 
       script
         var socket = io.connect("", { secure: true });
-        window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "countrySelect", "angles", "localytics.directives"]);
+        window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "ngResource", "countrySelect", "angles", "localytics.directives"]);
 
       if locals.admin
         script(src="/client/dashboard/admin-config.js")

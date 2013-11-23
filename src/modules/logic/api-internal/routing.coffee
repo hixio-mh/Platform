@@ -139,14 +139,39 @@ setup = (options, imports, register) ->
   server.server.get "/api/v1/publishers/:action", (req, res) ->
     if not utility.userCheck req, res then return
 
-    if req.params.action == "create" then publishers.create req, res
-    else if req.params.action == "save" then publishers.save req, res
-    else if req.params.action == "delete" then publishers.delete req, res
-    else if req.params.action == "get" then publishers.get req, res, false
-    else if req.params.action == "all" then publishers.get req, res, true
+    #if req.params.action == "create" then publishers.create req, res
+    #else if req.params.action == "save" then publishers.save req, res
+    #else if req.params.action == "delete" then publishers.delete req, res
+    #else if req.params.action == "get" then publishers.get req, res, false
+    #else if req.params.action == "all" then publishers.get req, res, true
     else if req.params.action == "approve" then publishers.approve req, res
     else if req.params.action == "dissaprove" then publishers.dissaprove req, res
     else res.json { error: "Unknown action #{req.params.action}"}
+
+  # Get all publishers
+  server.server.get "/api/v1/publishers", (req, res) ->
+    if not utility.userCheck req, res then return
+    publishers.get req, res, false
+
+  # Get publisher by id
+  server.server.get "/api/v1/publishers/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    # MISSING
+
+  # Create a new publisher
+  server.server.post "/api/v1/publishers", (req, res) ->
+    if not utility.userCheck req, res then return
+    publishers.create req, res
+
+  # Update a publisher
+  server.server.put "/api/v1/publishers/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    publishers.save req, res
+
+  # Delete a publisher
+  server.server.delete "/api/v1/publishers/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    publishers.delete req, res
 
   register null, {}
 

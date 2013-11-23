@@ -14,7 +14,9 @@
     "/api/v1/user/:action",
     "/api/v1/ads/:action",
     "/api/v1/campaigns/:action",
-    "/api/v1/publishers/:action"
+
+    "/api/v1/publishers",
+    "/api/v1/publishers/:id"
   ],
 
   "views": [
