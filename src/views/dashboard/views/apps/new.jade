@@ -1,0 +1,19 @@
+.inner: form
+  dl.form.center
+    dt
+      label Application name
+      span Used as a display name in Adefy
+    dd: input(type="text")
+    dt
+      label Application URL
+      span The Android package name or App Store ID
+    dd: input(type="text", placeholder="com.android.game")
+    dt: label Application category
+    dd
+      select.chosen-select
+        option(ng-repeat="cat in categories", ng-bind="cat")
+    dt: label Description
+    dd: textarea
+
+script.
+  $(".chosen-select").chosen({disable_search_threshold: 10});
