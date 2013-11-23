@@ -12,7 +12,10 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route) ->
+window.AdefyDashboard.factory 'App', ($resource) ->
+  return $resource('/api/v1/publishers/:id', {id: '@id'})
+
+window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
 
   $scope.apps = []               # Application data for table
 
@@ -28,41 +31,39 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route) ->
   ## App listing
   ##
   refreshAppListing = ->
-    $http.get("/api/v1/publishers/get").success (list) ->
-      if list.error != undefined then alert list.error; return
-
+    App.query (apps) ->
       # Calculate CTR, status, and active text
-      for p, i in list
+      for p, i in apps
 
         # CTR
-        list[i].ctr = (list[i].clicks / list[i].impressions) * 100
+        apps[i].ctr = (apps[i].clicks / apps[i].impressions) * 100
 
-        if isNaN list[i].ctr then list[i].ctr = 0
+        if isNaN apps[i].ctr then apps[i].ctr = 0
 
         # Status
-        if list[i].status == 0
-          list[i].statusText = "Created"
-          list[i].statusClass = "label-primary"
-        else if list[i].status == 1
-          list[i].statusText = "Rejected"
-          list[i].statusClass = "label-danger"
-        else if list[i].status == 2
-          list[i].statusText = "Approved"
-          list[i].statusClass = "label-success"
-        else if list[i].status == 3
-          list[i].statusText = "Awaiting Approval"
-          list[i].statusClass = "label-info"
+        if apps[i].status == 0
+          apps[i].statusText = "Created"
+          apps[i].statusClass = "label-primary"
+        else if apps[i].status == 1
+          apps[i].statusText = "Rejected"
+          apps[i].statusClass = "label-danger"
+        else if apps[i].status == 2
+          apps[i].statusText = "Approved"
+          apps[i].statusClass = "label-success"
+        else if apps[i].status == 3
+          apps[i].statusText = "Awaiting Approval"
+          apps[i].statusClass = "label-info"
 
         # Active
-        if list[i].active == true
-          list[i].activeText = "Active"
-          list[i].activeClass = "label-primary"
-        else if list[i].active == false
-          list[i].activeText = "Disabled"
-          list[i].activeClass = "label-danger"
+        if apps[i].active == true
+          apps[i].activeText = "Active"
+          apps[i].activeClass = "label-primary"
+        else if apps[i].active == false
+          apps[i].activeText = "Disabled"
+          apps[i].activeClass = "label-danger"
 
         # fetch chart data here later
-        list[i].chart = {
+        apps[i].chart = {
           #labels : ["January","February","March","April","May","June","July"],
           labels : ["","","","","","",""],
           datasets : [
@@ -82,8 +83,8 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route) ->
             }
           ]
         }
-
-      $scope.apps = list
+    
+      $scope.apps = apps
 
   refreshAppListing()
 
@@ -104,3 +105,6 @@ window.AdefyDashboard.controller "appsNew", ($scope, $http, $route) ->
     "Community"
     "Women"
   ]
+
+  $scope.submit = ->
+    console.log this.app
