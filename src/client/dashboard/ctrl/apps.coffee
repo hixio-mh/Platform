@@ -15,7 +15,7 @@
 window.AdefyDashboard.factory 'App', ($resource) ->
   return $resource('/api/v1/publishers/:id', {id: '@id'})
 
-window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
+window.AdefyDashboard.controller "appsIndex", ($scope, App) ->
 
   $scope.apps = []               # Application data for table
 
@@ -65,7 +65,7 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
   refreshAppListing()
 
 
-window.AdefyDashboard.controller "appsNew", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
 
   # Application categories
   $scope.categories = [
@@ -83,4 +83,6 @@ window.AdefyDashboard.controller "appsNew", ($scope, $http, $route) ->
   ]
 
   $scope.submit = ->
-    console.log this.app
+    newApp = new App(this.app)
+    newApp.$save() # TODO: check for negative response and don't redirect
+    $location.path("/apps")
