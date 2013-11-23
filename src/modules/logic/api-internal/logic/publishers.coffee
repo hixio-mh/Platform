@@ -24,27 +24,24 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not utility.param req.query.name, res, "Application name" then return
+    if not utility.param req.param('name'), res, "Application name" then return
 
     # Validate type
-    if Number(req.query.type) == undefined then type = 0
-    else if Number(req.query.type) == 1 then type = 1
-    else if Number(req.query.type) == 2 then type = 2
+    if Number(req.param('type')) == undefined then type = 0
+    else if Number(req.param('type')) == 1 then type = 1
+    else if Number(req.param('type')) == 2 then type = 2
     else type = 0
 
     utility.verifyAdmin req, res, (admin, user) ->
       if user == undefined then res.json { error: "No such user!" }; return
 
-      req.query.url = req.query.url || ""
-      req.query.description = req.query.description || ""
-
       newPublisher = db.models().Publisher.getModel()
         owner: user._id
-        name: String req.query.name
+        name: String req.param('name')
         type: type
-        url: String req.query.url
-        category: String req.query.category
-        description: String req.query.description
+        url: String req.param('url') || ""
+        category: String req.param('category')
+        description: String req.param('description') || ""
 
         status: 0
         active: false
@@ -55,7 +52,7 @@ module.exports = (db, utility) ->
         earnings: 0
 
       newPublisher.save()
-      res.json { msg: "OK" }
+      res.json(200)
 
     , true
 
