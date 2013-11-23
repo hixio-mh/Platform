@@ -38,28 +38,6 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
         app.ctr = (app.clicks / app.impressions) * 100
         if isNaN app.ctr then app.ctr = 0
 
-        # Status
-        if app.status == 0
-          app.statusText = "Created"
-          app.statusClass = "label-primary"
-        else if app.status == 1
-          app.statusText = "Rejected"
-          app.statusClass = "label-danger"
-        else if app.status == 2
-          app.statusText = "Approved"
-          app.statusClass = "label-success"
-        else if app.status == 3
-          app.statusText = "Awaiting Approval"
-          app.statusClass = "label-info"
-
-        # Active
-        if app.active == true
-          app.activeText = "Active"
-          app.activeClass = "label-primary"
-        else if app.active == false
-          app.activeText = "Disabled"
-          app.activeClass = "label-danger"
-
         # fetch chart data here later
         app.chart = {
           #labels : ["January","February","March","April","May","June","July"],
