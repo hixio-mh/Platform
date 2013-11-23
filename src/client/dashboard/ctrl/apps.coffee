@@ -16,21 +16,6 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route) ->
 
   $scope.apps = []               # Application data for table
 
-  # Application categories
-  $scope.categories = [
-    "Finance"
-    "IT"
-    "Business"
-    "Entertainment"
-    "News"
-    "Auto & Motor"
-    "Sport"
-    "Travel"
-    "Information"
-    "Community"
-    "Women"
-  ]
-
   # Chart.js options
   $scope.options = {
     scaleShowLabels: false,

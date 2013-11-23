@@ -10,8 +10,7 @@
     dd: input(type="text", placeholder="com.android.game")
     dt: label Application category
     dd
-      select.chosen-select
-        option(ng-repeat="cat in categories", ng-bind="cat")
+      select.chosen-select(ng-model="category", ng-options="c for c in categories")
     dt: label Description
     dd: textarea
 
