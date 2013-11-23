@@ -17,7 +17,7 @@ window.AdefyDashboard.factory 'App', ($resource) ->
 
 window.AdefyDashboard.controller "appsIndex", ($scope, App) ->
 
-  $scope.apps = []               # Application data for table
+  $scope.apps = []
 
   # Chart.js options
   $scope.options = {
