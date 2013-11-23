@@ -170,6 +170,27 @@ module.exports = (db, utility) ->
 
     , true
 
+  # Finds a single publisher by ID
+  #
+  # @param [Object] req request
+  # @param [Object] res response
+  find: (req, res) ->
+    if not utility.param req.param('id'), res, "Publisher id" then return
+
+    utility.verifyAdmin req, res, (admin, user) ->
+      if user == undefined then res.json { error: "No such user!" }; return
+
+      db.fetch "Publisher", { _id: req.param('id'), owner: user._id }, (pub) ->
+        if pub == undefined or pub.length == 0
+          res.json(404)
+          return
+
+        res.json pub[0]
+
+      , ((error) -> res.json { error: error }), true
+
+    , true
+
   # Updates publisher status if applicable
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
