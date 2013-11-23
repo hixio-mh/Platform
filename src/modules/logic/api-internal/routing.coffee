@@ -156,7 +156,7 @@ setup = (options, imports, register) ->
   # Get publisher by id
   server.server.get "/api/v1/publishers/:id", (req, res) ->
     if not utility.userCheck req, res then return
-    # MISSING
+    publisher.find req, res
 
   # Create a new publisher
   server.server.post "/api/v1/publishers", (req, res) ->
