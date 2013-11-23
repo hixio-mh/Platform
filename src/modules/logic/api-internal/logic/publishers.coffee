@@ -32,11 +32,9 @@ module.exports = (db, utility) ->
     else if Number(req.param('type')) == 2 then type = 2
     else type = 0
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
-
+    if req.current_user
       newPublisher = db.models().Publisher.getModel()
-        owner: user._id
+        owner: req.current_user.id
         name: String req.param('name')
         type: type
         url: String req.param('url') || ""
@@ -52,9 +50,9 @@ module.exports = (db, utility) ->
         earnings: 0
 
       newPublisher.save()
-      res.json(200)
-
-    , true
+      res.send(200)
+    else
+      res.send(403)
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
@@ -91,7 +89,7 @@ module.exports = (db, utility) ->
             publisher[diff.name] = diff.post
 
         publisher.save()
-        res.json { msg: "OK" }
+        res.send(200)
 
     , true
 
@@ -109,18 +107,18 @@ module.exports = (db, utility) ->
       db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
 
         if publisher == undefined or publisher.length == 0
-          res.json { error: "No such campaign!" }
+          res.send(404)
           return
 
         if not admin and not publisher.owner.equals user._id
-          res.json { error: "Unauthorized!" }
+          res.send(403)
           return
 
         # Assuming we've gotten to this point, we are authorized to perform
         # the delete
         publisher.remove()
 
-        res.json { msg: "OK" }
+        res.send(200)
 
     , true
 
@@ -177,19 +175,18 @@ module.exports = (db, utility) ->
   find: (req, res) ->
     if not utility.param req.param('id'), res, "Publisher id" then return
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
-
+    if req.current_user
       db.fetch "Publisher", { _id: req.param('id'), owner: user._id }, (pub) ->
         if pub == undefined or pub.length == 0
-          res.json(404)
+          res.send(404)
           return
 
         res.json pub[0]
 
       , ((error) -> res.json { error: error }), true
 
-    , true
+    else
+      res.json 404, { error: "No such user!" }
 
   # Updates publisher status if applicable
   #
@@ -216,7 +213,7 @@ module.exports = (db, utility) ->
           pub[0].status = 2
           pub[0].save()
 
-        res.json { msg: "OK" }
+        res.send(200)
 
       , ((error) -> res.json { error: error }), true
 
@@ -243,4 +240,4 @@ module.exports = (db, utility) ->
           timestamp: new Date().getTime()
 
         pub.save()
-        res.json { msg: "OK" }
+        res.send(200)
