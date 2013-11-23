@@ -33,37 +33,35 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
   refreshAppListing = ->
     App.query (apps) ->
       # Calculate CTR, status, and active text
-      for p, i in apps
-
+      for app, i in apps
         # CTR
-        apps[i].ctr = (apps[i].clicks / apps[i].impressions) * 100
-
-        if isNaN apps[i].ctr then apps[i].ctr = 0
+        app.ctr = (app.clicks / app.impressions) * 100
+        if isNaN app.ctr then app.ctr = 0
 
         # Status
-        if apps[i].status == 0
-          apps[i].statusText = "Created"
-          apps[i].statusClass = "label-primary"
-        else if apps[i].status == 1
-          apps[i].statusText = "Rejected"
-          apps[i].statusClass = "label-danger"
-        else if apps[i].status == 2
-          apps[i].statusText = "Approved"
-          apps[i].statusClass = "label-success"
-        else if apps[i].status == 3
-          apps[i].statusText = "Awaiting Approval"
-          apps[i].statusClass = "label-info"
+        if app.status == 0
+          app.statusText = "Created"
+          app.statusClass = "label-primary"
+        else if app.status == 1
+          app.statusText = "Rejected"
+          app.statusClass = "label-danger"
+        else if app.status == 2
+          app.statusText = "Approved"
+          app.statusClass = "label-success"
+        else if app.status == 3
+          app.statusText = "Awaiting Approval"
+          app.statusClass = "label-info"
 
         # Active
-        if apps[i].active == true
-          apps[i].activeText = "Active"
-          apps[i].activeClass = "label-primary"
-        else if apps[i].active == false
-          apps[i].activeText = "Disabled"
-          apps[i].activeClass = "label-danger"
+        if app.active == true
+          app.activeText = "Active"
+          app.activeClass = "label-primary"
+        else if app.active == false
+          app.activeText = "Disabled"
+          app.activeClass = "label-danger"
 
         # fetch chart data here later
-        apps[i].chart = {
+        app.chart = {
           #labels : ["January","February","March","April","May","June","July"],
           labels : ["","","","","","",""],
           datasets : [
@@ -83,7 +81,7 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route, App) ->
             }
           ]
         }
-    
+
       $scope.apps = apps
 
   refreshAppListing()
