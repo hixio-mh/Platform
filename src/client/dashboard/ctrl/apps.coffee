@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "apps", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "appsIndex", ($scope, $http, $route) ->
 
   $scope.apps = []               # Application data for table
 
@@ -101,3 +101,21 @@ window.AdefyDashboard.controller "apps", ($scope, $http, $route) ->
       $scope.apps = list
 
   refreshAppListing()
+
+
+window.AdefyDashboard.controller "appsNew", ($scope, $http, $route) ->
+
+  # Application categories
+  $scope.categories = [
+    "Finance"
+    "IT"
+    "Business"
+    "Entertainment"
+    "News"
+    "Auto & Motor"
+    "Sport"
+    "Travel"
+    "Information"
+    "Community"
+    "Women"
+  ]
