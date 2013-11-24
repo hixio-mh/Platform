@@ -1,8 +1,9 @@
 .titlebar.cf.full
   .name(ng-bind="app.name")
-  .label.green Approved
-  // .label.red Rejected
-  // .label.gray Pending
+  span(ng-switch="app.status")
+    .label.gray(ng-switch-when="0") Pending
+    .label.red(ng-switch-when="1") Rejected
+    .label.green(ng-switch-when="2") Approved
   .menu
     a.active(href="#")
       i.fa.fa-fw.fa-signal
@@ -20,16 +21,16 @@
 
 .stats.app
   .stat: .wrap
-    .amount.large $ 381.23
+    .amount.large $ {{ app.earnings | number:2 }}
     .desc Earned today
   .stat: .wrap
-    .amount.large ▲ 8,351
+    .amount.large ▲ {{ app.impressions | number }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ 251
+    .amount.large ▲ {{ app.clicks | number }}
     .desc Clicks
   .stat: .wrap
-    .amount.large $ 472.75
+    .amount.large $ {{ app.earnings | number:2 }}
     .desc Total revenue
 .graphs
   .graph
