@@ -1,1 +1,38 @@
-h1 Show!
+.titlebar.cf.full
+  .name(ng-bind="app.name")
+  .label.green Approved
+  // .label.red Rejected
+  // .label.gray Pending
+  .menu
+    a.active(href="#")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(href="#")
+      i.fa.fa-fw.fa-paperclip
+      | Integration
+    a(href="#")
+      i.fa.fa-fw.fa-pencil
+      | Design
+    a(href="/app/edit")
+      i.fa.fa-fw.fa-wrench
+      | Edit
+
+
+.stats.app
+  .stat: .wrap
+    .amount.large $ 381.23
+    .desc Earned today
+  .stat: .wrap
+    .amount.large ▲ 8,351
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 251
+    .desc Clicks
+  .stat: .wrap
+    .amount.large $ 472.75
+    .desc Total revenue
+.graphs
+  .graph
+  .graph
+  .graph
+  .graph
