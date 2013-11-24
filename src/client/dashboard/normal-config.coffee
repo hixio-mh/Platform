@@ -57,8 +57,8 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "accBilling"
     templateUrl: "/views/dashboard/account:billing"
 
-  $routeProvider.when "/acc/funds",
-    controller: "accFunds"
+  $routeProvider.when "/funds",
+    controller: "funds"
     templateUrl: "/views/dashboard/account:funds"
 
   $routeProvider.when "/acc/feedback",

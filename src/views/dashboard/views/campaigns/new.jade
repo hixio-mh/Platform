@@ -8,7 +8,7 @@
     dd: textarea(ng-model="campaign.description")
     dt: label Category
     dd
-      select(chosen, ng-model="campaign.category", ng-options="c for c in categories")
+      select(chosen ng-model="campaign.category", ng-options="c for c in categories")
   fieldset: dl.form.center
     legend Bidding
     dt
@@ -19,14 +19,14 @@
         option CPM
         option CPC
     dt: label Total Budget
-    dd: input(ng-model="campaign.total_budget" type="text" placeholder="min $25")
+    dd: input(ng-model="campaign.totalBudget" type="text" placeholder="min $25")
     dt: label Daily Budget (optional)
-    dd: input(ng-model="campaign.daily_budget" type="text")
+    dd: input(ng-model="campaign.dailyBudget" type="text")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
     dd
-      select(chosen ng-model="campaign.bid_system")
+      select(chosen ng-model="campaign.bidSystem")
         option Automatic
         option Manual
     dt: label Bid

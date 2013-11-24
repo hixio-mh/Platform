@@ -12,7 +12,10 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#pad-wrapper
-  .row.section
-    .col-md-12
-      h1 Nothing here yet.
+.inner
+    .funds.center(style="text-align: center")
+      .amount.large ${{me.funds | number:2}}
+      .desc in Fund
+      .actions
+        button Deposit funds
+        button.blue Withdraw funds

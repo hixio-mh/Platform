@@ -12,4 +12,4 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "accFunds", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "funds", ($scope, $http, $route) ->
