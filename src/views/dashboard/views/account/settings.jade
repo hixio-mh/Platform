@@ -1,0 +1,47 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+.inner: form
+  fieldset: dl.form.thin.center
+    legend Profile
+    dt: label Username
+    dd: input(type="text" disabled placeholder="{{me.username}}")
+    dt: label Email
+    dd: input(type="email" disabled placeholder="{{me.email}}")
+
+  fieldset: dl.form.thin.center
+    legend Billing
+
+    .billing.center
+      h3 Address
+      .field.w50.margin
+        input(type="text" placeholder="First name")
+      .field.w50
+        input(type="text" placeholder="Last name")
+      .field
+        input(type="text" placeholder="Address")
+      .field
+        input(type="text" placeholder="State/Province")
+      .field.w75.margin
+        input(type="text" placeholder="City")
+      .field.w25
+        input(type="text" placeholder="Postal Code")
+      .field
+        select.chosen-select(data-placeholder="Select Country")
+          option(selected="selected") Austria
+          option France
+          option UK
+  fieldset: dl.form.thin.center
+    dt
+    dd: button.blue Save
