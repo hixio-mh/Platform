@@ -92,7 +92,7 @@ window.AdefyDashboard.controller "appsShow", ($scope, $location, $routeParams, A
   $scope.app = {}
 
   refreshApp = ->
-    App.get id: $routeParams, (app) ->
+    App.get id: $routeParams.id, (app) ->
       $scope.app = app
       console.log $scope.app
 

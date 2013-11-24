@@ -16,9 +16,9 @@ a.new-item(href="/apps/new")
   i.fa.fa-plus
   | New app
 .grid
-  .item(ng-repeat="app in apps")
+  a.item(ng-repeat="app in apps" href="/apps/{{app.id}}")
     img.icon(src="http://i1-news.softpedia-static.com/images/news2/Free-Angry-Birds-Release-Brings-Another-15-Levels-to-iPhone-iPod-touch-2.jpg")
-    a.name(ng-bind="app.name" href="/apps/{{app.id}}")
+    .name(ng-bind="app.name")
     .metrics
       canvas(linechart, options="options", data="app.chart", width="340", height="200")
       .wrap: .text

@@ -136,17 +136,31 @@ setup = (options, imports, register) ->
   #   /approve     [admin-only] approve a publisher
   #   /dissapprove [admin-only] disapprove a publisher
   #
-  server.server.get "/api/v1/publishers/:action", (req, res) ->
-    if not utility.userCheck req, res then return
+  #server.server.get "/api/v1/publishers/:action", (req, res) ->
+    #if not utility.userCheck req, res then return
 
     #if req.params.action == "create" then publishers.create req, res
     #else if req.params.action == "save" then publishers.save req, res
     #else if req.params.action == "delete" then publishers.delete req, res
     #else if req.params.action == "get" then publishers.get req, res, false
     #else if req.params.action == "all" then publishers.get req, res, true
-    else if req.params.action == "approve" then publishers.approve req, res
-    else if req.params.action == "dissaprove" then publishers.dissaprove req, res
-    else res.json { error: "Unknown action #{req.params.action}"}
+    #else if req.params.action == "approve" then publishers.approve req, res
+    #else if req.params.action == "dissaprove" then publishers.dissaprove req, res
+    #else res.json { error: "Unknown action #{req.params.action}"}
+
+  server.server.all "/api/v1/*", (req, res, next) ->
+    if req.cookies.user
+      db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
+        if user.length == 0 
+          req.current_user = null
+          delete req.cookies.user
+          next()
+        else
+          req.current_user =
+            id: user._id
+            username: user.username,
+            admin: user.permissions == 0
+          next()
 
   # Get all publishers
   server.server.get "/api/v1/publishers", (req, res) ->
@@ -156,7 +170,7 @@ setup = (options, imports, register) ->
   # Get publisher by id
   server.server.get "/api/v1/publishers/:id", (req, res) ->
     if not utility.userCheck req, res then return
-    publisher.find req, res
+    publishers.find req, res
 
   # Create a new publisher
   server.server.post "/api/v1/publishers", (req, res) ->
