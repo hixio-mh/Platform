@@ -84,8 +84,12 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
 
   $scope.submit = ->
     newApp = new App(this.app)
-    newApp.$save() # TODO: check for negative response and don't redirect
-    $location.path("/apps")
+    newApp.$save().then(
+      -> # success
+        $location.path("/apps")
+      -> #error
+    )
+
 
 window.AdefyDashboard.controller "appsShow", ($scope, $location, $routeParams, App) ->
 
