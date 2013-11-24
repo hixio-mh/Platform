@@ -27,6 +27,22 @@ setup = (options, imports, register) ->
   invites = require("./logic/invites.js") db, utility
   users = require("./logic/users.js") db, utility
 
+  # Set the req.current_user
+  server.server.all "/api/v1/*", (req, res, next) ->
+    if req.cookies.user
+      db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
+        if user.length == 0 
+          req.current_user = null
+          delete req.cookies.user
+          next()
+        else
+          req.current_user =
+            id: user._id
+            username: user.username,
+            admin: user.permissions == 0
+          next()
+
+
   ## ** Unprotected ** - public invite add request!
   server.server.get "/api/v1/invite/add", (req, res) ->
     if not utility.param req.query.key, res, "Key" then return
@@ -116,15 +132,35 @@ setup = (options, imports, register) ->
   #   /events   fetch events for a campaign
   #   /save     save a single campaign
   #
+  ###
   server.server.get "/api/v1/campaigns/:action", (req, res) ->
-    if not utility.userCheck req, res then return
-
-    if req.params.action == "create" then campaigns.create req, res
-    else if req.params.action == "get" then campaigns.fetch req, res
-    else if req.params.action == "delete" then campaigns.delete req, res
     else if req.params.action == "events" then campaigns.fetchEvents req, res
-    else if req.params.action == "save" then campaigns.save req, res
-    else res.json { error: "Unknown action #{req.params.action}" }
+  ###
+
+  # Get all campaigns
+  server.server.get "/api/v1/campaigns", (req, res) ->
+    if not utility.userCheck req, res then return
+    campaigns.fetch req, res
+
+  # Get campaign by id
+  server.server.get "/api/v1/campaigns/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    campaigns.find req, res
+
+  # Create a new campaign
+  server.server.post "/api/v1/campaigns", (req, res) ->
+    if not utility.userCheck req, res then return
+    campaigns.create req, res
+
+  # Update a campaign
+  server.server.put "/api/v1/campaigns/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    campaigns.save req, res
+
+  # Delete a campaign
+  server.server.delete "/api/v1/campaigns/:id", (req, res) ->
+    if not utility.userCheck req, res then return
+    campaigns.delete req, res
 
   # Publisher manipulation - /api/v1/publishers/:action
   #
@@ -137,30 +173,6 @@ setup = (options, imports, register) ->
   #   /dissapprove [admin-only] disapprove a publisher
   #
   #server.server.get "/api/v1/publishers/:action", (req, res) ->
-    #if not utility.userCheck req, res then return
-
-    #if req.params.action == "create" then publishers.create req, res
-    #else if req.params.action == "save" then publishers.save req, res
-    #else if req.params.action == "delete" then publishers.delete req, res
-    #else if req.params.action == "get" then publishers.get req, res, false
-    #else if req.params.action == "all" then publishers.get req, res, true
-    #else if req.params.action == "approve" then publishers.approve req, res
-    #else if req.params.action == "dissaprove" then publishers.dissaprove req, res
-    #else res.json { error: "Unknown action #{req.params.action}"}
-
-  server.server.all "/api/v1/*", (req, res, next) ->
-    if req.cookies.user
-      db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-        if user.length == 0 
-          req.current_user = null
-          delete req.cookies.user
-          next()
-        else
-          req.current_user =
-            id: user._id
-            username: user.username,
-            admin: user.permissions == 0
-          next()
 
   # Get all publishers
   server.server.get "/api/v1/publishers", (req, res) ->

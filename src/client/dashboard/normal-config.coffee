@@ -43,7 +43,7 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
 
   $routeProvider.when "/campaigns",
     controller: "campaigns"
-    templateUrl: "/views/dashboard/campaigns"
+    templateUrl: "/views/dashboard/campaigns:index"
 
   $routeProvider.when "/acc/info",
     controller: "accInformation"

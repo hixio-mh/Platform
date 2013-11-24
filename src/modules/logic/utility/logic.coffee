@@ -32,7 +32,7 @@ setup = (options, imports, register) ->
       param: (param, res, label) ->
         if param == undefined
           if res != undefined and label != undefined
-            res.json { error: "#{label} missing"}
+            res.json 404, { error: "#{label} missing"}
           return false
         true
 
