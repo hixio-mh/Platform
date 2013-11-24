@@ -12,12 +12,15 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "accInformation", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "settings", ($scope, $http, $route) ->
 
   # Fetch data!
   $scope.me = {}
   $scope.saveMessage = ""
-  $http.get("/api/v1/user/self").success (me) -> $scope.me = me
+
+  $http.get("/api/v1/user/self").success (me) -> 
+    $scope.me = me
+    console.log $scope.me
 
   $scope.save = ->
     args = ""
