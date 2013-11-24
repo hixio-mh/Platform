@@ -29,6 +29,7 @@ module.exports = [
   "./modules/logic/api-analytics",
 
   "./modules/logic/migration",
+  "./modules/logic/seed",
 
   "./modules/logic/routes",
   "./modules/logic/page-login",
