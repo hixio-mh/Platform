@@ -24,7 +24,8 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not utility.param req.param('name'), res, "Application name" then return
+    if not req.param('name')
+      return res.json 400, {error: "No application name"}
 
     # Validate type
     if Number(req.param('type')) == undefined then type = 0
