@@ -10,7 +10,7 @@
     dd: input(ng-model="app.url" type="text" placeholder="com.android.game")
     dt: label Application category
     dd
-      select.chosen-select(chosen, ng-model="app.category", ng-options="c for c in categories")
+      select(chosen, ng-model="app.category", ng-options="c for c in categories")
     dt: label Description
     dd: textarea(ng-model="app.description")
 

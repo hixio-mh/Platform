@@ -60,9 +60,7 @@ window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
     pointDot: false,
   }
 
-  ##
-  ## Form constants
-  ##
+window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) ->
 
   $scope.minPricings = {
     "cpm": "1.00"
@@ -108,3 +106,14 @@ window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
     "Tools and Utilities"
     "Travel"
   ]
+
+  $scope.submit = ->
+    console.log(this.campaign)
+    ###
+    newCampaign = new Campaign(this.campaign)
+    newCampaign.$save().then(
+      -> # success
+        $location.path("/campaigns")
+      -> #error
+    )
+    ###
