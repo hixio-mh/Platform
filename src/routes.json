@@ -38,7 +38,7 @@
 
     "/acc/info",
     "/acc/billing",
-    "/acc/funds",
+    "/funds",
     "/acc/feedback",
 
     "/admin",

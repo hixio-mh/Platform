@@ -177,14 +177,14 @@ module.exports = (db, utility) ->
     if not utility.param req.param('id'), res, "Publisher id" then return
 
     if req.current_user
-      db.fetch "Publisher", { _id: req.param('id'), owner: req.current_user.id }, (pub) ->
-        if pub == undefined or pub.length == 0
+      Publisher = db.models()["Publisher"].getModel()
+      Publisher.findOne { _id: req.param('id'), owner: req.current_user.id }, (err, pub) ->
+
+        if pub
+          res.json(pub)
+        else
           res.send(404)
-          return
 
-        res.json pub[0]
-
-      , ((error) -> res.json { error: error }), true
     else
       res.json 404, { error: "No such user!" }
 
