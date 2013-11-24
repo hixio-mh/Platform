@@ -3,11 +3,11 @@
     dt
       label Application name
       span Used as a display name in Adefy
-    dd: input(ng-model="app.name" type="text")
+    dd: input(required ng-model="app.name" type="text")
     dt
       label Application URL
       span The Android package name or App Store ID
-    dd: input(, ng-model="app.url" type="text" placeholder="com.android.game")
+    dd: input(ng-model="app.url" type="text" placeholder="com.android.game")
     dt: label Application category
     dd
       select.chosen-select(chosen, ng-model="app.category", ng-options="c for c in categories")
