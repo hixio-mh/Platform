@@ -15,7 +15,7 @@
 window.AdefyDashboard.factory 'App', ($resource) ->
   return $resource('/api/v1/publishers/:id', {id: '@id'})
 
-window.AdefyDashboard.controller "appsIndex", ($scope, App) ->
+window.AdefyDashboard.controller "appsIndex", ($scope, $location, App) ->
 
   $scope.apps = []
 
@@ -86,3 +86,15 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
     newApp = new App(this.app)
     newApp.$save() # TODO: check for negative response and don't redirect
     $location.path("/apps")
+
+window.AdefyDashboard.controller "appsShow", ($scope, $location, $routeParams, App) ->
+
+  $scope.app = {}
+
+  refreshApp = ->
+    App.get id: $routeParams, (app) ->
+      $scope.app = app
+      console.log $scope.app
+
+  refreshApp()
+

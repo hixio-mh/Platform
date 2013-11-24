@@ -26,6 +26,7 @@
 
     "/apps",
     "/apps/new",
+    "/apps/:id",
 
     "/ads",
     "/campaigns",
