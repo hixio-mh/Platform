@@ -27,24 +27,6 @@ setup = (options, imports, register) ->
   invites = require("./logic/invites.js") db, utility
   users = require("./logic/users.js") db, utility
 
-  # Require the user to be logged in to access the API, set req.user
-  server.server.all "/api/v1/*", (req, res, next) ->
-    if req.cookies.user
-      db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-        if user.length == 0 
-          req.user = null
-          delete req.cookies.user
-          req.send(403) # the user ID was invalid
-        else
-          req.user =
-            id: user._id
-            username: user.username,
-            admin: user.permissions == 0
-          next() # everything was okay, allow the user to proceed to the API
-
-    else
-      # user was not logged in, deny access to the API.
-      req.send(403)
 
   ## ** Unprotected ** - public invite add request!
   server.server.get "/api/v1/invite/add", (req, res) ->
@@ -58,7 +40,7 @@ setup = (options, imports, register) ->
       if req.query.test == "true" then testing = true
 
     if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
-      res.json { error: "Invalid key" }
+      res.json 404, { error: "Invalid key" }
       return
 
     email = req.query.email
@@ -75,6 +57,28 @@ setup = (options, imports, register) ->
 
     # Error callback
     , (error) -> res.json { error: error }
+
+  # Require the user to be logged in to access the API, set req.user
+  server.server.all "/api/v1/*", (req, res, next) ->
+    if req.cookies.user
+      db.fetch "User",
+        username: req.cookies.user.id
+        session: req.cookies.user.sess
+      , (user) ->
+        if user.length == 0
+          req.user = null
+          delete req.cookies.user
+          req.send(403) # the user ID was invalid
+        else
+          req.user =
+            id: user._id
+            username: user.username,
+            admin: user.permissions == 0
+          next() # everything was okay, allow the user to proceed to the API
+
+    else
+      # user was not logged in, deny access to the API.
+      req.send(403)
 
   # Invite manipulation [admin only] - /api/v1/invite/:action
   #
