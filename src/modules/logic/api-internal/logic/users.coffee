@@ -24,12 +24,12 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.query.id, res, "Id" then return
+    if not utility.param req.param('id'), res, "Id" then return
 
     utility.verifyAdmin req, res, (admin) ->
       if not admin then return
 
-      db.fetch "User", { _id: req.query.id }, (user) ->
+      db.fetch "User", { _id: req.param('id') }, (user) ->
         if user.length = 0 then res.json { error: "No such user" }
         else
 
@@ -47,12 +47,12 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   get: (req, res) ->
-    if not utility.param req.query.filter, res, "Filter" then return
+    if not utility.param req.param('filter'), res, "Filter" then return
 
     utility.verifyAdmin req, res, (admin) ->
       if not admin then return
 
-      if req.query.filter == "all"
+      if req.param('filter') == "all"
 
         # Fetch wide, result always an array
         db.fetch "User", {}, (data) ->
@@ -78,7 +78,7 @@ module.exports = (db, utility) ->
         , (err) -> res.json { error: err }
         , true
 
-      else if req.query.filter == "username"
+      else if req.param('filter') == "username"
         if not utility.param req.params.username, res, "Username" then return
 
         # TODO: Sanitize
@@ -127,37 +127,33 @@ module.exports = (db, utility) ->
 
     , (err) -> res.json { error: err }
 
-  # Saves both the user signed in, and any user if we are an admin.
-  # If we are admin, expect a username.
+  # Update the user account
   #
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    utility.verifyAdmin req, res, (admin) ->
-
-      # Query current user
-      if admin == false
-        query = { username: req.cookies.id, session: req.cookies.sess }
-      else query = { username: req.query.username }
+    if req.current_user
+      query = { username: req.current_user.username }
 
       db.fetch "User", query, (user) ->
         if user == undefined or user.length == 0
-          res.json { error: "No such user" }
+          res.json 404, { error: "No such user" }
           return
 
-        user.fname = req.query.fname
-        user.lname = req.query.lname
-        user.email = req.query.email
-        user.company = req.query.company
-        user.address = req.query.address
-        user.city = req.query.city
-        user.state = req.query.state
-        user.postalCode = req.query.postalCode
-        user.country = req.query.country
-        user.phone = req.query.phone
-        user.fax = req.query.fax
+        user.fname = req.param('fname')
+        user.lname = req.param('lname')
+        user.email = req.param('email')
+        user.company = req.param('company')
+        user.address = req.param('address')
+        user.city = req.param('city')
+        user.state = req.param('state')
+        user.postalCode = req.param('postalCode')
+        user.country = req.param('country')
+        user.phone = req.param('phone')
+        user.fax = req.param('fax')
 
         user.save()
-        res.json { msg: "OK" }
+        res.send(200)
 
-    , true
+    else
+      res.send(403)

@@ -14,22 +14,10 @@
 
 window.AdefyDashboard.controller "settings", ($scope, $http, $route) ->
 
-  # Fetch data!
-  $scope.me = {}
-  $scope.saveMessage = ""
-
-  $http.get("/api/v1/user/self").success (me) -> 
+  $http.get("/api/v1/account").success (me) ->
     $scope.me = me
-    console.log $scope.me
 
   $scope.save = ->
-    args = ""
-    args += "&#{name}=#{val}" for name, val of $scope.me
-
-    $http.get("/api/v1/user/save?#{args.substring 1}").success (msg) ->
-      if msg.error != undefined
-        $scope.saveMessage = msg.error
-        setTimeout (-> $scope.$apply -> $scope.saveMessage = ""), 1000
-      else
-        $scope.saveMessage = "Saved"
-        setTimeout (-> $scope.$apply -> $scope.saveMessage = ""), 1000
+    console.log $scope.me
+    $http.put("/api/v1/account", $scope.me).success (resp) ->
+      console.log "updated!"
