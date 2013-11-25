@@ -34,6 +34,7 @@ setup = (options, imports, register) ->
         if user.length == 0 
           req.current_user = null
           delete req.cookies.user
+          req.send(403) # the user ID was invalid
         else
           req.current_user =
             id: user._id
@@ -41,9 +42,9 @@ setup = (options, imports, register) ->
             admin: user.permissions == 0
           next() # everything was okay, allow the user to proceed to the API
 
-    # if the user ID was either invalid, or the user was not logged in,
-    # deny access to the API.
-    req.send(403)
+    else
+      # user was not logged in, deny access to the API.
+      req.send(403)
 
   ## ** Unprotected ** - public invite add request!
   server.server.get "/api/v1/invite/add", (req, res) ->

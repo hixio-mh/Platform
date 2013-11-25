@@ -13,3 +13,6 @@
 ##
 
 window.AdefyDashboard.controller "funds", ($scope, $http, $route) ->
+
+  $http.get("/api/v1/account/transactions").success (data) ->
+    $scope.transactions = data
