@@ -27,21 +27,23 @@ setup = (options, imports, register) ->
   invites = require("./logic/invites.js") db, utility
   users = require("./logic/users.js") db, utility
 
-  # Set the req.current_user
+  # Require the user to be logged in to access the API, set req.current_user
   server.server.all "/api/v1/*", (req, res, next) ->
     if req.cookies.user
       db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
         if user.length == 0 
           req.current_user = null
           delete req.cookies.user
-          next()
         else
           req.current_user =
             id: user._id
             username: user.username,
             admin: user.permissions == 0
-          next()
+          next() # everything was okay, allow the user to proceed to the API
 
+    # if the user ID was either invalid, or the user was not logged in,
+    # deny access to the API.
+    req.send(403)
 
   ## ** Unprotected ** - public invite add request!
   server.server.get "/api/v1/invite/add", (req, res) ->
@@ -96,7 +98,6 @@ setup = (options, imports, register) ->
   #
   # Some routes are admin only
   server.server.get "/api/v1/user/:action", (req, res) ->
-    if not utility.userCheck req, res then return
 
     action = req.params.action
 
@@ -107,11 +108,9 @@ setup = (options, imports, register) ->
     else res.json { error: "Unknown action #{req.params.action} "}
 
   server.server.get "/api/v1/account", (req, res) ->
-    if not utility.userCheck req, res then return
     users.getSelf req, res
 
   server.server.put "/api/v1/account", (req, res) ->
-    if not utility.userCheck req, res then return
     users.save req, res
 
   # Ad manipulation - /api/v1/ads/:action
@@ -121,8 +120,6 @@ setup = (options, imports, register) ->
   #   /delete   delete an ad
   #
   server.server.get "/api/v1/ads/:action", (req, res) ->
-    if not utility.userCheck req, res then return
-
     if req.params.action == "get" then ads.get req, res
     else if req.params.action == "create" then ads.create req, res
     else if req.params.action == "delete" then ads.delete req, res
@@ -143,27 +140,22 @@ setup = (options, imports, register) ->
 
   # Get all campaigns
   server.server.get "/api/v1/campaigns", (req, res) ->
-    if not utility.userCheck req, res then return
     campaigns.fetch req, res
 
   # Get campaign by id
   server.server.get "/api/v1/campaigns/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     campaigns.find req, res
 
   # Create a new campaign
   server.server.post "/api/v1/campaigns", (req, res) ->
-    if not utility.userCheck req, res then return
     campaigns.create req, res
 
   # Update a campaign
   server.server.put "/api/v1/campaigns/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     campaigns.save req, res
 
   # Delete a campaign
   server.server.delete "/api/v1/campaigns/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     campaigns.delete req, res
 
   # Publisher manipulation - /api/v1/publishers/:action
@@ -180,27 +172,22 @@ setup = (options, imports, register) ->
 
   # Get all publishers
   server.server.get "/api/v1/publishers", (req, res) ->
-    if not utility.userCheck req, res then return
     publishers.get req, res, false
 
   # Get publisher by id
   server.server.get "/api/v1/publishers/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     publishers.find req, res
 
   # Create a new publisher
   server.server.post "/api/v1/publishers", (req, res) ->
-    if not utility.userCheck req, res then return
     publishers.create req, res
 
   # Update a publisher
   server.server.put "/api/v1/publishers/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     publishers.save req, res
 
   # Delete a publisher
   server.server.delete "/api/v1/publishers/:id", (req, res) ->
-    if not utility.userCheck req, res then return
     publishers.delete req, res
 
   register null, {}
