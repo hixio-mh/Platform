@@ -103,18 +103,7 @@ setup = (options, imports, register) ->
         spew.warning "Unauthorized user tried to access " + req.url
         res.redirect "/login"
     else next() # Page doesn't need auth
-  ###
-  server.registerRule (req, res, next) ->
-    if req.cookies.user
-      db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-        if user.length == 0 then req.current_user = null; delete req.cookies.user
-        else
-          req.current_user =
-            id: user._id
-            username: user.username,
-            admin: user.permissions == 0
-    next()
-  ###
+
   _secure = config["modes"][config["mode"]].secure
   _portHTTP = config["modes"][config["mode"]]["port-http"]
   _postHTTPS = config["modes"][config["mode"]]["port-https"]

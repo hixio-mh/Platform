@@ -33,27 +33,25 @@ module.exports = (db, utility) ->
     else if Number(req.param('type')) == 2 then type = 2
     else type = 0
 
-    if req.current_user
-      newPublisher = db.models().Publisher.getModel()
-        owner: req.current_user.id
-        name: String req.param('name')
-        type: type
-        url: String req.param('url') || ""
-        category: String req.param('category')
-        description: String req.param('description') || ""
+    newPublisher = db.models().Publisher.getModel()
+      owner: req.user.id
+      name: String req.param('name')
+      type: type
+      url: String req.param('url') || ""
+      category: String req.param('category')
+      description: String req.param('description') || ""
 
-        status: 0
-        active: false
-        apikey: utility.randomString 32
-        impressions: 0
-        clicks: 0
-        requests: 0
-        earnings: 0
+      status: 0
+      active: false
+      apikey: utility.randomString 32
+      impressions: 0
+      clicks: 0
+      requests: 0
+      earnings: 0
 
-      newPublisher.save()
-      res.send(200)
-    else
-      res.send(403)
+    newPublisher.save()
+    res.send(200)
+
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
@@ -61,67 +59,54 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    if not utility.param req.query.id, res, "Publisher id" then return
-    if not utility.param req.query.mod, res, "Modifications" then return
+    if not utility.param req.param('mod'), res, "Modifications" then return
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
+    # Fetch publisher
+    db.fetch "Publisher", { _id: req.param('id') }, (publisher) ->
 
-      # Fetch publisher
-      db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
+      if publisher == undefined or publisher.length == 0
+        res.json { error: "No such publisher!" }
+        return
 
-        if publisher == undefined or publisher.length == 0
-          res.json { error: "No such publisher!" }
-          return
+      if not req.user.admin and not publisher.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized!" }
+        return
 
-        if not admin and not publisher.owner.equals user._id
-          res.json { error: "Unauthorized!" }
-          return
+      # Go through and apply changes
+      mod = JSON.parse req.query.mod
+      affected = []
 
-        # Go through and apply changes
-        mod = JSON.parse req.query.mod
-        affected = []
+      for diff in mod
 
-        for diff in mod
+        # Make sure we aren't setting a value that doesn't exist, or one
+        # that doesn't match our expected pre value
+        if String(publisher[diff.name]) == String diff.pre
+          publisher[diff.name] = diff.post
 
-          # Make sure we aren't setting a value that doesn't exist, or one
-          # that doesn't match our expected pre value
-          if String(publisher[diff.name]) == String diff.pre
-            publisher[diff.name] = diff.post
-
-        publisher.save()
-        res.send(200)
-
-    , true
+      publisher.save()
+      res.send(200)
 
   # Delete publisher, user must either own the publisher or be an admin
   #
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.query.id, res, "Publisher id" then return
+    # Fetch campaign
+    db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
+      if publisher == undefined or publisher.length == 0
+        res.send(404)
+        return
 
-      # Fetch campaign
-      db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
+      if not req.user.admin and not publisher.owner.equals req.user.id
+        res.send(403)
+        return
 
-        if publisher == undefined or publisher.length == 0
-          res.send(404)
-          return
+      # Assuming we've gotten to this point, we are authorized to perform
+      # the delete
+      publisher.remove()
 
-        if not admin and not publisher.owner.equals user._id
-          res.send(403)
-          return
-
-        # Assuming we've gotten to this point, we are authorized to perform
-        # the delete
-        publisher.remove()
-
-        res.send(200)
-
-    , true
+      res.send(200)
 
   # Fetches owned publisher list.
   # Admin privileges are required to fetch all.
@@ -132,61 +117,52 @@ module.exports = (db, utility) ->
   get: (req, res, all) ->
     if all != true then all = false
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
-      if all and not admin then res.json(403); return
+    if all and not req.user.admin then res.json(403); return
 
-      if all then query = {} else query = { owner: user._id }
+    if all then query = {} else query = { owner: req.user.id }
 
-      db.fetch "Publisher", query, (publishers) ->
+    db.fetch "Publisher", query, (publishers) ->
+      ret = []
 
-        ret = []
+      for p in publishers
+        pub =
+          id: p._id
+          name: p.name
+          url: p.url
+          description: p.description
+          category: p.category
+          active: p.active
+          apikey: p.apikey
+          type: p.type
+          impressions: p.impressions
+          requests: p.requests
+          clicks: p.clicks
+          earnings: p.earnings
+          status: p.status
+          approvalMessage: p.approvalMessage
 
-        for p in publishers
-          pub =
-            id: p._id
-            name: p.name
-            url: p.url
-            description: p.description
-            category: p.category
-            active: p.active
-            apikey: p.apikey
-            type: p.type
-            impressions: p.impressions
-            requests: p.requests
-            clicks: p.clicks
-            earnings: p.earnings
-            status: p.status
-            approvalMessage: p.approvalMessage
+        if req.user.admin
+          pub.username = req.user.username
 
-          if admin then pub.username = user.username
+        ret.push pub
 
-          ret.push pub
+      res.json ret
 
-        res.json ret
+    , ((error) -> res.json { error: error }), true
 
-      , ((error) -> res.json { error: error }), true
-
-    , true
 
   # Finds a single publisher by ID
   #
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    if not utility.param req.param('id'), res, "Publisher id" then return
+    Publisher = db.models()["Publisher"].getModel()
+    Publisher.findOne { _id: req.param('id'), owner: req.user.id }, (err, pub) ->
 
-    if req.current_user
-      Publisher = db.models()["Publisher"].getModel()
-      Publisher.findOne { _id: req.param('id'), owner: req.current_user.id }, (err, pub) ->
-
-        if pub
-          res.json(pub)
-        else
-          res.send(404)
-
-    else
-      res.json 404, { error: "No such user!" }
+      if pub
+        res.json(pub)
+      else
+        res.send(404)
 
   # Updates publisher status if applicable
   #

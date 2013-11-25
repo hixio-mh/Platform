@@ -27,16 +27,16 @@ setup = (options, imports, register) ->
   invites = require("./logic/invites.js") db, utility
   users = require("./logic/users.js") db, utility
 
-  # Require the user to be logged in to access the API, set req.current_user
+  # Require the user to be logged in to access the API, set req.user
   server.server.all "/api/v1/*", (req, res, next) ->
     if req.cookies.user
       db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
         if user.length == 0 
-          req.current_user = null
+          req.user = null
           delete req.cookies.user
           req.send(403) # the user ID was invalid
         else
-          req.current_user =
+          req.user =
             id: user._id
             username: user.username,
             admin: user.permissions == 0
@@ -135,11 +135,17 @@ setup = (options, imports, register) ->
   #   /create   create an ad
   #   /delete   delete an ad
   #
-  server.server.get "/api/v1/ads/:action", (req, res) ->
-    if req.params.action == "get" then ads.get req, res
-    else if req.params.action == "create" then ads.create req, res
-    else if req.params.action == "delete" then ads.delete req, res
-    else res.json { error: "Unknown action #{req.params.action} " }
+  server.server.get "/api/v1/ads", (req, res) ->
+    ads.get req, res
+
+  server.server.get "/api/v1/ads/:id", (req, res) ->
+    ads.find req, res
+
+  server.server.post "/api/v1/ads", (req, res) ->
+    ads.create req, res
+
+  server.server.delete "/api/v1/ads/:id", (req, res) ->
+    ads.delete req, res
 
   # Campaign manipulation - /api/v1/campaigns/:action
   #

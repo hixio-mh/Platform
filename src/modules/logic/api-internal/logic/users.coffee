@@ -132,28 +132,24 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    if req.current_user
-      query = { username: req.current_user.username }
+    query = { username: req.user.username }
 
-      db.fetch "User", query, (user) ->
-        if user == undefined or user.length == 0
-          res.json 404, { error: "No such user" }
-          return
+    db.fetch "User", query, (user) ->
+      if user == undefined or user.length == 0
+        res.json 404, { error: "No such user" }
+        return
 
-        user.fname = req.param('fname')
-        user.lname = req.param('lname')
-        user.email = req.param('email')
-        user.company = req.param('company')
-        user.address = req.param('address')
-        user.city = req.param('city')
-        user.state = req.param('state')
-        user.postalCode = req.param('postalCode')
-        user.country = req.param('country')
-        user.phone = req.param('phone')
-        user.fax = req.param('fax')
+      user.fname = req.param('fname')
+      user.lname = req.param('lname')
+      user.email = req.param('email')
+      user.company = req.param('company')
+      user.address = req.param('address')
+      user.city = req.param('city')
+      user.state = req.param('state')
+      user.postalCode = req.param('postalCode')
+      user.country = req.param('country')
+      user.phone = req.param('phone')
+      user.fax = req.param('fax')
 
-        user.save()
-        res.send(200)
-
-    else
-      res.send(403)
+      user.save()
+      res.send(200)
