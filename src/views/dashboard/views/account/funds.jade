@@ -15,7 +15,27 @@
 .inner
     .funds.center(style="text-align: center")
       .amount.large ${{me.funds | number:2}}
-      .desc in Fund
+      .desc Balance
+      .field.w50
+        .amount ${{me.funds | number:2}}
+        .desc Free
+      .field.w50
+        .amount ${{me.funds | number:2}}
+        .desc Reserved
       .actions
         button Deposit funds
         button.blue Withdraw funds
+    table.transactions
+      tbody(ng-repeat="t in transactions" ng-switch="t.type")
+        tr.withdraw(ng-switch-when="withdraw")
+          td.desc Withdrawn {{ t.amount | currency:$ }}
+          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number -{{ t.amount | currency:$ }}
+        tr.deposit(ng-switch-when="deposit")
+          td.desc Deposited {{ t.amount | currency:$ }}
+          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number +{{ t.amount | currency:$ }}
+        tr.reserve(ng-switch-when="reserve")
+          td.desc Reserved {{ t.amount | currency:$ }}
+          td.time  {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number {{ t.amount | currency:$ }}
