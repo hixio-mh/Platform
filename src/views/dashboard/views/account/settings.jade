@@ -18,7 +18,7 @@
     dt: label Username
     dd: input(type="text" disabled placeholder="{{me.username}}")
     dt: label Email
-    dd: input(type="email" disabled placeholder="{{me.email}}")
+    dd: input(type="email" ng-model="me.email")
 
   fieldset: dl.form.thin.center
     legend Billing
@@ -26,22 +26,22 @@
     .billing.center
       h3 Address
       .field.w50.margin
-        input(type="text" placeholder="First name")
+        input(ng-model="me.fname" type="text" placeholder="First name")
       .field.w50
-        input(type="text" placeholder="Last name")
+        input(ng-model="me.lname" type="text" placeholder="Last name")
       .field
-        input(type="text" placeholder="Address")
+        input(ng-model="me.address" type="text" placeholder="Address")
       .field
-        input(type="text" placeholder="State/Province")
+        input(ng-model="me.state" type="text" placeholder="State/Province")
       .field.w75.margin
-        input(type="text" placeholder="City")
+        input(ng-model="me.city" type="text" placeholder="City")
       .field.w25
-        input(type="text" placeholder="Postal Code")
+        input(ng-model="me.postalCode" type="text" placeholder="Postal Code")
       .field
-        select.chosen-select(data-placeholder="Select Country")
+        select.chosen-select(ng-model="me.country" data-placeholder="Select Country")
           option(selected="selected") Austria
           option France
           option UK
   fieldset: dl.form.thin.center
     dt
-    dd: button.blue Save
+    dd: button.blue(ng-click="save()") Save

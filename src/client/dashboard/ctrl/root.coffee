@@ -14,6 +14,5 @@
 
 window.AdefyDashboard.controller "rootController", ($scope, $http, $route) ->
 
-  $http.get("/api/v1/user/self").success (me) ->
-    me.fundsText = "$#{me.funds.toFixed 2} Funds"
+  $http.get("/api/v1/account").success (me) ->
     $scope.me = me

@@ -93,8 +93,6 @@ setup = (options, imports, register) ->
   #
   #   /get      [admin-only] fetch a single, or all users
   #   /delete   [admin-only] delete a single user
-  #   /self     fetch own user information
-  #   /save     save a single user
   #
   # Some routes are admin only
   server.server.get "/api/v1/user/:action", (req, res) ->
@@ -105,10 +103,16 @@ setup = (options, imports, register) ->
     # Admin-only
     if action == "get" then users.get req, res
     else if action == "delete" then users.delete req, res
-    else if action == "self" then users.getSelf req, res
-    else if action == "save" then users.save req, res
 
     else res.json { error: "Unknown action #{req.params.action} "}
+
+  server.server.get "/api/v1/account", (req, res) ->
+    if not utility.userCheck req, res then return
+    users.getSelf req, res
+
+  server.server.put "/api/v1/account", (req, res) ->
+    if not utility.userCheck req, res then return
+    users.save req, res
 
   # Ad manipulation - /api/v1/ads/:action
   #
