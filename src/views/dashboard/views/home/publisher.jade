@@ -12,30 +12,118 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#main-stats
-  .row.stats-row
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Impressions
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Clicks
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0%
-        | CTR
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number $0.00
-        | Spent
-      span.date Today
+.graph2
+  .stats.app
+    .stat: .wrap
+      .amount.large $ 381.23
+      .desc Earned today
+    .stat: .wrap
+      .amount.large ▲ 8,351
+      .desc Impressions today
+    .stat: .wrap
+      .amount.large ▲ 251
+      .desc Clicks
+    .stat: .wrap
+      .amount.large $ 472.75
+      .desc Total revenue
+  canvas(id="myChart" width="960" height="300")
+.index
+  ul.news
+    li
+      span.title News item
+      span.date Sept 23
+      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic. It will, however, dissolve metal, rock, glass, ceramic. So there's that. How about something with some protein, maybe? Something green, huh? How are you even alive? 
+    li
+      span.title News item
+      span.date Sept 23 
+      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right. Because I think that we can do business together - we came to an understanding. Take a look at the money in your hand. Now just imagine making that every week. That's right. Two pounds a week, thirty-five thousand a pound. 
+    li
+      span.title News item
+      span.date Sept 23 
+      p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+    li
+      span.title News item
+      span.date Sept 23 
+      p You asked me if we were in the meth business or the money business. Neither, I’m in the empire business. I was under the impression that you had this under control. Well, that's what this is - problem solving. Skyler this is a simple division of labor - I bring in the money, you launder the money. This is what you wanted. 
+    li
+      span.title News item
+      span.date Sept 23 
+      p Just you, sir? Don't worry, Master Wayne. It takes a little time to get back in the swing of things.
+    li
+      span.title News item
+      span.date Sept 23 
+      p And why do we fall? So we can learn to pick ourselves up.
+    li
+      span.title News item
+      span.date Sept 23 
+      p No, no, no. A vigilante is just a man lost in scramble for his own gratification. He can be destroyed or locked up. But if you make yourself more than just a man, if you devote yourself to an idel and if they can't stop you then you become something else entirely. Legend, Mr Wayne.
+    li
+      span.title News item
+      span.date Sept 23 
+      p You know what you said about the structures becoming shackles. You were right and I can't take it, the injustice. I mean, no one ever's gonna know who saved the entire city.
+  ul.news
+    li
+      span.title News item
+      span.date Sept 23
+      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic. It will, however, dissolve metal, rock, glass, ceramic. So there's that. How about something with some protein, maybe? Something green, huh? How are you even alive? 
+    li
+      span.title News item
+      span.date Sept 23 
+      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right. Because I think that we can do business together - we came to an understanding. Take a look at the money in your hand. Now just imagine making that every week. That's right. Two pounds a week, thirty-five thousand a pound. 
+    li
+      span.title News item
+      span.date Sept 23 
+      p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+    li
+      span.title News item
+      span.date Sept 23 
+      p You asked me if we were in the meth business or the money business. Neither, I’m in the empire business. I was under the impression that you had this under control. Well, that's what this is - problem solving. Skyler this is a simple division of labor - I bring in the money, you launder the money. This is what you wanted. 
+    li
+      span.title News item
+      span.date Sept 23 
+      p Just you, sir? Don't worry, Master Wayne. It takes a little time to get back in the swing of things.
+    li
+      span.title News item
+      span.date Sept 23 
+      p And why do we fall? So we can learn to pick ourselves up.
+    li
+      span.title News item
+      span.date Sept 23 
+      p No, no, no. A vigilante is just a man lost in scramble for his own gratification. He can be destroyed or locked up. But if you make yourself more than just a man, if you devote yourself to an idel and if they can't stop you then you become something else entirely. Legend, Mr Wayne.
+    li
+      span.title News item
+      span.date Sept 23 
+      p You know what you said about the structures becoming shackles. You were right and I can't take it, the injustice. I mean, no one ever's gonna know who saved the entire city.
 
-#pad-wrapper
-  .row.header
-    h3 Publisher Dashboard
-    a.below-header(href="#") use the advertiser dashboard
+
+
+
+script.
+  var data = {
+    labels : ["January","February","March","April","May","June","July"],
+    datasets : [
+      {
+        fillColor : "rgba(220,220,220,0.5)",
+        strokeColor : "rgba(220,220,220,1)",
+        pointColor : "rgba(220,220,220,1)",
+        pointStrokeColor : "#fff",
+        data : [65,49,40,71,56,55,40]
+      },
+      {
+        fillColor : "rgba(151,187,205,0.5)",
+        strokeColor : "rgba(151,187,205,1)",
+        pointColor : "rgba(151,187,205,1)",
+        pointStrokeColor : "#fff",
+        data : [28,98,40,19,56,27,100]
+      }
+    ]
+  }
+
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var options = {
+      //scaleShowLabels: false,
+      //scaleShowGridLines: false,
+      scaleLineColor : "rgba(0,0,0,0)",
+
+  };
+  new Chart(ctx).Line(data,options);
