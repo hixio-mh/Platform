@@ -109,3 +109,16 @@ module.exports = (db, utility) ->
         , ((err) -> res.json { error: err }), true # db fetch Ad
 
     else res.json { error: "Invalid filter" }
+
+  # Finds a single ad by ID
+  #
+  # @param [Object] req request
+  # @param [Object] res response
+  find: (req, res) ->
+    Ad = db.models()["Ad"].getModel()
+    Ad.findOne { _id: req.param('id'), owner: req.user.id }, (err, ad) ->
+
+      if ad
+        res.json(ad)
+      else
+        res.send(404)

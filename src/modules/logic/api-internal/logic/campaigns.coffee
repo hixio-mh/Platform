@@ -72,56 +72,49 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   fetch: (req, res) ->
-    if req.current_user
-      db.fetch "Campaign", { owner: req.current_user.id }, (campaigns) ->
+    db.fetch "Campaign", { owner: req.user.id }, (campaigns) ->
 
-        ret = []
+      ret = []
 
-        # Remove the owner id, and refactor the id field
-        for c in campaigns
+      # Remove the owner id, and refactor the id field
+      for c in campaigns
 
-          ret.push
-            id: c._id
-            name: c.name
-            description: c.description
-            category: c.category
-            pricing: c.pricing
-            totalBudget: c.totalBudget
-            dailyBudget: c.dailyBudget
-            bidSystem: c.bidSystem
-            bid: c.bid
-            maxBid: c.maxBid
+        ret.push
+          id: c._id
+          name: c.name
+          description: c.description
+          category: c.category
+          pricing: c.pricing
+          totalBudget: c.totalBudget
+          dailyBudget: c.dailyBudget
+          bidSystem: c.bidSystem
+          bid: c.bid
+          maxBid: c.maxBid
 
-            status: c.status
-            avgCPC: c.avgCPC
-            clicks: c.clicks
-            impressions: c.impressions
-            spent: c.spent
+          status: c.status
+          avgCPC: c.avgCPC
+          clicks: c.clicks
+          impressions: c.impressions
+          spent: c.spent
 
-        res.json ret
+      res.json ret
 
-      , ((err) -> res.json 500, { error: err }), true
-    else
-      res.send(403)
+    , ((err) -> res.json 500, { error: err }), true
+
 
   # Finds a single Campaign by ID
   #
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    if not utility.param req.param('id'), res, "Campaign id" then return
+    db.fetch "Campaign", { _id: req.param('id'), owner: req.user.id }, (pub) ->
+      if pub == undefined or pub.length == 0
+        res.send(404)
+        return
 
-    if req.current_user
-      db.fetch "Campaign", { _id: req.param('id'), owner: req.current_user.id }, (pub) ->
-        if pub == undefined or pub.length == 0
-          res.send(404)
-          return
+      res.json pub[0]
 
-        res.json pub[0]
-
-      , ((error) -> res.json { error: error }), true
-    else
-      res.json 404, { error: "No such user!" }
+    , ((error) -> res.json { error: error }), true
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign
@@ -187,59 +180,54 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    if not utility.param req.query.id, res, "Campaign id" then return
     if not utility.param req.query.mod, res, "Modifications" then return
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
+    # Fetch campaign
+    db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
 
-      # Fetch campaign
-      db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
+      if campaign == undefined or campaign.length == 0
+        res.json 404, { error: "No such campaign!" }
+        return
 
-        if campaign == undefined or campaign.length == 0
-          res.json 404, { error: "No such campaign!" }
+    if not req.user.admin
+      if not campaign.owner.equals req.user.id
+          res.json 403, { error: "Unauthorized!" }
           return
 
-        if not admin
-          if not campaign.owner.equals user._id
-            res.json 403, { error: "Unauthorized!" }
-            return
+      # Go through and apply changes
+      mod = JSON.parse req.query.mod
+      affected = []
 
-        # Go through and apply changes
-        mod = JSON.parse req.query.mod
-        affected = []
+      for diff in mod
 
-        for diff in mod
+        # Make sure we aren't setting a value that doesn't exist, or one
+        # that doesn't match our expected pre value
+        if String(campaign[diff.name]) == diff.pre
 
-          # Make sure we aren't setting a value that doesn't exist, or one
-          # that doesn't match our expected pre value
-          if String(campaign[diff.name]) == diff.pre
+          # Figure out target based on what is being saved
+          # For now, no target. Sneaky sneaky.
 
-            # Figure out target based on what is being saved
-            # For now, no target. Sneaky sneaky.
+          # Add to our affected array
+          affected.push
+            name: diff.name
+            valuePre: campaign[diff.name]
+            valuePost: diff.post
 
-            # Add to our affected array
-            affected.push
-              name: diff.name
-              valuePre: campaign[diff.name]
-              valuePost: diff.post
+          # Apply change
+          campaign[diff.name] = diff.post
 
-            # Apply change
-            campaign[diff.name] = diff.post
+      if affected.length > 0
 
-        if affected.length > 0
+        # Now create the campaign event
+        newEvent = db.models().CampaignEvent.getModel()
+          campaign: campaign._id
+          affected: affected
 
-          # Now create the campaign event
-          newEvent = db.models().CampaignEvent.getModel()
-            campaign: campaign._id
-            affected: affected
+        campaign.save()
+        newEvent.save()
 
-          campaign.save()
-          newEvent.save()
+      res.json(200)
 
-        res.json(200)
-
-    , true
 
   # Delete the campaign identified by req.query.id
   # If we are not the administrator, we must own the campaign!
@@ -247,27 +235,20 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.query.id, res, "Campaign id" then return
+    # Fetch campaign
+    db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json 404, { error: "No such user!" }; return
+      if campaign == undefined or campaign.length == 0
+        res.json 404, { error: "No such campaign!" }
+        return
 
-      # Fetch campaign
-      db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
-
-        if campaign == undefined or campaign.length == 0
-          res.json 404, { error: "No such campaign!" }
+      if not req.user.admin
+        if not campaign.owner.equals req.user.id
+          res.json 403, { error: "Unauthorized!" }
           return
 
-        if not admin
-          if not campaign.owner.equals user._id
-            res.json 403, { error: "Unauthorized!" }
-            return
+      # Assuming we've gotten to this point, we are authorized to perform
+      # the delete
+      campaign.remove()
 
-        # Assuming we've gotten to this point, we are authorized to perform
-        # the delete
-        campaign.remove()
-
-        res.json(200)
-
-    , true
+      res.json(200)
