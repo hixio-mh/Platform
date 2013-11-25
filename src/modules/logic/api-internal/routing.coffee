@@ -108,12 +108,27 @@ setup = (options, imports, register) ->
 
     else res.json { error: "Unknown action #{req.params.action} "}
 
+  #
+  # Get user account settings
+  #
   server.server.get "/api/v1/account", (req, res) ->
     users.getSelf req, res
 
+  #
+  # Update user account settings
+  #
   server.server.put "/api/v1/account", (req, res) ->
     users.save req, res
 
+  #
+  # Returns a list of transactions: deposits, withdrawals, reserves
+  #
+  server.server.get "/api/v1/account/transactions", (req, res) ->
+    res.json [
+      {type: 'deposit', amount: 3.20, time: new Date().getTime() - 200}
+      {type: 'withdraw', amount: 3.20, time: new Date().getTime() - 600}
+      {type: 'reserve', amount: 3.20, time: new Date().getTime() - 3600}
+    ]
   # Ad manipulation - /api/v1/ads/:action
   #
   #   /get      fetch ads owned by a user
