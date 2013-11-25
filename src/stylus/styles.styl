@@ -314,10 +314,13 @@ dl.form
   width: 75%;
 
 .funds
+  max-width: 570px
   .actions
     display: inline-block
     text-align: center
     margin-top: 25px
+  button
+    margin: 5px 10px
 
 /* dropdown */
 .dropdown
@@ -600,3 +603,34 @@ dl.form
     right: 15px
     line-height:1.6
     text-shadow:none
+
+/* transactions */
+.transactions
+  margin: 20px auto
+  max-width: 520px
+  border-top: 1px solid #ccc
+  td
+    border-bottom: 1px solid #ccc
+    padding: 15px 10px
+    line-height: 22px
+    vertical-align: middle
+  .number
+    font-weight: 600
+    font-size: 20px
+    margin-left: 10px
+    text-align: right
+
+  .time
+    font-size: 14px
+    margin-left: 15px
+    text-align: right
+    color: gray
+  .desc
+    font-size: inherit
+    color: inherit
+  .deposit .number
+    color: #2ecc71
+  .withdraw .number
+    color: #e74c3c
+  .reserve .number
+    color: #95a5a6
