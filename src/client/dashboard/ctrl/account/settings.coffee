@@ -20,4 +20,4 @@ window.AdefyDashboard.controller "settings", ($scope, $http, $route) ->
   $scope.save = ->
     console.log $scope.me
     $http.put("/api/v1/account", $scope.me).success (resp) ->
-      console.log "updated!"
+      $scope.setNotification("Saved!", "success")

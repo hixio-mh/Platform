@@ -115,5 +115,6 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
       -> # success
         $location.path("/campaigns")
       -> #error
+        $scope.setNotification("There was an error with your form submission", "error")
     )
     ###

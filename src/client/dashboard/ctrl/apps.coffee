@@ -88,6 +88,7 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
       -> # success
         $location.path("/apps")
       -> #error
+        $scope.setNotification("There was an error with your form submission", "error")
     )
 
 

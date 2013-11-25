@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "funds", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "funds", ($scope, $rootScope, $http, $route) ->
 
   $http.get("/api/v1/account/transactions").success (data) ->
     $scope.transactions = data

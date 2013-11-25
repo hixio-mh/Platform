@@ -18,6 +18,8 @@ body
   line-height: 1.6
   padding-top: 52px // navbar
   padding-bottom: 50px
+body.withNotification
+  padding-top: 92px // navbar + notification
 
 a
   color: hsl(196, 77%, 55%)
@@ -572,3 +574,29 @@ dl.form
   display: none
 .tab-pane.active
   display: block
+
+/* notification */
+.notification
+  position: fixed
+  top: 52px
+  left: 0
+  right: 0
+  padding: 7px
+  text-align: center
+  color: #fff
+  border-bottom: 1px solid rgba(0,0,0,.1)
+  text-shadow: 0 1px 2px rgba(0,0,0,.3)
+  box-shadow: 0 1px 1px rgba(0,0,0,.1)
+  background-color: #bdc3c7
+  &.info
+    background-color: #3498db
+  &.success
+    background-color: #2ecc71
+  &.error
+    background-color: #e74c3c
+  i
+    cursor:pointer
+    position: absolute
+    right: 15px
+    line-height:1.6
+    text-shadow:none

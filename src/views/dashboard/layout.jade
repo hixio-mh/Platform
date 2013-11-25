@@ -40,7 +40,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body(data-ng-controller="rootController")
+  body(data-ng-controller="rootController" ng-class="{withNotification: notification}")
     header.navbar.cf
       #logo Adefy
       .menu.left.full
@@ -77,7 +77,9 @@ html(lang="en", data-ng-app="AdefyDashboard")
             a(href="/logout" target="_self")
               i.fa.fa-fw.fa-sign-out
               | Sign out
-
+    .notification(ng-show="notification" ng-class="notification.type")
+      span(ng-bind="notification.text")
+      i.fa.fa-fw.fa-times-circle(ng-click="clearNotification()")
     .content(data-ng-view="")
 
     footer
