@@ -50,31 +50,19 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.query.id, res, "Ad id" then return
+    db.fetch "Ad", { _id: req.query.id }, (ad) ->
 
-    # Find user
-    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not utility.verifyDBResponse user, res, "User" then return
+      if ad == undefined or ad.length == 0
+        res.json { error: "No such ad found" }
+        return
 
-      # If we have admin privs, then delete the ad even without ownership
-      query = { _id: req.query.id, owner: user._id }
+      if req.user.admin or ad.owner == req.user.id
+        res.json 403, { error: "Unauthorized" }
+        return
 
-      utility.verifyAdmin req, res, (admin) ->
-        if admin then query = { _id: req.query.id }
+      ad.remove()
+      res.json { msg: "Deleted ad #{req.query.id}" }
 
-        db.fetch "Ad", query, (ad) ->
-
-          if ad == undefined or ad.length == 0
-            res.json { error: "No such ad found" }
-            return
-
-          if !admin and ad.owner != user._id
-            res.json { error: "Unauthorized" }
-            return
-
-          ad.remove()
-          res.json { msg: "Deleted ad #{req.query.id}" }
-      , true
 
   # Main GET method, expects {filter}
   #
