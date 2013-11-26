@@ -66,24 +66,18 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   get: (req, res) ->
-    if not utility.param req.query.filter, res, "Filter" then return
+    db.model("Ad").find { owner: req.user.id }, (err, data) ->
+      if utility.dbError err, res then return
 
-    if req.query.filter == "user"
-      db.model("Ad").find { owner: req.user.id }, (err, data) ->
-        if utility.dbError err, res then return
-        if data.length == 0 then res.json []
-        else
+      ret = []
+      for a in data
+        ad = {}
+        ad.name = a.name
+        ad.id = a._id
+        ret.push ad
 
-          ret = []
-          for a in data
-            ad = {}
-            ad.name = a.name
-            ad.id = a._id
-            ret.push ad
+      res.json 200, ret
 
-          res.json ret
-
-    else res.json 400, { error: "Invalid filter" }
 
   # Finds a single ad by ID
   #
