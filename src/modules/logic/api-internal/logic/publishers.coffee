@@ -25,7 +25,7 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not utility.param req.query.name, res, "Application name" then return
+    if not utility.param req.param("name"), res, "Application name" then return
 
     # Validate type
     if Number req.param("type") == undefined then type = 0
@@ -65,7 +65,7 @@ module.exports = (utility) ->
   # @param [Object] res response
   save: (req, res) ->
 
-    db.model("Publisher").findById req.param.id, (err, pub) ->
+    db.model("Publisher").findById req.param('id'), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
@@ -92,7 +92,7 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    db.model("Publisher").findById req.param.id, (err, pub) ->
+    db.model("Publisher").findById req.param('id'), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 

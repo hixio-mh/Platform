@@ -1,4 +1,4 @@
-.inner: form
+.inner: form(ng-class="{submitted: submitted}")
   fieldset: dl.form.center
     legend Information
     dt
@@ -8,41 +8,41 @@
     dd: textarea(ng-model="campaign.description")
     dt: label Category
     dd
-      select(chosen ng-model="campaign.category", ng-options="c for c in categories")
+      select(chosen required ng-model="campaign.category", ng-options="c for c in categories")
   fieldset: dl.form.center
     legend Bidding
     dt
       label Pricing
       span You, a bobsleder!? That I'd like to see! Noooooo! 
     dd
-      select(chosen ng-model="campaign.pricing")
+      select(chosen required ng-model="campaign.pricing")
         option CPM
         option CPC
     dt: label Total Budget
-    dd: input(ng-model="campaign.totalBudget" type="text" placeholder="min $25")
+    dd: input(required ng-model="campaign.totalBudget" type="text" placeholder="min $25")
     dt: label Daily Budget (optional)
     dd: input(ng-model="campaign.dailyBudget" type="text")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
     dd
-      select(chosen ng-model="campaign.bidSystem")
+      select(chosen required ng-model="campaign.bidSystem")
         option Automatic
         option Manual
     dt: label Bid
-    dd: input(ng-model="campaign.bid" type="text" placeholder="min $1.00")
+    dd: input(ng-model="campaign.bid" required type="text" placeholder="min $1.00")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
       dt: label Geographical
       dd
         .radio
-          input(type="radio" name="geographical_targetting" id="all_countries" checked="true")
+          input(type="radio" ng-model="campaign.geographicalTargetting" value="all" name="geographical_targetting" id="all_countries")
           label(for="all_countries") All Countries
         .radio
-          input(type="radio" name="geographical_targetting" id="specific_countries")
+          input(type="radio" ng-model="campaign.geographicalTargetting" value="specific" name="geographical_targetting" id="specific_countries")
           label(for="specific_countries") Specific Countries
-        select(chosen multiple ng-model="campaign.country" data-placeholder="Select countries")
+        select(chosen multiple ng-model="campaign.countries" ng-disabled="campaign.geographicalTargetting != 'specific'" data-placeholder="Select countries")
           option Austria
           option France
           option UK
@@ -50,24 +50,24 @@
       dt: label Network
       dd
         .radio
-          input(type="radio" name="network_targetting" id="all_traffic" checked="true")
+          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="all" id="all_traffic")
           label(for="all_traffic") All Traffic
         .radio
-          input(type="radio" name="network_targetting" id="mobile_data_traffic")
+          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="mobile" id="mobile_data_traffic")
           label(for="mobile_data_traffic") Mobile Data Traffic
         .radio
-          input(type="radio" name="network_targetting" id="wifi_traffic")
+          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="wifi" id="wifi_traffic")
           label(for="wifi_traffic") Wifi Traffic
     dl.form.center.single
       dt: label Platform
       dd
         .radio
-          input(type="radio" name="platform_targetting" id="all_platforms" checked="true")
+          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="all" id="all_platforms")
           label(for="all_platforms") All Platforms
         .radio
-          input(type="radio" name="platform_targetting" id="specific_platforms")
+          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="specific" id="specific_platforms")
           label(for="specific_platforms") Specific Platforms
-        select(chosen multiple data-placeholder="Select platforms")
+        select(chosen multiple ng-model="campaign.platforms" ng-disabled="campaign.platformTargetting != 'specific'" data-placeholder="Select platforms")
           option Austria
           option France
     dl.form.center.single
@@ -75,26 +75,26 @@
       dd
         .field.w50.margin
           .radio
-            input(type="radio" name="device_targetting" id="all_devices" checked="true")
+            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="all" id="all_devices")
             label(for="all_devices") All Devices
           .radio
-            input(type="radio" name="device_targetting" id="specific_devices")
+            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="specific" id="specific_devices")
             label(for="specific_devices") Specific Devices
           .radio
-            input(type="radio" name="device_targetting" id="exclude_devices")
+            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="exclude" id="exclude_devices")
             label(for="exclude_devices") Exclude Devices
-          select(chosen multiple data-placeholder="Select devices")
+          select(chosen multiple ng-model="campaign.devices" ng-disabled="campaign.deviceTargetting == 'all'" data-placeholder="Select devices")
             option Nexus 4
             option Galaxy S3
             option iPhone
         .field.w50
           .radio
-            input(type="radio" name="manufacturer_targetting" id="all_manufacturers" checked="true")
+            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="all" id="all_manufacturers")
             label(for="all_manufacturers") All Manufacturers
           .radio
-            input(type="radio" name="manufacturer_targetting" id="specific_manufacturers")
+            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="specific" id="specific_manufacturers")
             label(for="specific_manufacturers") Specific Manufacturers
-          select(chosen multiple data-placeholder="Select manufacturers")
+          select(chosen multiple ng-model="campaign.manufacturers" ng-disabled="campaign.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
             option LG
             option HTC
             option Sony
@@ -102,12 +102,11 @@
       dt: label Scheduling
       dd
         .radio
-          input(type="radio" name="scheduling" id="no_scheduling")
+          input(type="radio" ng-model="campaign.scheduling" value="no" name="scheduling" id="no_scheduling")
           label(for="no_scheduling") No Scheduling
         .radio
-          input(type="radio" name="scheduling" id="custom_scheduling")
+          input(type="radio" ng-model="campaign.scheduling" value="yes" name="scheduling" id="custom_scheduling")
           label(for="custom_scheduling") Custom Scheduling
     dl.form.center
     dt
-    dd
-      button.blue(ng-click="submit()") Save
+    dd: button.blue.save(ng-click="submit()") Save

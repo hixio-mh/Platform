@@ -83,6 +83,7 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
   ]
 
   $scope.submit = ->
+    $scope.submitted = true
     newApp = new App(this.app)
     newApp.$save().then(
       -> # success
@@ -121,9 +122,22 @@ window.AdefyDashboard.controller "appsEdit", ($scope, $location, $routeParams, A
     $scope.app = app
 
   $scope.submit = ->
+    $scope.submitted = true
     $scope.app.$save().then(
-      => # success
+      -> # success
         $location.path("/apps/#{$scope.app.id}")
       -> #error
         $scope.setNotification("There was an error with your form submission", "error")
     )
+
+  # modal
+  $scope.form = {} # define the object, or it will not get set inside the modal
+  $scope.delete = ->
+    if $scope.app.name == $scope.form.name
+      $scope.app.$delete().then(
+        -> # success
+          $location.path("/apps")
+        -> #error
+          $scope.setNotification("There was an error with your form submission", "error")
+      )
+    return true

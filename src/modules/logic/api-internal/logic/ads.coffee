@@ -91,7 +91,7 @@ module.exports = (utility) ->
   # @param [Object] res response
   find: (req, res) ->
     db.model("Ad").findOne
-      _id: req.param.id
+      _id: req.param('id')
       owner: req.user.id
     , (err, ad) ->
       if utility.dbError err, res then return

@@ -1,4 +1,4 @@
-.inner: form
+.inner: form(ng-class="{submitted: submitted}")
   dl.form.center
     dt
       label Application name
@@ -13,5 +13,6 @@
       select(chosen, ng-model="app.category", ng-options="c for c in categories")
     dt: label Description
     dd: textarea(ng-model="app.description")
-
-    button.blue.center(ng-click="submit()") Save
+  dl.form.center
+    dt
+    dd: button.blue.save(ng-click="submit()") Save

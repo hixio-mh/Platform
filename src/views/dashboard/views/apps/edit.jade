@@ -13,9 +13,9 @@
       | Integration
     a.active(href="/apps/{{app.id}}/edit")
       i.fa.fa-fw.fa-wrench
-      | Edit
+      | Settings
 
-.inner: form
+.inner: form(ng-class="{submitted: submitted}")
   dl.form.center
     dt
       label Application name
@@ -30,5 +30,12 @@
       select(chosen, ng-model="app.category", ng-options="c for c in categories")
     dt: label Description
     dd: textarea(ng-model="app.description")
-
-    button.blue.center(ng-click="submit()") Save
+  dl.form.center.single
+    dt
+    dd
+      a.delete(form-modal template="/views/dashboard/apps:delete" title="Delete app" 
+        ok-button-text="Delete" form-submit="delete()" form-object="form") 
+        | I want to delete the application
+  dl.form.center
+    dt
+    dd: button.blue.save(ng-click="submit()") Save
