@@ -25,12 +25,12 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not utility.param req.query.name, res, "Ad name" then return
+    if not utility.param req.param('name'), res, "Ad name" then return
 
     # Create new ad entry
     newAd = db.model("Ad")
       owner: req.user.id
-      name: req.query.name
+      name: req.param('name')
       data: ""
 
     newAd.save (err) ->
@@ -39,15 +39,14 @@ module.exports = (utility) ->
         res.json 400, { error: err }
         return
 
-      spew.info "Created new ad '#{req.query.name}' for #{req.user.username}"
-      res.json { ad: { id: newAd._id, name: newAd.name }}
+      res.json 200, { id: newAd._id, name: newAd.name }
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   #
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    db.model("Ad").findById req.query.id, (err, ad) ->
+    db.model("Ad").findById req.param('id'), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
 
