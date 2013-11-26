@@ -93,20 +93,19 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    if not utility.param req.param('id'), res, "Id" then return
-
     db.model("Campaign").findById req.param('id'), (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then res.send(404); return
 
       # Check if authorized
-      if not req.user.admin and campaign.owner.equals req.user.id
-        res.json 401, { error: "Unauthorized" }
+      if not req.user.admin and not campaign.owner.equals req.user.id
+        res.send 403
         return
 
-      pub[0].id = pub[0]._id
-      delete pub[0]._id
-      res.json pub[0]
+      obj = campaign.toObject()
+      obj.id = obj._id
+      delete obj._id
+      res.json 200, obj
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign

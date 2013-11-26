@@ -41,6 +41,7 @@
     "/campaigns",
     "/campaigns/new",
     "/campaigns/:id",
+    "/campaigns/:id/edit",
 
     "/settings",
     "/acc/billing",
