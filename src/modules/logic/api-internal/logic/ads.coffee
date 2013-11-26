@@ -39,7 +39,7 @@ module.exports = (db, utility) ->
       newAd.save (err) ->
         if err
           spew.error "Error saving new ad [#{err}"
-          res.json { error: err }
+          res.json 400, { error: err }
           return
 
         spew.info "Created new ad '#{req.query.name}' for #{user.username}"
@@ -53,15 +53,15 @@ module.exports = (db, utility) ->
     db.fetch "Ad", { _id: req.query.id }, (ad) ->
 
       if ad == undefined or ad.length == 0
-        res.json { error: "No such ad found" }
+        res.json 404, { error: "No such ad found" }
         return
 
-      if req.user.admin or ad.owner == req.user.id
-        res.json 403, { error: "Unauthorized" }
+      if not req.user.admin and not ad.owner.equals req.user.id
+        res.send(403)
         return
 
       ad.remove()
-      res.json { msg: "Deleted ad #{req.query.id}" }
+      res.send(200)
 
 
   # Main GET method, expects {filter}
@@ -94,9 +94,9 @@ module.exports = (db, utility) ->
 
           res.json ret
 
-        , ((err) -> res.json { error: err }), true # db fetch Ad
+        , ((err) -> res.json 400, { error: err }), true # db fetch Ad
 
-    else res.json { error: "Invalid filter" }
+    else res.json 400, { error: "Invalid filter" }
 
   # Finds a single ad by ID
   #
