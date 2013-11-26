@@ -1,0 +1,39 @@
+.new-ad
+  a.new-item(href="/modal")
+    i.fa.fa-plus
+    | New ad
+ul.list(ng-if="ads")
+  li(ng-repeat="ad in ads")
+    .ad
+      .name(ng-bind="ad.name")
+      .edit: i.fa.fa-wrench
+
+    table.campaigns
+      tr
+        th PepsiCon 2013
+        td             
+          .amount 71.21 %
+          .desc CTR
+        td
+          .amount ▲ 8,351
+          .desc Impressions
+        td
+          .amount ▲ 251
+          .desc Clicks
+        td
+          .amount $ 472.75
+          .desc Spent
+      tr
+        th Qwerty1
+        td
+          .amount 71.21 %
+          .desc CTR
+        td
+          .amount ▲ 8,351
+          .desc Impressions
+        td
+          .amount ▲ 251
+          .desc Clicks
+        td
+          .amount $ 472.75
+          .desc Spent
