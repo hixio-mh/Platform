@@ -177,7 +177,7 @@ setup = (options, imports, register) ->
     campaigns.create req, res
 
   # Update a campaign
-  server.server.put "/api/v1/campaigns/:id", (req, res) ->
+  server.server.post "/api/v1/campaigns/:id", (req, res) ->
     campaigns.save req, res
 
   # Delete a campaign
@@ -209,7 +209,7 @@ setup = (options, imports, register) ->
     publishers.create req, res
 
   # Update a publisher
-  server.server.put "/api/v1/publishers/:id", (req, res) ->
+  server.server.post "/api/v1/publishers/:id", (req, res) ->
     publishers.save req, res
 
   # Delete a publisher

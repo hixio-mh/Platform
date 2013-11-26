@@ -119,6 +119,9 @@ module.exports = (db, utility) ->
     Ad.findOne { _id: req.param('id'), owner: req.user.id }, (err, ad) ->
 
       if ad
-        res.json(ad)
+        obj = ad.toObject()
+        obj.id = obj._id
+        delete obj._id
+        res.json(obj)
       else
         res.send(404)
