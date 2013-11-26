@@ -18,7 +18,21 @@ window.AdefyDashboard.factory 'Ad', ($resource) ->
 window.AdefyDashboard.controller "ads", ($scope, $location, Ad) ->
 
   refreshAds = ->
-    Ads.query (ads) ->
+    Ad.query (ads) ->
       $scope.ads = ads
 
   refreshAds()
+
+  # modal
+  $scope.ad = {} # define the object, or it will not get set inside the modal
+  $scope.create = ->
+    console.log this.ad
+    newAd = new Ad(this.ad)
+    newAd.$save().then(
+      -> # success
+        # just close
+      -> #error
+        $scope.setNotification("There was an error with your form submission", "error")
+    )
+    refreshAds()
+    return true

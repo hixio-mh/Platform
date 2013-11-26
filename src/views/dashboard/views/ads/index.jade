@@ -1,5 +1,6 @@
 .new-ad
-  a.new-item(href="/modal")
+  a.new-item(form-modal template="/views/dashboard/ads:new" title="Create ad"
+        ok-button-text="Save" form-submit="create()" form-object="ad")
     i.fa.fa-plus
     | New ad
 ul.list(ng-if="ads")
