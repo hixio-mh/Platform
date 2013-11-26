@@ -33,6 +33,7 @@
     "/apps/new",
     "/apps/:id",
     "/apps/:id/edit",
+    "/apps/:id/integration",
 
     "/ads",
     "/ads/:id",

@@ -113,6 +113,13 @@ setup = (options, imports, register) ->
     else res.json { error: "Unknown action #{req.params.action} "}
 
   #
+  # Graph data aggregation
+  #
+  # accepts type (ad, campaign), id, range (time)
+  server.server.get "/api/v1/aggregation", (req, res) ->
+
+
+  #
   # Get user account settings
   #
   server.server.get "/api/v1/account", (req, res) ->
