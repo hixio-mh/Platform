@@ -53,6 +53,14 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "campaignsNew"
     templateUrl: "/views/dashboard/campaigns:new"
 
+  $routeProvider.when "/campaigns/:id",
+    controller: "campaignsShow"
+    templateUrl: "/views/dashboard/campaigns:show"
+
+  $routeProvider.when "/campaigns/:id/edit",
+    controller: "campaignsEdit"
+    templateUrl: "/views/dashboard/campaigns:edit"
+
   $routeProvider.when "/campaigns",
     controller: "campaigns"
     templateUrl: "/views/dashboard/campaigns:index"
