@@ -20,26 +20,32 @@
 config = require "../../../config.json"
 express = require "express"
 spew = require "spew"
+mongoose = require "mongoose"
+fs = require "fs"
 
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
   sockets = imports["line-socketio"]
-  db = imports["line-mongodb"]
   snapshot = imports["line-snapshot"]
   auth = imports["line-userauth"]
 
   spew.init "Starting Initialization"
 
-  # Setup db models and connect using config info
-  db.setupModels __dirname + "/../../../models/index.js"
+  # Connect to the db
+  con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
+  con += ":#{config.db.port}/#{config.db.db}"
 
-  db.connect \
-    config.db.user,\
-    config.db.pass,\
-    config.db.host,\
-    config.db.port,\
-    config.db.db
+  dbConnection = mongoose.connect con, (err) ->
+    if err then spew.critical "Error connecting to database [#{err}]"
+    else spew.init "Connected to MongoDB #{config.db.db} as #{config.db.user}"
+
+    # Setup db models
+    modelPath = "#{__dirname}/../../../models"
+    fs.readdirSync(modelPath).forEach (file) ->
+      if ~file.indexOf ".js"
+        spew.init "Loading model #{file}"
+        require "#{modelPath}/#{file}"
 
   ## Set up middleware
 

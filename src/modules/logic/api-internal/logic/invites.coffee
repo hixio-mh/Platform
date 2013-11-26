@@ -17,8 +17,9 @@
 ##
 spew = require "spew"
 request = require "request"
+db = require "mongoose"
 
-module.exports = (db, utility) ->
+module.exports = (utility) ->
 
   # Ships an invite request to the database
   #
@@ -28,7 +29,7 @@ module.exports = (db, utility) ->
   # @return [Object] invite
   create: (email, code) ->
 
-    invite = db.models().Invite.getModel()
+    invite = db.model("Invite")
       email: email
       code: code
 
@@ -87,14 +88,9 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   getAll: (req, res) ->
-
-    # Fetch wide, result always an array
-    db.fetch "Invite", {}, (data) ->
-
+    db.model("Invite").find {}, (err, data) ->
+      if utility.dbError err, res then return
       if data.length == 0 then res.json []
-
-      # TODO: Figure out why result is not wide
-      if data !instanceof Array then data = [ data ]
 
       # Data fetched, send only what is needed
       ret = []
@@ -108,9 +104,6 @@ module.exports = (db, utility) ->
 
       res.json ret
 
-    , (err) -> res.json { error: err }
-    , true
-
   # Delete invite
   #
   # @param [Object] req request
@@ -118,12 +111,12 @@ module.exports = (db, utility) ->
   delete: (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
-    db.fetch "Invite", { _id: req.query.id }, (invite) ->
+    db.model("Invite").findById req.query.id, (err, invite) ->
+      if utility.dbError err, res then return
+      if not invite then res.send(404); return
 
-      if invite.length == 0 then res.json { error: "No such invite" }
-      else
-        invite.remove()
-        res.json { msg: "OK" }
+      invite.remove()
+      res.json { msg: "OK" }
 
   # Update invite
   #
@@ -134,12 +127,12 @@ module.exports = (db, utility) ->
     if not utility.param req.query.email, res, "Email" then return
     if not utility.param req.query.code, res, "Code" then return
 
-    db.fetch "Invite", { _id: req.query.id }, (invite) ->
+    db.model("Invite").findById req.query.id, (err, invite) ->
+      if utility.dbError err, res then return
+      if not invite then res.send(404); return
 
-      if invite.length == 0 then res.json { error: "No such invite" }
-      else
+      invite.code = req.query.code
+      invite.email = req.query.email
+      invite.save()
 
-        invite.code = req.query.code
-        invite.email = req.query.email
-        invite.save()
-        res.json { msg: "OK" }
+      res.json { msg: "OK" }

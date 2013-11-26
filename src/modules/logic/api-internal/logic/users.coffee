@@ -16,85 +16,77 @@
 ## User manipulation
 ##
 spew = require "spew"
+db = require "mongoose"
 
-module.exports = (db, utility) ->
+module.exports = (utility) ->
 
   # Delete user
   #
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.param('id'), res, "Id" then return
+    if not utility.param req.param.id, res, "Id" then return
+    if not req.user.admin
+      res.json 403, { error: "Unauthorized" }
+      return
 
-    utility.verifyAdmin req, res, (admin) ->
-      if not admin then return
+    db.model("User").findById req.param.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not utility.verifyDBResponse user, res, "User" then return
 
-      db.fetch "User", { _id: req.param('id') }, (user) ->
-        if user.length = 0 then res.json { error: "No such user" }
-        else
+      if req.cookies.user.sess == user.session
+        res.json 500, { error: "You can't delete yourself!" }
+        return
 
-          if req.cookies.user.sess == user.session
-            res.json { error: "You can't delete yourself!" }
-            return
+      spew.info "Deleted user #{user.username}"
 
-          spew.info "Deleted user #{user.username}"
-
-          user.remove()
-          res.json { msg: "OK" }
+      user.remove()
+      res.json { msg: "OK" }
 
   # Retrieve user, expects {filter}
   #
   # @param [Object] req request
   # @param [Object] res response
   get: (req, res) ->
-    if not utility.param req.param('filter'), res, "Filter" then return
+    if not utility.param req.param("filter"), res, "Filter" then return
+    if not req.user.admin
+      res.json 403, { error: "Unauthorized" }
+      return
 
-    utility.verifyAdmin req, res, (admin) ->
-      if not admin then return
+    if req.param.filter == "all"
+      db.model("User").find {}, (err, users) ->
+        if utility.dbError err, res then return
 
-      if req.param('filter') == "all"
+        # Data fetched, send only what is needed
+        ret = []
 
-        # Fetch wide, result always an array
-        db.fetch "User", {}, (data) ->
+        for u in users
+          user = {}
+          user.username = u.username
+          user.fname = u.fname
+          user.lname = u.lname
+          user.email = u.email
+          user.id = u._id
+          user.funds = u.funds
+          ret.push user
 
-          # TODO: Figure out why result is not wide
-          if data not instanceof Array then data = [ data ]
+        res.json ret
 
-          # Data fetched, send only what is needed
-          ret = []
+    else if req.param.filter == "username"
+      if not utility.param req.params.username, res, "Username" then return
 
-          for u in data
-            user = {}
-            user.username = u.username
-            user.fname = u.fname
-            user.lname = u.lname
-            user.email = u.email
-            user.id = u._id
-            user.funds = u.funds
-            ret.push user
+      db.model("User").findOne { username: req.params.username }, (err, user) ->
+        if utility.dbError err, res then return
+        if not user then res.send(404); return
 
-          res.json ret
+        # Data fetched, send only what is needed
+        ret = {}
+        ret.username = user.username
+        ret.fname = user.fname
+        ret.lname = user.lname
+        ret.email = user.email
 
-        , (err) -> res.json { error: err }
-        , true
-
-      else if req.param('filter') == "username"
-        if not utility.param req.params.username, res, "Username" then return
-
-        # TODO: Sanitize
-
-        # Fetch wide, result always an array
-        db.fetch "User", { username: req.params.username }, (user) ->
-          if not utility.verifyDBResponse user, res, "User" then return
-
-          # Data fetched, send only what is needed
-          ret = {}
-          ret.username = user.username
-          ret.fname = user.fname
-          ret.lname = user.lname
-          ret.email = user.email
-
-          res.json ret
+        res.json ret
 
   # Retrieve the user represented by the cookies on the request. Used on
   # the backend account page, and for rendering advertising credit and
@@ -103,12 +95,10 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   getSelf: (req, res) ->
-    _username = req.cookies.user.id
-    _session = req.cookies.user.sess
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
 
-    db.fetch "User", { username: _username, session: _session }, (user) ->
-
-      ret =
+      res.json {
         username: user.username
         fname: user.fname
         lname: user.lname
@@ -122,34 +112,27 @@ module.exports = (db, utility) ->
         phone: user.phone
         fax: user.fax
         funds: user.funds
-
-      res.json ret
-
-    , (err) -> res.json { error: err }
+      }
 
   # Update the user account
   #
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    query = { username: req.user.username }
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
 
-    db.fetch "User", query, (user) ->
-      if user == undefined or user.length == 0
-        res.json 404, { error: "No such user" }
-        return
-
-      user.fname = req.param('fname')
-      user.lname = req.param('lname')
-      user.email = req.param('email')
-      user.company = req.param('company')
-      user.address = req.param('address')
-      user.city = req.param('city')
-      user.state = req.param('state')
-      user.postalCode = req.param('postalCode')
-      user.country = req.param('country')
-      user.phone = req.param('phone')
-      user.fax = req.param('fax')
+      user.fname = req.param.fname || user.fname
+      user.lname = req.param.lname || user.lname
+      user.email = req.param.email || user.email
+      user.company = req.param.company || user.company
+      user.address = req.param.address || user.address
+      user.city = req.param.city || user.city
+      user.state = req.param.state || user.state
+      user.postalCode = req.param.postalCode || user.postalCode
+      user.country = req.param.country || user.country
+      user.phone = req.param.phone || user.phone
+      user.fax = req.param.fax || user.fax
 
       user.save()
-      res.send(200)
+      res.send 200

@@ -4,7 +4,10 @@
   "main": "logic.js",
   "private": true,
   "plugin": {
-    "consumes": [ "line-express", "logic-utility" ],
+    "consumes": [
+      "line-express",
+      "logic-utility"
+    ],
     "provides": []
   }
 }

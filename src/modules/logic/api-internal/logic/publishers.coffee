@@ -16,30 +16,30 @@
 ## Publisher manipulation
 ##
 spew = require "spew"
+db = require "mongoose"
 
-module.exports = (db, utility) ->
+module.exports = (utility) ->
 
   # Create new publisher on identified user
   #
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not req.param('name')
-      return res.json 400, {error: "No application name"}
+    if not utility.param req.query.name, res, "Application name" then return
 
     # Validate type
-    if Number(req.param('type')) == undefined then type = 0
-    else if Number(req.param('type')) == 1 then type = 1
-    else if Number(req.param('type')) == 2 then type = 2
+    if Number req.param("type") == undefined then type = 0
+    else if Number req.param("type") == 1 then type = 1
+    else if Number req.param("type") == 2 then type = 2
     else type = 0
 
-    newPublisher = db.models().Publisher.getModel()
+    newPublisher = db.model("Publisher")
       owner: req.user.id
-      name: String req.param('name')
+      name: String req.param "name"
       type: type
-      url: String req.param('url') || ""
-      category: String req.param('category')
-      description: String req.param('description') || ""
+      url: String req.param("url") || ""
+      category: String req.param "category"
+      description: String req.param("description") || ""
 
       status: 0
       active: false
@@ -58,34 +58,30 @@ module.exports = (db, utility) ->
 
     res.json 200, obj
 
-
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
   #
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    # Fetch publisher
-    Publisher = db.models()["Publisher"].getModel()
-    Publisher.findById req.param('id'), (err, publisher) ->
 
-      if not publisher
-        res.json(404)
+    db.model("Publisher").findById req.param.id, (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
+
+      if not req.user.admin and not pub.owner.equals req.user.id
+        res.json 403
         return
 
-      if not req.user.admin and not publisher.owner.equals req.user.id
-        res.json(403)
-        return
+      pub.name = req.param "name"
+      pub.url = req.param "url"
+      pub.category = req.param "category"
+      pub.description = req.param "description"
 
-      publisher.name = req.param('name')
-      publisher.url = req.param('url')
-      publisher.category = req.param('category')
-      publisher.description = req.param('description')
-
-      publisher.save()
+      pub.save()
 
       # quick _id to id patch
-      obj = publisher.toObject()
+      obj = pub.toObject()
       obj.id = obj._id
       delete obj._id
 
@@ -96,19 +92,16 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    Publisher = db.models()["Publisher"].getModel()
-    Publisher.findById req.param('id'), (err, publisher) ->
+    db.model("Publisher").findById req.param.id, (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
 
-      if not publisher
-        res.send(404)
+      if not req.user.admin and not pub.owner.equals req.user.id
+        res.send 403
         return
 
-      if not req.user.admin and not publisher.owner.equals req.user.id
-        res.send(403)
-        return
-
-      publisher.remove()
-      res.send(200)
+      pub.remove()
+      res.send 200
 
   # Fetches owned publisher list.
   # Admin privileges are required to fetch all.
@@ -118,12 +111,12 @@ module.exports = (db, utility) ->
   # @param [Boolean] all fetch all, defaults to false
   get: (req, res, all) ->
     if all != true then all = false
-
     if all and not req.user.admin then res.json(403); return
-
     if all then query = {} else query = { owner: req.user.id }
 
-    db.fetch "Publisher", query, (publishers) ->
+    db.model("Publisher").find query, (err, publishers) ->
+      if utility.dbError err, res then return
+
       ret = []
 
       for p in publishers
@@ -150,25 +143,22 @@ module.exports = (db, utility) ->
 
       res.json ret
 
-    , ((error) -> res.json 400, { error: error }), true
-
-
   # Finds a single publisher by ID
   #
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    Publisher = db.models()["Publisher"].getModel()
-    Publisher.findOne { _id: req.param('id'), owner: req.user.id }, (err, pub) ->
+    db.model("Publisher").findOne
+      _id: req.param "id"
+      owner: req.user.id
+    , (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
 
-      if pub
-        # rename id key
-        obj = pub.toObject()
-        obj.id = obj._id
-        delete obj._id
-        res.json(obj)
-      else
-        res.send(404)
+      obj = pub.toObject()
+      obj.id = obj._id
+      delete obj._id
+      res.json obj
 
   # Updates publisher status if applicable
   #
@@ -180,26 +170,24 @@ module.exports = (db, utility) ->
   approve: (req, res) ->
     if not utility.param req.query.id, res, "Publisher id" then return
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
+    db.model("Publisher").findOne
+      _id: req.query.id
+      owner: req.user.id
+    , (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
 
-      db.fetch "Publisher", { _id: req.query.id, owner: user._id }, (pub) ->
-        if pub == undefined or pub.length == 0
-          res.json 404, { error: "No such publication" }
-          return
+      # Switch to "Awaiting Approval"
+      if pub.status == 0 or pub.status == 1
+        pub.status = 3
+        pub.save()
 
-        if pub[0].status == 0 or pub[0].status == 1
-          pub[0].status = 3
-          pub[0].save()
-        else if admin and (pub[0].status == 3 or pub[0].status == 1)
-          pub[0].status = 2
-          pub[0].save()
+      # If we are admin, approve directly
+      else if req.user.admin and (pub.status == 3 or pub.status == 1)
+        pub.status = 2
+        pub.save()
 
-        res.send(200)
-
-      , ((error) -> res.json 400, { error: error }), true
-
-    , true
+      res.send 200
 
   # Disapproves the publisher
   #
@@ -209,17 +197,18 @@ module.exports = (db, utility) ->
     if not utility.param req.query.id, res, "Publisher id" then return
     if not utility.param req.query.msg, res, "Disapproval message" then return
 
-    utility.verifyAdmin req, res, (admin) ->
+    if not req.user.admin
+      res.json 403, { error: "Unauthorized" }
+      return
 
-      db.fetch "Publisher", { _id: req.query.id }, (pub) ->
-        if pub == undefined or pub.length == 0
-          res.json 404, { error: "No such publisher!" }
-          return
+    db.model("Publisher").findById req.query.id, (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
 
-        pub.status = 1
-        pub.approvalMessage.push
-          msg: req.query.msg
-          timestamp: new Date().getTime()
+      pub.status = 1
+      pub.approvalMessage.push
+        msg: req.query.msg
+        timestamp: new Date().getTime()
 
-        pub.save()
-        res.send(200)
+      pub.save()
+      res.send 200

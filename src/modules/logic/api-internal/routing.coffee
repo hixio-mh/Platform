@@ -11,25 +11,24 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+db = require "mongoose"
 
 ##
 ## Private API (locked down by core-init-start)
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  db = imports["line-mongodb"]
+  app = imports["line-express"].server
   utility = imports["logic-utility"]
 
-  publishers = require("./logic/publishers.js") db, utility
-  campaigns = require("./logic/campaigns.js") db, utility
-  ads = require("./logic/ads.js") db, utility
-  invites = require("./logic/invites.js") db, utility
-  users = require("./logic/users.js") db, utility
-
+  publishers = require("./logic/publishers.js") utility
+  campaigns = require("./logic/campaigns.js") utility
+  ads = require("./logic/ads.js") utility
+  invites = require("./logic/invites.js") utility
+  users = require("./logic/users.js") utility
 
   ## ** Unprotected ** - public invite add request!
-  server.server.get "/api/v1/invite/add", (req, res) ->
+  app.get "/api/v1/invite/add", (req, res) ->
     if not utility.param req.query.key, res, "Key" then return
     if not utility.param req.query.email, res, "Email" then return
 
@@ -59,26 +58,27 @@ setup = (options, imports, register) ->
     , (error) -> res.json { error: error }
 
   # Require the user to be logged in to access the API, set req.user
-  server.server.all "/api/v1/*", (req, res, next) ->
+  app.all "/api/v1/*", (req, res, next) ->
     if req.cookies.user
-      db.fetch "User",
+      db.model("User").findOne
         username: req.cookies.user.id
         session: req.cookies.user.sess
-      , (user) ->
+      , (err, user) ->
+        if utility.dbError err, res then return
+
         if user.length == 0
           req.user = null
           delete req.cookies.user
-          req.send(403) # the user ID was invalid
+          req.send 403 # the user ID was invalid
         else
           req.user =
             id: user._id
-            username: user.username,
+            username: user.username
             admin: user.permissions == 0
           next() # everything was okay, allow the user to proceed to the API
 
-    else
-      # user was not logged in, deny access to the API.
-      req.send(403)
+    # user was not logged in, deny access to the API.
+    else req.send(403)
 
   # Invite manipulation [admin only] - /api/v1/invite/:action
   #
@@ -87,14 +87,13 @@ setup = (options, imports, register) ->
   #   /delete   delete an invite
   #
   # admin only
-  server.server.get "/api/v1/invite/:action", (req, res) ->
-    utility.verifyAdmin req, res, (admin) ->
-      if not admin then return
+  app.get "/api/v1/invite/:action", (req, res) ->
+    if not req.user.admin then return
 
-      if req.params.action == "all" then invites.getAll req, res
-      else if req.params.action == "update" then invites.update req, res
-      else if req.params.action == "delete" then invites.delete req, res
-      else res.json { error: "Unknown action #{req.params.action} "}
+    if req.params.action == "all" then invites.getAll req, res
+    else if req.params.action == "update" then invites.update req, res
+    else if req.params.action == "delete" then invites.delete req, res
+    else res.json { error: "Unknown action #{req.params.action} "}
 
   # User manipulation - /api/v1/user/:action
   #
@@ -102,13 +101,10 @@ setup = (options, imports, register) ->
   #   /delete   [admin-only] delete a single user
   #
   # Some routes are admin only
-  server.server.get "/api/v1/user/:action", (req, res) ->
+  app.get "/api/v1/user/:action", (req, res) ->
 
-    action = req.params.action
-
-    # Admin-only
-    if action == "get" then users.get req, res
-    else if action == "delete" then users.delete req, res
+    if req.params.action == "get" then users.get req, res
+    else if req.params.action == "delete" then users.delete req, res
 
     else res.json { error: "Unknown action #{req.params.action} "}
 
@@ -116,25 +112,22 @@ setup = (options, imports, register) ->
   # Graph data aggregation
   #
   # accepts type (ad, campaign), id, range (time)
-  server.server.get "/api/v1/aggregation", (req, res) ->
-
+  app.get "/api/v1/aggregation", (req, res) ->
 
   #
   # Get user account settings
   #
-  server.server.get "/api/v1/account", (req, res) ->
-    users.getSelf req, res
+  app.get "/api/v1/account", (req, res) -> users.getSelf req, res
 
   #
   # Update user account settings
   #
-  server.server.put "/api/v1/account", (req, res) ->
-    users.save req, res
+  app.put "/api/v1/account", (req, res) -> users.save req, res
 
   #
   # Returns a list of transactions: deposits, withdrawals, reserves
   #
-  server.server.get "/api/v1/account/transactions", (req, res) ->
+  app.get "/api/v1/account/transactions", (req, res) ->
     res.json [
       {type: 'deposit', amount: 3.20, time: new Date().getTime() - 200}
       {type: 'withdraw', amount: 3.20, time: new Date().getTime() - 600}
@@ -144,73 +137,36 @@ setup = (options, imports, register) ->
   #
   # Ad manipulation - /api/v1/ads
   #
-  server.server.get "/api/v1/ads", (req, res) ->
-    ads.get req, res
-
-  server.server.get "/api/v1/ads/:id", (req, res) ->
-    ads.find req, res
-
-  server.server.post "/api/v1/ads", (req, res) ->
-    ads.create req, res
-
-  server.server.delete "/api/v1/ads/:id", (req, res) ->
-    ads.delete req, res
+  app.get "/api/v1/ads", (req, res) -> ads.get req, res
+  app.get "/api/v1/ads/:id", (req, res) -> ads.find req, res
+  app.post "/api/v1/ads", (req, res) -> ads.create req, res
+  app.delete "/api/v1/ads/:id", (req, res) -> ads.delete req, res
 
   # Campaign manipulation - /api/v1/campaigns/:action
   #
   #   /events   fetch events for a campaign
   #
   ###
-  server.server.get "/api/v1/campaigns/:action", (req, res) ->
+  app.get "/api/v1/campaigns/:action", (req, res) ->
     else if req.params.action == "events" then campaigns.fetchEvents req, res
   ###
-
-  # Get all campaigns
-  server.server.get "/api/v1/campaigns", (req, res) ->
-    campaigns.fetch req, res
-
-  # Get campaign by id
-  server.server.get "/api/v1/campaigns/:id", (req, res) ->
-    campaigns.find req, res
-
-  # Create a new campaign
-  server.server.post "/api/v1/campaigns", (req, res) ->
-    campaigns.create req, res
-
-  # Update a campaign
-  server.server.post "/api/v1/campaigns/:id", (req, res) ->
-    campaigns.save req, res
-
-  # Delete a campaign
-  server.server.delete "/api/v1/campaigns/:id", (req, res) ->
-    campaigns.delete req, res
+  app.get "/api/v1/campaigns", (req, res) -> campaigns.fetch req, res
+  app.get "/api/v1/campaigns/:id", (req, res) -> campaigns.find req, res
+  app.post "/api/v1/campaigns", (req, res) -> campaigns.create req, res
+  app.post "/api/v1/campaigns/:id", (req, res) -> campaigns.save req, res
+  app.delete "/api/v1/campaigns/:id", (req, res) -> campaigns.delete req, res
 
   # Publisher manipulation - /api/v1/publishers/:action
   #
   #   /approve     [admin-only] approve a publisher
   #   /dissapprove [admin-only] disapprove a publisher
   #
-  #server.server.get "/api/v1/publishers/:action", (req, res) ->
-
-  # Get all publishers
-  server.server.get "/api/v1/publishers", (req, res) ->
-    publishers.get req, res, false
-
-  # Get publisher by id
-  server.server.get "/api/v1/publishers/:id", (req, res) ->
-    publishers.find req, res
-
-  # Create a new publisher
-  server.server.post "/api/v1/publishers", (req, res) ->
-    publishers.create req, res
-
-  # Update a publisher
-  server.server.post "/api/v1/publishers/:id", (req, res) ->
-    publishers.save req, res
-
-  # Delete a publisher
-  server.server.delete "/api/v1/publishers/:id", (req, res) ->
-    publishers.delete req, res
+  #app.get "/api/v1/publishers/:action", (req, res) ->
+  app.get "/api/v1/publishers", (req, res) ->publishers.get req, res, false
+  app.get "/api/v1/publishers/:id", (req, res) -> publishers.find req, res
+  app.post "/api/v1/publishers", (req, res) -> publishers.create req, res
+  app.post "/api/v1/publishers/:id", (req, res) -> publishers.save req, res
+  app.delete "/api/v1/publishers/:id", (req, res) -> publishers.delete req, res
 
   register null, {}
 

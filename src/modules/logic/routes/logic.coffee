@@ -11,7 +11,6 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 routes = require "../../../routes.json"
 
