@@ -112,6 +112,8 @@ module.exports = (db, utility) ->
         res.send(404)
         return
 
+      pub[0].id = pub[0]._id
+      delete pub[0]._id
       res.json pub[0]
 
     , ((error) -> res.json { error: error }), true

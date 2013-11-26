@@ -160,7 +160,11 @@ module.exports = (db, utility) ->
     Publisher.findOne { _id: req.param('id'), owner: req.user.id }, (err, pub) ->
 
       if pub
-        res.json(pub)
+        # rename id key
+        obj = pub.toObject()
+        obj.id = obj._id
+        delete obj._id
+        res.json(obj)
       else
         res.send(404)
 
