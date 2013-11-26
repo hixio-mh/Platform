@@ -108,6 +108,7 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
   ]
 
   $scope.campaign = {
+    bidSystem: 'automatic',
     geographicalTargetting: "all",
     networkTargetting: "all",
     platformTargetting: "all",
@@ -117,9 +118,7 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
   }
 
   $scope.submit = ->
-    console.log(this.campaign)
     $scope.submitted = true
-    ###
     newCampaign = new Campaign(this.campaign)
     newCampaign.$save().then(
       -> # success
@@ -127,4 +126,3 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
       -> #error
         $scope.setNotification("There was an error with your form submission", "error")
     )
-    ###
