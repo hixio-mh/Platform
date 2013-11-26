@@ -92,9 +92,7 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
     )
 
 
-window.AdefyDashboard.controller "appsShow", ($scope, $location, $routeParams, App) ->
-
-  $scope.app = {}
+window.AdefyDashboard.controller "appsShow", ($scope, $routeParams, App) ->
 
   refreshApp = ->
     App.get id: $routeParams.id, (app) ->
@@ -102,3 +100,30 @@ window.AdefyDashboard.controller "appsShow", ($scope, $location, $routeParams, A
 
   refreshApp()
 
+window.AdefyDashboard.controller "appsEdit", ($scope, $location, $routeParams, App) ->
+
+  # Application categories
+  $scope.categories = [
+    "Finance"
+    "IT"
+    "Business"
+    "Entertainment"
+    "News"
+    "Auto & Motor"
+    "Sport"
+    "Travel"
+    "Information"
+    "Community"
+    "Women"
+  ]
+
+  App.get id: $routeParams.id, (app) ->
+    $scope.app = app
+
+  $scope.submit = ->
+    $scope.app.$save().then(
+      => # success
+        $location.path("/apps/#{$scope.app.id}")
+      -> #error
+        $scope.setNotification("There was an error with your form submission", "error")
+    )
