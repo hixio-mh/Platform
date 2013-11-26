@@ -50,7 +50,13 @@ module.exports = (db, utility) ->
       earnings: 0
 
     newPublisher.save()
-    res.send(200)
+
+    # quick _id to id patch
+    obj = newPublisher.toObject()
+    obj.id = obj._id
+    delete obj._id
+
+    res.json 200, obj
 
 
   # Save edits to existing publisher, user must either own the publisher or be

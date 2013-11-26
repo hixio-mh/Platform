@@ -5,10 +5,10 @@
     .label.red(ng-switch-when="1") Rejected
     .label.green(ng-switch-when="2") Approved
   .menu.full
-    a.active(href="#")
+    a.active(href="/apps/{{app.id}}")
       i.fa.fa-fw.fa-signal
       | Metrics
-    a(href="#")
+    a(href="/apps/{{app.id}}/integration")
       i.fa.fa-fw.fa-paperclip
       | Integration
     a(href="/apps/{{app.id}}/edit")
