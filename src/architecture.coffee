@@ -14,7 +14,6 @@
 
 module.exports = [
   "./modules/line/express",
-  "./modules/line/mongodb",
   "./modules/line/snapshot",
   "./modules/line/socketio",
 

@@ -11,8 +11,8 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 config = require "../../../config.json"
+db = require "mongoose"
 
 ##
 ## Database seed
@@ -20,7 +20,6 @@ config = require "../../../config.json"
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
-  db = imports["line-mongodb"]
   utility = imports["logic-utility"]
 
   # If we aren't in development mode, return early
@@ -42,7 +41,7 @@ setup = (options, imports, register) ->
     ]
 
     # Go through and remove all documents
-    db.models()[m].getModel().remove({}) for m in models
+    db.model(m).remove({}) for m in models
 
     # Now insert seed data
     #

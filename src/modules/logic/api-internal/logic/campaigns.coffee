@@ -16,8 +16,9 @@
 ## Campaign manipulation
 ##
 spew = require "spew"
+db = require "mongoose"
 
-module.exports = (db, utility) ->
+module.exports = (utility) ->
 
   # Create new cmapaign
   #
@@ -34,45 +35,38 @@ module.exports = (db, utility) ->
     if not utility.param req.query.bid, res, "Bid" then return
     if not utility.param req.query.bidMax, res, "Max bid" then return
 
-    query =
-      username: req.cookies.user.id
-      session: req.cookies.user.sess
+    # Create new campaign
+    newCampaign = db.model("Campaign")
+      owner: req.user.id
+      name: req.query.name
+      description: req.query.description
+      category: req.query.category
+      pricing: req.query.pricing
+      totalBudget: Number req.query.totalBudget
+      dailyBudget: Number req.query.dailyBudget
+      bidSystem: req.query.system
+      bid: Number req.query.bid
+      maxBid: Number req.query.bidMax
 
-    # Fetch user
-    db.fetch "User", query, (user) ->
-      if not utility.verifyDBResponse user, res, "User" then return
+      status: 0 # 0 is created, no ads
+      avgCPC: 0
+      clicks: 0
+      impressions: 0
+      spent: 0
 
-      # Create new campaign
-      newCampaign = db.models().Campaign.getModel()
-        owner: user._id
-        name: req.query.name
-        description: req.query.description
-        category: req.query.category
-        pricing: req.query.pricing
-        totalBudget: Number req.query.totalBudget
-        dailyBudget: Number req.query.dailyBudget
-        bidSystem: req.query.system
-        bid: Number req.query.bid
-        maxBid: Number req.query.bidMax
+    # Pass placeholder for daily if none provided
+    if newCampaign.dailyBudget.length == 0 then newCampaign.dailyBudget = "-"
 
-        status: 0 # 0 is created, no ads
-        avgCPC: 0
-        clicks: 0
-        impressions: 0
-        spent: 0
-
-      # Pass placeholder for daily if none provided
-      if newCampaign.dailyBudget.length == 0 then newCampaign.dailyBudget = "-"
-
-      newCampaign.save()
-      res.json(200)
+    newCampaign.save()
+    res.json 200
 
   # Fetch campaigns owned by the user identified by the cookie
   #
   # @param [Object] req request
   # @param [Object] res response
   fetch: (req, res) ->
-    db.fetch "Campaign", { owner: req.user.id }, (campaigns) ->
+    db.model("Campaign").find { owner: req.user.id }, (err, campaigns) ->
+      if utility.dbError err, res then return
 
       ret = []
 
@@ -99,24 +93,25 @@ module.exports = (db, utility) ->
 
       res.json ret
 
-    , ((err) -> res.json 500, { error: err }), true
-
-
   # Finds a single Campaign by ID
   #
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    db.fetch "Campaign", { _id: req.param('id'), owner: req.user.id }, (pub) ->
-      if pub == undefined or pub.length == 0
-        res.send(404)
+    if not utility.param req.query.id, res, "Id" then return
+
+    db.model("Campaign").findById req.param.id, (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then res.send(404); return
+
+      # Check if authorized
+      if not req.user.admin and campaign.owner.equals req.user.id
+        res.json 401, { error: "Unauthorized" }
         return
 
       pub[0].id = pub[0]._id
       delete pub[0]._id
       res.json pub[0]
-
-    , ((error) -> res.json { error: error }), true
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign
@@ -130,7 +125,8 @@ module.exports = (db, utility) ->
     # ownership verification for admins
     fetchAndReplyWithEvents = (res, id) ->
 
-      db.fetch "CampaignEvent", { campaign: id }, (events) ->
+      db.model("CampaignEvent").find { campaign: id }, (err, events) ->
+        if utility.dbError err, res then return
 
         # Go through and send only affected list, along with a timestamp
         ret = []
@@ -151,30 +147,22 @@ module.exports = (db, utility) ->
             affected: affected
 
         res.json ret
-      , ((error) -> res.json { error: error }), true
 
-    utility.verifyAdmin req, res, (admin, user) ->
-      if user == undefined then res.json { error: "No such user!" }; return
+    # If admin, fetch
+    if req.user.admin then fetchAndReplyWithEvents res, req.query.id
+    else
 
-      # If admin, fetch
-      if admin then fetchAndReplyWithEvents res, req.query.id
-      else
+      # If not, verify ownership before fetching
+      db.model("Campaign").find { owner: req.user.id }, (err, campaign) ->
+        if utility.dbError err, res then return
+        if not campaign then res.send(404); return
 
-        # If not, verify ownership before fetching
-        db.fetch "Campaign", { owner: user._id }, (campaign) ->
+        if not campaign.owner.equals req.user.id
+          res.json 401, { error: "Unauthorized!" }
+          return
 
-          if campaign == undefined or campaign.length == 0
-            res.json { error: "No such campaign" }
-            return
-
-          if not campaign.owner.equals user._id
-            res.json { error: "Unauthorized!" }
-            return
-
-          # Verified, fetch
-          fetchAndReplyWithEvents res, req.query.id
-
-    , true
+        # Verified, fetch
+        fetchAndReplyWithEvents res, req.query.id
 
   # Saves the campaign and generates new campaign events. User must either be
   # admin or own the campaign in question!
@@ -183,18 +171,17 @@ module.exports = (db, utility) ->
   # @param [Object] res response
   save: (req, res) ->
     if not utility.param req.query.mod, res, "Modifications" then return
+    if not utility.param req.query.id, res, "Id" then return
 
     # Fetch campaign
-    db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
+    db.model("Campaign").findById req.query.id, (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then res.send(404); return
 
-      if campaign == undefined or campaign.length == 0
-        res.json 404, { error: "No such campaign!" }
+      # Permission check
+      if not req.user.admin and not campaign.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized!" }
         return
-
-    if not req.user.admin
-      if not campaign.owner.equals req.user.id
-          res.json 403, { error: "Unauthorized!" }
-          return
 
       # Go through and apply changes
       mod = JSON.parse req.query.mod
@@ -228,8 +215,7 @@ module.exports = (db, utility) ->
         campaign.save()
         newEvent.save()
 
-      res.json(200)
-
+      res.json 200
 
   # Delete the campaign identified by req.query.id
   # If we are not the administrator, we must own the campaign!
@@ -237,20 +223,15 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    # Fetch campaign
-    db.fetch "Campaign", { _id: req.query.id }, (campaign) ->
+    if not utility.param req.query.id, res, "Id" then return
 
-      if campaign == undefined or campaign.length == 0
-        res.json 404, { error: "No such campaign!" }
+    db.model("Campaign").findById req.query.id, (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then res.send(404); return
+
+      if not req.user.admin and not campaign.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized!" }
         return
 
-      if not req.user.admin
-        if not campaign.owner.equals req.user.id
-          res.json 403, { error: "Unauthorized!" }
-          return
-
-      # Assuming we've gotten to this point, we are authorized to perform
-      # the delete
       campaign.remove()
-
-      res.json(200)
+      res.json 200

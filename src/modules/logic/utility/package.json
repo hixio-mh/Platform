@@ -4,7 +4,7 @@
   "main": "logic.js",
   "private": true,
   "plugin": {
-    "consumes": ["line-mongodb"],
+    "consumes": [],
     "provides": [ "logic-utility" ]
   }
 }

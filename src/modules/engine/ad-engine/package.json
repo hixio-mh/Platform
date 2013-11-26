@@ -6,7 +6,6 @@
   "plugin": {
     "consumes": [
       "line-express",
-      "line-mongodb",
       "line-userauth",
       "logic-utility"
     ],

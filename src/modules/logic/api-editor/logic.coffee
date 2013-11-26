@@ -14,7 +14,7 @@
 
 spew = require "spew"
 fs = require "fs"
-mongoose = require "mongoose"
+db = require "mongoose"
 http = require "http"
 
 ##
@@ -23,22 +23,9 @@ http = require "http"
 setup = (options, imports, register) ->
 
   server = imports["line-express"]
-  db = imports["line-mongodb"]
   utility = imports["logic-utility"]
 
   staticDir = "#{__dirname}/../../../static"
-
-  exportHeader =  """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charest="utf-8">
-      <title>Ad Export</title>
-    </head>
-    <body>
-  """
-
-  exportFooter = "</body></html>"
 
   ##
   ## Routing
@@ -47,52 +34,42 @@ setup = (options, imports, register) ->
   # Main editor ad serving, assumes a valid req.cookies.user
   server.server.get "/editor/:ad", (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
-    if not utility.userCheck req, res then return
 
     res.render "editor.jade", { ad: req.params.ad }, (err, html) ->
       if err
         spew.error
-        server.throw500 err
+        res.json 500, { error: "Internal error" }
       else res.send html
 
   # Editor load/save, expects a valid user
   server.server.post "/logic/editor/:action", (req, res) ->
     if not utility.param req.params.action, res, "Action" then return
-    if not utility.userCheck req, res then return
 
     if req.params.action == "load" then loadAd req, res
     else if req.params.action == "save" then saveAd req, res
     else if req.params.action == "export" then exportAd req, res
-    else res.json { error: "Unknown action #{req.params.action}" }
+    else res.json 400, { error: "Unknown action #{req.params.action}" }
 
   # Exports
   server.server.get "/exports/:folder/:file", (req, res) ->
-    if not utility.userCheck req, res then return
 
     # TODO: Validation?
     folder = req.params.folder
     file = req.params.file
 
-    db.fetch [ "Export", "User" ], [
-      { folder: folder, file: file },
-      { session: req.cookies.user.sess, username: req.cookies.user.id }
-    ], (data) ->
+    db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
+      if utility.dbError err, res then return
+      if not ex then res.send(404); return
 
-      ex = data[0]
-      user = data[1]
-
-      if not utility.verifyDBResponse user, res, "User" then return
-      if not utility.verifyDBResponse ex, res, "Export" then return
-
-      if ex.owner.toString() != user._id.toString()
-        res.json { error: "Unauthorized!" }
+      if not req.user.admin and not ex.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized!" }
         return
 
       expired = new Date() > ex.expiration
 
       if expired
         ex.remove()
-        server.throw404()
+        res.json 404, { error: "Export expired" }
         return
 
       folder = ex.folder
@@ -103,8 +80,7 @@ setup = (options, imports, register) ->
       if req.query.download == undefined
         res.set "Content-Type", "text/html"
         res.send fs.readFileSync path
-      else
-        res.send fs.readFileSync path
+      else res.send fs.readFileSync path
 
   ##
   ## Logic
@@ -112,109 +88,113 @@ setup = (options, imports, register) ->
   loadAd = (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
-    # Find user
-    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not utility.verifyDBResponse user, res, "User" then return
+    db.model("Ad").findById req.query.id, (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then res.send(404); return
 
-      db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
+      if not req.user.admin and not ad.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized" }
+        return
 
-        if ad == undefined then res.json { error: "No such ad found" }
-        else res.json { ad: ad.data }
+      res.json { ad: ad.data }
 
   saveAd = (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
 
-    # Find user
-    db.fetch "User", { session: req.cookies.user.sess }, (user) ->
-      if not utility.verifyDBResponse user, res, "User" then return
+    db.model("Ad").findById req.query.id, (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then res.send(404); return
 
-      db.fetch "Ad", { _id: req.query.id, owner: user._id }, (ad) ->
+      if not req.user.admin and not ad.owner.equals req.user.id
+        res.json 403, { error: "Unauthorized" }
+        return
 
-        if ad == undefined then res.json { error: "No such ad found" }
-        else
-          ad.data = req.query.data
-          ad.save()
-          res.json { msg: "Saved" }
+      ad.data = req.query.data
+      ad.save()
+
+      res.json { msg: "Saved" }
 
   exportAd = (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
-    if not utility.userCheck req, res then return
 
-    # Find the requesting user
-    db.fetch "User", { session: req.cookies.user.sess}, (user) ->
-      if not utility.verifyDBResponse user, res, "User" then return
+    # Takes a full AWGL source and AJS min
+    buildExport = (awgl, ajs) ->
 
-      # Compile a working export
-      finalExport =  ""
-      finalExport += exportHeader
+      # Add opening script tag, and pull in the full version of AWGL,
+      # followed by the min AJS
+      #
+      # @todo: Is injecting req.query.data here a security risk?
+      ex = """
 
-      # Takes a full AWGL source and AJS min
-      buildExport = (awgl, ajs) ->
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charest="utf-8">
+          <title>Ad Export</title>
+        </head>
+        <body>
 
-        # Add opening script tag, and pull in the full version of AWGL,
-        # followed by the min AJS
-        finalExport += "<script type=\"text/javascript\">"
-        finalExport += awgl
-        finalExport += ajs
+          <script type=\"text/javascript\">
+          #{awgl}
+          #{ajs}
+          #{req.query.data}
+          </script>
 
-        # Ship our ad code (takes care of instantiation)
-        finalExport += req.query.data
+        </body>
+        </html>
+      """
 
-        finalExport += "</script>"
+      # Make a folder within /exports specific for us, then ship the data
+      # as a new html file in that folder. Both get randomized names
+      folder = utility.randomString 16
+      file = "#{utility.randomString 8}.html"
 
-        finalExport += exportFooter
+      # Create an export entry for it
+      #
+      # exports expire after 72 hours
+      db.model("Export")
+        folder: folder
+        file: file
+        expiration: new Date(new Date().getTime() + (1000 * 60 * 60 * 72))
+        owner: user._id
+      .save()
 
-        # Make a folder within /exports specific for us, then ship the data
-        # as a new html file in that folder. Both get randomized names
-        folder = utility.randomString 16
-        file = "#{utility.randomString 8}.html"
+      localPath = "#{staticDir}/_exports/#{folder}"
+      remotePath = "https://app.adefy.eu/exports/#{folder}/#{file}"
 
-        # Create an export entry for it
-        #
-        # exports expire after 72 hours
-        db.models().Export.getModel()
-          folder: folder
-          file: file
-          expiration: new Date(new Date().getTime() + (1000 * 60 * 60 * 72))
-          owner: user._id
-        .save()
+      # Create _exports directory if it doesn't already exist
+      if not fs.existsSync "#{staticDir}/_exports"
+        fs.mkdirSync "#{staticDir}/_exports"
 
-        localPath = "#{staticDir}/_exports/#{folder}"
-        remotePath = "https://app.adefy.eu/exports/#{folder}/#{file}"
+      fs.mkdirSync localPath
+      fs.writeFileSync "#{localPath}/#{file}", ex
 
-        # Create _exports directory if it doesn't already exist
-        if not fs.existsSync "#{staticDir}/_exports"
-          fs.mkdirSync "#{staticDir}/_exports"
+      res.json { link: remotePath }
 
-        fs.mkdirSync localPath
-        fs.writeFileSync "#{localPath}/#{file}", finalExport
+    CDN_awgl = "http://cdn.adefy.eu/awgl/awgl-full.js"
+    CDN_ajs = "http://cdn.adefy.eu/ajs/ajs.js"
 
-        res.json { link: remotePath }
+    # Fetch CDN files
+    # TODO: Cache these, fetch only a version # request, and update as needed
+    http.get CDN_awgl, (awgl_res) ->
 
-      CDN_awgl = "http://cdn.adefy.eu/awgl/awgl-full.js"
-      CDN_ajs = "http://cdn.adefy.eu/ajs/ajs.js"
+      awglSrc = ""
 
-      # Fetch CDN files
-      # TODO: Cache these, fetch only a version # request, and update as needed
-      http.get CDN_awgl, (awgl_res) ->
+      # Build awglSrc, then fetch ajsSrc
+      awgl_res.on "data", (chunk) -> awglSrc += chunk
+      awgl_res.on "end", ->
+        http.get CDN_ajs, (ajs_res) ->
 
-        awglSrc = ""
+          ajsSrc = ""
 
-        # Build awglSrc, then fetch ajsSrc
-        awgl_res.on "data", (chunk) -> awglSrc += chunk
-        awgl_res.on "end", ->
-          http.get CDN_ajs, (ajs_res) ->
+          # Build ajsSrc, and on end create the export
+          ajs_res.on "data", (chunk) -> ajsSrc += chunk
+          ajs_res.on "end", -> buildExport awglSrc, ajsSrc
 
-            ajsSrc = ""
-
-            # Build ajsSrc, and on end create the export
-            ajs_res.on "data", (chunk) -> ajsSrc += chunk
-            ajs_res.on "end", -> buildExport awglSrc, ajsSrc
-
-          .on "error", (e) -> res.json { error: "AJS request error: #{e}" }
-      .on "error", (e) -> res.json { error: "AWGL request error: #{e}" }
+        .on "error", (e) -> res.json 500, { error: "AJS request error: #{e}" }
+    .on "error", (e) -> res.json 500, { error: "AWGL request error: #{e}" }
 
   register null, {}
 
