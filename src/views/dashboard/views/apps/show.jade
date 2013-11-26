@@ -15,21 +15,30 @@
       i.fa.fa-fw.fa-wrench
       | Settings
 
-.stats.app
-  .stat: .wrap
-    .amount.large $ {{ app.earnings | number:2 }}
-    .desc Earned today
-  .stat: .wrap
-    .amount.large ▲ {{ app.impressions | number }}
-    .desc Impressions today
-  .stat: .wrap
-    .amount.large ▲ {{ app.clicks | number }}
-    .desc Clicks
-  .stat: .wrap
-    .amount.large $ {{ app.earnings | number:2 }}
-    .desc Total revenue
+
+.contents.w920.center
+  h1 Statistics
+  .stats.app
+    .stat: .wrap
+      .amount.large $ {{ app.earnings | number:2 }}
+      .desc Earned today
+    .stat: .wrap
+      .amount.large $ {{ app.earnings | number:2 }}
+      .desc Total revenue
+    .stat: .wrap
+      .amount.large ▲ {{ app.impressions | number }}
+      .desc Impressions
+    .stat: .wrap
+      .amount.large ▲ {{ app.clicks | number }}
+      .desc Clicks
+    .stat: .wrap
+      .amount.large {{ app.ctr | number }} %
+      .desc CTR
+
 .graphs
   .graph
-  .graph
-  .graph
-  .graph
+    h3 Earnings
+    canvas(linechart, options="options", data="chart", width="900", height="350")
+    hr
+    h3 Impressions
+    canvas(linechart, options="options", data="chart", width="900", height="350")

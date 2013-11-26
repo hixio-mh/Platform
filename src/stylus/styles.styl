@@ -77,7 +77,7 @@ input:focus, textarea:focus, button:focus
   border: 1px solid #5897fb
 label
   font-weight: 600
-legend
+legend, h1
   display: block
   width: 100%
   margin-bottom: 10px
@@ -105,7 +105,7 @@ header
   text-shadow: 0 1px 1px rgba(0,0,0,.3)
   box-shadow: 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
   position: fixed
-  z-index: 1
+  z-index: 100
   .menu
     box-shadow: -1px 0 rgba(0,0,0,.17), 1px 0 rgba(255,255,255,.2) // outer border on first and last element
   .menu > a, .menu > .da
@@ -179,21 +179,20 @@ header
 .stats
   border-bottom 1px solid #ccc
 .stats.app
-  background-color: #fcfcfc
+  padding-bottom: 20px
 
 .stat 
-  width: 25%
-  height: 100px
-  line-height: 90px
-  border-right: 1px solid #ccc
+  width: 50%
+  line-height: 80px
   display: inline-block
   vertical-align: middle
   padding: 0 25px
-  text-align: right
-  &:last-of-type
-    border-right: none
+  //text-align: center
 
-.graph 
+
+.graphs
+  text-align: center
+.graph
   //width: calc(50% - 50px)
   margin: 25px
   padding: 15px
@@ -204,8 +203,17 @@ header
   vertical-align: middle
   border-radius: 5px
   border: 1px solid #c7c7c7
-  box-shadow: 0 0 1px rgba(0,0,0,.2)
-
+  box-shadow: 0 0 1px rgba(0,0,0,.1)
+  h3
+    text-align: left
+    font-size: 32px
+    margin-bottom: 10px
+    margin-left: 10px
+  hr
+    height: 0
+    border: none
+    border-top: 1px solid #ccc
+    margin: 10px -15px
 
 .wrap 
   display: inline-block
@@ -578,6 +586,7 @@ dl.form
 
 /* notification */
 .notification
+  z-index: 99
   position: fixed
   top: 52px
   left: 0
@@ -636,6 +645,9 @@ dl.form
 .contents.center
   margin: 20px auto
   max-width: 720px
+.contents.w920.center
+  margin: 20px auto
+  max-width: 920px
 
 /* delete link */
 .delete
