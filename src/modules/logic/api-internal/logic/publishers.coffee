@@ -68,7 +68,7 @@ module.exports = (db, utility) ->
         res.json { error: "No such publisher!" }
         return
 
-      if not req.user.admin and not publisher.owner.equals req.user.id
+      if not req.user.admin or not publisher.owner.equals req.user.id
         res.json 403, { error: "Unauthorized!" }
         return
 
@@ -98,7 +98,7 @@ module.exports = (db, utility) ->
         res.send(404)
         return
 
-      if not req.user.admin and not publisher.owner.equals req.user.id
+      if not req.user.admin or not publisher.owner.equals req.user.id
         res.send(403)
         return
 
