@@ -44,6 +44,11 @@ exports.createSchema = ->
 
     ads: [mongoose.Schema.ObjectId]
 
+    avgCPC: Number
+    clicks: Number
+    impressions: Number
+    spent: Number
+
   model = null
 
 exports.createModel = -> model = mongoose.model "Campaigns", schema

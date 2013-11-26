@@ -75,10 +75,6 @@ setup = (options, imports, register) ->
       verifyAdmin: (req, res, cb, passive) ->
         if passive != true then passive = false
 
-        if req.cookies.admin != "true"
-          if not passive then res.json { error: "Unauthorized" }
-          cb false
-
         if req.cookies.user == undefined
           if not passive then res.json { error: "Not a user!" }
           cb false
@@ -86,27 +82,11 @@ setup = (options, imports, register) ->
         db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
           if user == undefined or user.length = 0
             if not passive then res.json { error: "No such user" }
-            cb false
+            cb false, user
 
           if user.permissions != 0
             if not passive then res.json { error: "Unauthorized" }
-            cb false
+            cb false, user
           else cb true, user
-
-      # Verify db response, send an error response if necessary
-      #
-      # @param [Object] obj db response
-      # @param [Object] res response object
-      # @param [String] label name of database object
-      # @param [Boolean] passive if false or undefined, issues a res.JSON error
-      #
-      # @return [Boolean] valid
-      verifyDBResponse: (obj, res, label, passive) ->
-        if passive != true then passive = false
-
-        if obj == undefined and (obj.length != undefined and obj.length == 0)
-          if not passive then res.json { error: "#{label} not found" }
-          return false
-        else return true
 
 module.exports = setup

@@ -154,7 +154,7 @@ module.exports = (db, utility) ->
             res.json { error: "No such campaign" }
             return
 
-          if campaign.owner != user._id
+          if not campaign.owner.equals user._id
             res.json { error: "Unauthorized!" }
             return
 
@@ -183,7 +183,7 @@ module.exports = (db, utility) ->
           return
 
         if not admin
-          if campaign.owner != user._id
+          if not campaign.owner.equals user._id
             res.json { error: "Unauthorized!" }
             return
 
@@ -242,7 +242,7 @@ module.exports = (db, utility) ->
           return
 
         if not admin
-          if campaign.owner != user._id
+          if not campaign.owner.equals user._id
             res.json { error: "Unauthorized!" }
             return
 
@@ -251,5 +251,4 @@ module.exports = (db, utility) ->
         campaign.remove()
 
         res.json { msg: "OK" }
-
     , true
