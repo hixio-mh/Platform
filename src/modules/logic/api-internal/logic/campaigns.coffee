@@ -100,7 +100,7 @@ module.exports = (utility) ->
   find: (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
-    db.model("Campaign").findById req.param.id, (err, campaign) ->
+    db.model("Campaign").findById req.param('id'), (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then res.send(404); return
 

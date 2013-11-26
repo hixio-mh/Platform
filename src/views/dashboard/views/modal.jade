@@ -1,0 +1,10 @@
+.overlay
+  .modal-wrap
+    .modal-cell
+      .modal
+        .header {{ title }}
+        .content
+          div(ng-include="template")
+        .actions
+          button(ng-click="close()") Close
+          button.blue(ng-click="submit()") {{ okButtonText }}

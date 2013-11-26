@@ -25,12 +25,12 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.param.id, res, "Id" then return
+    if not utility.param req.param('id'), res, "Id" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
       return
 
-    db.model("User").findById req.param.id, (err, user) ->
+    db.model("User").findById req.param('id'), (err, user) ->
       if utility.dbError err, res then return
       if not utility.verifyDBResponse user, res, "User" then return
 
@@ -53,7 +53,7 @@ module.exports = (utility) ->
       res.json 403, { error: "Unauthorized" }
       return
 
-    if req.param.filter == "all"
+    if req.param('filter') == "all"
       db.model("User").find {}, (err, users) ->
         if utility.dbError err, res then return
 
@@ -72,7 +72,7 @@ module.exports = (utility) ->
 
         res.json ret
 
-    else if req.param.filter == "username"
+    else if req.param('filter') == "username"
       if not utility.param req.params.username, res, "Username" then return
 
       db.model("User").findOne { username: req.params.username }, (err, user) ->
@@ -122,17 +122,17 @@ module.exports = (utility) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      user.fname = req.param.fname || user.fname
-      user.lname = req.param.lname || user.lname
-      user.email = req.param.email || user.email
-      user.company = req.param.company || user.company
-      user.address = req.param.address || user.address
-      user.city = req.param.city || user.city
-      user.state = req.param.state || user.state
-      user.postalCode = req.param.postalCode || user.postalCode
-      user.country = req.param.country || user.country
-      user.phone = req.param.phone || user.phone
-      user.fax = req.param.fax || user.fax
+      user.fname = req.param('fname') || user.fname
+      user.lname = req.param('lname') || user.lname
+      user.email = req.param('email') || user.email
+      user.company = req.param('company') || user.company
+      user.address = req.param('address') || user.address
+      user.city = req.param('city') || user.city
+      user.state = req.param('state') || user.state
+      user.postalCode = req.param('postalCode') || user.postalCode
+      user.country = req.param('country') || user.country
+      user.phone = req.param('phone') || user.phone
+      user.fax = req.param('fax') || user.fax
 
       user.save()
       res.send 200

@@ -107,8 +107,18 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
     "Travel"
   ]
 
+  $scope.campaign = {
+    geographicalTargetting: "all",
+    networkTargetting: "all",
+    platformTargetting: "all",
+    deviceTargetting: "all",
+    manufacturerTargetting: "all",
+    scheduling: "no"
+  }
+
   $scope.submit = ->
     console.log(this.campaign)
+    $scope.submitted = true
     ###
     newCampaign = new Campaign(this.campaign)
     newCampaign.$save().then(
