@@ -133,11 +133,9 @@ setup = (options, imports, register) ->
       {type: 'withdraw', amount: 3.20, time: new Date().getTime() - 600}
       {type: 'reserve', amount: 3.20, time: new Date().getTime() - 3600}
     ]
-  # Ad manipulation - /api/v1/ads/:action
+
   #
-  #   /get      fetch ads owned by a user
-  #   /create   create an ad
-  #   /delete   delete an ad
+  # Ad manipulation - /api/v1/ads
   #
   server.server.get "/api/v1/ads", (req, res) ->
     ads.get req, res
@@ -153,11 +151,7 @@ setup = (options, imports, register) ->
 
   # Campaign manipulation - /api/v1/campaigns/:action
   #
-  #   /create   create a campaign owned by the current user
-  #   /get      fetch campaigns owned by the current user
-  #   /delete   delete a single campaign
   #   /events   fetch events for a campaign
-  #   /save     save a single campaign
   #
   ###
   server.server.get "/api/v1/campaigns/:action", (req, res) ->
@@ -186,11 +180,6 @@ setup = (options, imports, register) ->
 
   # Publisher manipulation - /api/v1/publishers/:action
   #
-  #   /create      create a publisher owned by the current user
-  #   /save        save a single publisher
-  #   /delete      delete a single publisher
-  #   /get         fetch owned publishers
-  #   /all         [admin-only] fetch all publishers
   #   /approve     [admin-only] approve a publisher
   #   /dissapprove [admin-only] disapprove a publisher
   #

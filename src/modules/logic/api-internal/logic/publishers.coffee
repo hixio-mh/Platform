@@ -59,42 +59,41 @@ module.exports = (db, utility) ->
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    if not utility.param req.param('mod'), res, "Modifications" then return
-
     # Fetch publisher
-    db.fetch "Publisher", { _id: req.param('id') }, (publisher) ->
+    Publisher = db.models()["Publisher"].getModel()
+    Publisher.findById req.param('id'), (err, publisher) ->
 
-      if publisher == undefined or publisher.length == 0
-        res.json 404, { error: "No such publisher!" }
+      if not publisher
+        res.json(404)
         return
 
-      if not req.user.admin or not publisher.owner.equals req.user.id
-        res.json 403, { error: "Unauthorized!" }
+      if not req.user.admin and not publisher.owner.equals req.user.id
+        res.json(403)
         return
 
-      # Go through and apply changes
-      mod = JSON.parse req.query.mod
-      affected = []
-
-      for diff in mod
-
-        # Make sure we aren't setting a value that doesn't exist, or one
-        # that doesn't match our expected pre value
-        if String(publisher[diff.name]) == String diff.pre
-          publisher[diff.name] = diff.post
+      publisher.name = req.param('name')
+      publisher.url = req.param('url')
+      publisher.category = req.param('category')
+      publisher.description = req.param('description')
 
       publisher.save()
-      res.send(200)
+
+      # quick _id to id patch
+      obj = publisher.toObject()
+      obj.id = obj._id
+      delete obj._id
+
+      res.json 200, obj
 
   # Delete publisher, user must either own the publisher or be an admin
   #
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    # Fetch campaign
-    db.fetch "Publisher", { _id: req.query.id }, (publisher) ->
+    Publisher = db.models()["Publisher"].getModel()
+    Publisher.findById req.param('id'), (err, publisher) ->
 
-      if publisher == undefined or publisher.length == 0
+      if not publisher
         res.send(404)
         return
 
@@ -102,10 +101,7 @@ module.exports = (db, utility) ->
         res.send(403)
         return
 
-      # Assuming we've gotten to this point, we are authorized to perform
-      # the delete
       publisher.remove()
-
       res.send(200)
 
   # Fetches owned publisher list.

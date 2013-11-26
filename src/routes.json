@@ -32,6 +32,7 @@
     "/apps",
     "/apps/new",
     "/apps/:id",
+    "/apps/:id/edit",
 
     "/ads",
     "/ads/:id",
