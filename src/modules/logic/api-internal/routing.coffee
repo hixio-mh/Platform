@@ -113,6 +113,7 @@ setup = (options, imports, register) ->
   #
   # accepts type (ad, campaign), id, range (time)
   app.get "/api/v1/aggregation", (req, res) ->
+    res.json 200, [65,59,90,81,56,55,40]
 
   #
   # Get user account settings

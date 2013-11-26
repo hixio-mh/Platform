@@ -25,8 +25,7 @@ schema = new mongoose.Schema
   totalBudget: Number
   dailyBudget: Number
   bidSystem: String
-  bid: Number
-  maxBid: Number
+  bid: Number # either bid or max bid, inferred from bidSystem
 
   # Dynamic vals
   #
