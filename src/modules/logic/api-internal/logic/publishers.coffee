@@ -65,7 +65,7 @@ module.exports = (db, utility) ->
     db.fetch "Publisher", { _id: req.param('id') }, (publisher) ->
 
       if publisher == undefined or publisher.length == 0
-        res.json { error: "No such publisher!" }
+        res.json 404, { error: "No such publisher!" }
         return
 
       if not req.user.admin or not publisher.owner.equals req.user.id
@@ -98,7 +98,7 @@ module.exports = (db, utility) ->
         res.send(404)
         return
 
-      if not req.user.admin or not publisher.owner.equals req.user.id
+      if not req.user.admin and not publisher.owner.equals req.user.id
         res.send(403)
         return
 
@@ -148,7 +148,7 @@ module.exports = (db, utility) ->
 
       res.json ret
 
-    , ((error) -> res.json { error: error }), true
+    , ((error) -> res.json 400, { error: error }), true
 
 
   # Finds a single publisher by ID
@@ -183,7 +183,7 @@ module.exports = (db, utility) ->
 
       db.fetch "Publisher", { _id: req.query.id, owner: user._id }, (pub) ->
         if pub == undefined or pub.length == 0
-          res.json { error: "No such publication" }
+          res.json 404, { error: "No such publication" }
           return
 
         if pub[0].status == 0 or pub[0].status == 1
@@ -195,7 +195,7 @@ module.exports = (db, utility) ->
 
         res.send(200)
 
-      , ((error) -> res.json { error: error }), true
+      , ((error) -> res.json 400, { error: error }), true
 
     , true
 
@@ -211,7 +211,7 @@ module.exports = (db, utility) ->
 
       db.fetch "Publisher", { _id: req.query.id }, (pub) ->
         if pub == undefined or pub.length == 0
-          res.json { error: "No such publisher!" }
+          res.json 404, { error: "No such publisher!" }
           return
 
         pub.status = 1
