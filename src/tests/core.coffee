@@ -28,7 +28,7 @@ describe "Authentication", ->
     api.post("/login").send
       username: "testy-trista"
       password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
-    .expect(302)
+    .expect(200)
     .end (err, res) ->
       agent.saveCookies res
       done()

@@ -28,7 +28,7 @@ setup = (options, imports, register) ->
       db.model("Invite").findOne { code: req.query.invite }, (err, inv) ->
         if utility.dbError err, res then return
 
-        if inv.length <= 0
+        if not inv
           spew.warning "Invalid invite!"
           res.redirect "/"
         else
@@ -67,7 +67,7 @@ setup = (options, imports, register) ->
     db.model("Invite").findOne { code: req.body.invitation }, (err, inv) ->
       if utility.dbError err, res then return
 
-      if inv.length == 0
+      if not inv
         res.render "account/register.jade",
           error: "Not a valid invite ;("
         return
@@ -76,7 +76,7 @@ setup = (options, imports, register) ->
       db.model("User").findOne { username: req.body.username }, (err, user) ->
         if utility.dbError err, res then return
 
-        if user.length != 0
+        if user
           res.render "account/register.jade",
             error: "Username taken"
           return
