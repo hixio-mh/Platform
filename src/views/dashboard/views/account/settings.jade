@@ -41,9 +41,6 @@
       .field.w25
         input(ng-model="me.postalCode" type="text" placeholder="Postal Code")
       .field
-        select(chosen ng-model="me.country" data-placeholder="Select Country")
-          option(selected="selected") Austria
-          option France
-          option UK
+        country-select(chosen ng-model="me.country" data-placeholder="Select Country")
     
   button.blue.save(ng-click="save()") Save

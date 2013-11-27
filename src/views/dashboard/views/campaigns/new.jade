@@ -43,10 +43,7 @@
         .radio
           input(type="radio" ng-model="campaign.geographicalTargetting" value="specific" name="geographical_targetting" id="specific_countries")
           label(for="specific_countries") Specific Countries
-        select(chosen multiple ng-model="campaign.countries" ng-disabled="campaign.geographicalTargetting != 'specific'" data-placeholder="Select countries")
-          option Austria
-          option France
-          option UK
+        country-select(chosen multiple ng-model="campaign.countries" ng-disabled="campaign.geographicalTargetting != 'specific'" data-placeholder="Select countries")
     dl.form.center.single
       dt: label Network
       dd
