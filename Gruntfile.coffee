@@ -242,6 +242,15 @@ module.exports = (grunt) ->
       _buildDir
     ]
 
+    mochaTest:
+      test:
+        options:
+          reporter: "nyan"
+          require: "coffee-script"
+        src: [
+          "#{srcDir}/tests/*.coffee"
+        ]
+
     # Watch files for changes and ship updates to build folder
     watch:
       serverCS:
@@ -277,6 +286,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-cssmin"
   grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-nodemon"
+  grunt.loadNpmTasks "grunt-mocha-test"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
@@ -297,6 +307,8 @@ module.exports = (grunt) ->
     "clean"
     "persistentFull"
   ]
+
+  grunt.registerTask "test", [ "mochaTest" ]
 
   grunt.registerTask "default", [ "full" ]
   grunt.registerTask "dev", [ "concurrent:dev" ]
