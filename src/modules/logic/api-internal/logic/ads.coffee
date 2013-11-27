@@ -90,7 +90,4 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
 
-      obj = ad.toObject()
-      obj.id = obj._id
-      delete obj._id
-      res.json obj
+      res.json ad.toAPI()

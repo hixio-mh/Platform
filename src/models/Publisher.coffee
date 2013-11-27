@@ -42,4 +42,11 @@ schema = new mongoose.Schema
   clicks: Number
   earnings: Number
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "Publisher", schema

@@ -102,10 +102,7 @@ module.exports = (utility) ->
         res.send 403
         return
 
-      obj = campaign.toObject()
-      obj.id = obj._id
-      delete obj._id
-      res.json 200, obj
+      res.json 200, campaign.toAPI()
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign

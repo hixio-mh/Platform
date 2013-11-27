@@ -40,4 +40,11 @@ schema = new mongoose.Schema
   impressions: Number
   spent: Number
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "Campaign", schema
