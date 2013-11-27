@@ -15,7 +15,7 @@
 mongoose = require "mongoose"
 
 schema = new mongoose.Schema
-  owner: mongoose.Schema.ObjectId
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
   url: String
   description: String
