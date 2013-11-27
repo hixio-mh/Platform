@@ -74,4 +74,11 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
 
     cb null, isMatch
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "User", schema

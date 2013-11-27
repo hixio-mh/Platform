@@ -50,13 +50,7 @@ module.exports = (utility) ->
       earnings: 0
 
     newPublisher.save()
-
-    # quick _id to id patch
-    obj = newPublisher.toObject()
-    obj.id = obj._id
-    delete obj._id
-
-    res.json 200, obj
+    res.json 200, newPublisher.toAPI()
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
@@ -79,13 +73,7 @@ module.exports = (utility) ->
       pub.description = req.param "description"
 
       pub.save()
-
-      # quick _id to id patch
-      obj = pub.toObject()
-      obj.id = obj._id
-      delete obj._id
-
-      res.json 200, obj
+      res.json 200, pub.toAPI()
 
   # Delete publisher, user must either own the publisher or be an admin
   #
@@ -118,29 +106,7 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
 
       ret = []
-
-      for p in publishers
-        pub =
-          id: p._id
-          name: p.name
-          url: p.url
-          description: p.description
-          category: p.category
-          active: p.active
-          apikey: p.apikey
-          type: p.type
-          impressions: p.impressions
-          requests: p.requests
-          clicks: p.clicks
-          earnings: p.earnings
-          status: p.status
-          approvalMessage: p.approvalMessage
-
-        if req.user.admin
-          pub.username = req.user.username
-
-        ret.push pub
-
+      ret.push p.toAPI() for p in publishers
       res.json ret
 
   # Finds a single publisher by ID
@@ -155,10 +121,7 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
-      obj = pub.toObject()
-      obj.id = obj._id
-      delete obj._id
-      res.json obj
+      res.json pub.toAPI()
 
   # Updates publisher status if applicable
   #

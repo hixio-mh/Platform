@@ -18,4 +18,11 @@ schema = new mongoose.Schema
   email: String
   code: String
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "Invite", schema

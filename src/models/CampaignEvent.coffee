@@ -27,4 +27,11 @@ schema = new mongoose.Schema
     target: mongoose.Schema.ObjectId  # Id of target, if one exists
   ]
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "CampaignEvent", schema

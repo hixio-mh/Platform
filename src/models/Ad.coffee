@@ -19,4 +19,11 @@ schema = new mongoose.Schema
   name: String
   data: String
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+
+  ret
+
 mongoose.model "Ad", schema
