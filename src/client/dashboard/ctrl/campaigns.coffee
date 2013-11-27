@@ -168,6 +168,12 @@ window.AdefyDashboard.controller "campaignsShow", ($scope, $routeParams, Campaig
 
 window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routeParams, Campaign, Ad) ->
 
+  $scope.min = {
+    budget: 25,
+    cpm: 1.00,
+    cpc: 0.10
+  }
+
   # Campaign categories
   $scope.categories = [
     "Alcohol"
@@ -221,9 +227,15 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
 
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
+    # temp:
+    $scope.campaign.rules = []
 
   Ad.query (ads) ->
     $scope.ads = ads
+
+
+  $scope.addRule = ->
+    $scope.campaign.rules.push {}
 
   $scope.submit = ->
     $scope.submitted = true

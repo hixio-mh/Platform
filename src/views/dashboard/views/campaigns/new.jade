@@ -31,8 +31,8 @@
         option(value="manual") Manual
     dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
-    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
-    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
