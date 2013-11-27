@@ -15,6 +15,9 @@
 window.AdefyDashboard.factory 'Campaign', ($resource) ->
   return $resource('/api/v1/campaigns/:id', {id: '@id'})
 
+window.AdefyDashboard.factory 'Ad', ($resource) ->
+  return $resource('/api/v1/ads/:id', {id: '@id'})
+
 window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
 
   refreshCampaigns = ->
@@ -62,9 +65,10 @@ window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
 
 window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) ->
 
-  $scope.minPricings = {
-    "cpm": "1.00"
-    "cpc": "0.10"
+  $scope.min = {
+    budget: 25,
+    cpm: 1.00,
+    cpc: 0.10
   }
 
   $scope.categories = [
@@ -108,6 +112,7 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
   ]
 
   $scope.campaign = {
+    pricing: 'CPM',
     bidSystem: 'automatic',
     geographicalTargetting: "all",
     networkTargetting: "all",
@@ -161,7 +166,7 @@ window.AdefyDashboard.controller "campaignsShow", ($scope, $routeParams, Campaig
 
   refreshCampaign()
 
-window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routeParams, Campaign) ->
+window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routeParams, Campaign, Ad) ->
 
   # Campaign categories
   $scope.categories = [
@@ -216,6 +221,9 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
 
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
+
+  Ad.query (ads) ->
+    $scope.ads = ads
 
   $scope.submit = ->
     $scope.submitted = true

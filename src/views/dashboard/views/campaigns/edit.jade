@@ -8,14 +8,14 @@
       i.fa.fa-fw.fa-wrench
       | Settings
 
-.inner: form
+script(type='ng/template')
+
+.inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
     legend Ads
     dt
     dd
-      select(chosen multiple data-placeholder="Select Ads")
-        option Ad 1
-        option Ad 2
+      select(chosen multiple ng-options="ad.id as ad.name for ad in ads" ng-model="campaign.ads" data-placeholder="Select Ads")
   fieldset: dl.form.center
     legend Bidding
     dt: label Daily Budget (optional)
@@ -29,8 +29,8 @@
         option(value="manual") Manual
     dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
-    dd: input(ng-model="campaign.bid" required type="text" placeholder="min $1.00")
-
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
