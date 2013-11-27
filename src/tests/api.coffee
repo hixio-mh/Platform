@@ -23,9 +23,7 @@ describe "Invites", ->
 
   it "Should reject invalid invite key", (done) ->
     req = api.get("/api/v1/invite/add?key=adfsdf&email=t@t.com&test=true")
-    req.expect(200).expect("Content-Type", /json/).end (err, res) ->
-      res.body.should.have.property "error", "Invalid key"
-      done()
+    req.expect(400).end (err, res) -> done()
 
   it "Should accept invite request with two keys", (done) ->
 
@@ -40,7 +38,7 @@ describe "Invites", ->
     req = api.get("/api/v1/invite/add?key=T13S7UESiorFUWMI&email=t1@t.com&test=true")
     req.expect(200).expect("Content-Type", /json/).end (err, res) ->
       res.body.should.not.have.property "error"
-      res.body.should.have.property "msg"
+      res.body.should.have.property "email"
       res.body.should.have.property "code"
       res.body.should.have.property "id"
       actuallyDone()
