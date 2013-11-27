@@ -32,14 +32,11 @@ setup = (options, imports, register) ->
     if not utility.param req.query.key, res, "Key" then return
     if not utility.param req.query.email, res, "Email" then return
 
-    testing = false
-
     # If in test mode, don't contact mailchimp
-    if req.query.test != undefined
-      if req.query.test == "true" then testing = true
+    if req.query.test == "true" then testing = true else testing = false
 
     if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
-      res.json 404, { error: "Invalid key" }
+      res.json 400
       return
 
     email = req.query.email

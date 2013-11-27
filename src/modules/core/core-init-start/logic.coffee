@@ -51,13 +51,12 @@ setup = (options, imports, register) ->
 
   # Auth
   publicPages = [
-    "/"
     "/login"
     "/register"
     "/recover"
 
     # Public invite request
-    "/logic/invite/add"
+    "/api/v1/invite/add"
 
     # Ad request
     "/api/r"
