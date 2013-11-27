@@ -1,4 +1,4 @@
-.inner: form(ng-class="{submitted: submitted}")
+.inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
     legend Information
     dt
@@ -19,9 +19,9 @@
         option CPM
         option CPC
     dt: label Total Budget
-    dd: input(required ng-model="campaign.totalBudget" type="text" placeholder="min $25")
+    dd: input(required ng-model="campaign.totalBudget" type="number" min="{{min.budget}}" placeholder="min {{ min.budget | currency:$ }}")
     dt: label Daily Budget (optional)
-    dd: input(ng-model="campaign.dailyBudget" type="text")
+    dd: input(ng-model="campaign.dailyBudget" type="number")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
@@ -31,7 +31,8 @@
         option(value="manual") Manual
     dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
-    dd: input(ng-model="campaign.bid" required type="text" placeholder="min $1.00")
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
