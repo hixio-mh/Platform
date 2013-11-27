@@ -8,8 +8,6 @@
       i.fa.fa-fw.fa-wrench
       | Settings
 
-script(type='ng/template')
-
 .inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
     legend Ads
@@ -19,7 +17,7 @@ script(type='ng/template')
   fieldset: dl.form.center
     legend Bidding
     dt: label Daily Budget (optional)
-    dd: input(type="text")
+    dd: input(ng-model="campaign.dailyBudget" type="number")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
@@ -29,8 +27,8 @@ script(type='ng/template')
         option(value="manual") Manual
     dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
-    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
-    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
@@ -107,56 +105,21 @@ script(type='ng/template')
 
   fieldset: dl.form.center
     legend Fine tunning
-    .ad-rule
-      select.chosen-select
-        option Advert 1
-        option Advert 2
-      select.chosen-select
-        option anywhere
-        option Countries...
-      select.chosen-select
-        option on all traffic
-        option on mobile data traffic
-        option on wifi2 traffic
-      select.chosen-select
-        option on all platforms
-        option on Android
-        option on iOS
-      select.chosen-select
-        option for all devices
-        option for Nexus 4
-        option for iPhone 5S
-      select.chosen-select
-        option any time
-        option between
-    .ad-rule
-      select.chosen-select
-        option Advert 1
-        option Advert 2
-      select.chosen-select
-        option anywhere
-        option Countries...
-      select.chosen-select
-        option on all traffic
-        option on mobile data traffic
-        option on wifi traffic
-      select.chosen-select
-        option on all platforms
-        option on Android
-        option on iOS
-      select.chosen-select
-        option for all devices
-        option for Nexus 4
-        option for iPhone 5S
-      select.chosen-select
-        option between
-        option any time
-      select.chosen-select
-        option 10:00
-      | and
-      select.chosen-select
-        option 12:00
-    a Add new rule
+
+    div(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
+      select(chosen ng-options="ad.id as ad.name for ad in ads" ng-model="rule.ad")
+      country-select(chosen multiple data-placeholder="anywhere" ng-model="rule.countries")
+      select(chosen ng-model='rule.networkTargetting')
+        option(value="all") on all traffic
+        option(value="mobile") on mobile data traffic
+        option(value="wifi") on wifi traffic
+
+      select(chosen ng-model="rule.platformTargetting")
+        option(value="all") on all platforms
+        option(value="android") on Android
+        option(value="iOS") on iOS
+
+    button(ng-click="addRule()") Add new rule
 
     dl.form.center.single
       dt
@@ -167,3 +130,5 @@ script(type='ng/template')
     dl.form.center
     dt
     dd: button.blue.save(ng-click="submit()") Save
+
+    pre(ng-bind="campaign | json")
