@@ -18,7 +18,7 @@ schema = new mongoose.Schema
   folder: String
   file: String
   expiration: Date
-  owner: mongoose.Schema.ObjectId
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 
 schema.methods.toAPI = ->
   ret = @toObject()
