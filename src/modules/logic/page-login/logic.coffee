@@ -43,7 +43,7 @@ setup = (options, imports, register) ->
     db.model("User").findOne { username: req.body.username }, (err, user) ->
       if utility.dbError err, res then return
 
-      if user.length == 0
+      if not user
         res.status(401).render "account/login.jade",
           error: "wrong username or password"
         return
