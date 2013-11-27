@@ -78,7 +78,7 @@ schema.methods.removeAd = (adId) ->
 # @return [Array<Ad>]
 schema.statics.getAds = (cId, cb) ->
 
-  # Get ad id if needed
+  # Get campaign id if needed
   if typeof cId == "object"
     if cId.id != undefined then cId = cId.id
     else if cId._id != undefined then cId = cId._id
