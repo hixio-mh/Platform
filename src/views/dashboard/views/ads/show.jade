@@ -1,0 +1,37 @@
+.titlebar.cf.full
+  .name(ng-bind="ad.name")
+  .menu.full
+    a.active(href="/ads/{{ad.id}}")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(href="https://app.adefy.eu/editor/{{ad.id}}" target="_self")
+      i.fa.fa-fw.fa-pencil
+      | Editor
+    a(href="/ads/{{ad.id}}/edit")
+      i.fa.fa-fw.fa-wrench
+      | Settings
+    a.delete(form-modal template="/views/dashboard/ads:delete" title="Delete ad"
+          ok-button-text="Delete" form-submit="delete()" form-object="form")
+      i.fa.fa-fw.fa-trash-o
+      | Delete
+
+.contents.w920.center
+  h1 Statistics
+  .stats.campaign
+    .stat: .wrap
+      .amount.large ▲ {{ ad.impressions | number }}
+      .desc Impressions
+    .stat: .wrap
+      .amount.large ▲ {{ ad.clicks | number }}
+      .desc Clicks
+    .stat: .wrap
+      .amount.large {{ ad.ctr | number }} %
+      .desc CTR
+
+.graphs
+  .graph
+    h3 CTR
+    canvas(linechart, options="options", data="chart", width="900", height="350")
+    hr
+    h3 Impressions
+    canvas(linechart, options="options", data="chart", width="900", height="350")
