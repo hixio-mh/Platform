@@ -57,23 +57,18 @@ module.exports = (utility) ->
       ad.remove()
       res.send 200
 
-  # Main GET method, expects {filter}
-  #
-  # Currently only a filter of "user" is supported, returning all ads
-  # owned by a user in an array, with "name" and "id" keys.
+  # Fetches owned ads
   #
   # @param [Object] req request
   # @param [Object] res response
   get: (req, res) ->
-    db.model("Ad").find { owner: req.user.id }, (err, data) ->
+    db.model("Ad")
+    .find({ owner: req.user.id })
+    .populate("campaigns").exec (err, ads) ->
       if utility.dbError err, res then return
 
       ret = []
-      for a in data
-        ad = {}
-        ad.name = a.name
-        ad.id = a._id
-        ret.push ad
+      ret.push ad.toAPI() for ad in ads
 
       res.json 200, ret
 

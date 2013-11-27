@@ -12,6 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 db = require "mongoose"
+spew = require "spew"
 
 ##
 ## Migration, updates database as needed
@@ -24,8 +25,10 @@ setup = (options, imports, register) ->
   # Admin only!
   #
   # TODO: Refactor this to take on multiple tasks, and update all models
-  server.server.get "/migrate", (req, res) ->
-    if not req.user.admin then return
+  server.server.get "/api/v1/migrate", (req, res) ->
+    if not req.user.admin
+      res.send 403
+      return
 
     # Logging info
     objectsAffected = {}
@@ -39,27 +42,63 @@ setup = (options, imports, register) ->
         objectsAffected[object][version] = 1
       else objectsAffected[object][version] += 1
 
-    # Update user schema
-    db.model("User").find {}, (err, users) ->
-      if utility.dbError err, res then return
+    models = [
+      "User"
+      "Ad"
+    ]
 
-      for u in users
+    # Called after each migration, replies once all are done
+    _done = 0
+    registerDone = ->
+      _done++
 
-        # Original users had no version field, so add it along with the other
-        # necessary changes
-        if u.version == undefined
-          u.version = 1
+      if _done == models.length
+        res.json { msg: "OK", affected: objectsAffected }
 
-          logMigration "Users", 1
+    # Helpers for migrating specific models
+    migrators =
+      "User": ->
 
-          # Add funds field
-          u.funds = 0
+        # Update user schema
+        db.model("User").find {}, (err, users) ->
+          if utility.dbError err, res then return
 
-          u.save()
+          for u in users
 
-        # Add more version checks...
+            # Version 0 (pre-version field)
+            if u.version == undefined
 
-      res.json { msg: "OK", affected: objectsAffected }
+              # Add version and funds fields
+              u.version = 1
+              u.funds = 0
+              u.save()
+
+              logMigration "User", 1
+
+          registerDone()
+
+      "Ad": ->
+
+        # Update Ad schema
+        db.model("Ad").find {}, (err, ads) ->
+          if utility.dbError err, res then return
+
+          for a in ads
+
+            # Version 0 (pre-version field)
+            if a.version == undefined
+
+              # Add version and campaigns fields
+              a.version = 1
+              a.campaigns = []
+              a.save()
+
+              logMigration "Ad", 1
+
+          registerDone()
+
+    # Start actual migration
+    migrators[m]() for m in models
 
   register null, {}
 
