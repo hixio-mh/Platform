@@ -11,6 +11,7 @@
 .inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
     legend Ads
+    p Ads are added to the campaign here.
     dt
     dd
       select(chosen multiple ng-options="ad.id as ad.name for ad in ads" ng-model="campaign.ads" data-placeholder="Select Ads")
@@ -31,36 +32,37 @@
     dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
   fieldset: dl.form.center
     legend Targetting
+    p In this section the general targetting is configured. Later, per-ad fine-tuning is possible, which will override these settings.
     dl.form.center.single
       dt: label Geographical
       dd
         .radio
-          input(type="radio" ng-model="campaign.geographicalTargetting" value="all" name="geographical_targetting" id="all_countries")
+          input(type="radio" ng-model="campaign.geographicalTargetting" value="all")
           label(for="all_countries") All Countries
         .radio
-          input(type="radio" ng-model="campaign.geographicalTargetting" value="specific" name="geographical_targetting" id="specific_countries")
+          input(type="radio" ng-model="campaign.geographicalTargetting" value="specific")
           label(for="specific_countries") Specific Countries
         country-select(chosen multiple ng-model="campaign.countries" ng-disabled="campaign.geographicalTargetting != 'specific'" data-placeholder="Select countries")
     dl.form.center.single
       dt: label Network
       dd
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="all" id="all_traffic")
+          input(type="radio" ng-model="campaign.networkTargetting" value="all")
           label(for="all_traffic") All Traffic
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="mobile" id="mobile_data_traffic")
+          input(type="radio" ng-model="campaign.networkTargetting" value="mobile")
           label(for="mobile_data_traffic") Mobile Data Traffic
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="wifi" id="wifi_traffic")
+          input(type="radio" ng-model="campaign.networkTargetting" value="wifi")
           label(for="wifi_traffic") Wifi Traffic
     dl.form.center.single
       dt: label Platform
       dd
         .radio
-          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="all" id="all_platforms")
+          input(type="radio" ng-model="campaign.platformTargetting" value="all")
           label(for="all_platforms") All Platforms
         .radio
-          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="specific" id="specific_platforms")
+          input(type="radio" ng-model="campaign.platformTargetting" value="specific")
           label(for="specific_platforms") Specific Platforms
         select(chosen multiple ng-model="campaign.platforms" ng-disabled="campaign.platformTargetting != 'specific'" data-placeholder="Select platforms")
           option Austria
@@ -70,13 +72,13 @@
       dd
         .field.w50.margin
           .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="all" id="all_devices")
+            input(type="radio" ng-model="campaign.deviceTargetting" value="all")
             label(for="all_devices") All Devices
           .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="specific" id="specific_devices")
+            input(type="radio" ng-model="campaign.deviceTargetting" value="specific")
             label(for="specific_devices") Specific Devices
           .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="exclude" id="exclude_devices")
+            input(type="radio" ng-model="campaign.deviceTargetting" value="exclude")
             label(for="exclude_devices") Exclude Devices
           select(chosen multiple ng-model="campaign.devices" ng-disabled="campaign.deviceTargetting == 'all'" data-placeholder="Select devices")
             option Nexus 4
@@ -84,10 +86,10 @@
             option iPhone
         .field.w50
           .radio
-            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="all" id="all_manufacturers")
+            input(type="radio" ng-model="campaign.manufacturerTargetting" value="all")
             label(for="all_manufacturers") All Manufacturers
           .radio
-            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="specific" id="specific_manufacturers")
+            input(type="radio" ng-model="campaign.manufacturerTargetting" value="specific")
             label(for="specific_manufacturers") Specific Manufacturers
           select(chosen multiple ng-model="campaign.manufacturers" ng-disabled="campaign.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
             option LG
@@ -105,30 +107,83 @@
 
   fieldset: dl.form.center
     legend Fine tunning
+    p Rules can be added, that modify the behavior of individual ads in the campaign.
+    .rule(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
+      .field
+        select(chosen ng-options="ad.id as ad.name for ad in ads" ng-model="rule.ad")
+      .column
+        label Geographical
+        .radio
+          input(type="radio" ng-model="rule.geographicalTargetting" value="all")
+          label(for="all_countries") All Countries
+        .radio
+          input(type="radio" ng-model="rule.geographicalTargetting" value="specific")
+          label(for="specific_countries") Specific Countries
+        country-select(chosen multiple ng-model="rule.countries" ng-disabled="rule.geographicalTargetting != 'specific'" data-placeholder="Select countries")
+      .column
+        label Network
+        .radio
+          input(type="radio" ng-model="rule.networkTargetting" value="all")
+          label(for="all_traffic") All Traffic
+        .radio
+          input(type="radio" ng-model="rule.networkTargetting" value="mobile")
+          label(for="mobile_data_traffic") Mobile Data Traffic
+        .radio
+          input(type="radio" ng-model="rule.networkTargetting" value="wifi")
+          label(for="wifi_traffic") Wifi Traffic
+      .column
+        label Platforms
+        .radio
+          input(type="radio" ng-model="rule.platformTargetting" value="all")
+          label(for="all_platforms") All Platforms
+        .radio
+          input(type="radio" ng-model="rule.platformTargetting" value="specific")
+          label(for="specific_platforms") Specific Platforms
+        select(chosen multiple ng-model="rule.platforms" ng-disabled="rule.platformTargetting != 'specific'")
+          option Austria
+          option France
+      .column
+        label Devices
+        .radio
+          input(type="radio" ng-model="rule.deviceTargetting" value="all")
+          label(for="all_devices") All Devices
+        .radio
+          input(type="radio" ng-model="rule.deviceTargetting" value="specific")
+          label(for="specific_devices") Specific Devices
+        .radio
+          input(type="radio" ng-model="rule.deviceTargetting" value="exclude")
+          label(for="exclude_devices") Exclude Devices
+        select(chosen multiple ng-model="rule.devices" ng-disabled="rule.deviceTargetting == 'all'" data-placeholder="Select devices")
+          option Nexus 4
+          option Galaxy S3
+          option iPhone
+      .column
+        label Manufacturers
+        .radio
+          input(type="radio" ng-model="rule.manufacturerTargetting" value="all")
+          label(for="all_manufacturers") All Manufacturers
+        .radio
+          input(type="radio" ng-model="rule.manufacturerTargetting" value="specific")
+          label(for="specific_manufacturers") Specific Manufacturers
+        select(chosen multiple ng-model="rule.manufacturers" ng-disabled="rule.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
+          option LG
+          option HTC
+          option Sony
+      .column
+        .radio
+          input(type="radio" ng-model="rule.scheduling" value="no" name="scheduling" id="no_scheduling")
+          label(for="no_scheduling") No Scheduling
+        .radio
+          input(type="radio" ng-model="rule.scheduling" value="yes" name="scheduling" id="custom_scheduling")
+          label(for="custom_scheduling") Custom Scheduling
 
-    div(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
-      select(chosen ng-options="ad.id as ad.name for ad in ads" ng-model="rule.ad")
-      country-select(chosen multiple data-placeholder="anywhere" ng-model="rule.countries")
-      select(chosen ng-model='rule.networkTargetting')
-        option(value="all") on all traffic
-        option(value="mobile") on mobile data traffic
-        option(value="wifi") on wifi traffic
+    button(ng-click="addRule()" style="margin: 7px") Add new rule
 
-      select(chosen ng-model="rule.platformTargetting")
-        option(value="all") on all platforms
-        option(value="android") on Android
-        option(value="iOS") on iOS
-
-    button(ng-click="addRule()") Add new rule
-
-    dl.form.center.single
-      dt
-      dd
-        a.delete(form-modal template="/views/dashboard/campaigns:delete" title="Delete campaign"
+    hr
+    a.delete(form-modal template="/views/dashboard/campaigns:delete" title="Delete campaign"
           ok-button-text="Delete" form-submit="delete()" form-object="form") 
-          | I want to delete the campaign
-    dl.form.center
-    dt
-    dd: button.blue.save(ng-click="submit()") Save
+      | I want to delete the campaign
+
+    button.blue.save(ng-click="submit()") Save
 
     pre(ng-bind="campaign | json")

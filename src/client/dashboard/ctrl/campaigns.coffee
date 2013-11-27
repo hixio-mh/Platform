@@ -235,7 +235,14 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
 
 
   $scope.addRule = ->
-    $scope.campaign.rules.push {}
+    $scope.campaign.rules.push {
+      geographicalTargetting: "all",
+      networkTargetting: "all",
+      platformTargetting: "all",
+      deviceTargetting: "all",
+      manufacturerTargetting: "all",
+      scheduling: "no"
+    }
 
   $scope.submit = ->
     $scope.submitted = true
