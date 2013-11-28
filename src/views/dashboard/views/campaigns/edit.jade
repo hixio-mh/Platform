@@ -6,7 +6,7 @@ include _menu
     p Ads are added to the campaign here.
     dt
     dd
-      select(chosen multiple ng-options="ad.id as ad.name for ad in ads" ng-model="campaign.ads" data-placeholder="Select Ads")
+      select(chosen multiple ng-options="ad as ad.name for ad in ads" ng-model="campaign.ads" data-placeholder="Select Ads")
   fieldset: dl.form.center
     legend Bidding
     dt: label Daily Budget (optional)
@@ -102,7 +102,7 @@ include _menu
     p Rules can be added, that modify the behavior of individual ads in the campaign.
     .rule(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
       .field
-        select(chosen ng-options="ad.id as ad.name for ad in ads" ng-model="rule.ad")
+        select(chosen ng-options="ad.id as ad.name for ad in campaign.ads" ng-model="rule.ad")
       .column
         label Geographical
         .radio
