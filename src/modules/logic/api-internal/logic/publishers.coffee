@@ -123,6 +123,19 @@ module.exports = (utility) ->
 
       res.json pub.toAPI()
 
+  requestApproval: (req, res) ->
+    db.model("Publisher").findOne
+      _id: req.param "id"
+      owner: req.user.id
+    , (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
+
+      pub.status = 0
+      pub.save()
+
+      res.send 200
+
   # Updates publisher status if applicable
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
