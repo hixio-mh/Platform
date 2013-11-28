@@ -5,7 +5,7 @@
     | New ad
 ul.list(ng-if="ads")
   li(ng-repeat="ad in ads")
-    a.ad(href="/ads/{{ad.id}}")
+    a.ad(ng-href="/ads/{{ad.id}}")
       .name(ng-bind="ad.name")
       .edit: i.fa.fa-wrench
 

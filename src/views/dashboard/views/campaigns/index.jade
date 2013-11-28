@@ -2,7 +2,7 @@ a.new-item(href="/campaigns/new")
   i.fa.fa-plus
   | New campaign
 .grid
-  a.item(ng-repeat="campaign in campaigns" href="/campaigns/{{campaign.id}}")
+  a.item(ng-repeat="campaign in campaigns" ng-href="/campaigns/{{campaign.id}}")
     img.icon(src="http://delfinamassun.files.wordpress.com/2011/09/light-grey-square.jpg")
     .name(ng-bind="campaign.name")
     .metrics
