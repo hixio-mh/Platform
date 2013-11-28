@@ -101,73 +101,79 @@ include _menu
     legend Fine tunning
     p Rules can be added, that modify the behavior of individual ads in the campaign.
     .rule(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
-      .field
-        select(chosen ng-options="ad.id as ad.name for ad in campaign.ads" ng-model="rule.ad")
-      .column
-        label Geographical
-        .radio
-          input(type="radio" ng-model="rule.geographicalTargetting" value="all")
-          label(for="all_countries") All Countries
-        .radio
-          input(type="radio" ng-model="rule.geographicalTargetting" value="specific")
-          label(for="specific_countries") Specific Countries
-        country-select(chosen multiple ng-model="rule.countries" ng-disabled="rule.geographicalTargetting != 'specific'" data-placeholder="Select countries")
-      .column
-        label Network
-        .radio
-          input(type="radio" ng-model="rule.networkTargetting" value="all")
-          label(for="all_traffic") All Traffic
-        .radio
-          input(type="radio" ng-model="rule.networkTargetting" value="mobile")
-          label(for="mobile_data_traffic") Mobile Data Traffic
-        .radio
-          input(type="radio" ng-model="rule.networkTargetting" value="wifi")
-          label(for="wifi_traffic") Wifi Traffic
-      .column
-        label Platforms
-        .radio
-          input(type="radio" ng-model="rule.platformTargetting" value="all")
-          label(for="all_platforms") All Platforms
-        .radio
-          input(type="radio" ng-model="rule.platformTargetting" value="specific")
-          label(for="specific_platforms") Specific Platforms
-        select(chosen multiple ng-model="rule.platforms" ng-disabled="rule.platformTargetting != 'specific'")
-          option Austria
-          option France
-      .column
-        label Devices
-        .radio
-          input(type="radio" ng-model="rule.deviceTargetting" value="all")
-          label(for="all_devices") All Devices
-        .radio
-          input(type="radio" ng-model="rule.deviceTargetting" value="specific")
-          label(for="specific_devices") Specific Devices
-        .radio
-          input(type="radio" ng-model="rule.deviceTargetting" value="exclude")
-          label(for="exclude_devices") Exclude Devices
-        select(chosen multiple ng-model="rule.devices" ng-disabled="rule.deviceTargetting == 'all'" data-placeholder="Select devices")
-          option Nexus 4
-          option Galaxy S3
-          option iPhone
-      .column
-        label Manufacturers
-        .radio
-          input(type="radio" ng-model="rule.manufacturerTargetting" value="all")
-          label(for="all_manufacturers") All Manufacturers
-        .radio
-          input(type="radio" ng-model="rule.manufacturerTargetting" value="specific")
-          label(for="specific_manufacturers") Specific Manufacturers
-        select(chosen multiple ng-model="rule.manufacturers" ng-disabled="rule.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
-          option LG
-          option HTC
-          option Sony
-      .column
-        .radio
-          input(type="radio" ng-model="rule.scheduling" value="no" name="scheduling" id="no_scheduling")
-          label(for="no_scheduling") No Scheduling
-        .radio
-          input(type="radio" ng-model="rule.scheduling" value="yes" name="scheduling" id="custom_scheduling")
-          label(for="custom_scheduling") Custom Scheduling
+      .actions
+        a.open(ng-click="closed = !closed")
+          i.fa.fa-fw.fa-chevron-down(ng-if="closed")
+          i.fa.fa-fw.fa-chevron-up(ng-if="!closed")
+        a.remove(ng-click="removeRule($index)"): i.fa.fa-fw.fa-times
+      .config(ng-hide="closed")
+        .field
+          select(chosen ng-options="ad.id as ad.name for ad in campaign.ads" ng-model="rule.ad")
+        .column
+          label Geographical
+          .radio
+            input(type="radio" ng-model="rule.geographicalTargetting" value="all")
+            label(for="all_countries") All Countries
+          .radio
+            input(type="radio" ng-model="rule.geographicalTargetting" value="specific")
+            label(for="specific_countries") Specific Countries
+          country-select(chosen multiple ng-model="rule.countries" ng-disabled="rule.geographicalTargetting != 'specific'" data-placeholder="Select countries")
+        .column
+          label Network
+          .radio
+            input(type="radio" ng-model="rule.networkTargetting" value="all")
+            label(for="all_traffic") All Traffic
+          .radio
+            input(type="radio" ng-model="rule.networkTargetting" value="mobile")
+            label(for="mobile_data_traffic") Mobile Data Traffic
+          .radio
+            input(type="radio" ng-model="rule.networkTargetting" value="wifi")
+            label(for="wifi_traffic") Wifi Traffic
+        .column
+          label Platforms
+          .radio
+            input(type="radio" ng-model="rule.platformTargetting" value="all")
+            label(for="all_platforms") All Platforms
+          .radio
+            input(type="radio" ng-model="rule.platformTargetting" value="specific")
+            label(for="specific_platforms") Specific Platforms
+          select(chosen multiple ng-model="rule.platforms" ng-disabled="rule.platformTargetting != 'specific'")
+            option Austria
+            option France
+        .column
+          label Devices
+          .radio
+            input(type="radio" ng-model="rule.deviceTargetting" value="all")
+            label(for="all_devices") All Devices
+          .radio
+            input(type="radio" ng-model="rule.deviceTargetting" value="specific")
+            label(for="specific_devices") Specific Devices
+          .radio
+            input(type="radio" ng-model="rule.deviceTargetting" value="exclude")
+            label(for="exclude_devices") Exclude Devices
+          select(chosen multiple ng-model="rule.devices" ng-disabled="rule.deviceTargetting == 'all'" data-placeholder="Select devices")
+            option Nexus 4
+            option Galaxy S3
+            option iPhone
+        .column
+          label Manufacturers
+          .radio
+            input(type="radio" ng-model="rule.manufacturerTargetting" value="all")
+            label(for="all_manufacturers") All Manufacturers
+          .radio
+            input(type="radio" ng-model="rule.manufacturerTargetting" value="specific")
+            label(for="specific_manufacturers") Specific Manufacturers
+          select(chosen multiple ng-model="rule.manufacturers" ng-disabled="rule.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
+            option LG
+            option HTC
+            option Sony
+        .column
+          .radio
+            input(type="radio" ng-model="rule.scheduling" value="no" name="scheduling" id="no_scheduling")
+            label(for="no_scheduling") No Scheduling
+          .radio
+            input(type="radio" ng-model="rule.scheduling" value="yes" name="scheduling" id="custom_scheduling")
+            label(for="custom_scheduling") Custom Scheduling
 
     button(ng-click="addRule()" style="margin: 7px") Add new rule
 
