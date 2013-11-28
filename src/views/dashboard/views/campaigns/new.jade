@@ -97,15 +97,6 @@
             option LG
             option HTC
             option Sony
-    dl.form.center.single
-      dt: label Scheduling
-      dd
-        .radio
-          input(type="radio" ng-model="campaign.scheduling" value="no" name="scheduling" id="no_scheduling")
-          label(for="no_scheduling") No Scheduling
-        .radio
-          input(type="radio" ng-model="campaign.scheduling" value="yes" name="scheduling" id="custom_scheduling")
-          label(for="custom_scheduling") Custom Scheduling
     dl.form.center
     dt
     dd: button.blue.save(ng-click="submit()") Save
