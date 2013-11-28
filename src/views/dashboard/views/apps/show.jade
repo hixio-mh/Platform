@@ -1,20 +1,4 @@
-.titlebar.cf.full
-  .name(ng-bind="app.name")
-  span(ng-switch="app.status")
-    .label.gray(ng-switch-when="0") Pending
-    .label.red(ng-switch-when="1") Rejected
-    .label.green(ng-switch-when="2") Approved
-  .menu.full
-    a.active(href="/apps/{{app.id}}")
-      i.fa.fa-fw.fa-signal
-      | Metrics
-    a(href="/apps/{{app.id}}/integration")
-      i.fa.fa-fw.fa-paperclip
-      | Integration
-    a(href="/apps/{{app.id}}/edit")
-      i.fa.fa-fw.fa-wrench
-      | Settings
-
+include _menu
 
 .contents.w920.center
   h1 Statistics

@@ -1,0 +1,9 @@
+.titlebar.cf.full
+  .name(ng-bind="campaign.name")
+  .menu.full
+    a(href="/campaigns/{{campaign.id}}")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(href="/campaigns/{{campaign.id}}/edit")
+      i.fa.fa-fw.fa-wrench
+      | Settings

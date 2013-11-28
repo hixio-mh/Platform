@@ -1,12 +1,4 @@
-.titlebar.cf.full
-  .name(ng-bind="campaign.name")
-  .menu.full
-    a(href="/campaigns/{{campaign.id}}")
-      i.fa.fa-fw.fa-signal
-      | Metrics
-    a.active(href="/campaigns/{{campaign.id}}/edit")
-      i.fa.fa-fw.fa-wrench
-      | Settings
+include _menu
 
 .inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
