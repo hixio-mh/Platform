@@ -16,7 +16,11 @@
     "request": "2.21.0",
     "spew": "0.0.2",
     "gzippo": "0.2.0",
-    "adm-zip": "0.4.3"
+    "adm-zip": "0.4.3",
+    "node-statsd": "0.0.7",
+    "microtime": "~0.5.0",
+    "redis": "~0.9.1",
+    "hiredis": "~0.1.15"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

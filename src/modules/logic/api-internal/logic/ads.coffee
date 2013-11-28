@@ -32,6 +32,7 @@ module.exports = (utility) ->
       owner: req.user.id
       name: req.param('name')
       data: ""
+      campaigns: []
 
     newAd.save (err) ->
       if err
@@ -46,7 +47,11 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    db.model("Ad").findById req.param('id'), (err, ad) ->
+    db.model("Ad")
+    .findById(req.param('id'))
+    .populate("campaigns")
+    .exec (err, ad) ->
+
       if utility.dbError err, res then return
       if not ad then res.send(404); return
 
@@ -54,7 +59,12 @@ module.exports = (utility) ->
         res.send 403
         return
 
+      # Remove ourselves from all campaigns we are currently part of
+      ad.removeFromCampaigns()
+
+      # Now remove ourselves. So sad ;(
       ad.remove()
+
       res.send 200
 
   # Fetches owned ads
@@ -64,7 +74,8 @@ module.exports = (utility) ->
   get: (req, res) ->
     db.model("Ad")
     .find({ owner: req.user.id })
-    .populate("campaigns").exec (err, ads) ->
+    .populate("campaigns")
+    .exec (err, ads) ->
       if utility.dbError err, res then return
 
       ret = []

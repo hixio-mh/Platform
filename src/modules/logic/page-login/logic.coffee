@@ -13,6 +13,9 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+microtime = require "microtime"
+statsdLib = require("node-statsd").StatsD
+statsd = new statsdLib()
 
 setup = (options, imports, register) ->
 
@@ -35,7 +38,11 @@ setup = (options, imports, register) ->
   # Login POST [username, password]
   server.server.post "/login", (req, res) ->
 
+    _timingStart = microtime.now()
+
     if not req.body.username or not req.body.password
+      statsd.increment "event.login.401"
+
       res.status(401).render "account/login.jade",
         error: "Wrong Username or Password"
       return
@@ -44,17 +51,23 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
 
       if not user
+        statsd.increment "event.login.incorrect.username"
+
         res.status(401).render "account/login.jade",
           error: "wrong username or password"
         return
 
       user.comparePassword req.body.password, (err, isMatch) ->
         if err
+          statsd.increment "event.login.pwerror"
+
           spew.error "Failed to compare passwords [#{err}]"
           throw server.InternalError
           return
 
         if not isMatch
+          statsd.increment "event.login.incorrect.password"
+
           res.status(401).render "account/login.jade",
             error: "Wrong Username or Password"
           return
@@ -76,11 +89,16 @@ setup = (options, imports, register) ->
         user.session = userData.sess
 
         user.save (err) ->
+
           if err
+            statsd.increment "event.login.dberror"
+
             spew.error "Error saving user sess ID [#{err}]"
             throw server.InternalError
           else
-            spew.info "User #{userData.id} logged in"
+            statsd.increment "event.login.success"
+            statsd.timing "timing.login-us", (microtime.now() - _timingStart)
+
             res.redirect "/"
 
   register null, {}
