@@ -14,6 +14,9 @@
 mongoose = require "mongoose"
 spew = require "spew"
 
+redisLib = require "redis"
+redis = redisLib.createClient()
+
 schema = new mongoose.Schema
 
   # Creation vals
@@ -131,12 +134,45 @@ schema.methods.removeAd = (adId) ->
 
   # Remove ad from our own array if possible
   for ad, i in @ads
-    if ad.id.equals adId
+
+    # Sanity check
+    if ad._id == undefined
+      throw new Error "Ads field has to be populated for ad removal!"
+      return
+
+    # Perform actual id check
+    if ad._id.equals adId
+
+      # Clear campaign:ad references from redis
+      ad.clearCampaignReferences @
+
+      # Remove from our ad array and save
       @ads.splice i, 1
       @save()
       break
 
+  # Remove all keys from redis
+  redis.
+
   null
+
+# Refresh all ad refs. This must be done whenever our targeting information
+# is modified
+#
+# This requires that our ad field be populated!
+schema.methods.refreshAdRefs = ->
+  spew.info "Refreshing ad refs #{JSON.stringify @ads}"
+
+  for ad in @ads
+    ad.clearCampaignReferences @
+    ad.createCampaignReferences @
+    spew.info "Refreshed refs for #{ad.name}"
+
+# Return our lifetime aggregated data
+#
+# @param [Method] callback
+# @return [String] data csv data from graphite
+schema.methods.lifetimeData = (cb) ->
 
 # Return array of ad documents belonging to a campaign
 #

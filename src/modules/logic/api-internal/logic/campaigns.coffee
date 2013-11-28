@@ -38,20 +38,16 @@ module.exports = (utility) ->
       name: req.param('name')
       description: req.param('description') || ''
       category: req.param('category')
-      pricing: req.param('pricing')
+
       totalBudget: Number req.param('totalBudget')
       dailyBudget: Number req.param('dailyBudget') || 0
+      pricing: req.param('pricing')
+
       bidSystem: req.param('bidSystem')
       bid: Number req.param('bid')
 
       status: 0 # 0 is created, no ads
-      avgCPC: 0
-      clicks: 0
-      impressions: 0
-      spent: 0
-
-    # Pass placeholder for daily if none provided
-    if newCampaign.dailyBudget.length == 0 then newCampaign.dailyBudget = "-"
+      ads: []
 
     newCampaign.save()
     res.json 200
@@ -64,27 +60,9 @@ module.exports = (utility) ->
     db.model("Campaign").find { owner: req.user.id }, (err, campaigns) ->
       if utility.dbError err, res then return
 
-      ret = []
-
       # Remove the owner id, and refactor the id field
-      for c in campaigns
-
-        ret.push
-          id: c._id
-          name: c.name
-          description: c.description
-          category: c.category
-          pricing: c.pricing
-          totalBudget: c.totalBudget
-          dailyBudget: c.dailyBudget
-          bidSystem: c.bidSystem
-          bid: c.bid
-
-          status: c.status
-          avgCPC: c.avgCPC
-          clicks: c.clicks
-          impressions: c.impressions
-          spent: c.spent
+      ret = []
+      ret.push c.toAnonAPI() for c in campaigns
 
       res.json ret
 
@@ -93,7 +71,10 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    db.model("Campaign").findById req.param('id'), (err, campaign) ->
+    db.model("Campaign")
+    .findById(req.param('id'))
+    .populate("ads")
+    .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then res.send(404); return
 
@@ -102,7 +83,27 @@ module.exports = (utility) ->
         res.send 403
         return
 
-      res.json 200, campaign.toAPI()
+      res.json campaign.toAnonAPI()
+      return
+
+      # Fetch redis stats
+      #   impressions
+      #   clicks
+      #   spent
+      campaign.getLifetimeStats (metrics) ->
+        if metrics == null
+          res.send 500
+          return
+
+        # Attach objects onto campaign and send it back
+        ret = campaign.toAPI()
+
+        ret.ctr = metrics.clicks / metrics.impressions
+        ret.clicks = metrics.clicks
+        ret.impressions = metrics.impressions
+        ret.spent = metrics.spent
+
+        res.json 200, ret
 
   # Fetches events associated with the campaign. If not admin, user must own
   # the campaign
@@ -161,11 +162,13 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
-    if not utility.param req.param('mod'), res, "Modifications" then return
     if not utility.param req.param('id'), res, "Id" then return
 
     # Fetch campaign
-    db.model("Campaign").findById req.param('id'), (err, campaign) ->
+    db.model("Campaign")
+    .findById(req.param('id'))
+    .populate("ads")
+    .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then res.send(404); return
 
@@ -174,39 +177,32 @@ module.exports = (utility) ->
         res.json 403, { error: "Unauthorized!" }
         return
 
-      # Go through and apply changes
-      mod = JSON.parse req.param('mod')
-      affected = []
+      # Go through and apply changes, one by one
+      refreshAdRefs = false
+      for key, val of req.body
+        if campaign[key] != undefined
+          if campaign[key] != val
 
-      for diff in mod
+            if key == "devices" and val.length == 0 then val = []
+            else if key == "platforms" and val.length == 0 then val = []
+            else if key == "countries" and val.length == 0 then val = []
 
-        # Make sure we aren't setting a value that doesn't exist, or one
-        # that doesn't match our expected pre value
-        if String(campaign[diff.name]) == diff.pre
+            campaign[key] = val
 
-          # Figure out target based on what is being saved
-          # For now, no target. Sneaky sneaky.
+            spew.info "Saving modified key #{key}:#{val} #{val.length}"
 
-          # Add to our affected array
-          affected.push
-            name: diff.name
-            valuePre: campaign[diff.name]
-            valuePost: diff.post
+            # Check if we need to refresh our ad refs
+            if key == "bidSystem" then refreshAdRefs = true
+            else if key == "bid" then refreshAdRefs = true
+            else if key == "devices" then refreshAdRefs = true
+            else if key == "platforms" then refreshAdRefs = true
+            else if key == "network" then refreshAdRefs = true
+            else if key == "countries" then refreshAdRefs = true
 
-          # Apply change
-          campaign[diff.name] = diff.post
+      campaign.save()
+      if refreshAdRefs then campaign.refreshAdRefs()
 
-      if affected.length > 0
-
-        # Now create the campaign event
-        newEvent = db.models().CampaignEvent.getModel()
-          campaign: campaign._id
-          affected: affected
-
-        campaign.save()
-        newEvent.save()
-
-      res.json 200
+      res.json 200, campaign.toAnonAPI()
 
   # Delete the campaign identified by req.param('id')
   # If we are not the administrator, we must own the campaign!

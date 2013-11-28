@@ -89,10 +89,11 @@ setup = (options, imports, register) ->
         # Update Ad schema
         db.model("Ad").find {}, (err, ads) ->
           if utility.dbError err, res then return
+          spew
 
           for a in ads
 
-            # Version 0 (pre-version field)
+            # Version 0 -> 1 (pre-version field)
             if a.version == undefined
 
               # Add version and campaigns fields
