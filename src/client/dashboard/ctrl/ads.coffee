@@ -44,6 +44,14 @@ window.AdefyDashboard.controller "adsMenu", ($scope, $location, $http) ->
     else
       $http.post "/api/v1/publishers/#{$scope.ad.id}/deactivate"
 
+  $scope.requestApproval = ->
+    $http.post("/apps/{{$scope.ad.id}}/approval")
+    .success ->
+      $scope.setNotification("Successfully applied for approval!", "success")
+      $scope.ad.status = 0
+    .error ->
+      $scope.setNotification("There was an error with your request", "error")
+
 window.AdefyDashboard.controller "adsShow", ($scope, $location, $routeParams, Ad) ->
 
   # Chart.js options

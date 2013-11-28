@@ -86,3 +86,16 @@ module.exports = (utility) ->
       if not ad then res.send(404); return
 
       res.json ad.toAPI()
+
+  requestApproval: (req, res) ->
+    db.model("Ad").findOne
+      _id: req.param "id"
+      owner: req.user.id
+    , (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then res.send(404); return
+
+      ad.status = 0
+      ad.save()
+
+      res.send 200

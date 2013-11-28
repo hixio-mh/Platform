@@ -139,6 +139,8 @@ setup = (options, imports, register) ->
   app.get "/api/v1/ads/stats", (req, res) -> ####
   app.get "/api/v1/ads/:id", (req, res) -> ads.find req, res
   app.post "/api/v1/ads", (req, res) -> ads.create req, res
+  app.post "/api/v1/ads/:id/approval", (req, res) ->
+    ads.requestApproval req, res
   app.delete "/api/v1/ads/:id", (req, res) -> ads.delete req, res
 
   # Campaign manipulation - /api/v1/campaigns/:action
