@@ -29,6 +29,8 @@
     "/home/advertiser",
     "/home/publisher",
 
+    "/reports",
+
     "/apps",
     "/apps/new",
     "/apps/:id",
@@ -44,9 +46,8 @@
     "/campaigns/:id/edit",
 
     "/settings",
-    "/acc/billing",
     "/funds",
-    "/acc/feedback",
+    "/feedback",
 
     "/admin",
     "/admin/users",
