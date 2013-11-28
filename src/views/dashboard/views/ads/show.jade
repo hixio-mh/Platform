@@ -14,6 +14,8 @@
           ok-button-text="Delete" form-submit="delete()" form-object="form")
       i.fa.fa-fw.fa-trash-o
       | Delete
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="ad.active")
 
 .contents.w920.center
   h1 Statistics

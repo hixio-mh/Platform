@@ -37,6 +37,13 @@ window.AdefyDashboard.controller "ads", ($scope, $location, Ad) ->
     refreshAds()
     return true
 
+window.AdefyDashboard.controller "adsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.ad.active
+      $http.post "/api/v1/publishers/#{$scope.ad.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.ad.id}/deactivate"
+
 window.AdefyDashboard.controller "adsShow", ($scope, $location, $routeParams, Ad) ->
 
   # Chart.js options

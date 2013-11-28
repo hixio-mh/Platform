@@ -7,3 +7,5 @@
     a(ng-href="/campaigns/{{campaign.id}}/edit" tab)
       i.fa.fa-fw.fa-wrench
       | Settings
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="campaign.active")
