@@ -16,3 +16,13 @@ window.AdefyDashboard.controller "funds", ($scope, $rootScope, $http, $route) ->
 
   $http.get("/api/v1/account/transactions").success (data) ->
     $scope.transactions = data
+
+  # modal
+  $scope.creditCard = {} # define the object, or it will not get set inside the modal
+  $scope.withdraw = ->
+    # TODO
+    return true
+
+  $scope.deposit = ->
+    # TODO
+    return true
