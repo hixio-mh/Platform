@@ -64,6 +64,12 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $location, App) ->
 
   refreshAppListing()
 
+window.AdefyDashboard.controller "appsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.app.active
+      $http.post "/api/v1/publishers/#{$scope.app.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.app.id}/deactivate"
 
 window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
 

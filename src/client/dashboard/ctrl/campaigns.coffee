@@ -63,6 +63,13 @@ window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
     pointDot: false,
   }
 
+window.AdefyDashboard.controller "campaignsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.campaign.active
+      $http.post "/api/v1/publishers/#{$scope.campaign.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.campaign.id}/deactivate"
+
 window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) ->
 
   $scope.min = {
