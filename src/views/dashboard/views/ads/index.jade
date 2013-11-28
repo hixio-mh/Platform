@@ -10,31 +10,17 @@ ul.list(ng-if="ads")
       .edit: i.fa.fa-wrench
 
     table.campaigns
-      tr
-        th PepsiCon 2013
+      tr(ng-repeat="campaign in ad.campaigns")
+        th {{ campaign.name }}
         td             
-          .amount 71.21 %
+          .amount {{ campaign.ctr | number }} %
           .desc CTR
         td
-          .amount ▲ 8,351
+          .amount ▲ {{ campaign.impressions | number }}
           .desc Impressions
         td
-          .amount ▲ 251
+          .amount ▲ {{ campaign.clicks | number }}
           .desc Clicks
         td
-          .amount $ 472.75
-          .desc Spent
-      tr
-        th Qwerty1
-        td
-          .amount 71.21 %
-          .desc CTR
-        td
-          .amount ▲ 8,351
-          .desc Impressions
-        td
-          .amount ▲ 251
-          .desc Clicks
-        td
-          .amount $ 472.75
+          .amount {{ campaign.spent | currency:$ }}
           .desc Spent
