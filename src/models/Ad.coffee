@@ -11,10 +11,11 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 mongoose = require "mongoose"
 
 schema = new mongoose.Schema
+
+  # Generic per-ad information
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
   data: String
@@ -26,6 +27,7 @@ schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
+  delete _v
 
   ret
 

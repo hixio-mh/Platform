@@ -78,11 +78,12 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    db.model("Ad").findOne
-      _id: req.param('id')
-      owner: req.user.id
-    , (err, ad) ->
+    db.model("Ad").findById req.param('id'), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
+
+      if not req.user.admin and not ad.owner.equals req.user.id
+        res.send 403
+        return
 
       res.json ad.toAPI()

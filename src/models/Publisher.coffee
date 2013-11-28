@@ -21,14 +21,13 @@ schema = new mongoose.Schema
   description: String
   category: String
 
-  active: Boolean
+  active: { type: Boolean, default: false }
   apikey: String
 
-  # 0 - Awaiting approval request
+  # 0 - Pending
   # 1 - Rejected
   # 2 - Approved
-  # 3 - Awaiting approval request response
-  status: Number
+  status: { type: Number, default: 0 }
   approvalMessage: [{ msg: String, timestamp: Date }]
 
   # 0 - Android
@@ -36,16 +35,11 @@ schema = new mongoose.Schema
   # (unsupported) 2 - Windows
   type: Number
 
-  # Analytics
-  impressions: Number
-  requests: Number
-  clicks: Number
-  earnings: Number
-
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
+  delete _v
 
   ret
 
