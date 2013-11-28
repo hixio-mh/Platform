@@ -40,7 +40,6 @@ more info:
     Pricing: xxx     (Any/CPC/CPM)
     FloorCPC: xxxx   (cents)
     FloorCPM: xxxx   (cents)
-    StrictPricing: x (bool)
 
 At this point we shoot a query into Redis:
 
@@ -74,8 +73,7 @@ backfill. (Backfill.md)
 
 RTB
 ---
-We now have a set of suitable ads, of the form campaign_id:ad_id. Fetch JSON
-objects:
+We now have a set of suitable ads, of the form campaign_id:ad_id. Fetch ad data:
 
     MGET ad-keys
 
