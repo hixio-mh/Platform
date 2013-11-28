@@ -1,5 +1,9 @@
 .titlebar.cf.full(ng-controller="adsMenu")
   .name(ng-bind="ad.name")
+  span(ng-switch="ad.status")
+    .label.gray(ng-switch-when="0") Pending
+    .label.red(ng-switch-when="1") Rejected
+    .label.green(ng-switch-when="2") Approved
   .menu.full
     a.active(href="/ads/{{ad.id}}")
       i.fa.fa-fw.fa-signal
@@ -14,6 +18,9 @@
           ok-button-text="Delete" form-submit="delete()" form-object="form")
       i.fa.fa-fw.fa-trash-o
       | Delete
+    a(ng-click="requestApproval()" ng-if="ad.status == '1'")
+      i.fa.fa-fw.fa-question
+      | Request Approval
   .toggle-wrap(style="float:right")
     toggle-switch(method="activeToggled()" model="ad.active")
 
