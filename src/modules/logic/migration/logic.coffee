@@ -49,11 +49,18 @@ setup = (options, imports, register) ->
 
     # Called after each migration, replies once all are done
     _done = 0
-    registerDone = ->
+    messages = []
+
+    registerDone = (title, msg) ->
       _done++
 
+      if title != undefined
+        messages.push
+          title: title
+          msg: msg
+
       if _done == models.length
-        res.json { msg: "OK", affected: objectsAffected }
+        res.json { msg: "OK", affected: objectsAffected, messages: messages }
 
     # Helpers for migrating specific models
     migrators =
