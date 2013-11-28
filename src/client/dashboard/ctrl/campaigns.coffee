@@ -233,6 +233,8 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
   Ad.query (ads) ->
     $scope.ads = ads
 
+  $scope.removeRule = (index) ->
+    $scope.campaign.rules.splice(index, 1)
 
   $scope.addRule = ->
     $scope.campaign.rules.push {
