@@ -23,8 +23,10 @@
         .amount ${{me.funds | number:2}}
         .desc Reserved
       .actions
-        button Deposit funds
-        button.blue Withdraw funds
+        button(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
+        ok-button-text="Deposit" form-submit="deposit()" form-object="creditCard") Deposit funds
+        button.blue(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
+        ok-button-text="Withdraw" form-submit="withdraw()" form-object="creditCard") Withdraw funds
     table.transactions
       tbody(ng-repeat="t in transactions" ng-switch="t.type")
         tr.withdraw(ng-switch-when="withdraw")
