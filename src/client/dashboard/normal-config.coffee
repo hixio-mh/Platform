@@ -25,6 +25,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "dashAdvertiser"
     templateUrl: "/views/dashboard/home:advertiser"
 
+  $routeProvider.when "/reports",
+    controller: "reports"
+    templateUrl: "/views/dashboard/reports"
+
   $routeProvider.when "/apps",
     controller: "appsIndex"
     templateUrl: "/views/dashboard/apps:index"
@@ -72,10 +76,6 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   $routeProvider.when "/settings",
     controller: "settings"
     templateUrl: "/views/dashboard/account:settings"
-
-  $routeProvider.when "/acc/billing",
-    controller: "accBilling"
-    templateUrl: "/views/dashboard/account:billing"
 
   $routeProvider.when "/funds",
     controller: "funds"
