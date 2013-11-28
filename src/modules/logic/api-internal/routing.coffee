@@ -167,6 +167,8 @@ setup = (options, imports, register) ->
   app.get "/api/v1/publishers/:id", (req, res) -> publishers.find req, res
   app.post "/api/v1/publishers", (req, res) -> publishers.create req, res
   app.post "/api/v1/publishers/:id", (req, res) -> publishers.save req, res
+  app.post "/api/v1/publishers/:id/approval", (req, res) ->
+    publishers.requestApproval req, res
   app.delete "/api/v1/publishers/:id", (req, res) -> publishers.delete req, res
 
   register null, {}
