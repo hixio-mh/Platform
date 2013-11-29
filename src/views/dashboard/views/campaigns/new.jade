@@ -21,7 +21,7 @@
     dt: label Total Budget
     dd: input(required ng-model="campaign.totalBudget" type="number" min="{{min.budget}}" placeholder="min {{ min.budget | currency:$ }}")
     dt: label Daily Budget (optional)
-    dd: input(ng-model="campaign.dailyBudget" type="number")
+    dd: input(ng-model="campaign.dailyBudget" min="0" type="number")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.

@@ -96,6 +96,13 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
     "Women"
   ]
 
+  $scope.pricingModels = [ 'Any', 'CPM', 'CPC' ]
+
+  # Defaults
+  $scope.app = {
+    preferredPricing: 'Any'
+  }
+
   $scope.submit = ->
     $scope.submitted = true
     newApp = new App(this.app)
@@ -165,6 +172,8 @@ window.AdefyDashboard.controller "appsEdit", ($scope, $location, $routeParams, A
     "Community"
     "Women"
   ]
+
+  $scope.pricingModels = [ 'Any', 'CPM', 'CPC' ]
 
   App.get id: $routeParams.id, (app) ->
     $scope.app = app
