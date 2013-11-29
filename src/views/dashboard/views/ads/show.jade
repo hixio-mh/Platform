@@ -31,11 +31,20 @@
       .amount.large ▲ {{ ad.impressions | number }}
       .desc Impressions
     .stat: .wrap
+      .amount.large ▲ {{ stats.daily.impressions | number }}
+      .desc Impressions (daily)
+    .stat: .wrap
       .amount.large ▲ {{ ad.clicks | number }}
       .desc Clicks
     .stat: .wrap
+      .amount.large ▲ {{ stats.daily.clicks | number }}
+      .desc Clicks (daily)
+    .stat: .wrap
       .amount.large {{ ad.ctr | number }} %
       .desc CTR
+    .stat: .wrap
+      .amount.large {{ stats.daily.ctr | number }} %
+      .desc CTR (daily)
 
 .graphs
   .graph
