@@ -28,6 +28,22 @@
       .desc Total revenue
   canvas(id="myChart" width="960" height="300")
 .index
+  h1 Top Apps
+  table.info
+    thead: tr
+      th
+      th Impressions
+      th Clicks
+      th CTR
+      th Earnings
+    tbody
+      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
+        td {{ app.name }}
+        td {{ app.impressions | number }}
+        td {{ app.clicks | number }}
+        td {{ app.ctr | number:2 }}%
+        td $ {{ app.earnings | number:2 }}
+  h1 News
   ul.news
     li
       span.title News item
