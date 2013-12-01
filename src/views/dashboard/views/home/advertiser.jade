@@ -15,19 +15,35 @@
 .graph2
   .stats.dashboard
     .stat: .wrap
-      .amount.large $ 381.23
-      .desc Earned today
-    .stat: .wrap
       .amount.large ▲ 8,351
       .desc Impressions today
     .stat: .wrap
       .amount.large ▲ 251
-      .desc Clicks
+      .desc Clicks today
+    .stat: .wrap
+      .amount.large 70,25 %
+      .desc CTR today
     .stat: .wrap
       .amount.large $ 472.75
       .desc Total revenue
   canvas(id="myChart" width="960" height="300")
 .index
+  h1 Top Campaigns
+  table.info
+    thead: tr
+      th
+      th Impressions
+      th Clicks
+      th CTR
+      th Cost
+    tbody
+      tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true | limitTo:10")
+        td {{ campaign.name }}
+        td {{ campaign.impressions | number }}
+        td {{ campaign.clicks | number }}
+        td {{ campaign.ctr | number:2 }}%
+        td {{ campaign.spent | currency:$ }}
+  h1 News
   ul.news
     li
       span.title News item
@@ -54,7 +70,6 @@
       span.title News item
       span.date Sept 23 
       p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
-
 
 
 
