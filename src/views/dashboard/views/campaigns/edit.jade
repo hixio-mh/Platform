@@ -22,6 +22,8 @@ include _menu
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
     dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
     dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dt: label CTR Goal
+    dd: input(type="number" step="any" min="0.0" max="100.0" ng-model="campaign.CTRGoal")
   fieldset: dl.form.center
     legend Targetting
     p In this section the general targetting is configured. Later, per-ad fine-tuning is possible, which will override these settings.
