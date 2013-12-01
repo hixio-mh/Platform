@@ -12,7 +12,7 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-.graph2
+.index
   .stats.dashboard
     .stat: .wrap
       .amount.large $ 381.23
@@ -26,8 +26,9 @@
     .stat: .wrap
       .amount.large $ 472.75
       .desc Total revenue
-  canvas(id="myChart" width="960" height="300")
-.index
+  a.switch-view(href="/home/advertiser") Switch to advertiser view
+  canvas(id="myChart" width="940" height="300")
+
   h1 Top Apps
   table.info
     thead: tr
