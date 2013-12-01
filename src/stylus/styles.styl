@@ -600,19 +600,13 @@ fieldset
 .index
   margin: 0 auto
   max-width: 920px
-.graph2
-  padding: 0 30px 30px
-  canvas
-    display: block
-    margin: 0 auto
-  .stats
-    background-color: #fff
-    max-width: 920px
-    margin: 0 auto
-    margin-bottom: 30px
-    text-align: right
-    border: 1px solid #ccc
-    border-top: none
+.stats.dashboard
+  background-color: #fff
+  max-width: 920px
+  margin: 0 auto
+  text-align: right
+  border: 1px solid #ccc
+  border-top: none
   .stat
     border-right: none
 .news
@@ -626,6 +620,11 @@ fieldset
     margin-left: 15px
   p
     font-size: .85em
+.switch-view
+  display: block
+  text-align: right
+  font-size: .85em
+  margin: 10px
 
 /* tabs */
 .tab-pane
@@ -727,6 +726,7 @@ table.info
   border-collapse: collapse
   margin-bottom: 20px
   .tab
+    cursor: pointer
     background-color: white
     display:table-cell
     table-layout: fixed
