@@ -11,9 +11,6 @@
     a(href="https://app.adefy.eu/editor/{{ad.id}}" target="_self")
       i.fa.fa-fw.fa-pencil
       | Editor
-    a(href="/ads/{{ad.id}}/edit")
-      i.fa.fa-fw.fa-wrench
-      | Settings
     a.delete(form-modal template="/views/dashboard/ads:delete" title="Delete ad"
           ok-button-text="Delete" form-submit="delete()" form-object="form")
       i.fa.fa-fw.fa-trash-o
