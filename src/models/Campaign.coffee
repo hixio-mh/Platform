@@ -118,19 +118,22 @@ schema.methods.toAnonAPI = ->
 
   ret
 
+getIdFromArgument = (arg) ->
+  if typeof arg == "object"
+    if arg.id != undefined then arg = arg.id
+    else if arg._id != undefined then arg = adId._id
+    else arg = null
+  arg
+
 # Remove specific ad by id, passing either the id or an ad model.
 # Expects the ads field to be populated!
 #
 # @param [String, Ad] adId
 schema.methods.removeAd = (adId) ->
 
-  # Get ad id if needed
-  if typeof adId == "object"
-    if adId.id != undefined then adId = adId.id
-    else if adId._id != undefined then adId = adId._id
-    else
-      spew.error "Couldn't remove ad, no id: #{JSON.stringify adId}"
-      return
+  if (adId = getIdFromArgument adId) == null
+    spew.error "Couldn't remove ad, no id: #{JSON.stringify adId}"
+    return
 
   # Remove ad from our own array if possible
   for ad, i in @ads
@@ -152,7 +155,6 @@ schema.methods.removeAd = (adId) ->
       break
 
   # Remove all keys from redis
-  redis.
 
   null
 
@@ -163,10 +165,23 @@ schema.methods.removeAd = (adId) ->
 schema.methods.refreshAdRefs = ->
   spew.info "Refreshing ad refs #{JSON.stringify @ads}"
 
-  for ad in @ads
-    ad.clearCampaignReferences @
-    ad.createCampaignReferences @
-    spew.info "Refreshed refs for #{ad.name}"
+  populateAndRefreshRefs = (ad, campaign) ->
+    ad.populate "campaigns.campaign", (err, populatedAd) ->
+      if err
+        spew.error "Error populating ad campaigns field"
+        return
+
+      populatedAd.clearCampaignReferences campaign
+      populatedAd.createCampaignReferences campaign
+      spew.info "Refreshed refs for #{populatedAd.name}"
+
+  @populate "ads", (err, populatedCampaign) ->
+    if err
+      spew.error "Error populating ads"
+      return
+
+    for ad in populatedCampaign.ads
+      populateAndRefreshRefs ad, populatedCampaign
 
 # Return our lifetime aggregated data
 #

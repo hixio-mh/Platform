@@ -145,10 +145,6 @@ setup = (options, imports, register) ->
   #
   #   /events   fetch events for a campaign
   #
-  ###
-  app.get "/api/v1/campaigns/:action", (req, res) ->
-    else if req.params.action == "events" then campaigns.fetchEvents req, res
-  ###
   app.get "/api/v1/campaigns", (req, res) -> campaigns.fetch req, res
   app.get "/api/v1/campaigns/stats", (req, res) -> ####
   app.get "/api/v1/campaigns/:id", (req, res) -> campaigns.find req, res
