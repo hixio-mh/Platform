@@ -63,7 +63,7 @@ setup = (options, imports, register) ->
       , (err, user) ->
         if utility.dbError err, res then return
 
-        if user.length == 0
+        if not user
           req.user = null
           delete req.cookies.user
           req.send 403 # the user ID was invalid
