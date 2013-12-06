@@ -25,19 +25,19 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
-    if not utility.param req.param('name'), res, "Ad name" then return
+    if not utility.param req.param("name"), res, "Ad name" then return
 
     # Create new ad entry
     newAd = db.model("Ad")
       owner: req.user.id
-      name: req.param('name')
+      name: req.param "name"
       data: ""
       campaigns: []
 
     newAd.save (err) ->
       if err
-        spew.error "Error saving new ad [#{err}"
-        res.json 400, { error: err }
+        spew.error "Error saving new ad [#{err}]"
+        res.json 500
         return
 
       res.json 200, { id: newAd._id, name: newAd.name }
@@ -48,8 +48,8 @@ module.exports = (utility) ->
   # @param [Object] res response
   delete: (req, res) ->
     db.model("Ad")
-    .findById(req.param('id'))
-    .populate("campaigns")
+    .findById(req.param("id"))
+    .populate("campaigns.campaign")
     .exec (err, ad) ->
 
       if utility.dbError err, res then return
@@ -74,12 +74,12 @@ module.exports = (utility) ->
   get: (req, res) ->
     db.model("Ad")
     .find({ owner: req.user.id })
-    .populate("campaigns")
+    .populate("campaigns.campaign")
     .exec (err, ads) ->
       if utility.dbError err, res then return
 
       ret = []
-      ret.push ad.toAPI() for ad in ads
+      if ads then ret.push ad.toAPI() for ad in ads
 
       res.json 200, ret
 
@@ -89,7 +89,7 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
-    db.model("Ad").findById req.param('id'), (err, ad) ->
+    db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
 

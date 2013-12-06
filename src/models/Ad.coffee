@@ -58,7 +58,6 @@ schema.methods.toAPI = ->
 # Expects campaigns filed to be populated!
 schema.methods.removeFromCampaigns = ->
 
-  # Remove ourselves
   for c in @campaigns
     c.removeAd @_id
     c.save()
@@ -67,6 +66,20 @@ schema.methods.removeFromCampaigns = ->
   @campaigns = []
   @save()
 
+# Creates a campaign entry. Use this before clearing or setting campaign
+# references!
+schema.methods.registerCampaignParticipation = (campaign) ->
+  campaigns.push
+    campaign: campaign._id
+
+    countries: campaign.countries
+    network: campaign.network
+    platforms: campaign.platforms
+    devices: campaign.devices
+
+    bidSystem: campaign.bidSystem
+    bid: campaign.bid
+
 # Remove redis keys and values referencing us as belonging to a campaign.
 # This is called by the campaign when removing us! So we must not modify the
 # campaign itself.
@@ -74,10 +87,10 @@ schema.methods.removeFromCampaigns = ->
 # @param [Campaign] campaign campaign model
 schema.methods.clearCampaignReferences = (campaign) ->
 
-  # Build our base key name of the form pricing:category
-  key = "#{campaign.pricing.toLowerCase()}:#{campaign.category.toLowerCase()}"
+  pricing = campaign.pricing.toLowerCase()
+  category = campaign.category.toLowerCase()
 
-  # Build our reference value, of the form campaignId:adId
+  baseKey = "#{pricing}:#{category}"
   ref = "#{campaign._id}:#{@_id}"
 
   # Now fetch targeting info
@@ -114,23 +127,23 @@ schema.methods.clearCampaignReferences = (campaign) ->
     redis.lrem "country:#{country}", 0, ref
 
   # Network, either "mobile" or "wifi"
-  if network.length == 0 then redis.lrem "#{key}:network:none", 0, ref
-  else redis.lrem "#{key}:network:#{network}", 0, ref
+  if network.length == 0 then redis.lrem "#{baseKey}:network:none", 0, ref
+  else redis.lrem "#{baseKey}:network:#{network}", 0, ref
 
   # Platforms
-  if platforms.length == 0 then redis.lrem "#{key}:platform:none", 0, ref
+  if platforms.length == 0 then redis.lrem "#{baseKey}:platform:none", 0, ref
   else
     for platform in platforms
-      redis.lrem "#{key}:platform:#{platform}", 0, ref
+      redis.lrem "#{baseKey}:platform:#{platform}", 0, ref
 
   # Devices
-  if devices.length == 0 then redis.lrem "#{key}:device:none", 0, ref
+  if devices.length == 0 then redis.lrem "#{baseKey}:device:none", 0, ref
   else
     for device in devices
-      redis.lrem "#{key}:device:#{device}", 0, ref
+      redis.lrem "#{baseKey}:device:#{device}", 0, ref
 
   # Remove our own data entry!
-  redis.del key
+  redis.del baseKey
 
   null
 
@@ -140,10 +153,10 @@ schema.methods.clearCampaignReferences = (campaign) ->
 # @param [Campaign] campaign campaign model
 schema.methods.createCampaignReferences = (campaign) ->
 
-  # Build our base key name of the form pricing:category
-  key = "#{campaign.pricing.toLowerCase()}:#{campaign.category.toLowerCase()}"
+  pricing = campaign.pricing.toLowerCase()
+  category = campaign.category.toLowerCase()
 
-  # Build our reference value, of the form campaignId:adId
+  baseKey = "#{pricing}:#{category}"
   ref = "#{campaign._id}:#{@_id}"
 
   # Now fetch targeting info

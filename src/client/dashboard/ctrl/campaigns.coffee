@@ -12,19 +12,20 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.factory 'Campaign', ($resource) ->
-  return $resource('/api/v1/campaigns/:id', {id: '@id'})
+window.AdefyDashboard.factory "Campaign", ($resource) ->
+  return $resource("/api/v1/campaigns/:id", {id: "@id"})
 
-window.AdefyDashboard.factory 'Ad', ($resource) ->
-  return $resource('/api/v1/ads/:id', {id: '@id'})
+window.AdefyDashboard.factory "Ad", ($resource) ->
+  return $resource("/api/v1/ads/:id", {id: "@id"})
 
 window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
 
   refreshCampaigns = ->
     Campaign.query (campaigns) ->
-      console.log campaigns
+
       # Calculate CTR, status, and active text
       for campaign, i in campaigns
+
         # CTR
         campaign.ctr = (campaign.clicks / campaign.impressions) * 100
         if isNaN campaign.ctr then campaign.ctr = 0
@@ -112,8 +113,8 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
   ]
 
   $scope.campaign = {
-    pricing: 'CPM',
-    bidSystem: 'automatic',
+    pricing: "CPM",
+    bidSystem: "automatic",
     geographicalTargetting: "all",
     networkTargetting: "all",
     platformTargetting: "all",
@@ -216,7 +217,7 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
   ]
 
   $scope.campaign = {
-    bidSystem: 'automatic',
+    bidSystem: "automatic",
     geographicalTargetting: "all",
     networkTargetting: "all",
     platformTargetting: "all",
@@ -229,6 +230,8 @@ window.AdefyDashboard.controller "campaignsEdit", ($scope, $location, $routePara
     $scope.campaign = campaign
     # temp:
     $scope.campaign.rules = []
+
+    console.log campaign
 
   Ad.query (ads) ->
     $scope.ads = ads
