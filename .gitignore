@@ -11,3 +11,4 @@ src/config.json
 .ssh/
 *.pyc
 .idea/
+.DS_Store

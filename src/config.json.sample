@@ -28,7 +28,7 @@
 			"port-http": 43342,
 			"port-https": 43343,
 
-			"domain": "staging.adefy.eu:43343"
+			"domain": "staging.adefy.com:43343"
 		},
 		"production": {
 			"log-to-server": false,
@@ -39,7 +39,7 @@
 			"port-http": 8080,
 			"port-https": 8443,
 
-			"domain": "app.adefy.eu"
+			"domain": "app.adefy.com"
 		}
 	},
 
@@ -47,7 +47,7 @@
 	"snapshot": ".saved_state.json",
 
 	"secure-key": "ssl/adefy.key",
-	"secure-cert": "ssl/adefy.eu.crt",
+	"secure-cert": "ssl/adefy.com.crt",
 	"secure-ca": "ssl/gd_bundle.crt",
 
 	"db": {
