@@ -6,12 +6,12 @@ from __future__ import with_statement
 from fabric.api import *
 
 env.roledefs = {
-  "staging": ["staging.adefy.eu:58124"],
-  "production": ["app.adefy.eu:48723"]
+  "staging": ["staging.adefy.com:58124"],
+  "production": ["app.adefy.com:48723"]
 }
 
 env.user = "cris"
-env.key_filename = "/home/cris/.ssh/id_rsa"
+env.key_filename = "~/.ssh/id_rsa"
 
 adefy_path = "/var/adefy/"
 adefy_repo = "ssh://gitlab@git.spectrumit.eu:11235/adefy/adefycloud.git"
@@ -25,13 +25,12 @@ def _setup(branch):
     run("git init .")
     run("git remote add origin " + adefy_repo)
     run("git pull origin master")
-    run("git branch " + branch)
-    run("git pull origin " + branch)
+    run("git fetch origin " + branch + ":" + branch)
+    run("git checkout " + branch)
     run("git submodule init")
 
     # Install global dependencies
     sudo("npm install -g codo grunt-cli forever")
-    run("git checkout " + branch)
 
 # Updates server packages
 @roles("production", "staging")
