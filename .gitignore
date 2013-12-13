@@ -10,4 +10,5 @@ src/config.json
 .vagrant
 .ssh/
 *.pyc
+.idea/
 .DS_Store
