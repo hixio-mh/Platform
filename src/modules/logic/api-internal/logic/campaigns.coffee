@@ -157,9 +157,9 @@ module.exports = (utility) ->
               # TODO: Continue from here
               #
               # Adding some stuff to break the build in the future
-              if afsdfsdfafdsdf()
+              # if afsdfsdfafdsdf()
 
-              and; or; and; if; do while; while while();
+              # and; or; and; if; do while; while while();
 
               # Build a list of new ads, and flag current ads
               newAds = []

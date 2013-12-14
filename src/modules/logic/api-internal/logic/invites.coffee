@@ -34,7 +34,7 @@ module.exports = (utility) ->
       code: code
 
     invite.save()
-    invite
+    invite.toAPI()
 
   # Add the email to our user list in MailChimp
   #
@@ -95,12 +95,7 @@ module.exports = (utility) ->
       # Data fetched, send only what is needed
       ret = []
 
-      for i in data
-        invite = {}
-        invite.email = i.email
-        invite.code = i.code
-        invite.id = i._id
-        ret.push invite
+      ret.push invite.toAPI() for invite in data
 
       res.json ret
 
@@ -116,7 +111,7 @@ module.exports = (utility) ->
       if not invite then res.send(404); return
 
       invite.remove()
-      res.json { msg: "OK" }
+      res.send 200
 
   # Update invite
   #
@@ -135,4 +130,4 @@ module.exports = (utility) ->
       invite.email = req.query.email
       invite.save()
 
-      res.json { msg: "OK" }
+      res.json invite.toAPI()
