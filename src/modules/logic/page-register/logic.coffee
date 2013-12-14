@@ -116,7 +116,7 @@ setup = (options, imports, register) ->
 
             res.cookie "user", userData
             auth.authorize userData
-            res.redirect "/dashboard"
+            res.redirect "/home/publisher"
 
   register null, {}
 
