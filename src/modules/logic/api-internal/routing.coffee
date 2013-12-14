@@ -47,9 +47,11 @@ setup = (options, imports, register) ->
       # Save invite in db
       invite = invites.create email, utility.randomString 32
 
-      if req.query.key == "WtwkqLBTIMwslKnc" then res.json { msg: "Added" }
+      if req.query.key == "WtwkqLBTIMwslKnc" then res.json
+        msg: "Added"
+        id: invite.id
       else if req.query.key == "T13S7UESiorFUWMI"
-        res.json { email: email, code: invite.code, id: invite._id }
+        res.json { email: email, code: invite.code, id: invite.id }
 
     # Error callback
     , (error) -> res.json { error: error }
@@ -85,7 +87,7 @@ setup = (options, imports, register) ->
   #
   # admin only
   app.get "/api/v1/invite/:action", (req, res) ->
-    if not req.user.admin then return
+    if not req.user.admin then res.send 401
 
     if req.params.action == "all" then invites.getAll req, res
     else if req.params.action == "update" then invites.update req, res
