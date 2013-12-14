@@ -8,6 +8,7 @@ agentAdmin = superagent.agent()
 # agent.attachCookies req
 
 apiInviteTests = require "./api/api-invites"
+apiAdTests = require "./api/api-ads"
 
 # Basic authentication test, also sets up user for other tests
 describe "Authentication", ->
@@ -32,3 +33,4 @@ describe "Authentication", ->
 
 # Run all other API tests using authenticated credentials from above
 apiInviteTests agent, agentAdmin
+apiAdTests agent, agentAdmin
