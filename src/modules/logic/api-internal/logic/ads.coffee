@@ -40,7 +40,7 @@ module.exports = (utility) ->
         res.json 500
         return
 
-      res.json 200, { id: newAd._id, name: newAd.name }
+      res.json 200, newAd.toAPI()
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   #
