@@ -131,8 +131,7 @@ setup = (options, imports, register) ->
 
     if udata.preference == undefined
       return { error: "Ad preference not provided" }
-    else if udata.preference != 0 && udata.preference != 1 \
-      && udata.preference != 2 # @todo: && udata != 3
+    else if udata.preference < 0 or udata.preference > 3
       return { error: "Invalid ad preference: #{udata.preference}"}
 
     if udata.freem == undefined
