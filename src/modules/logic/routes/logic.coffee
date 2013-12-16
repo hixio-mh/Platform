@@ -27,7 +27,9 @@ setup = (options, imports, register) ->
   for p in routes.views
     server.server.get p, (req, res) ->
       if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
-      res.render "dashboard/layout.jade", auth
+      res.render "dashboard/layout.jade", auth, (err, html) ->
+        if err then spew.error err
+        else res.send html
 
   server.server.get "/views/dashboard/:view", (req, res) ->
     if not utility.param req.params.view, res, "View" then return
