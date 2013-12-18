@@ -7,7 +7,7 @@ api = supertest "http://localhost:8080"
 # Auth info
 agent = superagent.agent()
 
-describe "Authentication", ->
+describe "General Authentication", ->
 
   it "Expect redirection on root access", (done) ->
     api.get("/").expect 302, done

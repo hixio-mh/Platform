@@ -31,7 +31,7 @@ module.exports = (user, admin) ->
 
     util.apiObjectIdSanitizationCheck publisher
 
-  describe "Publishers", ->
+  describe "Publishers API", ->
 
     # GET /api/v1/publishers/:id
     it "Should fail to retrieve non-existant publisher", (done) ->
@@ -104,7 +104,7 @@ module.exports = (user, admin) ->
 
         done()
 
-    # DELETE /api/v1/publishers
+    # DELETE /api/v1/publishers/:id
     it "Should delete previously created publishers", (done) ->
 
       requests = 3

@@ -160,7 +160,7 @@ setup = (options, imports, register) ->
   #   /dissapprove [admin-only] disapprove a publisher
   #
   #app.get "/api/v1/publishers/:action", (req, res) ->
-  app.get "/api/v1/publishers", (req, res) ->publishers.get req, res, false
+  app.get "/api/v1/publishers", (req, res) -> publishers.get req, res, false
   app.get "/api/v1/publishers/stats", (req, res) -> ####
   app.get "/api/v1/publishers/:id", (req, res) -> publishers.find req, res
   app.post "/api/v1/publishers", (req, res) -> publishers.create req, res
