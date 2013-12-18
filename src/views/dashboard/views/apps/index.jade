@@ -22,7 +22,7 @@ a.new-item(href="/apps/new")
     .metrics
       canvas(linechart, options="options", data="app.chart", width="340", height="200")
       .wrap: .text
-        .amount.large $ {{ app.earnings | number:2 }}
+        .amount.large $ {{ app.stats.earnings | number:2 }}
         .desc Total Revenue
     .stats
       .tab
