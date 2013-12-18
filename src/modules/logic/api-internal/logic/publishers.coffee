@@ -22,6 +22,9 @@ module.exports = (utility) ->
 
   # Create new publisher on identified user
   #
+  # POST /api/v1/publishers
+  # Tested in api-publishers.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
@@ -55,6 +58,9 @@ module.exports = (utility) ->
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
   #
+  # POST /api/v1/publishers/:id
+  # Tested in api-publishers.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   save: (req, res) ->
@@ -75,7 +81,10 @@ module.exports = (utility) ->
       pub.save()
       res.json 200, pub.toAPI()
 
-  # Delete publisher, user must either own the publisher or be an admin
+  # Delete publisher, user must either own the publisher or be an admin,
+  #
+  # DELETE /api/v1/publishers/:id
+  # Tested in api-publishers.coffee
   #
   # @param [Object] req request
   # @param [Object] res response
@@ -94,6 +103,9 @@ module.exports = (utility) ->
   # Fetches owned publisher list.
   # Admin privileges are required to fetch all.
   #
+  # GET /api/v1/publishers
+  # Tested in api-publishers.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   # @param [Boolean] all fetch all, defaults to false
@@ -111,6 +123,9 @@ module.exports = (utility) ->
 
   # Finds a single publisher by ID
   #
+  # GET /api/v1/publishers/:id
+  # Tested in api-publishers.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   find: (req, res) ->
@@ -122,6 +137,8 @@ module.exports = (utility) ->
       if not pub then res.send(404); return
 
       res.json pub.toAPI()
+
+  ###
 
   # Updates publisher status if applicable
   #
@@ -175,3 +192,5 @@ module.exports = (utility) ->
 
       pub.save()
       res.send 200
+
+  ###

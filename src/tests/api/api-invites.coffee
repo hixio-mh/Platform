@@ -23,7 +23,7 @@ module.exports = (user, admin) ->
     user.attachCookies req
     req.expect(401).end (err, res) -> cb()
 
-  describe "Invites", ->
+  describe "Invites API", ->
 
     # /api/v1/invite/add
     it "Should reject invalid invite key", (done) ->

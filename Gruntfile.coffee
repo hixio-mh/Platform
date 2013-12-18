@@ -245,7 +245,7 @@ module.exports = (grunt) ->
     mochaTest:
       test:
         options:
-          reporter: "nyan"
+          reporter: "spec"
           require: "coffee-script"
         src: [
           "#{srcDir}/tests/*.coffee"

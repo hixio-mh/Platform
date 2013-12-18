@@ -22,6 +22,9 @@ module.exports = (utility) ->
 
   # Create an ad, expects "name" in url and req.cookies.user to be valid
   #
+  # POST /api/v1/ads
+  # Tested in api-ads.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   create: (req, res) ->
@@ -43,6 +46,9 @@ module.exports = (utility) ->
       res.json 200, newAd.toAPI()
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
+  #
+  # DELETE /api/v1/ads/:id
+  # Tested in api-ads.coffee
   #
   # @param [Object] req request
   # @param [Object] res response
@@ -69,6 +75,9 @@ module.exports = (utility) ->
 
   # Fetches owned ads
   #
+  # GET /api/v1/ads
+  # Tested in api-ads.coffee
+  #
   # @param [Object] req request
   # @param [Object] res response
   get: (req, res) ->
@@ -85,6 +94,9 @@ module.exports = (utility) ->
 
 
   # Finds a single ad by ID
+  #
+  # GET /api/v1/ads/:id
+  # Tested in api-ads.coffee
   #
   # @param [Object] req request
   # @param [Object] res response
