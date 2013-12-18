@@ -9,6 +9,7 @@ agentAdmin = superagent.agent()
 
 apiInviteTests = require "./api/api-invites"
 apiAdTests = require "./api/api-ads"
+apiPublisherTests = require "./api/api-publishers"
 
 # Basic authentication test, also sets up user for other tests
 describe "Authentication", ->
@@ -34,3 +35,4 @@ describe "Authentication", ->
 # Run all other API tests using authenticated credentials from above
 apiInviteTests agent, agentAdmin
 apiAdTests agent, agentAdmin
+apiPublisherTests agent, agentAdmin

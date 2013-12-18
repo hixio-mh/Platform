@@ -4,13 +4,24 @@ supertest = require "supertest"
 
 api = supertest "http://localhost:8080"
 
-actuallyDone = (done, i) -> i--; if i > 0 then return i; else done()
-
 # Keep track of the invites we create
 inviteAId = ""
 inviteBId = ""
 
 module.exports = (user, admin) ->
+
+  util = require("../utility") api, user, admin
+
+  validateInviteFormat = (invite) ->
+    expect(invite.email).to.exist
+    expect(invite.code).to.exist
+
+    util.apiObjectIdSanitizationCheck invite
+
+  unauthorizedUserCheck = (user, route, cb) ->
+    req = api.get route
+    user.attachCookies req
+    req.expect(401).end (err, res) -> cb()
 
   describe "Invites", ->
 
@@ -32,7 +43,7 @@ module.exports = (user, admin) ->
 
         inviteAId = res.body.id
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = api.get "/api/v1/invite/add?key=T13S7UESiorFUWMI&email=t1@t.com&test=true"
       req.expect(200).expect("Content-Type", /json/).end (err, res) ->
@@ -41,7 +52,7 @@ module.exports = (user, admin) ->
 
         inviteBId = res.body.id
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # /api/v1/invite/all
     it "Should return full invite list for admins only", (done) ->
@@ -49,17 +60,16 @@ module.exports = (user, admin) ->
       requests = 2
 
       unauthorizedUserCheck user, "/api/v1/invite/all", ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
-      req = api.get "/api/v1/invite/all"
-      admin.attachCookies req
+      req = util.adminRequest "/api/v1/invite/all"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
 
         res.body.should.be.an "array"
         validateInviteFormat invite for invite in res.body
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # /api/v1/invite/update
     it "Should let an admin edit an existing invite", (done) ->
@@ -67,12 +77,11 @@ module.exports = (user, admin) ->
       requests = 2
 
       unauthorizedUserCheck user, "/api/v1/invite/update", ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       email = String Math.floor(Math.random() * 10000)
 
-      req = api.get "/api/v1/invite/update?id=#{inviteAId}&code=123&email=#{email}"
-      admin.attachCookies req
+      req = util.adminRequest "/api/v1/invite/update?id=#{inviteAId}&code=123&email=#{email}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
 
@@ -80,7 +89,7 @@ module.exports = (user, admin) ->
         res.body.code.should.equal "123"
         res.body.email.should.equal email
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # /api/v1/invite/delete
     it "Should let an admin delete an existing invite", (done) ->
@@ -88,31 +97,14 @@ module.exports = (user, admin) ->
       requests = 3
 
       unauthorizedUserCheck user, "/api/v1/invite/delete", ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
-      req = api.get "/api/v1/invite/delete?id=#{inviteAId}"
-      admin.attachCookies req
+      req = util.adminRequest "/api/v1/invite/delete?id=#{inviteAId}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
-      req = api.get "/api/v1/invite/delete?id=#{inviteBId}"
-      admin.attachCookies req
+      req = util.adminRequest "/api/v1/invite/delete?id=#{inviteBId}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
-        requests = actuallyDone done, requests
-
-unauthorizedUserCheck = (user, route, cb) ->
-  req = api.get route
-  user.attachCookies req
-  req.expect(401).end (err, res) -> cb()
-
-apiObjectIdSanitizationCheck = (object) ->
-  expect(object._id).to.not.exist
-  expect(object.id).to.exist
-
-validateInviteFormat = (invite) ->
-  expect(invite.email).to.exist
-  expect(invite.code).to.exist
-
-  apiObjectIdSanitizationCheck invite
+        requests = util.actuallyDoneCheck done, requests
