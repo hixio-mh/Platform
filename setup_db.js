@@ -1,5 +1,9 @@
 use adefy_cloud;
 
+// Setup db user
+db.addUser("adefy_cloud", "GFtEA468aF73nYZh");
+
+// Setup test users
 testUser = {
   "email": "test@test.com",
   "fname": "Testy",
