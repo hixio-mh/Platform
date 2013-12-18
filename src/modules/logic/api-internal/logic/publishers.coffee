@@ -117,9 +117,19 @@ module.exports = (utility) ->
     db.model("Publisher").find query, (err, publishers) ->
       if utility.dbError err, res then return
 
+      pubCount = publishers.length
       ret = []
-      ret.push p.toAPI() for p in publishers
-      res.json ret
+
+      # Attach 24 hour stats to publishers, and return with complete data
+      for p in publishers
+        p.fetch24hStats (stats) ->
+
+          publisher = p.toAPI()
+          publisher.stats = stats
+          ret.push publisher
+
+          pubCount--
+          if pubCount == 0 then res.json ret
 
   # Finds a single publisher by ID
   #
@@ -136,7 +146,11 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
-      res.json pub.toAPI()
+      pub.fetch24hStats (stats) ->
+
+        publisher = pub.toAPI()
+        publisher.stats = stats
+        res.json publisher
 
   ###
 

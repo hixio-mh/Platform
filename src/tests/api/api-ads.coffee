@@ -89,9 +89,11 @@ module.exports = (user, admin) ->
         res.body.length.should.equal 3
         validateAdFormat ad for ad in res.body
 
-        res.body[0].id.should.equal testAdId1
-        res.body[1].id.should.equal testAdId2
-        res.body[2].id.should.equal testAdId3
+        idHunt = "#{testAdId1} #{testAdId2} #{testAdId3}"
+
+        expect(idHunt.indexOf res.body[0].id).to.be.at.least 0
+        expect(idHunt.indexOf res.body[1].id).to.be.at.least 0
+        expect(idHunt.indexOf res.body[2].id).to.be.at.least 0
 
         done()
 

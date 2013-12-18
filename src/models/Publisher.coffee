@@ -38,6 +38,8 @@ schema = new mongoose.Schema
   # (unsupported) 2 - Windows
   type: { type: Number, default: 0 }
 
+  earnings: { type: Number, default: 0 }
+
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
@@ -73,6 +75,20 @@ schema.methods.createAPIKey = ->
 
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
+
+# Requests statistics for the last 24 hours (earnings, clicks, impressions)
+#
+# Note: Also calls toAPI()
+schema.methods.fetch24hStats = (cb) ->
+
+  stats = {}
+
+  # Todo: Implement stat fetching from stats.adefy.com
+  stats.earnings24h = -1
+  stats.impressions24h = -1
+  stats.clicks24h = -1
+
+  cb stats
 
 schema.pre "save", (next) ->
   @createAPIKey()
