@@ -76,17 +76,20 @@ schema.methods.createAPIKey = ->
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
 
-# Requests statistics for the last 24 hours (earnings, clicks, impressions)
-#
-# Note: Also calls toAPI()
-schema.methods.fetch24hStats = (cb) ->
-
+# (earnings, clicks, impressions, ctr)
+schema.methods.fetchStats = (cb) ->
   stats = {}
 
   # Todo: Implement stat fetching from stats.adefy.com
   stats.earnings24h = -1
   stats.impressions24h = -1
   stats.clicks24h = -1
+  stats.ctr24h = -1
+
+  stats.earnings = -1
+  stats.impressions = -1
+  stats.clicks = -1
+  stats.ctr = -1
 
   cb stats
 

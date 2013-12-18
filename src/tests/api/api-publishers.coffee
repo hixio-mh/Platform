@@ -35,6 +35,12 @@ module.exports = (user, admin) ->
     expect(publisher.stats.earnings24h).to.exist
     expect(publisher.stats.impressions24h).to.exist
     expect(publisher.stats.clicks24h).to.exist
+    expect(publisher.stats.ctr24h).to.exist
+
+    expect(publisher.stats.earnings).to.exist
+    expect(publisher.stats.impressions).to.exist
+    expect(publisher.stats.clicks).to.exist
+    expect(publisher.stats.ctr).to.exist
 
   describe "Publishers API", ->
 

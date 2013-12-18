@@ -122,7 +122,7 @@ module.exports = (utility) ->
 
       # Attach 24 hour stats to publishers, and return with complete data
       for p in publishers
-        p.fetch24hStats (stats) ->
+        p.fetchStats (stats) ->
 
           publisher = p.toAPI()
           publisher.stats = stats
@@ -146,7 +146,7 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
-      pub.fetch24hStats (stats) ->
+      pub.fetchStats (stats) ->
 
         publisher = pub.toAPI()
         publisher.stats = stats
