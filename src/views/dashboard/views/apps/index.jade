@@ -17,7 +17,7 @@ a.new-item(href="/apps/new")
   | New app
 .grid
   a.item(ng-repeat="app in apps" ng-href="/apps/{{app.id}}")
-    img.icon(src="http://i1-news.softpedia-static.com/images/news2/Free-Angry-Birds-Release-Brings-Another-15-Levels-to-iPhone-iPod-touch-2.jpg")
+    img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
     .metrics
       canvas(linechart, options="options", data="app.chart", width="340", height="200")
@@ -26,8 +26,8 @@ a.new-item(href="/apps/new")
         .desc Total Revenue
     .stats
       .tab
-        .amount(data-ng-bind="app.requests")
-        .desc Requests
+        .amount(data-ng-bind="app.stats.impressions24h")
+        .desc Impressions Today
       .tab
-        .amount $ {{ app.earnings | number:2 }}
-        .desc Made Today
+        .amount $ {{ app.stats.earnings24h | number:2 }}
+        .desc Revenue Today

@@ -31,6 +31,11 @@ module.exports = (user, admin) ->
 
     util.apiObjectIdSanitizationCheck publisher
 
+  expectPublisherStats = (publisher) ->
+    expect(publisher.stats.earnings24h).to.exist
+    expect(publisher.stats.impressions24h).to.exist
+    expect(publisher.stats.clicks24h).to.exist
+
   describe "Publishers API", ->
 
     # GET /api/v1/publishers/:id
@@ -74,19 +79,28 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
+
         validatePublisherFormat res.body
+        expectPublisherStats res.body
+
         requests = actuallyDone done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
+
         validatePublisherFormat res.body
+        expectPublisherStats res.body
+
         requests = actuallyDone done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
+
         validatePublisherFormat res.body
+        expectPublisherStats res.body
+
         requests = actuallyDone done, requests
 
     # GET /api/v1/publishers
@@ -96,11 +110,15 @@ module.exports = (user, admin) ->
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
         res.body.length.should.equal 3
-        validatePublisherFormat publisher for publisher in res.body
 
-        res.body[0].id.should.equal testPublisherId1
-        res.body[1].id.should.equal testPublisherId2
-        res.body[2].id.should.equal testPublisherId3
+        validatePublisherFormat publisher for publisher in res.body
+        expectPublisherStats publisher for publisher in res.body
+
+        idHunt = "#{testPublisherId1} #{testPublisherId2} #{testPublisherId3}"
+
+        expect(idHunt.indexOf res.body[0].id).to.be.at.least 0
+        expect(idHunt.indexOf res.body[1].id).to.be.at.least 0
+        expect(idHunt.indexOf res.body[2].id).to.be.at.least 0
 
         done()
 
