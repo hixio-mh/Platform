@@ -55,6 +55,7 @@ module.exports = (grunt) ->
   moduleSrc = [
     "*.coffee"
     "modules/**/*.coffee"
+    "helpers/*.coffee"
   ]
   clientSrc = [
     "client/*.coffee"

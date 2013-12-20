@@ -4,23 +4,23 @@ include _menu
   h1 Statistics
   .stats.campaign
     .stat: .wrap
-      .amount.large ▲ {{ campaign.impressions | number }}
-      .desc Impressions
+      .amount.large ▲ {{ campaign.stats.impressions | number }}
+      .desc Total Impressions
     .stat: .wrap
-      .amount.large ▲ {{ stats.daily.impressions | number }}
-      .desc Impressions (daily)
+      .amount.large ▲ {{ campaign.stats.impressions24h | number }}
+      .desc Impressions Today
     .stat: .wrap
-      .amount.large ▲ {{ campaign.clicks | number }}
-      .desc Clicks
+      .amount.large ▲ {{ campaign.stats.clicks | number }}
+      .desc Total Clicks
     .stat: .wrap
-      .amount.large ▲ {{ stats.daily.clicks | number }}
-      .desc Clicks (daily)
+      .amount.large ▲ {{ campaign.stats.clicks24h | number }}
+      .desc Clicks Today
     .stat: .wrap
-      .amount.large {{ campaign.ctr | number }} %
-      .desc CTR
+      .amount.large {{ campaign.stats.ctr | number }} %
+      .desc Lifetime CTR
     .stat: .wrap
-      .amount.large {{ stats.daily.ctr | number }} %
-      .desc CTR (daily)
+      .amount.large {{ campaign.stats.ctr24h | number }} %
+      .desc Today's CTR
 
 .graphs
   .graph

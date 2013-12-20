@@ -11,6 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+graphiteQuery = require("../helpers/graphiteQuery") "http://stats.adefy.com"
 mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
@@ -80,18 +81,51 @@ schema.methods.createAPIKey = ->
 schema.methods.fetchStats = (cb) ->
   stats = {}
 
-  # Todo: Implement stat fetching from stats.adefy.com
-  stats.earnings24h = -1
-  stats.impressions24h = -1
-  stats.clicks24h = -1
-  stats.ctr24h = -1
+  query = graphiteQuery.query()
+  query.enableFilter()
 
-  stats.earnings = -1
-  stats.impressions = -1
-  stats.clicks = -1
-  stats.ctr = -1
+  query.addStatCountTarget "publishers.#{@_id}.impressions", "summarize", "24hours"
+  query.addStatCountTarget "publishers.#{@_id}.clicks", "summarize", "24hours"
+  query.addStatCountTarget "publishers.#{@_id}.ctr", "summarize", "24hours"
+  query.addStatCountTarget "publishers.#{@_id}.earnings", "summarize", "24hours"
 
-  cb stats
+  query.addStatCountTarget "publishers.#{@_id}.impressions", "summarize", "1year"
+  query.addStatCountTarget "publishers.#{@_id}.clicks", "summarize", "1year"
+  query.addStatCountTarget "publishers.#{@_id}.ctr", "summarize", "1year"
+  query.addStatCountTarget "publishers.#{@_id}.earnings", "summarize", "1year"
+
+  query.exec (data) ->
+
+    # Default stats object, since stats that have never been logged
+    # (new publisher) don't even return 0
+    stats =
+      impressions24h: 0
+      clicks24h: 0
+      ctr24h: 0
+      earnings24h: 0
+
+      impressions: 0
+      clicks: 0
+      ctr: 0
+      earnings: 0
+
+    # Helper
+    assignMatching = (res, stat, statName) ->
+      if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
+
+    # Iterate over the result, and attempt to find matching responses
+    for res in data
+
+      assignMatching res, stats.impressions, ".impressions,"
+      assignMatching res, stats.impressions24h, ".impressions24h,"
+      assignMatching res, stats.clicks, ".clicks,"
+      assignMatching res, stats.clicks24h, ".clicks24h,"
+      assignMatching res, stats.ctr, ".ctr,"
+      assignMatching res, stats.ctr24h, ".ctr24h,"
+      assignMatching res, stats.earnings, ".earnings,"
+      assignMatching res, stats.earnings24h, ".earnings24h,"
+
+    cb stats
 
 # (stat is earnings, clicks, impressions, or ctr)
 schema.methods.fetchCustomStat = (range, stat, cb) ->
