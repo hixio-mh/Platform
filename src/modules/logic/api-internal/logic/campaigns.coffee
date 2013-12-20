@@ -83,12 +83,8 @@ module.exports = (utility) ->
         res.send 403
         return
 
-      res.json campaign.toAnonAPI()
-      spew.info "Campaign fetch path: TODO!"
-      return
-
       campaign.fetchStats (stats) ->
-        campaign = campaign.toAPI()
+        campaign = campaign.toAnonAPI()
         campaign.stats = stats
         res.json campaign
 
@@ -225,7 +221,10 @@ module.exports = (utility) ->
     if not utility.param req.param("range"), res, "Temporal range" then return
     if not utility.param req.param("stat"), res, "Stat" then return
 
-    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+    db.model("Campaign")
+    .findById(req.param("id"))
+    .populate("ads")
+    .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then res.send(404); return
 

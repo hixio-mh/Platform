@@ -47,12 +47,14 @@ schema = new mongoose.Schema
     bid: { type: Number, default: 0 }
   ]
 
+schema.methods.getGraphiteId = -> "ads.#{@_id}"
+
 # (spent, clicks, impressions, ctr)
 schema.methods.fetchStats = (cb) ->
   stats = {}
 
   graphiteInterface.fetchStats
-    prefix: "ads.#{@_id}"
+    prefix: @getGraphiteId()
     filter: true
     request: [
       range: "24hours"
@@ -100,7 +102,7 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
   query = graphiteInterface.query()
   query.enableFilter()
 
-  query.addStatCountTarget "ads.#{@_id}.#{stat}"
+  query.addStatCountTarget "#{getGraphiteId()}.#{stat}"
   query.from = "-#{range}"
 
   query.exec (data) ->

@@ -10,25 +10,36 @@ module.exports = (@host) -> {
   getHost: -> @host
 
   fetchStats: (opts) ->
+    spew.info JSON.stringify opts
+
     if opts == undefined
       spew.error "No stat fetch opts set"
       return
     else if opts.prefix == undefined
       spew.error "No stat fetch prefix set"
       return
-    else if opts.request == undefined or opts.request.length == 0
+    else if opts.request == undefined
       spew.error "No stat fetch requests set"
       return
     else if opts.cb == undefined
       spew.error "No stat fetch callback set"
       return
 
+    # Bail early if no requests passed in
+    if opts.request.length == 0 then opts.cb []
+
     query = @query()
     if opts.filter == true then query.enableFilter()
 
     for req in opts.request
       for stat in req.stats
-        query.addStatCountTarget "#{opts.prefix}.#{stat}", "summarize", req.range
+
+        if stat.prefix != undefined
+          prefix = stat.prefix
+        else
+          prefix = opts.prefix
+
+        query.addStatCountTarget "#{prefix}.#{stat}", "summarize", req.range
 
     query.exec (data) -> opts.cb data
 

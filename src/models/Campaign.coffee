@@ -56,6 +56,8 @@ schema = new mongoose.Schema
   platforms: { type: Array, default: [] }
   devices: { type: Array, default: [] }
 
+schema.methods.getGraphiteId = -> "campaigns.#{@_id}"
+
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!
 #
@@ -63,20 +65,15 @@ schema = new mongoose.Schema
 # @return [Object] metrics
 schema.methods.fetchStats = (cb) ->
 
-  cb {
-    clicks: -1
-    impressions: -1
-    ctr: -1
-    spent: -1
-  }
-  return
+  stats =
+    clicks: 0
+    impressions: 0
+    ctr: 0
+    spent: 0
 
-  # Totals
-  clicks = 0
-  impressions = 0
-  spent = 0
+  # Build request object with all of our ad ids
+  request = []
 
-  # Iterate over ads and sum values
   for ad in @ads
 
     # Ensure ads have been populated!
@@ -84,35 +81,62 @@ schema.methods.fetchStats = (cb) ->
       throw new Error "Ads must be populated to retrieve lifetime stats!"
       return
 
-    # Query redis
-    ref = "#{@_id}:#{ad._id}"
+    request.push
+      range: "1year"
+      stats: ["impressions", "clicks", "ctr", "spent"]
+      prefix: ad.getGraphiteId()
 
-    redis.get ref, (err, data) ->
-      if err
-        spew.error
-        cb null
-      else
+  graphiteInterface.fetchStats
+    prefix: @getGraphiteId()
+    filter: true
+    request: request
+    cb: (data) ->
 
-        # Sanity check
-        if data == null then throw new Error "No redis key for ad! #{ref}"
+      # Sum! :D
+      for res in data
 
-        # Split, and sum it up
-        #
-        # sxx...x|rimpressions|avgcpm|impressions|clicks|spent
-        data = data.split "|"
+        if res.target.indexOf(".impressions,") != -1
+          stats.impressions += res.datapoints[0].y
 
-        impressions += data[3]
-        clicks += data[4]
-        spent += data[5]
+        if res.target.indexOf(".clicks,") != -1
+          stats.clicks += res.datapoints[0].y
 
-        # Ship it
-        cb { clicks: clicks, impressions: impressions, spent: spent }
+        if res.target.indexOf(".ctr,") != -1
+          stats.ctr += res.datapoints[0].y
+
+        if res.target.indexOf(".spent,") != -1
+          stats.spent += res.datapoints[0].y
+
+      cb stats
 
 # (stat is spent, clicks, impressions, or ctr)
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
-  # Todo: Implement
-  cb -1
+  query = graphiteInterface.query()
+  query.enableFilter()
+
+  adQueryTargets = []
+
+  for ad in @ads
+
+    # Ensure ads have been populated!
+    if ad.name == undefined
+      throw new Error "Ads must be populated to retrieve lifetime stats!"
+      return
+
+    adQueryTargets.push "#{ad.getGraphiteId()}.#{stat}"
+
+  initialTarget = adQueryTargets[0]
+  adQueryTargets = adQueryTargets.splice 0, 1
+
+  query.addStatCountTarget initialTarget, "sum", adQueryTargets
+  query.from = "-#{range}"
+
+  query.exec (data) ->
+    if data == null then cb []
+    else if data[0] == undefined then cb []
+    else if data[0].datapoints == undefined then cb []
+    else cb data[0].datapoints
 
 schema.methods.toAPI = ->
   ret = @toObject()

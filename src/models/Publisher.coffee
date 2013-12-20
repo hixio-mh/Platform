@@ -77,12 +77,14 @@ schema.methods.createAPIKey = ->
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
 
+schema.methods.getGraphiteId = -> "publishers.#{@_id}"
+
 # (earnings, clicks, impressions, ctr)
 schema.methods.fetchStats = (cb) ->
   stats = {}
 
   graphiteInterface.fetchStats
-    prefix: "publishers.#{@_id}"
+    prefix: @getGraphiteId()
     filter: true
     request: [
       range: "24hours"
@@ -130,7 +132,7 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
   query = graphiteInterface.query()
   query.enableFilter()
 
-  query.addStatCountTarget "publishers.#{@_id}.#{stat}"
+  query.addStatCountTarget "#{getGraphiteId()}.#{stat}"
   query.from = "-#{range}"
 
   query.exec (data) ->
