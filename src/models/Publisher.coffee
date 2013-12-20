@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-graphiteQuery = require("../helpers/graphiteQuery") "http://stats.adefy.com"
+graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
@@ -81,98 +81,63 @@ schema.methods.createAPIKey = ->
 schema.methods.fetchStats = (cb) ->
   stats = {}
 
-  query = graphiteQuery.query()
-  query.enableFilter()
+  graphiteInterface.fetchStats
+    prefix: "publishers.#{@_id}"
+    filter: true
+    request: [
+      range: "24hours"
+      stats: ["impressions", "clicks", "ctr", "earnings"]
+    ,
+      range: "1year"
+      stats: ["impressions", "clicks", "ctr", "earnings"]
+    ]
+    cb: (data) ->
 
-  query.addStatCountTarget "publishers.#{@_id}.impressions", "summarize", "24hours"
-  query.addStatCountTarget "publishers.#{@_id}.clicks", "summarize", "24hours"
-  query.addStatCountTarget "publishers.#{@_id}.ctr", "summarize", "24hours"
-  query.addStatCountTarget "publishers.#{@_id}.earnings", "summarize", "24hours"
+      # Default stats object, since stats that have never been logged
+      # (new publisher) don't even return 0
+      stats =
+        impressions24h: 0
+        clicks24h: 0
+        ctr24h: 0
+        earnings24h: 0
 
-  query.addStatCountTarget "publishers.#{@_id}.impressions", "summarize", "1year"
-  query.addStatCountTarget "publishers.#{@_id}.clicks", "summarize", "1year"
-  query.addStatCountTarget "publishers.#{@_id}.ctr", "summarize", "1year"
-  query.addStatCountTarget "publishers.#{@_id}.earnings", "summarize", "1year"
+        impressions: 0
+        clicks: 0
+        ctr: 0
+        earnings: 0
 
-  query.exec (data) ->
+      # Helper
+      assignMatching = (res, stat, statName) ->
+        if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
 
-    # Default stats object, since stats that have never been logged
-    # (new publisher) don't even return 0
-    stats =
-      impressions24h: 0
-      clicks24h: 0
-      ctr24h: 0
-      earnings24h: 0
+      # Iterate over the result, and attempt to find matching responses
+      for res in data
 
-      impressions: 0
-      clicks: 0
-      ctr: 0
-      earnings: 0
+        assignMatching res, stats.impressions, ".impressions,"
+        assignMatching res, stats.impressions24h, ".impressions24h,"
+        assignMatching res, stats.clicks, ".clicks,"
+        assignMatching res, stats.clicks24h, ".clicks24h,"
+        assignMatching res, stats.ctr, ".ctr,"
+        assignMatching res, stats.ctr24h, ".ctr24h,"
+        assignMatching res, stats.earnings, ".earnings,"
+        assignMatching res, stats.earnings24h, ".earnings24h,"
 
-    # Helper
-    assignMatching = (res, stat, statName) ->
-      if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
-
-    # Iterate over the result, and attempt to find matching responses
-    for res in data
-
-      assignMatching res, stats.impressions, ".impressions,"
-      assignMatching res, stats.impressions24h, ".impressions24h,"
-      assignMatching res, stats.clicks, ".clicks,"
-      assignMatching res, stats.clicks24h, ".clicks24h,"
-      assignMatching res, stats.ctr, ".ctr,"
-      assignMatching res, stats.ctr24h, ".ctr24h,"
-      assignMatching res, stats.earnings, ".earnings,"
-      assignMatching res, stats.earnings24h, ".earnings24h,"
-
-    cb stats
+      cb stats
 
 # (stat is earnings, clicks, impressions, or ctr)
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
-  # Note: We ignore stat for now
+  query = graphiteInterface.query()
+  query.enableFilter()
 
-  range = new String range
-  range.has = (str) -> @toString().indexOf(str) > 0
-  data = {}
+  query.addStatCountTarget "publishers.#{@_id}.#{stat}"
+  query.from = "-#{range}"
 
-  if range.has "min" or range.has "minute" or range.has "minutes"
-
-    range = range.split("min").join ""
-    range = range.split("minute").join ""
-    range = range.split("minutes").join ""
-    range = Number range
-
-    for minute in [0...range]
-      timestamp = Date.now() - (minute * 60000)
-      data[timestamp] = Math.round Math.random() * 100
-
-  else if range.has "hr" or range.has "hour" or range.has "hours"
-
-    range = range.split("hr").join ""
-    range = range.split("hour").join ""
-    range = range.split("hours").join ""
-    range = Number range
-
-    for hour in [0...range]
-      for min in [0...60]
-        timestamp = Date.now() - (min * 60000) - (hour * 3600000)
-        data[timestamp] = Math.round Math.random() * 100
-
-  else if range.has "d" or range.has "day" or range.has "days"
-
-    range = range.split("d").join ""
-    range = range.split("day").join ""
-    range = range.split("days").join ""
-    range = Number range
-
-    for day in [0...range]
-      for hour in [0...24]
-        for fiveMin in [0...12] # 5min
-          timestamp = Date.now() - (fiveMin * 300000) - (hour * 3600000) - (day * 86400000)
-          data[timestamp] = Math.round Math.random() * 100
-
-  cb data
+  query.exec (data) ->
+    if data == null then cb []
+    else if data[0] == undefined then cb []
+    else if data[0].datapoints == undefined then cb []
+    else cb data[0].datapoints
 
 schema.pre "save", (next) ->
   @createAPIKey()
