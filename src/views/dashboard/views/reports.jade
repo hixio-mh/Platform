@@ -1,8 +1,10 @@
-.index
+.tabs-wrap
   .tabs
     .tab(ng-click="tab = 'campaigns'" ng-class="{active: tab == 'campaigns'}") Campaigns
     .tab(ng-click="tab = 'ads'" ng-class="{active: tab == 'ads'}") Ads
     .tab(ng-click="tab = 'apps'" ng-class="{active: tab == 'apps'}") Apps
+
+.index
   select.metrics(chosen data-placeholder="Choose a metric" ng-options="metric for metric in metrics" ng-model="metric")
 
   .right: select(chosen)
