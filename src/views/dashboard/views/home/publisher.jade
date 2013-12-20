@@ -12,20 +12,21 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
+.stats.dashboard
+  .stat: .wrap
+    .amount.large $ 381.23
+    .desc Earned today
+  .stat: .wrap
+    .amount.large ▲ 8,351
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 251
+    .desc Clicks
+  .stat: .wrap
+    .amount.large $ 472.75
+    .desc Total revenue
+
 .index
-  .stats.dashboard
-    .stat: .wrap
-      .amount.large $ 381.23
-      .desc Earned today
-    .stat: .wrap
-      .amount.large ▲ 8,351
-      .desc Impressions today
-    .stat: .wrap
-      .amount.large ▲ 251
-      .desc Clicks
-    .stat: .wrap
-      .amount.large $ 472.75
-      .desc Total revenue
   a.switch-view(href="/home/advertiser") Switch to advertiser view
   canvas(id="myChart" width="940" height="300")
 
