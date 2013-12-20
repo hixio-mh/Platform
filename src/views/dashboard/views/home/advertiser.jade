@@ -12,20 +12,21 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ 8,351
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 251
+    .desc Clicks today
+  .stat: .wrap
+    .amount.large 70,25 %
+    .desc CTR today
+  .stat: .wrap
+    .amount.large $ 472.75
+    .desc Total revenue
+
 .index
-  .stats.dashboard
-    .stat: .wrap
-      .amount.large ▲ 8,351
-      .desc Impressions today
-    .stat: .wrap
-      .amount.large ▲ 251
-      .desc Clicks today
-    .stat: .wrap
-      .amount.large 70,25 %
-      .desc CTR today
-    .stat: .wrap
-      .amount.large $ 472.75
-      .desc Total revenue
   a.switch-view(href="/home/publisher") Switch to publisher view
   canvas(id="myChart" width="940" height="300")
 

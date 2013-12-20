@@ -26,7 +26,7 @@ a
   text-decoration: none
   cursor: pointer
   &:hover
-    color: red
+    color: #5897fb
 
 .center
   margin: 0 auto
@@ -118,21 +118,20 @@ header
   height 52px
   line-height 52px
   color #fff
-  background-color hsl(196, 77%, 55%)
-  border-bottom 1px solid rgb(21, 151, 199)
+  background-color #0a242e
+  border-bottom 1px solid rgba(0,0,0,.1)
   padding: 0 20px
   text-shadow: 0 1px 1px rgba(0,0,0,.3)
   box-shadow: 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
   position: fixed
   z-index: 100
-  .menu
-    box-shadow: -1px 0 rgba(0,0,0,.17), 1px 0 rgba(255,255,255,.2) // outer border on first and last element
   .menu > a, .menu > .da
-    border-left: 1px solid rgba(255,255,255,.2)
-    border-right: 1px solid rgba(0,0,0,.17)
+    border-left: 1px solid transparent
+    border-right: 1px solid transparent
     &:hover, &.active
-      border-left-color: transparent
-      box-shadow: -1px 0 rgba(0,0,0,0.2), -2px 0 rgba(255,255,255,0.2)
+      color: #33b5e5;
+      border-color: rgba(255,255,255,.12);
+      background-color: rgba(0,0,0,.3)
 
 #logo
   font-family Oleo Script
@@ -161,6 +160,7 @@ header
   color: inherit
   display: inline-block
   padding: 0 20px
+  cursor: pointer
   &.active, &:hover
     background-color: rgba(0,0,0,.1)
 
@@ -246,7 +246,7 @@ header
 .amount
   font-size: 22px;
   line-height: 1.2
-  font-weight: bold
+  font-weight: 100
   &.large
     font-size: 40px
 
@@ -437,7 +437,6 @@ fieldset
     border-radius: 4px;
   .name
     display: inline-block;
-    font-weight: 600;
   .metrics
     position: relative;
     canvas
@@ -601,14 +600,15 @@ fieldset
   margin: 0 auto
   max-width: 920px
 .stats.dashboard
-  background-color: #fff
-  max-width: 920px
-  margin: 0 auto
-  text-align: right
-  border: 1px solid #ccc
-  border-top: none
+  background-color: #33b5e5
+  color: #fff
+  text-align: center
+  border-bottom: 1px solid rgba(0,0,0,.1)
   .stat
     border-right: none
+  .desc
+    color: #fff
+    opacity: .7
 .news
   width: 50%
   display: inline-block
@@ -720,25 +720,30 @@ table.info
     background-color: white
 
 /* reports tabs */
+.tabs-wrap
+  background-color: #33b5e5
+  border-bottom: 1px solid rgba(0,0,0,.1)
+  margin-bottom: 20px
 .tabs
   display: table
-  width: 100%
-  border-collapse: collapse
-  margin-bottom: 20px
+  max-width: 920px
+  margin: 0 auto
+  margin-bottom: -1px
   .tab
     cursor: pointer
-    background-color: white
     display:table-cell
     table-layout: fixed
     width: 1%
     padding: 15px
     text-align: center
-    border: 1px solid #ccc
-    border-top: none
-    font-weight: 600
-  .tab:hover, .tab.active
+    border-right: 1px solid rgba(0,0,0,.1)
     color: #fff
-    background-color: #333
+  .tab:first-of-type
+    border-left: 1px solid rgba(0,0,0,.1)
+  .tab:hover, .tab.active
+    color: #33b5e5
+    background-color: #fff
+    border-bottom: 1px solid rgba(0,0,0,.1)
 
 .right
   float: right

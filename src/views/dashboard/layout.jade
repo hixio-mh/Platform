@@ -41,7 +41,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body(data-ng-controller="rootController" ng-class="{withNotification: notification}")
+  body(data-ng-controller="rootController" ng-class="{withNotification: notification}").tk-proxima-nova
     header.navbar.cf
       #logo Adefy
       .menu.left.full
@@ -127,3 +127,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
         script(src="/client/dashboard/ctrl/admin/invites.js")
         script(src="/client/dashboard/ctrl/admin/users.js")
         script(src="/client/dashboard/ctrl/admin/publishers.js")
+
+      script(src="//use.typekit.net/udl8vci.js")
+      script.
+        try{Typekit.load();}catch(e){}
+      // ferno │ .tk-proxima-nova
