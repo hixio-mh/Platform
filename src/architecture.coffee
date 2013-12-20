@@ -16,6 +16,7 @@ module.exports = [
   "./modules/line/express",
   "./modules/line/snapshot",
   "./modules/line/socketio",
+  "./modules/core/core-stats",
 
   "./modules/core/core-init-snapshot",
   "./modules/line/userauth",
