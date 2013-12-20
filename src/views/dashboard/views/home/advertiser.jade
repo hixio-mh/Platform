@@ -28,7 +28,9 @@
 
 .index.dashboard
   a.switch-view(href="/home/publisher") Switch to publisher view
-  canvas(id="myChart" width="940" height="300")
+
+  div
+    canvas(id="myChart" width="940" height="300")
 
   h1 Top Campaigns
   table.info
@@ -45,33 +47,34 @@
         td {{ campaign.clicks | number }}
         td {{ campaign.ctr | number:2 }}%
         td {{ campaign.spent | currency:$ }}
-  h1 News
-  ul.news
-    li
-      span.title News item
-      span.date Sept 23
-      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic.
-    li
-      span.title News item
-      span.date Sept 23 
-      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right.
-    li
-      span.title News item
-      span.date Sept 23 
-      p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
-  ul.news
-    li
-      span.title News item
-      span.date Sept 23
-      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy.
-    li
-      span.title News item
-      span.date Sept 23 
-      p That is seventeen five - your half of the thirty-five thousand. 
-    li
-      span.title News item
-      span.date Sept 23 
-      p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+  div
+    h1 News
+    ul.news
+      li
+        span.title News item
+        span.date Sept 23
+        p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic.
+      li
+        span.title News item
+        span.date Sept 23 
+        p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right.
+      li
+        span.title News item
+        span.date Sept 23 
+        p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+    ul.news
+      li
+        span.title News item
+        span.date Sept 23
+        p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy.
+      li
+        span.title News item
+        span.date Sept 23 
+        p That is seventeen five - your half of the thirty-five thousand. 
+      li
+        span.title News item
+        span.date Sept 23 
+        p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
 
 
 

@@ -1,12 +1,12 @@
-* {-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+* {-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box }
 
 .cf:after {
-  clear:both;
-  content:".";
-  display:block;
-  font-size:0;
-  height:0;
-  line-height:0;
+  clear:both
+  content:"."
+  display:block
+  font-size:0
+  height:0
+  line-height:0
   visibility:hidden
 }
 .cf{zoom:1}
@@ -32,29 +32,29 @@ a
   margin: 0 auto
 
 button 
-  background: -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%);
-  border: 1px solid #bbb;
+  background: -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
+  border: 1px solid #bbb
   box-shadow: inset 0 1px rgba(255,255,255,.2)
-  color: #555;
-  text-shadow: 0 1px white;
-  padding: 7px;
-  border-radius: 5px;
+  color: #555
+  text-shadow: 0 1px white
+  padding: 7px
+  border-radius: 5px
   &:hover, &:active
-    background-image: linear-gradient(#eee 20%,#fff 80%);
-    box-shadow: 0 1px 0 #fff inset;
+    background-image: linear-gradient(#eee 20%,#fff 80%)
+    box-shadow: 0 1px 0 #fff inset
 
 button.blue
-  color: #fff;
-  background:  -webkit-linear-gradient(top,#34b5e5,#5897fb);
+  color: #fff
+  background:  -webkit-linear-gradient(top,#34b5e5,#5897fb)
   border: 1px solid #1597c7
   border-bottom: 1px solid rgba(0,0,0,.2)
   text-shadow: 0 1px 1px rgba(0,0,0,0.3)
-  box-shadow: inset 0 -1px rgba(255,255,255,0.15);
+  box-shadow: inset 0 -1px rgba(255,255,255,0.15)
   &:hover, &:active
-    box-shadow: 0 1px 0 rgba(255,255,255,.2) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.2) inset
     background: #5897fb
   &:focus
-    border-color: #385FDA;
+    border-color: #385FDA
 
 button.save
   margin: 7px auto
@@ -67,7 +67,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
   border: 1px solid #ccc
   border-radius: 4px
 
-  border:1px solid #aaa;
+  border:1px solid #aaa
   box-shadow: inset 0 15px 15px -15px rgba(0,0,0,.1)
   &.ng-invalid.ng-dirty, .submitted &.ng-invalid
     border: 1px solid #e74c3c !important //#c0392b
@@ -129,8 +129,8 @@ header
     border-left: 1px solid transparent
     border-right: 1px solid transparent
     &:hover, &.active
-      color: #33b5e5;
-      border-color: rgba(255,255,255,.12);
+      color: #33b5e5
+      border-color: rgba(255,255,255,.12)
       background-color: rgba(0,0,0,.3)
 
 #logo
@@ -138,18 +138,18 @@ header
   font-size 32px
   float left
   line-height 50px // font's x-height is fucked up, manually push up
-  margin-right: 25px;
+  margin-right: 25px
 
 .menu
   position: relative
   display: inline-block
   vertical-align: top
-  font-size: 14px;
+  font-size: 14px
 
 .menu.left
   float: left
 .menu.right
-  float: right;
+  float: right
 .menu.full i // a "full" menu has text + icons
   margin-right: 10px
 
@@ -244,15 +244,15 @@ header
   line-height: 1
 
 .amount
-  font-size: 22px;
+  font-size: 22px
   line-height: 1.2
   font-weight: 100
   &.large
     font-size: 40px
 
 .desc
-  font-size: 14px;
-  color: #999;
+  font-size: 14px
+  color: #999
 
 .inner
   padding: 25px
@@ -345,20 +345,20 @@ fieldset
 }
 .field
   margin: 5px 0
-  display: inline-block;
-  width: 100%;
+  display: inline-block
+  width: 100%
 
 .field.margin
-  padding-right: 15px;
+  padding-right: 15px
 
 .field.w25
-  width: 25%;
+  width: 25%
 .field.w50
-  width: 50%;
+  width: 50%
   select
     width: 100%
 .field.w75
-  width: 75%;
+  width: 75%
 
 .funds
   max-width: 570px
@@ -372,20 +372,20 @@ fieldset
 /* dropdown */
 .dropdown
   //display: none
-  background-color: #fff;
+  background-color: #fff
   box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1)
   border-radius: 5px
   position: absolute
-  right: 4px;
-  top: 100%;
-  color: #333;
+  right: 4px
+  top: 100%
+  color: #333
   text-shadow: none
   line-height: 40px
   width: 160px // needed?
   &.active 
     display: block
   a
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee
     display: block
     i
       margin-right: 10px
@@ -393,24 +393,24 @@ fieldset
       border-radius: 5px 5px 0 0
     &:last-of-type
       border-radius: 0 0 5px 5px 
-      border: none;
+      border: none
     &:hover
       background-color: #333
       color: #fff
 
   &:after
-    bottom: 100%;
-    border: solid transparent;
-    content: "";
-    height: 0;
-    width: 0;
-    position: absolute;
+    bottom: 100%
+    border: solid transparent
+    content: ""
+    height: 0
+    width: 0
+    position: absolute
 
     border-color: rgba(136, 183, 213, 0)
-    border-bottom-color: #fff;
-    border-width: 10px;
-    right: 16px;
-    margin-left: -10px;
+    border-bottom-color: #fff
+    border-width: 10px
+    right: 16px
+    margin-left: -10px
 
 /* apps/campaigns grid */
 .grid
@@ -425,22 +425,22 @@ fieldset
     border: 1px solid #c7c7c7
     display: inline-block
     box-shadow: 0 0 1px rgba(0,0,0,.2)
-    text-align: left;
+    text-align: left
     vertical-align: top
     cursor: pointer
     color: inherit !important
     .icon
-      max-width: 100%;
-      max-width: 48px;
-      vertical-align: middle;
-      margin: 0 15px;
-      border-radius: 4px;
+      max-width: 100%
+      max-width: 48px
+      vertical-align: middle
+      margin: 0 15px
+      border-radius: 4px
     .name
-      display: inline-block;
+      display: inline-block
     .metrics
-      position: relative;
+      position: relative
       canvas
-        margin-left: -2px; // it's slightly displaced
+        margin-left: -2px // it's slightly displaced
     .wrap
       position: absolute
       top: 0
@@ -449,7 +449,7 @@ fieldset
       bottom: 15px
       text-align: center
       background-color: rgba(255,255,255,.5)
-      line-height: 180px; // probably a better way to do this, set line height to <canvas> graph height
+      line-height: 180px // probably a better way to do this, set line height to <canvas> graph height
       // a lil' bit less, to center it properly
     .text
       display: inline-block
@@ -461,8 +461,8 @@ fieldset
     .desc
       text-shadow: 0 1px white
     .stats
-      margin-top: -15px;
-      border-bottom: none; // temp: cleanup
+      margin-top: -15px
+      border-bottom: none // temp: cleanup
       .tab
         width: 50%
         text-align: center
@@ -538,28 +538,28 @@ fieldset
 
 /* Login styles */
 .login
-  text-align: center;
+  text-align: center
   form
-    display: inline-block;
-    text-align: center;
+    display: inline-block
+    text-align: center
 
 /* modal styles -- ugly */
 .overlay
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  background-color: rgba(0,0,0,.7);
+  position: fixed
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  z-index: 999
+  background-color: rgba(0,0,0,.7)
   
 .modal-wrap
-  display: table;
-  height: 100%;
-  width: 100%;
+  display: table
+  height: 100%
+  width: 100%
 .modal-cell
-  display: table-cell;
-  vertical-align: middle;
+  display: table-cell
+  vertical-align: middle
 .modal
   max-width: 520px
   margin: 0 auto
@@ -756,14 +756,14 @@ table.info
     width: 100%
     min-height: 200px
 
-@media (min-width: 1200px) {
+@media (min-width: 1600px) {
   .index.dashboard {
-    max-width: 100%;
+    max-width: 100%
     div {
-      width: 45%;
-      display: inline-block;
-      margin: 20px 2.5%;
-      vertical-align: top;
+      width: 45%
+      display: inline-block
+      margin: 20px 2.5%
+      vertical-align: top
     }
   }
 }
@@ -786,118 +786,16 @@ graph {
 }
 
 .rickshaw_container .axis-y {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40px;
+  position: absolute
+  top: 0
+  bottom: 0
+  width: 40px
 }
 
 
 /* rickshaw */
-.rickshaw .detail {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.1);
-  bottom: 0;
-  width: 1px;
-  transition: opacity 0.25s linear;
-  -moz-transition: opacity 0.25s linear;
-  -o-transition: opacity 0.25s linear;
-  -webkit-transition: opacity 0.25s linear;
-}
-.rickshaw .detail.inactive {
-  opacity: 0;
-}
-.rickshaw .detail .item.active {
-  opacity: 1;
-}
-.rickshaw .detail .x_label {
-  font-family: Arial, sans-serif;
-  border-radius: 3px;
-  padding: 6px;
-  opacity: 0.5;
-  border: 1px solid #e0e0e0;
-  font-size: 12px;
-  position: absolute;
-  background: white;
-  white-space: nowrap;
-}
-.rickshaw .detail .x_label.left {
-  left: 0;
-}
-.rickshaw .detail .x_label.right {
-  right: 0;
-}
-.rickshaw .detail .item {
-  position: absolute;
-  z-index: 2;
-  border-radius: 3px;
-  padding: 0.25em;
-  font-size: 12px;
-  font-family: Arial, sans-serif;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  margin-left: 1em;
-  margin-right: 1em;
-  margin-top: -1em;
-  white-space: nowrap;
-}
-.rickshaw .detail .item.left {
-  left: 0;
-}
-.rickshaw .detail .item.right {
-  right: 0;
-}
-.rickshaw .detail .item.active {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.8);
-}
-.rickshaw .detail .item:after {
-  position: absolute;
-  display: block;
-  width: 0;
-  height: 0;
-
-  content: "";
-
-  border: 5px solid transparent;
-}
-.rickshaw .detail .item.left:after {
-  top: 1em;
-  left: -5px;
-  margin-top: -5px;
-  border-right-color: rgba(0, 0, 0, 0.8);
-  border-left-width: 0;
-}
-.rickshaw .detail .item.right:after {
-  top: 1em;
-  right: -5px;
-  margin-top: -5px;
-  border-left-color: rgba(0, 0, 0, 0.8);
-  border-right-width: 0;
-}
 .rickshaw .detail .dot {
-  width: 4px;
-  height: 4px;
-  margin-left: -2px;
-  margin-top: -2px;
-  border-radius: 5px;
-  position: absolute;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
-  background: white;
-  border-width: 2px;
-  border-style: solid;
-  display: none;
-  background-clip: padding-box;
-
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
-}
-.rickshaw .detail .dot.active {
-  display: block;
+  -moz-box-sizing: content-box
+  -webkit-box-sizing: content-box
+  box-sizing: content-box
 }
