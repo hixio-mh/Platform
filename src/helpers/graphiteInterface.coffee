@@ -2,19 +2,43 @@ config = require "../config.json"
 request = require "request"
 spew = require "spew"
 
-# Helper for graphite, builds and executes queries. Simplez
+# Helper for graphite, builds and executes queries, and offers stat fetching
+# helpers
 module.exports = (@host) -> {
 
   setHost: (@host) ->
   getHost: -> @host
 
-  # Builds a new query
+  fetchStats: (opts) ->
+    if opts == undefined
+      spew.error "No stat fetch opts set"
+      return
+    else if opts.prefix == undefined
+      spew.error "No stat fetch prefix set"
+      return
+    else if opts.request == undefined or opts.request.length == 0
+      spew.error "No stat fetch requests set"
+      return
+    else if opts.cb == undefined
+      spew.error "No stat fetch callback set"
+      return
+
+    query = @query()
+    if opts.filter == true then query.enableFilter()
+
+    for req in opts.request
+      for stat in req.stats
+        query.addStatCountTarget "#{opts.prefix}.#{stat}", "summarize", req.range
+
+    query.exec (data) -> opts.cb data
+
+  # Builds a new query. Todo: Document fully
   query: ->
 
     @from = ""
     @untill = ""
 
-    @_filter = true
+    @_filter = false
     @_targets = []
 
     @enableFilter = => @_filter = true
@@ -74,8 +98,10 @@ module.exports = (@host) -> {
 
         if target.method != null then query += ")"
 
+      if @from.length > 0 then query += "&from=#{@from}"
+      if @untill.length > 0 then query += "&untill=#{@untill}"
+
       query += "&format=json"
-      spew.info query
       query
 
     @_filterResponse = (data) ->
