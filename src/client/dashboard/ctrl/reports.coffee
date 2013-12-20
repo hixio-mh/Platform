@@ -52,7 +52,7 @@ window.AdefyDashboard.controller "reports", ($scope, $location) ->
     ]
   }
 
-window.AdefyDashboard.controller "appsReports", ($scope, $location, App) ->
+window.AdefyDashboard.controller "appsReports", ($scope, $location, App, $http) ->
   # get table data
   App.query (apps) ->
     # Calculate CTR, status, and active text
@@ -65,14 +65,15 @@ window.AdefyDashboard.controller "appsReports", ($scope, $location, App) ->
     # get total app statistics
     for app in $scope.apps
       $http.get("/api/v1/publishers/stats/#{app.id}/#{$scope.opts.metric}/#{$scope.opts.range}").success (resp) ->
-        $scope.totals.push
-          name: app.name
-          color: "#faa"
-          data: resp
+        if resp.length
+          $scope.totals.push
+            name: app.name
+            color: "#faa"
+            data: resp
 
   # get barchart app statistics
 
-window.AdefyDashboard.controller "campaignsReports", ($scope, $location, Campaign) ->
+window.AdefyDashboard.controller "campaignsReports", ($scope, $location, Campaign, $http) ->
   # get total app statistics
 
   # get barchart app statistics
@@ -88,10 +89,11 @@ window.AdefyDashboard.controller "campaignsReports", ($scope, $location, Campaig
 
     for campaign in $scope.campaigns
       $http.get("/api/v1/campaigns/stats/#{campaign.id}/#{$scope.opts.metric}/#{$scope.opts.range}").success (resp) ->
-        $scope.totals.push
-          name: campaign.name
-          color: "#faa"
-          data: resp
+        if resp.length
+          $scope.totals.push
+            name: campaign.name
+            color: "#faa"
+            data: resp
 
 window.AdefyDashboard.controller "adsReports", ($scope, $location, Ad, $http) ->
   # get total app statistics
@@ -110,7 +112,8 @@ window.AdefyDashboard.controller "adsReports", ($scope, $location, Ad, $http) ->
 
     for ad in $scope.ads
       $http.get("/api/v1/ads/stats/#{ad.id}/#{$scope.opts.metric}/#{$scope.opts.range}").success (resp) ->
-        $scope.totals.push
-          name: ad.name
-          color: "#faa"
-          data: resp
+        if resp.length
+          $scope.totals.push
+            name: ad.name
+            color: "#faa"
+            data: resp
