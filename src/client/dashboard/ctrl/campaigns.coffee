@@ -64,6 +64,13 @@ window.AdefyDashboard.controller "campaigns", ($scope, Campaign) ->
     pointDot: false,
   }
 
+window.AdefyDashboard.controller "campaignsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.campaign.active
+      $http.post "/api/v1/publishers/#{$scope.campaign.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.campaign.id}/deactivate"
+
 window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) ->
 
   $scope.min = {
@@ -133,7 +140,7 @@ window.AdefyDashboard.controller "campaignsNew", ($scope, $location, Campaign) -
         $scope.setNotification("There was an error with your form submission", "error")
     )
 
-window.AdefyDashboard.controller "campaignsShow", ($scope, $routeParams, Campaign) ->
+window.AdefyDashboard.controller "campaignsShow", ($scope, $routeParams, $http, Campaign) ->
 
   # Chart.js options
   $scope.options = { }
@@ -158,12 +165,20 @@ window.AdefyDashboard.controller "campaignsShow", ($scope, $routeParams, Campaig
     ]
   }
 
+  $scope.stats = {}
+
   refreshCampaign = ->
     Campaign.get id: $routeParams.id, (campaign) ->
       $scope.campaign = campaign
 
       $scope.campaign.ctr = (campaign.clicks / campaign.impressions) * 100
       if isNaN campaign.ctr then $scope.campaign.ctr = 0
+
+      # get daily stats
+      $http.get("/api/v1/campaigns/#{$scope.campaign.id}/stats/daily").success (data) ->
+        $scope.stats.daily = data
+        $scope.stats.daily.ctr = (data.clicks / data.impressions) * 100
+        if isNaN $scope.stats.daily.ctr then $scope.stats.daily.ctr = 0
 
   refreshCampaign()
 

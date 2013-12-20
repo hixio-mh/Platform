@@ -65,7 +65,7 @@ setup = (options, imports, register) ->
       , (err, user) ->
         if utility.dbError err, res then return
 
-        if user.length == 0
+        if not user
           req.user = null
           delete req.cookies.user
           req.send 403 # the user ID was invalid
@@ -141,6 +141,8 @@ setup = (options, imports, register) ->
   app.get "/api/v1/ads/stats", (req, res) -> ####
   app.get "/api/v1/ads/:id", (req, res) -> ads.find req, res
   app.post "/api/v1/ads", (req, res) -> ads.create req, res
+  app.post "/api/v1/ads/:id/approval", (req, res) ->
+    ads.requestApproval req, res
   app.delete "/api/v1/ads/:id", (req, res) -> ads.delete req, res
 
   # Campaign manipulation - /api/v1/campaigns/:action
@@ -165,6 +167,8 @@ setup = (options, imports, register) ->
   app.get "/api/v1/publishers/:id", (req, res) -> publishers.find req, res
   app.post "/api/v1/publishers", (req, res) -> publishers.create req, res
   app.post "/api/v1/publishers/:id", (req, res) -> publishers.save req, res
+  app.post "/api/v1/publishers/:id/approval", (req, res) ->
+    publishers.requestApproval req, res
   app.delete "/api/v1/publishers/:id", (req, res) -> publishers.delete req, res
 
   register null, {}

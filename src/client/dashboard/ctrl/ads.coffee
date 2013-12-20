@@ -37,6 +37,21 @@ window.AdefyDashboard.controller "ads", ($scope, $location, Ad) ->
     refreshAds()
     return true
 
+window.AdefyDashboard.controller "adsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.ad.active
+      $http.post "/api/v1/publishers/#{$scope.ad.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.ad.id}/deactivate"
+
+  $scope.requestApproval = ->
+    $http.post("/apps/{{$scope.ad.id}}/approval")
+    .success ->
+      $scope.setNotification("Successfully applied for approval!", "success")
+      $scope.ad.status = 0
+    .error ->
+      $scope.setNotification("There was an error with your request", "error")
+
 window.AdefyDashboard.controller "adsShow", ($scope, $location, $routeParams, Ad) ->
 
   # Chart.js options
@@ -63,12 +78,19 @@ window.AdefyDashboard.controller "adsShow", ($scope, $location, $routeParams, Ad
     ]
   }
 
+  $scope.stats = {}
+
   refreshAd = ->
     Ad.get id: $routeParams.id, (ad) ->
       $scope.ad = ad
 
       $scope.ad.ctr = (ad.clicks / ad.impressions) * 100
       if isNaN ad.ctr then $scope.ad.ctr = 0
+
+      $http.get("/api/v1/ads/#{$scope.ad.id}/stats/daily").success (data) ->
+        $scope.stats.daily = data
+        $scope.stats.daily.ctr = (data.clicks / data.impressions) * 100
+        if isNaN $scope.stats.daily.ctr then $scope.stats.daily.ctr = 0
 
   refreshAd()
 

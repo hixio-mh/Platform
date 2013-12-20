@@ -12,90 +12,66 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-.graph2
-  .stats.app
-    .stat: .wrap
-      .amount.large $ 381.23
-      .desc Earned today
-    .stat: .wrap
-      .amount.large ▲ 8,351
-      .desc Impressions today
-    .stat: .wrap
-      .amount.large ▲ 251
-      .desc Clicks
-    .stat: .wrap
-      .amount.large $ 472.75
-      .desc Total revenue
-  canvas(id="myChart" width="960" height="300")
+.stats.dashboard
+  .stat: .wrap
+    .amount.large $ 381.23
+    .desc Earned today
+  .stat: .wrap
+    .amount.large ▲ 8,351
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 251
+    .desc Clicks
+  .stat: .wrap
+    .amount.large $ 472.75
+    .desc Total revenue
+
 .index
+  a.switch-view(href="/home/advertiser") Switch to advertiser view
+  canvas(id="myChart" width="940" height="300")
+
+  h1 Top Apps
+  table.info
+    thead: tr
+      th
+      th Impressions
+      th Clicks
+      th CTR
+      th Earnings
+    tbody
+      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
+        td {{ app.name }}
+        td {{ app.impressions | number }}
+        td {{ app.clicks | number }}
+        td {{ app.ctr | number:2 }}%
+        td $ {{ app.earnings | number:2 }}
+  h1 News
   ul.news
     li
       span.title News item
       span.date Sept 23
-      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic. It will, however, dissolve metal, rock, glass, ceramic. So there's that. How about something with some protein, maybe? Something green, huh? How are you even alive? 
+      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic.
     li
       span.title News item
       span.date Sept 23 
-      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right. Because I think that we can do business together - we came to an understanding. Take a look at the money in your hand. Now just imagine making that every week. That's right. Two pounds a week, thirty-five thousand a pound. 
+      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right.
     li
       span.title News item
       span.date Sept 23 
       p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
-    li
-      span.title News item
-      span.date Sept 23 
-      p You asked me if we were in the meth business or the money business. Neither, I’m in the empire business. I was under the impression that you had this under control. Well, that's what this is - problem solving. Skyler this is a simple division of labor - I bring in the money, you launder the money. This is what you wanted. 
-    li
-      span.title News item
-      span.date Sept 23 
-      p Just you, sir? Don't worry, Master Wayne. It takes a little time to get back in the swing of things.
-    li
-      span.title News item
-      span.date Sept 23 
-      p And why do we fall? So we can learn to pick ourselves up.
-    li
-      span.title News item
-      span.date Sept 23 
-      p No, no, no. A vigilante is just a man lost in scramble for his own gratification. He can be destroyed or locked up. But if you make yourself more than just a man, if you devote yourself to an idel and if they can't stop you then you become something else entirely. Legend, Mr Wayne.
-    li
-      span.title News item
-      span.date Sept 23 
-      p You know what you said about the structures becoming shackles. You were right and I can't take it, the injustice. I mean, no one ever's gonna know who saved the entire city.
   ul.news
     li
       span.title News item
       span.date Sept 23
-      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic. It will, however, dissolve metal, rock, glass, ceramic. So there's that. How about something with some protein, maybe? Something green, huh? How are you even alive? 
+      p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy.
     li
       span.title News item
       span.date Sept 23 
-      p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right. Because I think that we can do business together - we came to an understanding. Take a look at the money in your hand. Now just imagine making that every week. That's right. Two pounds a week, thirty-five thousand a pound. 
+      p That is seventeen five - your half of the thirty-five thousand. 
     li
       span.title News item
       span.date Sept 23 
       p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
-    li
-      span.title News item
-      span.date Sept 23 
-      p You asked me if we were in the meth business or the money business. Neither, I’m in the empire business. I was under the impression that you had this under control. Well, that's what this is - problem solving. Skyler this is a simple division of labor - I bring in the money, you launder the money. This is what you wanted. 
-    li
-      span.title News item
-      span.date Sept 23 
-      p Just you, sir? Don't worry, Master Wayne. It takes a little time to get back in the swing of things.
-    li
-      span.title News item
-      span.date Sept 23 
-      p And why do we fall? So we can learn to pick ourselves up.
-    li
-      span.title News item
-      span.date Sept 23 
-      p No, no, no. A vigilante is just a man lost in scramble for his own gratification. He can be destroyed or locked up. But if you make yourself more than just a man, if you devote yourself to an idel and if they can't stop you then you become something else entirely. Legend, Mr Wayne.
-    li
-      span.title News item
-      span.date Sept 23 
-      p You know what you said about the structures becoming shackles. You were right and I can't take it, the injustice. I mean, no one ever's gonna know who saved the entire city.
-
-
 
 
 script.
