@@ -1,6 +1,6 @@
 window.AdefyDashboard.directive "graph", [->     
 
-  template: "<div class='rickshaw_container'><div class='rickshaw'></div><div class='axis-y'></div></div>"
+  template: "<div class='rickshaw_container'><div class='rickshaw'></div><div class='axis-y'></div><div class='legend'></div></div>"
   restrict: "AE"
   scope:
     data: "="
@@ -32,18 +32,18 @@ window.AdefyDashboard.directive "graph", [->
       tickFormat: Rickshaw.Fixtures.Number.formatKMBT
       element: element.find(".axis-y")[0]
     )
-    #legend = new Rickshaw.Graph.Legend(
-    #  graph: rickshaw
-    #  element: element.find(".legend")[0]
-    #)
-    #highlighter = new Rickshaw.Graph.Behavior.Series.Highlight(
-    #  graph: rickshaw
-    #  legend: legend
-    #)
-    #shelving = new Rickshaw.Graph.Behavior.Series.Toggle(
-    #  graph: rickshaw
-    #  legend: legend
-    #)
+    legend = new Rickshaw.Graph.Legend(
+      graph: rickshaw
+      element: element.find(".legend")[0]
+    )
+    highlighter = new Rickshaw.Graph.Behavior.Series.Highlight(
+      graph: rickshaw
+      legend: legend
+    )
+    shelving = new Rickshaw.Graph.Behavior.Series.Toggle(
+      graph: rickshaw
+      legend: legend
+    )
     hoverDetails = new Rickshaw.Graph.HoverDetail(graph: rickshaw)
     rickshaw.render()
     scope.$watch "type", (type) ->

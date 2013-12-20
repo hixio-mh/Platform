@@ -5,18 +5,14 @@
     .tab(ng-click="tab = 'apps'" ng-class="{active: tab == 'apps'}") Apps
 
 .index
-  select.metrics(chosen data-placeholder="Choose a metric" ng-options="metric for metric in metrics" ng-model="metric")
+  select.metrics(chosen ng-options="value as key for (key,value) in metrics" ng-model="opts.metric")
 
-  .right: select(chosen)
-    option Daily
-    option Weekly
-    option Monthly
-    option 6 months
-    option Yearly
+  .right: select(chosen ng-options="value as key for (key,value) in ranges" ng-model="opts.range")
+
   div(ng-switch="tab")
     .tab(ng-switch-when="campaigns" ng-controller="campaignsReports")
       h1 Total
-      graph(data="rick" type="type" width="880" height="300")
+      graph(data="totals" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
@@ -37,7 +33,7 @@
 
     .tab(ng-switch-when="ads" ng-controller="adsReports")
       h1 Total
-      graph(data="rick" type="type" width="880" height="300")
+      graph(data="totals" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
@@ -58,7 +54,7 @@
 
     .tab(ng-switch-when="apps" ng-controller="appsReports")
       h1 Total
-      graph(data="rick" type="type" width="880" height="300")
+      graph(data="totals" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
