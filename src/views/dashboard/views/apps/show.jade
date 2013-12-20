@@ -5,19 +5,28 @@ include _menu
   .stats.app
     .stat: .wrap
       .amount.large $ {{ app.earnings | number:2 }}
-      .desc Earned today
-    .stat: .wrap
-      .amount.large $ {{ app.earnings | number:2 }}
       .desc Total revenue
+    .stat: .wrap
+      .amount.large $ {{ stats.daily.earnings | number:2 }}
+      .desc Earned today
     .stat: .wrap
       .amount.large ▲ {{ app.impressions | number }}
       .desc Impressions
     .stat: .wrap
+      .amount.large ▲ {{ stats.daily.impressions | number }}
+      .desc Impressions (daily)
+    .stat: .wrap
       .amount.large ▲ {{ app.clicks | number }}
       .desc Clicks
     .stat: .wrap
+      .amount.large ▲ {{ stats.daily.clicks | number }}
+      .desc Clicks (daily)
+    .stat: .wrap
       .amount.large {{ app.ctr | number }} %
       .desc CTR
+    .stat: .wrap
+      .amount.large {{ stats.daily.ctr | number }} %
+      .desc CTR (daily)
 
 .graphs
   .graph
