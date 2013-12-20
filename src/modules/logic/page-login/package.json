@@ -7,7 +7,8 @@
     "consumes": [
       "line-express",
       "line-userauth",
-      "logic-utility"
+      "logic-utility",
+      "core-stats"
     ],
     "provides": []
   }
