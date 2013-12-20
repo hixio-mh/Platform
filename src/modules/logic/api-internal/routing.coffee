@@ -138,7 +138,7 @@ setup = (options, imports, register) ->
   # Ad manipulation - /api/v1/ads
   #
   app.get "/api/v1/ads", (req, res) -> ads.get req, res
-  app.get "/api/v1/ads/stats", (req, res) -> ####
+  app.get "/api/v1/ads/stats/:id/:stat/:range", (req, res) -> ads.fetchStats req, res
   app.get "/api/v1/ads/:id", (req, res) -> ads.find req, res
   app.post "/api/v1/ads", (req, res) -> ads.create req, res
   app.post "/api/v1/ads/:id/approval", (req, res) ->
@@ -150,7 +150,8 @@ setup = (options, imports, register) ->
   #   /events   fetch events for a campaign
   #
   app.get "/api/v1/campaigns", (req, res) -> campaigns.fetch req, res
-  app.get "/api/v1/campaigns/stats", (req, res) -> ####
+  app.get "/api/v1/campaigns/stats/:id/:stat/:range", (req, res) ->
+    campaigns.fetchStats req, res
   app.get "/api/v1/campaigns/:id", (req, res) -> campaigns.find req, res
   app.post "/api/v1/campaigns", (req, res) -> campaigns.create req, res
   app.post "/api/v1/campaigns/:id", (req, res) -> campaigns.save req, res
@@ -163,7 +164,8 @@ setup = (options, imports, register) ->
   #
   #app.get "/api/v1/publishers/:action", (req, res) ->
   app.get "/api/v1/publishers", (req, res) -> publishers.get req, res, false
-  app.get "/api/v1/publishers/stats", (req, res) -> ####
+  app.get "/api/v1/publishers/stats/:id/:stat/:range", (req, res) ->
+    publishers.fetchStats req, res
   app.get "/api/v1/publishers/:id", (req, res) -> publishers.find req, res
   app.post "/api/v1/publishers", (req, res) -> publishers.create req, res
   app.post "/api/v1/publishers/:id", (req, res) -> publishers.save req, res

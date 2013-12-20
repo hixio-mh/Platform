@@ -146,6 +146,10 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
+      if not pub.owner.equals req.user.id
+        res.send 403
+        return
+
       pub.fetchStats (stats) ->
 
         publisher = pub.toAPI()
@@ -204,3 +208,19 @@ module.exports = (utility) ->
 
       pub.save()
       res.send 200
+
+  # Fetch publisher stats over a specific period of time
+  #
+  # @param [Object] req request
+  # @param [Object] res response
+  fetchStats: (req, res) ->
+    if not utility.param req.param("id"), res, "Publisher id" then return
+    if not utility.param req.param("range"), res, "Temporal range" then return
+    if not utility.param req.param("stat"), res, "Stat" then return
+
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then res.send(404); return
+
+      pub.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
+        res.json data

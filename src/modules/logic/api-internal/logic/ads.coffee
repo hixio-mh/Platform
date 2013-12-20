@@ -123,3 +123,19 @@ module.exports = (utility) ->
       ad.save()
 
       res.send 200
+
+  # Fetch ad stats over a specific period of time
+  #
+  # @param [Object] req request
+  # @param [Object] res response
+  fetchStats: (req, res) ->
+    if not utility.param req.param("id"), res, "Ad id" then return
+    if not utility.param req.param("range"), res, "Temporal range" then return
+    if not utility.param req.param("stat"), res, "Stat" then return
+
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then res.send(404); return
+
+      ad.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
+        res.json data
