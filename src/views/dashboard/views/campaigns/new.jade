@@ -21,7 +21,7 @@
     dt: label Total Budget
     dd: input(required ng-model="campaign.totalBudget" type="number" min="{{min.budget}}" placeholder="min {{ min.budget | currency:$ }}")
     dt: label Daily Budget (optional)
-    dd: input(ng-model="campaign.dailyBudget" type="number")
+    dd: input(ng-model="campaign.dailyBudget" min="0" type="number")
     dt
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
@@ -33,6 +33,8 @@
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
     dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
     dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dt: label CTR Goal
+    dd: input(type="number" step="any" min="0.0" max="100.0" ng-model="campaign.CTRGoal")
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
@@ -97,15 +99,6 @@
             option LG
             option HTC
             option Sony
-    dl.form.center.single
-      dt: label Scheduling
-      dd
-        .radio
-          input(type="radio" ng-model="campaign.scheduling" value="no" name="scheduling" id="no_scheduling")
-          label(for="no_scheduling") No Scheduling
-        .radio
-          input(type="radio" ng-model="campaign.scheduling" value="yes" name="scheduling" id="custom_scheduling")
-          label(for="custom_scheduling") Custom Scheduling
     dl.form.center
     dt
     dd: button.blue.save(ng-click="submit()") Save

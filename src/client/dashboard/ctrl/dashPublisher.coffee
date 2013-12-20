@@ -12,4 +12,13 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "dashPublisher", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "dashPublisher", ($scope, $http, $route, App) ->
+
+  App.query (apps) ->
+    # Calculate CTR, status, and active text
+    for app, i in apps
+      # CTR
+      app.ctr = (app.clicks / app.impressions) * 100
+      if isNaN app.ctr then app.ctr = 0
+
+    $scope.apps = apps

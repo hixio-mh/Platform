@@ -64,6 +64,20 @@ window.AdefyDashboard.controller "appsIndex", ($scope, $location, App) ->
 
   refreshAppListing()
 
+window.AdefyDashboard.controller "appsMenu", ($scope, $location, $http) ->
+  $scope.activeToggled = ->
+    if $scope.app.active
+      $http.post "/api/v1/publishers/#{$scope.app.id}/activate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.app.id}/deactivate"
+
+  $scope.requestApproval = ->
+    $http.post("/apps/{{$scope.app.id}}/approval")
+    .success ->
+      $scope.setNotification("Successfully applied for approval!", "success")
+      $scope.app.status = 0
+    .error ->
+      $scope.setNotification("There was an error with your request", "error")
 
 window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
 
@@ -81,6 +95,13 @@ window.AdefyDashboard.controller "appsNew", ($scope, $location, App) ->
     "Community"
     "Women"
   ]
+
+  $scope.pricingModels = [ 'Any', 'CPM', 'CPC' ]
+
+  # Defaults
+  $scope.app = {
+    preferredPricing: 'Any'
+  }
 
   $scope.submit = ->
     $scope.submitted = true
@@ -119,12 +140,19 @@ window.AdefyDashboard.controller "appsShow", ($scope, $routeParams, App) ->
     ]
   }
 
+  $scope.stats = {}
+
   refreshApp = ->
     App.get id: $routeParams.id, (app) ->
       $scope.app = app
 
       $scope.app.ctr = (app.clicks / app.impressions) * 100
       if isNaN app.ctr then $scope.app.ctr = 0
+
+      $http.get("/api/v1/apps/#{$scope.app.id}/stats/daily").success (data) ->
+        $scope.stats.daily = data
+        $scope.stats.daily.ctr = (data.clicks / data.impressions) * 100
+        if isNaN $scope.stats.daily.ctr then $scope.stats.daily.ctr = 0
 
   refreshApp()
 
@@ -144,6 +172,8 @@ window.AdefyDashboard.controller "appsEdit", ($scope, $location, $routeParams, A
     "Community"
     "Women"
   ]
+
+  $scope.pricingModels = [ 'Any', 'CPM', 'CPC' ]
 
   App.get id: $routeParams.id, (app) ->
     $scope.app = app

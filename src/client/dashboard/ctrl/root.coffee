@@ -18,6 +18,13 @@ window.AdefyDashboard.controller "rootController", ($scope, $rootScope, $http, $
   $scope.setNotification = (text, type) ->
     $rootScope.notification = {type: type, text: text}
 
+  $scope.sendFeedback = ->
+    $http.post("/api/v1/feedback", {text: $scope.feedback})
+    .success ->
+      $scope.setNotification("Feedback sent! Thank you for your input", "success")
+    .error ->
+      $scope.setNotification("There was an error with sending your feedback", "error")
+
   $http.get("/api/v1/account").success (me) ->
     $scope.me = me
 
