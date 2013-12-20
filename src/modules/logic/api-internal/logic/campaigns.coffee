@@ -87,24 +87,10 @@ module.exports = (utility) ->
       spew.info "Campaign fetch path: TODO!"
       return
 
-      # Fetch redis stats
-      #   impressions
-      #   clicks
-      #   spent
-      campaign.getLifetimeStats (metrics) ->
-        if metrics == null
-          res.send 500
-          return
-
-        # Attach objects onto campaign and send it back
-        ret = campaign.toAPI()
-
-        ret.ctr = metrics.clicks / metrics.impressions
-        ret.clicks = metrics.clicks
-        ret.impressions = metrics.impressions
-        ret.spent = metrics.spent
-
-        res.json 200, ret
+      campaign.fetchStats (stats) ->
+        campaign = campaign.toAPI()
+        campaign.stats = stats
+        res.json campaign
 
   # Saves the campaign and generates new campaign events. User must either be
   # admin or own the campaign in question!

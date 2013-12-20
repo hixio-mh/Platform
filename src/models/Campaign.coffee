@@ -11,6 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 mongoose = require "mongoose"
 spew = require "spew"
 
@@ -60,7 +61,15 @@ schema = new mongoose.Schema
 #
 # @param [Method] cb
 # @return [Object] metrics
-schema.methods.getLifetimeStats = (cb) ->
+schema.methods.fetchStats = (cb) ->
+
+  cb {
+    clicks: -1
+    impressions: -1
+    ctr: -1
+    spent: -1
+  }
+  return
 
   # Totals
   clicks = 0
@@ -99,52 +108,11 @@ schema.methods.getLifetimeStats = (cb) ->
         # Ship it
         cb { clicks: clicks, impressions: impressions, spent: spent }
 
-# (stat is earnings, clicks, impressions, or ctr)
+# (stat is spent, clicks, impressions, or ctr)
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
-  # Note: We ignore stat for now
-
-  range = new String range
-  range.has = (str) -> @toString().indexOf(str) > 0
-  data = {}
-
-  if range.has "min" or range.has "minute" or range.has "minutes"
-
-    range = range.split("min").join ""
-    range = range.split("minute").join ""
-    range = range.split("minutes").join ""
-    range = Number range
-
-    for minute in [0...range]
-      timestamp = Date.now() - (minute * 60000)
-      data[timestamp] = Math.round Math.random() * 100
-
-  else if range.has "hr" or range.has "hour" or range.has "hours"
-
-    range = range.split("hr").join ""
-    range = range.split("hour").join ""
-    range = range.split("hours").join ""
-    range = Number range
-
-    for hour in [0...range]
-      for min in [0...60]
-        timestamp = Date.now() - (min * 60000) - (hour * 3600000)
-        data[timestamp] = Math.round Math.random() * 100
-
-  else if range.has "d" or range.has "day" or range.has "days"
-
-    range = range.split("d").join ""
-    range = range.split("day").join ""
-    range = range.split("days").join ""
-    range = Number range
-
-    for day in [0...range]
-      for hour in [0...24]
-        for fiveMin in [0...12] # 5min
-          timestamp = Date.now() - (fiveMin * 300000) - (hour * 3600000) - (day * 86400000)
-          data[timestamp] = Math.round Math.random() * 100
-
-  cb data
+  # Todo: Implement
+  cb -1
 
 schema.methods.toAPI = ->
   ret = @toObject()
