@@ -152,8 +152,6 @@ module.exports = (utility) ->
         publisher.stats = stats
         res.json publisher
 
-  ###
-
   # Updates publisher status if applicable
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
@@ -206,5 +204,3 @@ module.exports = (utility) ->
 
       pub.save()
       res.send 200
-
-  ###

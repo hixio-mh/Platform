@@ -1,4 +1,4 @@
-.titlebar.cf.full
+.titlebar.cf.full(ng-controller="campaignsMenu")
   .name(ng-bind="campaign.name")
   .menu.full
     a(ng-href="/campaigns/{{campaign.id}}" tab partial="false")
@@ -7,3 +7,5 @@
     a(ng-href="/campaigns/{{campaign.id}}/edit" tab)
       i.fa.fa-fw.fa-wrench
       | Settings
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="campaign.active")

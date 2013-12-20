@@ -81,10 +81,6 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "funds"
     templateUrl: "/views/dashboard/account:funds"
 
-  $routeProvider.when "/acc/feedback",
-    controller: "accFeedback"
-    templateUrl: "/views/dashboard/account:feedback"
-
   $routeProvider.otherwise { redirectTo: "/home/publisher" }
 
   true

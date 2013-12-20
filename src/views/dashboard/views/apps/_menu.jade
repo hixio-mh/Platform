@@ -1,10 +1,9 @@
-.titlebar.cf.full
+.titlebar.cf.full(ng-controller="appsMenu")
   .name(ng-bind="app.name")
   span(ng-switch="app.status")
     .label.gray(ng-switch-when="0") Pending
     .label.red(ng-switch-when="1") Rejected
     .label.green(ng-switch-when="2") Approved
-  toggle-switch(model="switchStatus")
   .menu.full
     a(ng-href="/apps/{{app.id}}" tab partial='false')
       i.fa.fa-fw.fa-signal
@@ -15,3 +14,8 @@
     a(ng-href="/apps/{{app.id}}/edit" tab)
       i.fa.fa-fw.fa-wrench
       | Settings
+    a(ng-click="requestApproval()" ng-if="app.status == '1'")
+      i.fa.fa-fw.fa-question
+      | Request Approval
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="app.active")
