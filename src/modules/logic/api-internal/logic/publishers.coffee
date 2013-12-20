@@ -151,7 +151,6 @@ module.exports = (utility) ->
         return
 
       pub.fetchStats (stats) ->
-
         publisher = pub.toAPI()
         publisher.stats = stats
         res.json publisher

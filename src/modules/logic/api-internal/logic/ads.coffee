@@ -109,7 +109,10 @@ module.exports = (utility) ->
         res.send 403
         return
 
-      res.json ad.toAPI()
+      ad.fetchStats (stats) ->
+        advertisement = ad.toAPI()
+        advertisement.stats = stats
+        res.json advertisement
 
   requestApproval: (req, res) ->
     db.model("Ad").findOne
