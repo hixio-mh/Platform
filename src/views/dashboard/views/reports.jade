@@ -16,7 +16,7 @@
   div(ng-switch="tab")
     .tab(ng-switch-when="campaigns" ng-controller="campaignsReports")
       h1 Total
-      canvas(barchart, data="data", width="940", height="300")
+      graph(data="rick" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
@@ -37,7 +37,7 @@
 
     .tab(ng-switch-when="ads" ng-controller="adsReports")
       h1 Total
-      canvas(barchart, data="data", width="940", height="300")
+      graph(data="rick" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
@@ -58,7 +58,7 @@
 
     .tab(ng-switch-when="apps" ng-controller="appsReports")
       h1 Total
-      canvas(barchart, data="data", width="940", height="300")
+      graph(data="rick" type="type" width="880" height="300")
 
       h1 Comparison
       table.info
