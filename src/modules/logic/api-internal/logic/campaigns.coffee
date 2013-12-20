@@ -229,3 +229,19 @@ module.exports = (utility) ->
 
       campaign.remove()
       res.json 200
+
+  # Fetch campaign stats over a specific period of time
+  #
+  # @param [Object] req request
+  # @param [Object] res response
+  fetchStats: (req, res) ->
+    if not utility.param req.param("id"), res, "Campaign id" then return
+    if not utility.param req.param("range"), res, "Temporal range" then return
+    if not utility.param req.param("stat"), res, "Stat" then return
+
+    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then res.send(404); return
+
+      campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
+        res.json data
