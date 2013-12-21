@@ -152,6 +152,8 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
 
   query = graphiteInterface.query()
   query.enableFilter()
+
+  query.addStatCountTarget "#{@getGraphiteId()}.#{stat}"
   query.from = "-#{range}"
 
   # CTR requires post-processing server-side
