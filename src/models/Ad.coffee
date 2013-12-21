@@ -48,6 +48,7 @@ schema = new mongoose.Schema
   ]
 
 schema.methods.getGraphiteId = -> "ads.#{@_id}"
+
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
