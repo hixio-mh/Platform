@@ -7,6 +7,7 @@ window.AdefyDashboard.directive "graph", [->
     type: "="
     width: "="
     height: "="
+    unit: "="
 
   link: (scope, element, attrs) ->
     rickshaw = new Rickshaw.Graph(
@@ -24,7 +25,7 @@ window.AdefyDashboard.directive "graph", [->
 
     axisX = new Rickshaw.Graph.Axis.Time(
       graph: rickshaw
-      #timeUnit: (new Rickshaw.Fixtures.Time()).unit("day")
+      timeUnit: (new Rickshaw.Fixtures.Time()).unit($scope.unit || 'day')
     )
     axisY = new Rickshaw.Graph.Axis.Y(
       graph: rickshaw
