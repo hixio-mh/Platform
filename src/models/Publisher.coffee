@@ -109,20 +109,22 @@ schema.methods.fetchStats = (cb) ->
         earnings: 0
 
       # Helper
-      assignMatching = (res, stat, statName) ->
-        if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
+      assignMatching = (res, stat, statName, time) ->
+        if res.target.indexOf(statName) != -1
+          if res.target.indexOf(time) != -1
+            stat = res.datapoints[0].y
 
       # Iterate over the result, and attempt to find matching responses
       for res in data
 
-        assignMatching res, stats.impressions, ".impressions,"
-        assignMatching res, stats.impressions24h, ".impressions24h,"
-        assignMatching res, stats.clicks, ".clicks,"
-        assignMatching res, stats.clicks24h, ".clicks24h,"
-        assignMatching res, stats.ctr, ".ctr,"
-        assignMatching res, stats.ctr24h, ".ctr24h,"
-        assignMatching res, stats.earnings, ".earnings,"
-        assignMatching res, stats.earnings24h, ".earnings24h,"
+        assignMatching res, stats.impressions, ".impressions,", "1year"
+        assignMatching res, stats.impressions24h, ".impressions,", "24hours"
+        assignMatching res, stats.clicks, ".clicks,", "1year"
+        assignMatching res, stats.clicks24h, ".clicks,", "24hours"
+        assignMatching res, stats.ctr, ".ctr,", "1year"
+        assignMatching res, stats.ctr24h, ".ctr,", "24hours"
+        assignMatching res, stats.earnings, ".earnings,", "1year"
+        assignMatching res, stats.earnings24h, ".earnings,", "24hours"
 
       cb stats
 
@@ -132,7 +134,7 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
   query = graphiteInterface.query()
   query.enableFilter()
 
-  query.addStatCountTarget "#{getGraphiteId()}.#{stat}"
+  query.addStatCountTarget "#{@getGraphiteId()}.#{stat}"
   query.from = "-#{range}"
 
   query.exec (data) ->
