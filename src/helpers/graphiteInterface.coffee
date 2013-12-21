@@ -4,7 +4,9 @@ spew = require "spew"
 
 # Helper for graphite, builds and executes queries, and offers stat fetching
 # helpers
-module.exports = (@host) -> {
+module.exports = (host) -> {
+
+  host: host
 
   setHost: (@host) ->
   getHost: -> @host
@@ -54,6 +56,7 @@ module.exports = (@host) -> {
 
     @enableFilter = => @_filter = true
     @disableFilter = => @_filter = false
+    @isFiltered = => @_filter
 
     @addTarget = (target, method, args) =>
       if method == undefined then method = null
