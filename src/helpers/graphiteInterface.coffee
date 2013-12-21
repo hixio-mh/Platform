@@ -12,8 +12,10 @@ module.exports = (host) -> {
   getHost: -> @host
 
   fetchStats: (opts) ->
-    spew.info JSON.stringify opts
+    query = @buildStatFetchQuery opts
+    query.exec (data) -> opts.cb data
 
+  buildStatFetchQuery: (opts) ->
     if opts == undefined
       spew.error "No stat fetch opts set"
       return
@@ -22,9 +24,6 @@ module.exports = (host) -> {
       return
     else if opts.request == undefined
       spew.error "No stat fetch requests set"
-      return
-    else if opts.cb == undefined
-      spew.error "No stat fetch callback set"
       return
 
     # Bail early if no requests passed in
@@ -43,7 +42,7 @@ module.exports = (host) -> {
 
         query.addStatCountTarget "#{prefix}.#{stat}", "summarize", req.range
 
-    query.exec (data) -> opts.cb data
+    query
 
   # Builds a new query. Todo: Document fully
   query: ->
@@ -85,9 +84,17 @@ module.exports = (host) -> {
       request query, (error, response, body) =>
         if error then spew.error error
         else
-          if @_filter then body = @_filterResponse JSON.parse body
-          else body = JSON.parse body
-          cb body
+          try
+            if @_filter then body = @_filterResponse JSON.parse body
+            else body = JSON.parse body
+            if cb then cb body
+          catch err
+            spew.error err
+            spew.info body
+            if cb then cb null
+
+    @getPrefixStat = -> "stats.#{config.mode}"
+    @getPrefixStatCounts = -> "stats_counts.#{config.mode}"
 
     @_buildQuery = ->
       query = "#{host}/render?"
@@ -116,6 +123,7 @@ module.exports = (host) -> {
       if @untill.length > 0 then query += "&untill=#{@untill}"
 
       query += "&format=json"
+      spew.info query
       query
 
     @_filterResponse = (data) ->
