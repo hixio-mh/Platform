@@ -109,7 +109,7 @@ module.exports = (utility) ->
         res.send 403
         return
 
-      ad.fetchStats (stats) ->
+      ad.fetchCompiledStats (stats) ->
         advertisement = ad.toAPI()
         advertisement.stats = stats
         res.json advertisement
@@ -140,5 +140,5 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
 
-      ad.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
+      ad.fetchCompiledStat req.param("range"), req.param("stat"), (data) ->
         res.json data

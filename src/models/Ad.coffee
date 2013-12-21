@@ -48,76 +48,49 @@ schema = new mongoose.Schema
   ]
 
 schema.methods.getGraphiteId = -> "ads.#{@_id}"
-
-# (spent, clicks, impressions, ctr)
-schema.methods.fetchStats = (cb) ->
-  stats = {}
-
-  graphiteInterface.fetchStats
-    prefix: @getGraphiteId()
-    filter: true
-    request: [
-      range: "24hours"
-      stats: ["impressions", "clicks", "ctr", "spent"]
-    ,
-      range: "1year"
-      stats: ["impressions", "clicks", "ctr", "spent"]
-    ]
-    cb: (data) ->
-
-      # Default stats object, since stats that have never been logged
-      # (new publisher) don't even return 0
-      stats =
-        impressions24h: 0
-        clicks24h: 0
-        ctr24h: 0
-        spent24h: 0
-
-        impressions: 0
-        clicks: 0
-        ctr: 0
-        spent: 0
-
-      # Helper
-      assignMatching = (res, stat, statName) ->
-        if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
-
-      # Iterate over the result, and attempt to find matching responses
-      for res in data
-
-        assignMatching res, stats.impressions, ".impressions,"
-        assignMatching res, stats.impressions24h, ".impressions24h,"
-        assignMatching res, stats.clicks, ".clicks,"
-        assignMatching res, stats.clicks24h, ".clicks24h,"
-        assignMatching res, stats.ctr, ".ctr,"
-        assignMatching res, stats.ctr24h, ".ctr24h,"
-        assignMatching res, stats.spent, ".spent,"
-        assignMatching res, stats.spent24h, ".spent24h,"
-
-      cb stats
-
-# (stat is spent, clicks, impressions, or ctr)
-schema.methods.fetchCustomStat = (range, stat, cb) ->
-
-  query = graphiteInterface.query()
-  query.enableFilter()
-
-  query.addStatCountTarget "#{getGraphiteId()}.#{stat}"
-  query.from = "-#{range}"
-
-  query.exec (data) ->
-    if data == null then cb []
-    else if data[0] == undefined then cb []
-    else if data[0].datapoints == undefined then cb []
-    else cb data[0].datapoints
-
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
   delete _v
-
   ret
+
+# Fetches Spent, Clicks, Impressions and CTR for the past 24 hours, and
+# lifetime (both sums) for all campaigns
+schema.methods.fetchCompiledStats = (cb) ->
+
+  # Todo: We need to iterate over all campaign entries, and return a sum
+  # of all values
+
+  cb
+    impressions24h: 0
+    clicks24h: 0
+    ctr24h: 0
+    spent24h: 0
+
+    impressions: 0
+    clicks: 0
+    ctr: 0
+    spent: 0
+
+# Fetches a single stat over a specific period of time for all campaigns
+schema.methods.fetchCompiledStat = (range, stat, cb) -> cb []
+
+schema.methods.fetchStatsForCampaign = (campaign, cb) ->
+
+  cb
+    impressions24h: 0
+    clicks24h: 0
+    ctr24h: 0
+    spent24h: 0
+
+    impressions: 0
+    clicks: 0
+    ctr: 0
+    spent: 0
+
+# Fetches a single stat over a specific period of time for a single campaign
+schema.methods.fetchStatForCampaign = (range, stat, campaign, cb) -> cb []
 
 # Go through our campaigns, and remove ourselves from each
 # Expects campaigns filed to be populated!
@@ -256,18 +229,18 @@ schema.methods.createCampaignReferences = (campaign) ->
   for country in countries
     redis.rpush "country:#{country}", ref
 
-  if network.length == 0 then redis.rpush "#{key}:network:none", ref
-  else redis.rpush "#{key}:network:#{network}", ref
+  if network.length == 0 then redis.rpush "#{baseKey}:network:none", ref
+  else redis.rpush "#{baseKey}:network:#{network}", ref
 
-  if platforms.length == 0 then redis.rpush "#{key}:platform:none", ref
+  if platforms.length == 0 then redis.rpush "#{baseKey}:platform:none", ref
   else
     for platform in platforms
-      redis.rpush "#{key}:platform:#{platform}", ref
+      redis.rpush "#{baseKey}:platform:#{platform}", ref
 
-  if devices.length == 0 then redis.rpush "#{key}:device:none", ref
+  if devices.length == 0 then redis.rpush "#{baseKey}:device:none", ref
   else
     for device in devices
-      redis.rpush "#{key}:device:#{device}", ref
+      redis.rpush "#{baseKey}:device:#{device}", ref
 
   # Format our bid system
   if bidSystem == "manual" then bidSystem = "m" else bidSystem = "a"

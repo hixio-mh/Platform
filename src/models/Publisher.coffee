@@ -12,10 +12,18 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
+config = require "../config.json"
 mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
 spew = require "spew"
+redisLib = require "redis"
+redis = redisLib.createClient()
+statsdLib = require("node-statsd").StatsD
+statsd = new statsdLib
+  host: config["stats-db"].host
+  port: config["stats-db"].port
+  prefix: "#{config.mode}."
 
 schema = new mongoose.Schema
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
@@ -41,32 +49,43 @@ schema = new mongoose.Schema
 
   earnings: { type: Number, default: 0 }
 
+schema.methods.getGraphiteId = -> "publishers.#{@_id}"
+schema.methods.getRedisId = -> "pub:#{@apikey}"
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
   delete _v
-
   ret
 
 schema.methods.generateThumbnailUrl = (cb) ->
-
   playstorePrefix = "https://play.google.com/store/apps/details?id="
 
-  if @type != 0 or @url.length == 0
-    generateDefaultThumbnailUrl (thumbURL) =>
-      @thumbURL = thumbURL
-      if cb then cb thumbURL
+  if @type != 0 or @url.length == 0 then @_generateDefaultThumbnailUrl cb
   else
-
     if @url.indexOf("play.google.com") > 0
-      generateAppstoreThumbnailUrl @url, (thumbURL) =>
-        @thumbURL = thumbURL
-        if cb then cb thumbURL
+      @_generateAppstoreThumbnailUrl @url, cb
     else
-      generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", (thumbURL) =>
-        @thumbURL = thumbURL
-        if cb then cb thumbURL
+      @_generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", cb
+
+schema.methods._generateDefaultThumbnailUrl = (cb) ->
+  @thumbURL = "/img/default_icon.png"
+  if cb then cb @thumbURL
+
+schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
+
+  request url, (err, res, body) =>
+    if err then @_generateDefaultThumbnailUrl cb
+    else
+      if res.statusCode != 200 then @_generateDefaultThumbnailUrl cb
+      else
+        $ = cheerio.load res.body
+        src = $("img.cover-image").attr "src"
+
+        if src and src.length > 0
+          @thumbURL = src
+          cb src
+        else @_generateDefaultThumbnailUrl cb
 
 schema.methods.createAPIKey = ->
   if @apikey and @apikey.length == 24 then return
@@ -77,65 +96,72 @@ schema.methods.createAPIKey = ->
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
 
-schema.methods.getGraphiteId = -> "publishers.#{@_id}"
+# Fetches Earnings, Clicks, Impressions and CTR for the past 24 hours, and
+# lifetime (both sums)
+schema.methods.fetchOverviewStats = (cb) ->
 
-# (earnings, clicks, impressions, ctr)
-schema.methods.fetchStats = (cb) ->
-  stats = {}
-
-  graphiteInterface.fetchStats
+  # Build query for impressions, clicks, and earnings
+  query = graphiteInterface.buildStatFetchQuery
     prefix: @getGraphiteId()
     filter: true
     request: [
       range: "24hours"
-      stats: ["impressions", "clicks", "ctr", "earnings"]
-    ,
-      range: "1year"
-      stats: ["impressions", "clicks", "ctr", "earnings"]
+      stats: ["impressions", "clicks", "earnings"]
     ]
-    cb: (data) ->
 
-      # Default stats object, since stats that have never been logged
-      # (new publisher) don't even return 0
-      stats =
-        impressions24h: 0
-        clicks24h: 0
-        ctr24h: 0
-        earnings24h: 0
+  # We need to attach the prefix ourselves, since arguments are not parsed
+  # as key targets
+  divisor = "#{query.getPrefixStatCounts()}.#{@getGraphiteId()}.impressions"
+  dividend = "'#{@getGraphiteId()}.clicks'"
 
-        impressions: 0
-        clicks: 0
-        ctr: 0
-        earnings: 0
+  # Add divideSeries() ourselves to request CTR
+  query.addStatCountTarget dividend, "divideSeries", divisor
 
-      # Helper
-      assignMatching = (res, stat, statName, time) ->
-        if res.target.indexOf(statName) != -1
-          if res.target.indexOf(time) != -1
-            stat = res.datapoints[0].y
+  # Gogo!
+  query.exec (data) =>
 
-      # Iterate over the result, and attempt to find matching responses
-      for res in data
+    # Default stats object, since stats that have never been logged
+    # (new publisher) don't even return 0
+    stats =
+      impressions24h: 0
+      clicks24h: 0
+      ctr24h: 0
+      earnings24h: 0
 
-        assignMatching res, stats.impressions, ".impressions,", "1year"
-        assignMatching res, stats.impressions24h, ".impressions,", "24hours"
-        assignMatching res, stats.clicks, ".clicks,", "1year"
-        assignMatching res, stats.clicks24h, ".clicks,", "24hours"
-        assignMatching res, stats.ctr, ".ctr,", "1year"
-        assignMatching res, stats.ctr24h, ".ctr,", "24hours"
-        assignMatching res, stats.earnings, ".earnings,", "1year"
-        assignMatching res, stats.earnings24h, ".earnings,", "24hours"
+      impressions: @fetchImpressions()
+      clicks: @fetchClicks()
+      ctr: @fetchCTR()
+      earnings: @fetchEarnings()
 
-      cb stats
+    # Helper
+    assignMatching = (res, stat, statName) ->
+      if res.target.indexOf(statName) != -1 then gstat = res.datapoints[0].y
 
-# (stat is earnings, clicks, impressions, or ctr)
+    # Iterate over the result, and attempt to find matching responses
+    for res in data
+
+      assignMatching res, stats.impressions24h, ".impressions,"
+      assignMatching res, stats.clicks24h, ".clicks,"
+      assignMatching res, stats.ctr24h, ".ctr,"
+      assignMatching res, stats.earnings24h, ".earnings,"
+
+    cb stats
+
+# Fetches a single stat over a specific period of time
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
   query = graphiteInterface.query()
   query.enableFilter()
-
-  query.addStatCountTarget "#{@getGraphiteId()}.#{stat}"
   query.from = "-#{range}"
+
+  # CTR requires post-processing server-side
+  if stat.toLowerCase() == "ctr"
+
+    divisor = "#{query.getPrefixStatCounts()}.#{@getGraphiteId()}.impressions"
+    dividend = "'#{@getGraphiteId()}.clicks'"
+    query.addStatCountTarget dividend, "divideSeries", divisor
+
+  else query.addStatCountTarget "#{@getGraphiteId()}.#{stat}"
 
   query.exec (data) ->
     if data == null then cb []
@@ -143,25 +169,24 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
 
+schema.methods.logClick = -> @logStatIncrement "clicks"
+schema.methods.logImpression = -> @logStatIncrement "impressions"
+schema.methods.logStatIncrement = (stat) ->
+  statsd.increment "#{@getGraphiteId()}.#{stat}"
+  redis.incr "#{@getRedisId()}:#{stat}"
+
+schema.methods.fetchImpressions = -> redis.get "#{@getRedisId()}:impressions"
+schema.methods.fetchClicks = -> redis.get "#{@getRedisId()}:clicks"
+schema.methods.fetchCTR = -> @fetchClicks() / @fetchImpressions()
+schema.methods.fetchEarnings = -> redis.get "#{@getRedisId()}:earnings"
+
+schema.methods.generateRedisStructure = ->
+  spew.info redis.get "asdfsfsf"
+  # Todo: Check what redis returns
+
 schema.pre "save", (next) ->
   @createAPIKey()
   @generateThumbnailUrl -> next()
+  @generateRedisStructure()
 
 mongoose.model "Publisher", schema
-
-generateDefaultThumbnailUrl = (cb) -> cb "/img/default_icon.png"
-generateAppstoreThumbnailUrl = (url, cb) ->
-
-  request url, (err, res, body) ->
-    if err
-      spew.error err
-      generateDefaultThumbnailUrl cb
-    else
-      if res.statusCode != 200
-        generateDefaultThumbnailUrl cb
-      else
-        $ = cheerio.load res.body
-        src = $("img.cover-image").attr "src"
-
-        if src and src.length > 0 then cb src
-        else generateDefaultThumbnailUrl cb
