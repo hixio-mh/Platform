@@ -37,13 +37,4 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     Campaign.get id: $routeParams.id, (campaign) ->
       $scope.campaign = campaign
 
-      $scope.campaign.ctr = (campaign.clicks / campaign.impressions) * 100
-      if isNaN campaign.ctr then $scope.campaign.ctr = 0
-
-      # get daily stats
-      $http.get("/api/v1/campaigns/#{$scope.campaign.id}/stats/daily").success (data) ->
-        $scope.stats.daily = data
-        $scope.stats.daily.ctr = (data.clicks / data.impressions) * 100
-        if isNaN $scope.stats.daily.ctr then $scope.stats.daily.ctr = 0
-
   refreshCampaign()
