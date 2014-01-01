@@ -28,24 +28,24 @@ schema = new mongoose.Schema
   fname: String
   lname: String
 
-  address: String
-  city: String
-  state: String
-  postalCode: String
-  country: String
+  address: { type: String, default: "" }
+  city: { type: String, default: "" }
+  state: { type: String, default: "" }
+  postalCode: { type: String, default: "" }
+  country: { type: String, default: "" }
 
-  company: String
-  phone: String
-  fax: String
+  company: { type: String, default: "" }
+  phone: { type: String, default: "" }
+  fax: { type: String, default: "" }
 
   # 0 - admin (root)
   # 1 - unassigned
   # 2 - unassigned
   # ...
   # 7 - normal user
-  permissions: Number
+  permissions: { type: Number, default: 7 }
 
-  funds: Number
+  funds: { type: Number, default: 0 }
 
   # Schema version, used by /migrate
   version: Number
