@@ -25,10 +25,17 @@ statsd = new statsdLib
   port: config["stats-db"].port
   prefix: "#{config.mode}."
 
+##
+## Publisher schema
+##
+
 schema = new mongoose.Schema
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: { type: String, required: true }
+
   url: { type: String, default: "" }
+  _previouslyGeneratedUrl: { type: String, default: "" }
+
   description: { type: String, default: "" }
   category: { type: String, default: "" }
   thumbURL: { type: String, default: "" }
@@ -49,6 +56,10 @@ schema = new mongoose.Schema
 
   earnings: { type: Number, default: 0 }
 
+##
+## ID and handle generation
+##
+
 schema.methods.getGraphiteId = -> "publishers.#{@_id}"
 schema.methods.getRedisId = -> "pub:#{@apikey}"
 schema.methods.toAPI = ->
@@ -58,7 +69,13 @@ schema.methods.toAPI = ->
   delete _v
   ret
 
+##
+## Thumbnail handling
+##
+
 schema.methods.generateThumbnailUrl = (cb) ->
+  @_previouslyGeneratedUrl = @url
+
   playstorePrefix = "https://play.google.com/store/apps/details?id="
 
   if @type != 0 or @url.length == 0 then @_generateDefaultThumbnailUrl cb
@@ -67,6 +84,8 @@ schema.methods.generateThumbnailUrl = (cb) ->
       @_generateAppstoreThumbnailUrl @url, cb
     else
       @_generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", cb
+
+schema.methods.needsNewThumbnail = -> @_previouslyGeneratedUrl != @url
 
 schema.methods._generateDefaultThumbnailUrl = (cb) ->
   @thumbURL = "/img/default_icon.png"
@@ -87,14 +106,26 @@ schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
           cb src
         else @_generateDefaultThumbnailUrl cb
 
-schema.methods.createAPIKey = ->
-  if @apikey and @apikey.length == 24 then return
+##
+## API Key handling
+##
 
+schema.methods.createAPIKey = ->
   @apikey = ""
   map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
+
+schema.methods.hasAPIKey = ->
+  if @apikey and @apikey.length == 24
+    true
+  else
+    false
+
+##
+## Bundled stats fetching (Redis and StatsD)
+##
 
 # Fetches Earnings, Clicks, Impressions and CTR for the past 24 hours, and
 # lifetime (both sums)
@@ -171,24 +202,41 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
 
+##
+## Simple stat logging
+##
+
 schema.methods.logClick = -> @logStatIncrement "clicks"
 schema.methods.logImpression = -> @logStatIncrement "impressions"
 schema.methods.logStatIncrement = (stat) ->
   statsd.increment "#{@getGraphiteId()}.#{stat}"
   redis.incr "#{@getRedisId()}:#{stat}"
 
+##
+## Redis handling
+##
+
 schema.methods.fetchImpressions = -> redis.get "#{@getRedisId()}:impressions"
 schema.methods.fetchClicks = -> redis.get "#{@getRedisId()}:clicks"
 schema.methods.fetchCTR = -> @fetchClicks() / @fetchImpressions()
 schema.methods.fetchEarnings = -> redis.get "#{@getRedisId()}:earnings"
 
-schema.methods.generateRedisStructure = ->
-  spew.info redis.get "asdfsfsf"
-  # Todo: Check what redis returns
+schema.methods.ensureRedisStructure = ->
+  setKeyIfNull = (key, val) -> if redis.get key == null then redis.set key, val
+
+  setKeyIfNull "#{@getRedisId()}:impressions", 0
+  setKeyIfNull "#{@getRedisId()}:clicks", 0
+  setKeyIfNull "#{@getRedisId()}:imearningspressions", 0
+
+##
+##
+##
 
 schema.pre "save", (next) ->
-  @createAPIKey()
-  @generateThumbnailUrl -> next()
-  @generateRedisStructure()
+  if not @hasAPIKey() then @createAPIKey()
+  @ensureRedisStructure()
+
+  if @needsNewThumbnail() then @generateThumbnailUrl -> next()
+  else next()
 
 mongoose.model "Publisher", schema
