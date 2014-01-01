@@ -80,6 +80,8 @@ module.exports = (user, admin) ->
     # GET /api/v1/publishers/:id
     it "Should retrieve existing publishers individually", (done) ->
 
+      @timeout 10000
+
       requests = 3
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
@@ -111,6 +113,8 @@ module.exports = (user, admin) ->
 
     # GET /api/v1/publishers
     it "Should retrieve all three created publishers", (done) ->
+
+      @timeout 3333
 
       req = util.userRequest "/api/v1/publishers"
       req.expect(200).end (err, res) ->

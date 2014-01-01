@@ -40,7 +40,7 @@ schema = new mongoose.Schema
   name: { type: String, required: true }
 
   url: { type: String, default: "" }
-  _previouslyGeneratedUrl: { type: String, default: "" }
+  _previouslyGeneratedUrl: { type: String, default: "-" }
 
   description: { type: String, default: "" }
   category: { type: String, default: "" }
@@ -122,6 +122,8 @@ schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
 ##
 
 schema.methods.createAPIKey = ->
+  if @hasAPIKey() then return
+
   @apikey = ""
   map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
