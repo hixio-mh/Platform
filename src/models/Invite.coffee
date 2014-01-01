@@ -23,7 +23,6 @@ schema.methods.toAPI = ->
   ret.id = ret._id
   delete ret._id
   delete ret.__v
-
   ret
 
 mongoose.model "Invite", schema

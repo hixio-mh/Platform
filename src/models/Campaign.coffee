@@ -14,9 +14,12 @@
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 mongoose = require "mongoose"
 spew = require "spew"
-
 redisLib = require "redis"
 redis = redisLib.createClient()
+
+##
+## Campaign schema
+##
 
 schema = new mongoose.Schema
 
@@ -56,7 +59,22 @@ schema = new mongoose.Schema
   platforms: { type: Array, default: [] }
   devices: { type: Array, default: [] }
 
+##
+## ID and handle generation
+##
+
 schema.methods.getGraphiteId = -> "campaigns.#{@_id}"
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+  delete ret.__v
+  ret
+
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  delete ret.owner
+  ret
 
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!
@@ -137,20 +155,6 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0] == undefined then cb []
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
-
-schema.methods.toAPI = ->
-  ret = @toObject()
-  ret.id = ret._id
-  delete ret._id
-  delete ret.__v
-
-  ret
-
-# Return a version of ourselves without an owner (and with a proper id)
-schema.methods.toAnonAPI = ->
-  ret = @toAPI()
-  delete ret.owner
-  ret
 
 getIdFromArgument = (arg) ->
   if typeof arg == "object"

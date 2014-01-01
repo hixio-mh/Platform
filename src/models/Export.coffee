@@ -25,7 +25,11 @@ schema.methods.toAPI = ->
   ret.id = ret._id
   delete ret._id
   delete ret.__v
+  ret
 
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  delete ret.owner
   ret
 
 mongoose.model "Export", schema
