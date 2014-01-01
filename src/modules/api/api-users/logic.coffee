@@ -18,13 +18,13 @@
 spew = require "spew"
 db = require "mongoose"
 
-module.exports = (utility) ->
+setup = (options, imports, register) ->
+
+  app = imports["core-express"].server
+  utility = imports["logic-utility"]
 
   # Delete user
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  delete: (req, res) ->
+  app.get "/api/v1/user/delete", (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
@@ -44,10 +44,7 @@ module.exports = (utility) ->
       res.json 200
 
   # Retrieve user, expects {filter}
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  get: (req, res) ->
+  app.get "/api/v1/user/get", (req, res) ->
     if not utility.param req.param("filter"), res, "Filter" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
@@ -79,20 +76,14 @@ module.exports = (utility) ->
   # Retrieve the user represented by the cookies on the request. Used on
   # the backend account page, and for rendering advertising credit and
   # publisher balance
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  getSelf: (req, res) ->
+  app.get "/api/v1/user", (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
       res.json user.toAPI()
 
   # Update the user account. Users can only save themselves!
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  save: (req, res) ->
+  app.put "/api/v1/user", (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
@@ -115,3 +106,15 @@ module.exports = (utility) ->
 
       user.save()
       res.send 200
+
+  # Returns a list of transactions: deposits, withdrawals, reserves
+  app.get "/api/v1/user/transactions", (req, res) ->
+    res.json [
+      {type: 'deposit', amount: 3.20, time: new Date().getTime() - 200}
+      {type: 'withdraw', amount: 3.20, time: new Date().getTime() - 600}
+      {type: 'reserve', amount: 3.20, time: new Date().getTime() - 3600}
+    ]
+
+  register null, {}
+
+module.exports = setup

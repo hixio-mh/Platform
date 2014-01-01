@@ -1,7 +1,7 @@
 {
-  "name": "logic",
+  "name": "api-ads",
   "version": "0.0.1",
-  "main": "routing.js",
+  "main": "logic.js",
   "private": true,
   "plugin": {
     "consumes": [

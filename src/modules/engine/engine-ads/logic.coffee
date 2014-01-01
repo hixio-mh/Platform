@@ -46,7 +46,7 @@ setup = (options, imports, register) ->
 
   register null,
 
-    "ad-engine":
+    "engine-ads":
       fetch: fetch
 
 module.exports = setup

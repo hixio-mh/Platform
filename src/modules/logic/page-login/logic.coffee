@@ -14,13 +14,18 @@
 spew = require "spew"
 db = require "mongoose"
 microtime = require "microtime"
+config = require "../../../config.json"
+statsdLib = require("node-statsd").StatsD
+statsd = new statsdLib
+  host: config["stats-db"].host
+  port: config["stats-db"].port
+  prefix: "#{config.mode}."
 
 setup = (options, imports, register) ->
 
   server = imports["core-express"]
   auth = imports["core-userauth"]
   utility = imports["logic-utility"]
-  statsd = imports["core-stats"]
 
   server.registerPage "/login", "account/login.jade"
 

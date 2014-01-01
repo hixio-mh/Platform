@@ -15,17 +15,21 @@
 module.exports = [
   "./modules/core/core-express",
   "./modules/core/core-snapshot",
-  "./modules/core/core-stats",
 
   "./modules/core/core-init-snapshot",
   "./modules/core/core-userauth",
   "./modules/core/core-init-start",
 
   "./modules/logic/utility",
-  "./modules/engine/ad-engine",
+  "./modules/core/core-api",
+  "./modules/engine/engine-ads",
 
-  "./modules/logic/api-internal",
-  "./modules/logic/api-analytics",
+  "./modules/api/api-ads",
+  "./modules/api/api-campaigns",
+  "./modules/api/api-invites",
+  "./modules/api/api-publishers",
+  "./modules/api/api-users",
+  "./modules/api/api-analytics",
 
   "./modules/logic/migration",
   "./modules/logic/seed",
@@ -34,7 +38,7 @@ module.exports = [
   "./modules/logic/page-login",
   "./modules/logic/page-register",
 
-  "./modules/logic/api-editor",
+  "./modules/api/api-editor",
 
   "./modules/core/core-init-end"
 ]

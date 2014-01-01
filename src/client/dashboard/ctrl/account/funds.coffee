@@ -14,7 +14,7 @@
 
 window.AdefyDashboard.controller "funds", ($scope, $rootScope, $http, $route) ->
 
-  $http.get("/api/v1/account/transactions").success (data) ->
+  $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data
 
   # modal
