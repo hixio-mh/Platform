@@ -32,6 +32,7 @@ generateInterface = (api, user, admin) ->
 
   @apiObjectIdSanitizationCheck = (object) ->
     expect(object._id).to.not.exist
+    expect(object.owner).to.not.exist
     expect(object.id).to.exist
 
   @actuallyDoneCheck = (done, i) -> i--; if i > 0 then return i; else done()
