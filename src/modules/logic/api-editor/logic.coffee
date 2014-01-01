@@ -22,7 +22,7 @@ http = require "http"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
 
   staticDir = "#{__dirname}/../../../static"

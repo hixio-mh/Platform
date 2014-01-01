@@ -18,7 +18,7 @@ db = require "mongoose"
 ##
 setup = (options, imports, register) ->
 
-  app = imports["line-express"].server
+  app = imports["core-express"].server
   utility = imports["logic-utility"]
 
   publishers = require("./logic/publishers.js") utility

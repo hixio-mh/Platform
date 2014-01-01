@@ -5,10 +5,9 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "line-express",
-      "line-socketio",
-      "line-snapshot",
-      "line-userauth"
+      "core-express",
+      "core-snapshot",
+      "core-userauth"
     ],
     "provides": []
   }

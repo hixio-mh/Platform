@@ -25,10 +25,10 @@ fs = require "fs"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  sockets = imports["line-socketio"]
-  snapshot = imports["line-snapshot"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  # sockets = imports["core-socketio"]
+  snapshot = imports["core-snapshot"]
+  auth = imports["core-userauth"]
 
   spew.init "Starting Initialization"
 
@@ -126,10 +126,10 @@ setup = (options, imports, register) ->
     ca: "#{__dirname}/../../../#{config['secure-ca']}"
 
   if _secure
-    sockets.secure = true
-    sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
-    sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
-    sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
+    # sockets.secure = true
+    # sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
+    # sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
+    # sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
 
     # Start http server to forward to https
     httpForward = express()

@@ -20,7 +20,7 @@ module.exports = (grunt) ->
   # To build the site, we must do a few things
   # First, we build our modules to a modules folder inside of our build
   # directory. At this point, we copy the package.json files to the build folder
-  # as well. We then copy over the built line modules alongside our own.
+  # as well.
   #
   # The models have to be built as well, but they are built as they are, no
   # facy stuff.
@@ -32,7 +32,6 @@ module.exports = (grunt) ->
 
   # Folder paths
   srcDir = "src/"
-  lineSrcDir = "line/build/src/"
   _buildDir = "build/"     # Modified internally
 
   # Deployment paths
@@ -181,15 +180,6 @@ module.exports = (grunt) ->
           dest: _buildDir
         ]
 
-      # Copy built line modules
-      line:
-        files: [
-          expand: true
-          cwd: lineSrcDir
-          src: "**"
-          dest: "#{_buildDir}/modules/line"
-        ]
-
       # True static files (images, fonts, etc)
       static:
         files: [
@@ -266,9 +256,6 @@ module.exports = (grunt) ->
       stylus:
         files: WstylusSrc
         tasks: [ "stylus:full" ]
-      lineSrc:
-        files: [ "#{lineSrcDir}/**" ]
-        tasks: [ "copy:line" ]
       packageJSON:
         files: WmodulePackageJSON
         tasks: [ "copy:packageJSON" ]
@@ -292,10 +279,8 @@ module.exports = (grunt) ->
   # Perform a full build
   grunt.registerTask "persistentFull", [
     "copy:packageJSON"
-    "copy:line"
     "copy:static"
     "copy:jade"
-    "copy:line"
     "copy:ssl"
     "coffee:modules"
     "coffee:models"

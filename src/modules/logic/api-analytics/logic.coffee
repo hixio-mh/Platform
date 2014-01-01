@@ -21,7 +21,7 @@ db = require "mongoose"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
 
   server.server.get "/api/v1/analytics/:request", (req, res) ->

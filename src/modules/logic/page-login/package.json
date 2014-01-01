@@ -5,8 +5,8 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "line-express",
-      "line-userauth",
+      "core-express",
+      "core-userauth",
       "logic-utility",
       "core-stats"
     ],

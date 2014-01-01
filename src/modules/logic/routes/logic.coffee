@@ -16,7 +16,7 @@ routes = require "../../../routes.json"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
 
   # Serve layout to each path

@@ -19,7 +19,7 @@ db = require "mongoose"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
 
   # If we aren't in development mode, return early
