@@ -22,7 +22,8 @@
     "redis": "~0.9.1",
     "hiredis": "~0.1.15",
     "cheerio": "~0.12.4",
-    "node-cache": "~0.4.0"
+    "node-cache": "~0.4.0",
+    "express-validator": "~1.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
