@@ -119,6 +119,7 @@ module.exports = (utility) ->
 
       pubCount = publishers.length
       ret = []
+      if pubCount == 0 then return res.json ret
 
       fetchPublisher = (publisher, res) ->
         publisher.fetchOverviewStats (stats) ->
