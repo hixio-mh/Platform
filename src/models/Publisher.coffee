@@ -62,6 +62,10 @@ schema = new mongoose.Schema
 
   earnings: { type: Number, default: 0 }
 
+  minimumCPM: { type: Number, default: 0 }
+  minimumCPC: { type: Number, default: 0 }
+  preferredPricing: { type: String, default: "Any" }
+
 ##
 ## ID and handle generation
 ##
