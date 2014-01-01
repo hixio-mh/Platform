@@ -21,12 +21,13 @@ module.exports = [
   "./modules/core/core-init-start",
 
   "./modules/logic/utility",
-  "./modules/core/core-api",
   "./modules/engine/engine-ads",
+
+  "./modules/api/api-invites",
+  "./modules/core/core-api",
 
   "./modules/api/api-ads",
   "./modules/api/api-campaigns",
-  "./modules/api/api-invites",
   "./modules/api/api-publishers",
   "./modules/api/api-users",
   "./modules/api/api-analytics",

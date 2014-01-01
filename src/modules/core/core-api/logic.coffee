@@ -39,7 +39,7 @@ setup = (options, imports, register) ->
           next() # everything was okay, allow the user to proceed to the API
 
     # user was not logged in, deny access to the API.
-    else req.send(403)
+    else res.send(403)
 
   register null, {}
 

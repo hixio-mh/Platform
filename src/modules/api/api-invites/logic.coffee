@@ -24,39 +24,19 @@ setup = (options, imports, register) ->
   app = imports["core-express"].server
   utility = imports["logic-utility"]
 
-  ## ** Unprotected ** - public invite add request!
-  app.get "/api/v1/invite/add", (req, res) ->
-    if not utility.param req.query.key, res, "Key" then return
-    if not utility.param req.query.email, res, "Email" then return
+  fetchUser = (req, res, cb) ->
+    db.model("User").findOne
+      username: req.cookies.user.id
+      session: req.cookies.user.sess
+    , (err, user) ->
+      if utility.dbError err, res then return cb null
 
-    # If in test mode, don't contact mailchimp
-    if req.query.test == "true" then testing = true else testing = false
-
-    if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
-      res.json 400
-      return
-
-    email = req.query.email
-
-    # Register user to our MailChimp list, continue in callback
-    invites.sendToMailChimp email, testing, ->
-
-      # Save invite in db
-      invite = db.model("Invite")
-        email: email
-        code: utility.randomString 32
-
-      invite.save()
-      invite = invite.toAPI()
-
-      if req.query.key == "WtwkqLBTIMwslKnc" then res.json
-        msg: "Added"
-        id: invite.id
-      else if req.query.key == "T13S7UESiorFUWMI"
-        res.json { email: email, code: invite.code, id: invite.id }
-
-    # Error callback
-    , (error) -> res.json { error: error }
+      if not user then cb null
+      else
+        cb
+          id: user._id
+          username: user.username
+          admin: user.permissions == 0
 
   # Add the email to our user list in MailChimp
   #
@@ -105,49 +85,98 @@ setup = (options, imports, register) ->
         spew.error "MailChimp JSON: #{e} [#{body}]"
         errorCB "Server error"
 
+  ## ** Unprotected ** - public invite add request!
+  app.get "/api/v1/invite/add", (req, res) ->
+    if not utility.param req.query.key, res, "Key" then return
+    if not utility.param req.query.email, res, "Email" then return
+
+    # If in test mode, don't contact mailchimp
+    if req.query.test == "true" then testing = true else testing = false
+
+    if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
+      res.json 400
+      return
+
+    email = req.query.email
+
+    # Register user to our MailChimp list, continue in callback
+    sendToMailChimp email, testing, ->
+
+      # Save invite in db
+      invite = db.model("Invite")
+        email: email
+        code: utility.randomString 32
+
+      invite.save()
+      invite = invite.toAPI()
+
+      if req.query.key == "WtwkqLBTIMwslKnc" then res.json
+        msg: "Added"
+        id: invite.id
+      else if req.query.key == "T13S7UESiorFUWMI"
+        res.json { email: email, code: invite.code, id: invite.id }
+
+    # Error callback
+    , (error) -> res.json { error: error }
+
   # Get invite list
   app.get "/api/v1/invite/all", (req, res) ->
-    if not req.user.admin then res.send 401
+    if not req.cookies.user then return res.send 403
 
-    db.model("Invite").find {}, (err, data) ->
-      if utility.dbError err, res then return
-      if data.length == 0 then res.json []
+    fetchUser req, res, (user) ->
+      if user == null then return
+      if not user.admin then return res.send 401
 
-      # Data fetched, send only what is needed
-      ret = []
+      db.model("Invite").find {}, (err, data) ->
+        if utility.dbError err, res then return
+        if data.length == 0 then res.json []
 
-      ret.push invite.toAPI() for invite in data
+        # Data fetched, send only what is needed
+        ret = []
 
-      res.json ret
+        ret.push invite.toAPI() for invite in data
+
+        res.json ret
 
   # Delete invite
   app.get "/api/v1/invite/delete", (req, res) ->
-    if not req.user.admin then res.send 401
-    if not utility.param req.query.id, res, "Id" then return
 
-    db.model("Invite").findById req.query.id, (err, invite) ->
-      if utility.dbError err, res then return
-      if not invite then res.send(404); return
+    if not req.cookies.user then return res.send 403
 
-      invite.remove()
-      res.send 200
+    fetchUser req, res, (user) ->
+      if user == null then return
+      if not user.admin then return res.send 401
+
+      if not utility.param req.query.id, res, "Id" then return
+
+      db.model("Invite").findById req.query.id, (err, invite) ->
+        if utility.dbError err, res then return
+        if not invite then res.send(404); return
+
+        invite.remove()
+        res.send 200
 
   # Update invite
   app.get "/api/v1/invite/update", (req, res) ->
-    if not req.user.admin then res.send 401
-    if not utility.param req.query.id, res, "Id" then return
-    if not utility.param req.query.email, res, "Email" then return
-    if not utility.param req.query.code, res, "Code" then return
+    if not req.cookies.user then return res.send 403
 
-    db.model("Invite").findById req.query.id, (err, invite) ->
-      if utility.dbError err, res then return
-      if not invite then res.send(404); return
+    fetchUser req, res, (user) ->
+      if user == null then return
+      if not user.admin then return res.send 401
 
-      invite.code = req.query.code
-      invite.email = req.query.email
-      invite.save()
+      if not utility.param req.query.id, res, "Id" then return
+      if not utility.param req.query.email, res, "Email" then return
+      if not utility.param req.query.code, res, "Code" then return
 
-      res.json invite.toAPI()
+      db.model("Invite").findById req.query.id, (err, invite) ->
+        if utility.dbError err, res then return
+        if not invite then res.send(404); return
+
+        invite.code = req.query.code
+        invite.email = req.query.email
+        invite.save()
+
+        res.json invite.toAPI()
 
   register null, {}
 

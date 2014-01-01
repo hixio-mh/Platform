@@ -44,24 +44,17 @@ setup = (options, imports, register) ->
       minimumCPM: Number req.param("minimumCPM") || 0
       minimumCPC: Number req.param("minimumCPC") || 0
 
-      status: 0
-      active: false
-      impressions: 0
-      clicks: 0
-      requests: 0
-      earnings: 0
-
     newPublisher.save (err) ->
       if err
         res.json 400, err
       else
-        res.json 200, newPublisher.toAPI()
+        res.json 200, newPublisher.toAnonAPI()
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
   app.post "/api/v1/publishers/:id", (req, res) ->
 
-    db.model("Publisher").findById req.param('id'), (err, pub) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
@@ -94,11 +87,11 @@ setup = (options, imports, register) ->
         if err
           res.json 400
         else
-          res.json 200, pub.toAPI()
+          res.json 200, pub.toAnonAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
   app.delete "/api/v1/publishers/:id", (req, res) ->
-    db.model("Publisher").findById req.param('id'), (err, pub) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then res.send(404); return
 
@@ -128,7 +121,7 @@ setup = (options, imports, register) ->
       fetchPublisher = (publisher, res) ->
         publisher.fetchOverviewStats (stats) ->
 
-          publisherData = publisher.toAPI()
+          publisherData = publisher.toAnonAPI()
           publisherData.stats = stats
           ret.push publisherData
 
@@ -153,7 +146,7 @@ setup = (options, imports, register) ->
         return
 
       pub.fetchOverviewStats (stats) ->
-        publisher = pub.toAPI()
+        publisher = pub.toAnonAPI()
         publisher.stats = stats
         res.json publisher
 
