@@ -80,6 +80,10 @@ module.exports = (utility) ->
 
       req.onValidationError (msg) -> res.json 400, error: msg.path
 
+      pub.name = req.param("name") || pub.name
+      pub.category = req.param("category") || pub.category
+      pub.description = req.param("description") || pub.description
+
       if req.param "minimumCPM"
         req.check("minimumCPM", "Invalid minimum CPM").isInt().min 0
         pub.minimumCPM = req.param "minimumCPM"
@@ -87,10 +91,6 @@ module.exports = (utility) ->
       if req.param "minimumCPC"
         req.check("minimumCPC", "Invalid minimum CPC").isInt().min 0
         pub.minimumCPC = req.param "minimumCPC"
-
-      if req.param "name" then pub.name = req.param "name"
-      if req.param "category" then pub.category = req.param "category"
-      if req.param "description" then pub.description = req.param "description"
 
       if req.param "url"
         req.check("url", "Invalid url").isUrl()
