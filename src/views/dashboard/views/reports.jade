@@ -10,7 +10,7 @@
   .right: select(chosen ng-options="value as key for (key,value) in ranges" ng-model="opts.range")
 
   div(ng-switch="tab")
-    .tab(ng-switch-when="campaigns" ng-controller="campaignsReports")
+    .tab(ng-switch-when="campaigns" ng-controller="AdefyReportsCampaignsController")
       h1 Total
       graph(data="totals" type="type" width="880" height="300 " unit="decade")
 
@@ -31,7 +31,7 @@
             td {{ campaign.spent | currency:$ }}
       canvas(barchart, data="data2", width="940", height="300")
 
-    .tab(ng-switch-when="ads" ng-controller="adsReports")
+    .tab(ng-switch-when="ads" ng-controller="AdefyReportsAdsController")
       h1 Total
       graph(data="totals" type="type" width="880" height="300" unit="decade")
 
@@ -52,7 +52,7 @@
             td {{ ad.spent | currency:$ }}
       canvas(barchart, data="data2", width="940", height="300")
 
-    .tab(ng-switch-when="apps" ng-controller="appsReports")
+    .tab(ng-switch-when="apps" ng-controller="AdefyReportsAppsController")
       h1 Total
       graph(data="totals" type="type" width="880" height="300" unit="decade")
 

@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-routes = require "../../../routes.json"
+routes = require "../../../angularDashboardViews.json"
 
 setup = (options, imports, register) ->
 
