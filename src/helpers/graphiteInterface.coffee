@@ -82,16 +82,21 @@ module.exports = (host) -> {
       query = @_buildQuery()
 
       request query, (error, response, body) =>
-        if error then spew.error error
+
+        # Avoid the terrors of having to parse an empty response
+        if body.length == 0 or body == "[]"
+          return cb []
+
+        if error then spew.error "Graphite request error: #{error}"
         else
           try
             if @_filter then body = @_filterResponse JSON.parse body
             else body = JSON.parse body
             if cb then cb body
           catch err
-            spew.error err
+            spew.error "Graphite response parsing error: #{err}"
             spew.info body
-            if cb then cb null
+            if cb then cb []
 
     @getPrefixStat = -> "stats.#{config.mode}"
     @getPrefixStatCounts = -> "stats_counts.#{config.mode}"
@@ -123,7 +128,6 @@ module.exports = (host) -> {
       if @untill.length > 0 then query += "&untill=#{@untill}"
 
       query += "&format=json"
-      spew.info query
       query
 
     @_filterResponse = (data) ->
