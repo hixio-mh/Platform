@@ -43,17 +43,22 @@ module.exports = (utility) ->
       url: String req.param("url") || ""
       category: String req.param "category"
       description: String req.param("description") || ""
+      preferredPricing: String req.param("preferredPricing") || ""
+      minimumCPM: Number req.param("minimumCPM") || 0
+      minimumCPC: Number req.param("minimumCPC") || 0
 
       status: 0
       active: false
-      apikey: utility.randomString 32
       impressions: 0
       clicks: 0
       requests: 0
       earnings: 0
 
-    newPublisher.save()
-    res.json 200, newPublisher.toAPI()
+    newPublisher.save (err) ->
+      if err
+        res.json 400, err
+      else
+        res.json 200, newPublisher.toAPI()
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
@@ -73,13 +78,32 @@ module.exports = (utility) ->
         res.json 403
         return
 
-      pub.name = req.param "name"
-      pub.url = req.param "url"
-      pub.category = req.param "category"
-      pub.description = req.param "description"
+      req.onValidationError (msg) -> res.json 400, error: msg.path
 
-      pub.save()
-      res.json 200, pub.toAPI()
+      if req.param "minimumCPM"
+        req.check("minimumCPM", "Invalid minimum CPM").isInt().min 0
+        pub.minimumCPM = req.param "minimumCPM"
+
+      if req.param "minimumCPC"
+        req.check("minimumCPC", "Invalid minimum CPC").isInt().min 0
+        pub.minimumCPC = req.param "minimumCPC"
+
+      if req.param "name" then pub.name = req.param "name"
+      if req.param "category" then pub.category = req.param "category"
+      if req.param "description" then pub.description = req.param "description"
+
+      if req.param "url"
+        req.check("url", "Invalid url").isUrl()
+        pub.url = req.param "url"
+
+      if req.param("preferredPricing")
+        pub.preferredPricing = req.param "preferredPricing"
+
+      pub.save (err) ->
+        if err
+          res.json 400
+        else
+          res.json 200, pub.toAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
   #
