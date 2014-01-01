@@ -17,6 +17,7 @@ mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
 spew = require "spew"
+NodeCache = require "node-cache"
 redisLib = require "redis"
 redis = redisLib.createClient()
 statsdLib = require("node-statsd").StatsD
@@ -24,6 +25,11 @@ statsd = new statsdLib
   host: config["stats-db"].host
   port: config["stats-db"].port
   prefix: "#{config.mode}."
+
+##
+## Cache, used for storing remote statistics
+##
+statCache = new NodeCache stdTTL: 60
 
 ##
 ## Publisher schema
@@ -131,52 +137,81 @@ schema.methods.hasAPIKey = ->
 # lifetime (both sums)
 schema.methods.fetchOverviewStats = (cb) ->
 
-  # Build query for impressions, clicks, and earnings
-  query = graphiteInterface.buildStatFetchQuery
-    prefix: @getGraphiteId()
-    filter: true
-    request: [
-      range: "24hours"
-      stats: ["impressions", "clicks", "earnings"]
-    ]
+  statCacheKey = "24hStats:#{@getRedisId()}"
 
-  # We need to attach the prefix ourselves, since arguments are not parsed
-  # as key targets
-  divisor = "#{query.getPrefixStatCounts()}.#{@getGraphiteId()}.impressions"
-  dividend = "'#{@getGraphiteId()}.clicks'"
+  # Default stats object, since stats that have never been logged
+  # (new publisher) don't even return 0
+  localStats = {}
 
-  # Add divideSeries() ourselves to request CTR
-  query.addStatCountTarget dividend, "divideSeries", divisor
+  mergeStats = (localStats, remoteStats) ->
+    stats = {}
+    stats[key] = value for key, value of remoteStats
+    stats[key] = value for key, value of localStats
+    stats
 
-  # Gogo!
-  query.exec (data) =>
+  fetchRemoteStats = (cb) =>
 
-    # Default stats object, since stats that have never been logged
-    # (new publisher) don't even return 0
-    stats =
-      impressions24h: 0
-      clicks24h: 0
-      ctr24h: 0
-      earnings24h: 0
+    # Build query for impressions, clicks, and earnings
+    query = graphiteInterface.buildStatFetchQuery
+      prefix: @getGraphiteId()
+      filter: true
+      request: [
+        range: "24hours"
+        stats: ["impressions", "clicks", "earnings"]
+      ]
 
-      impressions: @fetchImpressions()
-      clicks: @fetchClicks()
-      ctr: @fetchCTR()
-      earnings: @fetchEarnings()
+    # We need to attach the prefix ourselves, since arguments are not parsed
+    # as key targets
+    divisor = "#{query.getPrefixStatCounts()}.#{@getGraphiteId()}.impressions"
+    dividend = "'#{@getGraphiteId()}.clicks'"
 
-    # Helper
-    assignMatching = (res, stat, statName) ->
-      if res.target.indexOf(statName) != -1 then gstat = res.datapoints[0].y
+    # Add divideSeries() ourselves to request CTR
+    query.addStatCountTarget dividend, "divideSeries", divisor
 
-    # Iterate over the result, and attempt to find matching responses
-    for res in data
+    # Gogo!
+    query.exec (data) =>
 
-      assignMatching res, stats.impressions24h, ".impressions,"
-      assignMatching res, stats.clicks24h, ".clicks,"
-      assignMatching res, stats.ctr24h, ".ctr,"
-      assignMatching res, stats.earnings24h, ".earnings,"
+      # Helper
+      assignMatching = (res, stat, statName) ->
+        if res.target.indexOf(statName) != -1 then gstat = res.datapoints[0].y
 
-    cb stats
+      remoteStats =
+        impressions24h: 0
+        clicks24h: 0
+        ctr24h: 0
+        earnings24h: 0
+
+      # Iterate over the result, and attempt to find matching responses
+      for res in data
+
+        assignMatching res, remoteStats.impressions24h, ".impressions,"
+        assignMatching res, remoteStats.clicks24h, ".clicks,"
+        assignMatching res, remoteStats.ctr24h, ".ctr,"
+        assignMatching res, remoteStats.earnings24h, ".earnings,"
+
+      # Store stats in cache
+      statCache.set statCacheKey, remoteStats, (err, success) ->
+        if err then spew.error "Cache error #{err}"
+        cb remoteStats
+
+  @fetchImpressions (impressions) =>
+    @fetchClicks (clicks) =>
+      @fetchEarnings (earnings) =>
+
+        localStats =
+          clicks: clicks
+          impressions: impressions
+          earnings: earnings
+          ctr: 0
+
+        if impressions != 0 then localStats.ctr = clicks / impressions
+
+        # Stats are fetched together, so check for only one stat in the cache
+        statCache.get statCacheKey, (err, data) ->
+          if data[statCacheKey] == undefined
+            fetchRemoteStats (remoteStats) => cb mergeStats localStats, remoteStats
+          else
+            cb mergeStats localStats, data[statCacheKey]
 
 # Fetches a single stat over a specific period of time
 schema.methods.fetchCustomStat = (range, stat, cb) ->
@@ -216,17 +251,32 @@ schema.methods.logStatIncrement = (stat) ->
 ## Redis handling
 ##
 
-schema.methods.fetchImpressions = -> redis.get "#{@getRedisId()}:impressions"
-schema.methods.fetchClicks = -> redis.get "#{@getRedisId()}:clicks"
-schema.methods.fetchCTR = -> @fetchClicks() / @fetchImpressions()
-schema.methods.fetchEarnings = -> redis.get "#{@getRedisId()}:earnings"
+schema.methods.fetchImpressions = (cb) ->
+  redis.get "#{@getRedisId()}:impressions", (err, result) ->
+    if err then spew.error err
+    cb Number result
+
+schema.methods.fetchClicks = (cb) ->
+  redis.get "#{@getRedisId()}:clicks", (err, result) ->
+    if err then spew.error err
+    cb Number result
+
+schema.methods.fetchCTR = (cb) ->
+  @fetchClicks (clicks) =>
+    @fetchImpressions (impressions) =>
+      cb Number(clicks) / Number(impressions)
+
+schema.methods.fetchEarnings = (cb) ->
+  redis.get "#{@getRedisId()}:earnings", (err, result) ->
+    if err then spew.error err
+    cb Number result
 
 schema.methods.ensureRedisStructure = ->
   setKeyIfNull = (key, val) -> if redis.get key == null then redis.set key, val
 
   setKeyIfNull "#{@getRedisId()}:impressions", 0
   setKeyIfNull "#{@getRedisId()}:clicks", 0
-  setKeyIfNull "#{@getRedisId()}:imearningspressions", 0
+  setKeyIfNull "#{@getRedisId()}:earnings", 0
 
 ##
 ##
