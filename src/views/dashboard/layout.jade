@@ -13,30 +13,31 @@
 //-
 
 !!!
-html(lang="en", data-ng-app="AdefyDashboard")
+html(lang="en" ng-app="AdefyDashboard")
   head
     meta(charset="utf-8")
-    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
 
     title Dashboard
 
-    meta(name="description", content="")
-    meta(name="author", content="Spectrum IT")
-    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="description" content="")
+    meta(name="author" content="Spectrum IT")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
 
-    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+    link(rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon")
 
     script(src="/js/vendor/pace.min.js")
 
-    link(rel="stylesheet", href="/css/vendor/pace-flash.css")
+    link(rel="stylesheet" href="/css/vendor/pace-flash.css")
 
-    link(rel="stylesheet", href="/css/reset.css")
-    link(rel="stylesheet", href="/css/styles.css")
-    link(rel="stylesheet", href="/css/vendor/chosen.min.css")
-    link(rel="stylesheet", href="/css/vendor/angular-toggle-switch.css")
-    link(rel="stylesheet", href="/css/vendor/rickshaw.css")
-    link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900')
-    link(rel='stylesheet', href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
+    link(rel="stylesheet" href="/css/reset.css")
+    link(rel="stylesheet" href="/css/styles.css")
+    link(rel="stylesheet" href="/css/vendor/chosen.min.css")
+    link(rel="stylesheet" href="/css/vendor/angular-toggle-switch.css")
+    link(rel="stylesheet" href="/css/vendor/rickshaw.css")
+    link(rel="stylesheet" href='//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900')
+    link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
+    link(rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css")
 
     | <!--[if lt IE 9]>
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,7 +68,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
-            a(href="#")
+            a(href="/admin")
               i.fa.fa-fw.fa-user
               | Admin
             a(href="/settings")
@@ -98,6 +99,8 @@ html(lang="en", data-ng-app="AdefyDashboard")
       script(src="/js/vendor/angular-country-select.min.js")
       script(src="/js/vendor/angles.js")
       script(src="/js/vendor/angular.chosen.js")
+      script(src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js")
+      script(src="http://cdn.oesmith.co.uk/morris-0.4.3.min.js")
 
       script(src="//d3js.org/d3.v3.min.js" charset="utf-8")
       script(src="/js/vendor/rickshaw.min.js")
@@ -110,12 +113,11 @@ html(lang="en", data-ng-app="AdefyDashboard")
       //-- Route configs, and root controller
       //--
 
-      //- Note: This will no longer work, the admin config has to be merged
-      //-       with the normal one
-      //-
-      //- if locals.admin
-      //-  script(src="/client/routes/admin.js")
-      script(src="/client/routes/normal.js")
+      if locals.admin
+        script(src="/client/routes/admin.js")
+      else
+        script(src="/client/routes/normal.js")
+
       script(src="/client/controllers/AdefyRootController.js")
 
       //--
@@ -173,6 +175,7 @@ html(lang="en", data-ng-app="AdefyDashboard")
         script(src="/client/pages/admin/controllers/AdefyAdminInvitesController.js")
         script(src="/client/pages/admin/controllers/AdefyAdminPublishersController.js")
         script(src="/client/pages/admin/controllers/AdefyAdminUsersController.js")
+        script(src="/client/pages/admin/controllers/AdefyAdminMenuController.js")
 
       script(src="//use.typekit.net/udl8vci.js")
       script.

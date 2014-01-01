@@ -11,11 +11,6 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
-##
-## Todo: Figure out what this is supposed to do. It is likel vestigal
-##
-
 window.AdefyDashboard.controller "AdefyAppsMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.app.active
