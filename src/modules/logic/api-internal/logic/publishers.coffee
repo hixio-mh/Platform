@@ -120,16 +120,19 @@ module.exports = (utility) ->
       pubCount = publishers.length
       ret = []
 
-      # Attach 24 hour stats to publishers, and return with complete data
-      for p in publishers
-        p.fetchOverviewStats (stats) ->
+      fetchPublisher = (publisher, res) ->
+        publisher.fetchOverviewStats (stats) ->
 
-          publisher = p.toAPI()
-          publisher.stats = stats
-          ret.push publisher
+          publisherData = publisher.toAPI()
+          publisherData.stats = stats
+          ret.push publisherData
 
           pubCount--
           if pubCount == 0 then res.json ret
+
+      # Attach 24 hour stats to publishers, and return with complete data
+      for p in publishers
+        fetchPublisher p, res
 
   # Finds a single publisher by ID
   #
