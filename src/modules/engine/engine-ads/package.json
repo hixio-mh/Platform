@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "engine-ads",
   "version": "0.0.1",
   "main": "logic.js",
   "private": true,
@@ -9,6 +9,6 @@
       "core-userauth",
       "logic-utility"
     ],
-    "provides": []
+    "provides": ["engine-ads"]
   }
 }

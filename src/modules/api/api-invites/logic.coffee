@@ -19,22 +19,44 @@ spew = require "spew"
 request = require "request"
 db = require "mongoose"
 
-module.exports = (utility) ->
+setup = (options, imports, register) ->
 
-  # Ships an invite request to the database
-  #
-  # @param [String] email
-  # @param [String] code Invite code
-  #
-  # @return [Object] invite
-  create: (email, code) ->
+  app = imports["core-express"].server
+  utility = imports["logic-utility"]
 
-    invite = db.model("Invite")
-      email: email
-      code: code
+  ## ** Unprotected ** - public invite add request!
+  app.get "/api/v1/invite/add", (req, res) ->
+    if not utility.param req.query.key, res, "Key" then return
+    if not utility.param req.query.email, res, "Email" then return
 
-    invite.save()
-    invite.toAPI()
+    # If in test mode, don't contact mailchimp
+    if req.query.test == "true" then testing = true else testing = false
+
+    if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
+      res.json 400
+      return
+
+    email = req.query.email
+
+    # Register user to our MailChimp list, continue in callback
+    invites.sendToMailChimp email, testing, ->
+
+      # Save invite in db
+      invite = db.model("Invite")
+        email: email
+        code: utility.randomString 32
+
+      invite.save()
+      invite = invite.toAPI()
+
+      if req.query.key == "WtwkqLBTIMwslKnc" then res.json
+        msg: "Added"
+        id: invite.id
+      else if req.query.key == "T13S7UESiorFUWMI"
+        res.json { email: email, code: invite.code, id: invite.id }
+
+    # Error callback
+    , (error) -> res.json { error: error }
 
   # Add the email to our user list in MailChimp
   #
@@ -42,7 +64,7 @@ module.exports = (utility) ->
   # @param [Boolean] testing if true, no email is sent (succesCB is called)
   # @param [Function] successCB called on success
   # @param [Function] errorCB called on error with message
-  sendToMailChimp: (email, testing, successCB, errorCB) ->
+  sendToMailChimp = (email, testing, successCB, errorCB) ->
 
     # Bail early if testing
     if testing == true
@@ -84,10 +106,9 @@ module.exports = (utility) ->
         errorCB "Server error"
 
   # Get invite list
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  getAll: (req, res) ->
+  app.get "/api/v1/invite/all", (req, res) ->
+    if not req.user.admin then res.send 401
+
     db.model("Invite").find {}, (err, data) ->
       if utility.dbError err, res then return
       if data.length == 0 then res.json []
@@ -100,10 +121,8 @@ module.exports = (utility) ->
       res.json ret
 
   # Delete invite
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  delete: (req, res) ->
+  app.get "/api/v1/invite/delete", (req, res) ->
+    if not req.user.admin then res.send 401
     if not utility.param req.query.id, res, "Id" then return
 
     db.model("Invite").findById req.query.id, (err, invite) ->
@@ -114,10 +133,8 @@ module.exports = (utility) ->
       res.send 200
 
   # Update invite
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  update: (req, res) ->
+  app.get "/api/v1/invite/update", (req, res) ->
+    if not req.user.admin then res.send 401
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.email, res, "Email" then return
     if not utility.param req.query.code, res, "Code" then return
@@ -131,3 +148,7 @@ module.exports = (utility) ->
       invite.save()
 
       res.json invite.toAPI()
+
+  register null, {}
+
+module.exports = setup

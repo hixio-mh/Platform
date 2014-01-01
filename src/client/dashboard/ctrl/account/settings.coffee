@@ -14,10 +14,10 @@
 
 window.AdefyDashboard.controller "settings", ($scope, $http, $route) ->
 
-  $http.get("/api/v1/account").success (me) ->
+  $http.get("/api/v1/user").success (me) ->
     $scope.me = me
 
   $scope.save = ->
     console.log $scope.me
-    $http.put("/api/v1/account", $scope.me).success (resp) ->
+    $http.put("/api/v1/user", $scope.me).success (resp) ->
       $scope.setNotification("Saved!", "success")

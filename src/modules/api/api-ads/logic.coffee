@@ -13,21 +13,18 @@
 ##
 
 ##
-## Ad manipulation
+## Ad manipulation - /api/v1/ads
 ##
 spew = require "spew"
 db = require "mongoose"
 
-module.exports = (utility) ->
+setup = (options, imports, register) ->
+
+  app = imports["core-express"].server
+  utility = imports["logic-utility"]
 
   # Create an ad, expects "name" in url and req.cookies.user to be valid
-  #
-  # POST /api/v1/ads
-  # Tested in api-ads.coffee
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  create: (req, res) ->
+  app.post "/api/v1/ads", (req, res) ->
     if not utility.param req.param("name"), res, "Ad name" then return
 
     # Create new ad entry
@@ -44,13 +41,7 @@ module.exports = (utility) ->
         res.json 200, newAd.toAnonAPI()
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
-  #
-  # DELETE /api/v1/ads/:id
-  # Tested in api-ads.coffee
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  delete: (req, res) ->
+  app.delete "/api/v1/ads/:id", (req, res) ->
     db.model("Ad")
     .findById(req.param("id"))
     .populate("campaigns.campaign")
@@ -72,13 +63,7 @@ module.exports = (utility) ->
       res.send 200
 
   # Fetches owned ads
-  #
-  # GET /api/v1/ads
-  # Tested in api-ads.coffee
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  get: (req, res) ->
+  app.get "/api/v1/ads", (req, res) ->
     db.model("Ad")
     .find({ owner: req.user.id })
     .populate("campaigns.campaign")
@@ -91,13 +76,7 @@ module.exports = (utility) ->
 
 
   # Finds a single ad by ID
-  #
-  # GET /api/v1/ads/:id
-  # Tested in api-ads.coffee
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  find: (req, res) ->
+  app.get "/api/v1/ads/:id", (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then res.send(404); return
@@ -111,7 +90,8 @@ module.exports = (utility) ->
         advertisement.stats = stats
         res.json advertisement
 
-  requestApproval: (req, res) ->
+  # Sets ad status as "awaiting approval"
+  app.post "/api/v1/ads/:id/approval", (req, res) ->
     db.model("Ad").findOne
       _id: req.param "id"
       owner: req.user.id
@@ -124,10 +104,7 @@ module.exports = (utility) ->
       res.send 200
 
   # Fetch ad stats over a specific period of time
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  fetchStats: (req, res) ->
+  app.get "/api/v1/ads/stats/:id/:stat/:range", (req, res) ->
     if not utility.param req.param("id"), res, "Ad id" then return
     if not utility.param req.param("range"), res, "Temporal range" then return
     if not utility.param req.param("stat"), res, "Stat" then return
@@ -138,3 +115,7 @@ module.exports = (utility) ->
 
       ad.fetchCompiledStat req.param("range"), req.param("stat"), (data) ->
         res.json data
+
+  register null, {}
+
+module.exports = setup
