@@ -80,6 +80,11 @@ schema.methods.toAPI = ->
   delete ret._previouslyGeneratedUrl
   ret
 
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  delete ret.owner
+  ret
+
 ##
 ## Thumbnail handling
 ##
