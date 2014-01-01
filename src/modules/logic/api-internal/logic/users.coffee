@@ -25,12 +25,12 @@ module.exports = (utility) ->
   # @param [Object] req request
   # @param [Object] res response
   delete: (req, res) ->
-    if not utility.param req.param('id'), res, "Id" then return
+    if not utility.param req.param("id"), res, "Id" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
       return
 
-    db.model("User").findById req.param('id'), (err, user) ->
+    db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res then return
       if not utility.verifyDBResponse user, res, "User" then return
 
@@ -41,7 +41,7 @@ module.exports = (utility) ->
       spew.info "Deleted user #{user.username}"
 
       user.remove()
-      res.json { msg: "OK" }
+      res.json 200
 
   # Retrieve user, expects {filter}
   #
@@ -53,40 +53,28 @@ module.exports = (utility) ->
       res.json 403, { error: "Unauthorized" }
       return
 
-    if req.param('filter') == "all"
+    findAll = (res) ->
       db.model("User").find {}, (err, users) ->
         if utility.dbError err, res then return
 
-        # Data fetched, send only what is needed
         ret = []
-
-        for u in users
-          user = {}
-          user.username = u.username
-          user.fname = u.fname
-          user.lname = u.lname
-          user.email = u.email
-          user.id = u._id
-          user.funds = u.funds
-          ret.push user
-
+        ret.push u.toAPI() for u in users
         res.json ret
 
-    else if req.param('filter') == "username"
-      if not utility.param req.params.username, res, "Username" then return
-
-      db.model("User").findOne { username: req.params.username }, (err, user) ->
+    findOne = (username, res) ->
+      db.model("User").findOne { username: username }, (err, user) ->
         if utility.dbError err, res then return
         if not user then res.send(404); return
 
-        # Data fetched, send only what is needed
-        ret = {}
-        ret.username = user.username
-        ret.fname = user.fname
-        ret.lname = user.lname
-        ret.email = user.email
+        res.json ret.toAPI()
 
-        res.json ret
+    if req.param("filter") == "all"
+      findAll res
+    else if req.param("filter") == "username"
+      if not utility.param req.params.username, res, "Username"
+        return
+      else
+        findOne req.params.username, res
 
   # Retrieve the user represented by the cookies on the request. Used on
   # the backend account page, and for rendering advertising credit and
@@ -98,23 +86,9 @@ module.exports = (utility) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      res.json {
-        username: user.username
-        fname: user.fname
-        lname: user.lname
-        email: user.email
-        company: user.company
-        address: user.address
-        city: user.city
-        state: user.state
-        postalCode: user.postalCode
-        country: user.country
-        phone: user.phone
-        fax: user.fax
-        funds: user.funds
-      }
+      res.json user.toAPI()
 
-  # Update the user account
+  # Update the user account. Users can only save themselves!
   #
   # @param [Object] req request
   # @param [Object] res response
@@ -122,17 +96,22 @@ module.exports = (utility) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      user.fname = req.param('fname') || user.fname
-      user.lname = req.param('lname') || user.lname
-      user.email = req.param('email') || user.email
-      user.company = req.param('company') || user.company
-      user.address = req.param('address') || user.address
-      user.city = req.param('city') || user.city
-      user.state = req.param('state') || user.state
-      user.postalCode = req.param('postalCode') || user.postalCode
-      user.country = req.param('country') || user.country
-      user.phone = req.param('phone') || user.phone
-      user.fax = req.param('fax') || user.fax
+      req.onValidationError (msg) -> res.json 400, error: msg.path
+
+      if req.param "email"
+        req.check("email", "Invalid email").isEmail()
+        user.email = req.param "email"
+
+      user.fname = req.param("fname") || user.fname
+      user.lname = req.param("lname") || user.lname
+      user.company = req.param("company") || user.company
+      user.address = req.param("address") || user.address
+      user.city = req.param("city") || user.city
+      user.state = req.param("state") || user.state
+      user.postalCode = req.param("postalCode") || user.postalCode
+      user.country = req.param("country") || user.country
+      user.phone = req.param("phone") || user.phone
+      user.fax = req.param("fax") || user.fax
 
       user.save()
       res.send 200

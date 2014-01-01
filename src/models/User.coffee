@@ -23,7 +23,6 @@ schema = new mongoose.Schema
 
   session: String
   hash: String
-  limit: String
 
   fname: String
   lname: String
@@ -50,6 +49,16 @@ schema = new mongoose.Schema
   # Schema version, used by /migrate
   version: Number
 
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+  delete ret.__v
+  delete ret.session
+  delete ret.permissions
+  delete ret.hash
+  ret
+
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
 
@@ -73,13 +82,5 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
       return cb err
 
     cb null, isMatch
-
-schema.methods.toAPI = ->
-  ret = @toObject()
-  ret.id = ret._id
-  delete ret._id
-  delete ret.__v
-
-  ret
 
 mongoose.model "User", schema
