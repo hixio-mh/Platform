@@ -14,16 +14,19 @@
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 mongoose = require "mongoose"
 spew = require "spew"
-
 redisLib = require "redis"
 redis = redisLib.createClient()
+
+##
+## Ad schema
+##
 
 schema = new mongoose.Schema
 
   # Generic per-ad information
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
-  data: String
+  data: { type: String, default: "" }
 
   # Added version number in v1
   # Added campaign references in v2
@@ -47,13 +50,22 @@ schema = new mongoose.Schema
     bid: { type: Number, default: 0 }
   ]
 
-schema.methods.getGraphiteId = -> "ads.#{@_id}"
+##
+## ID and handle generation
+##
 
+schema.methods.getGraphiteId = -> "ads.#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
   delete ret.__v
+  delete ret.version
+  ret
+
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  delete ret.owner
   ret
 
 # Fetches Spent, Clicks, Impressions and CTR for the past 24 hours, and
