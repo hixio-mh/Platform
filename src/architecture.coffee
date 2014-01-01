@@ -13,13 +13,12 @@
 ##
 
 module.exports = [
-  "./modules/line/express",
-  "./modules/line/snapshot",
-  "./modules/line/socketio",
+  "./modules/core/core-express",
+  "./modules/core/core-snapshot",
   "./modules/core/core-stats",
 
   "./modules/core/core-init-snapshot",
-  "./modules/line/userauth",
+  "./modules/core/core-userauth",
   "./modules/core/core-init-start",
 
   "./modules/logic/utility",

@@ -17,8 +17,8 @@ microtime = require "microtime"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  auth = imports["core-userauth"]
   utility = imports["logic-utility"]
   statsd = imports["core-stats"]
 

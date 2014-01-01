@@ -23,16 +23,16 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  sockets = imports["line-socketio"]
-  snapshot = imports["line-snapshot"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  # sockets = imports["core-socketio"]
+  snapshot = imports["core-snapshot"]
+  auth = imports["core-userauth"]
 
   spew.info "Performing final initialization"
 
   server.initLastRoutes()  # Add 500 and 404 error routes, create server
-  sockets.init(server)     # Create sockets io object, listen
-  sockets.initListeners()  # Tie socket listeners in
+  # sockets.init(server)     # Create sockets io object, listen
+  # sockets.initListeners()  # Tie socket listeners in
   server.beginListen()     # Start express listen()
 
   # Register onExit handler to save state

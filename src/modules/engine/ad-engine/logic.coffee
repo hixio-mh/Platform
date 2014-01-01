@@ -21,8 +21,8 @@ spew = require "spew"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  auth = imports["core-userauth"]
   utility = imports["logic-utility"]
 
   server.server.get "/api/r", (req, res) -> adRequest req.query, res

@@ -17,8 +17,8 @@ db = require "mongoose"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  auth = imports["core-userauth"]
   utility = imports["logic-utility"]
 
   server.registerPage "/register", "account/register.jade"

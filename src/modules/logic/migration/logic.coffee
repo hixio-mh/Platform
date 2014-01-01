@@ -19,7 +19,7 @@ spew = require "spew"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
 
   # Admin only!

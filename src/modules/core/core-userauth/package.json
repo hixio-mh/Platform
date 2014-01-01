@@ -1,10 +1,10 @@
 {
-  "name": "core-snapshot-init",
+  "name": "core-userauth",
   "version": "0.0.1",
   "main": "logic.js",
   "private": true,
   "plugin": {
     "consumes": ["core-snapshot"],
-    "provides": []
+    "provides": ["core-userauth"]
   }
 }
