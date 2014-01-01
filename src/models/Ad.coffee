@@ -53,7 +53,7 @@ schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
-  delete _v
+  delete ret.__v
   ret
 
 # Fetches Spent, Clicks, Impressions and CTR for the past 24 hours, and

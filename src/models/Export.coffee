@@ -24,7 +24,7 @@ schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
-  delete _v
+  delete ret.__v
 
   ret
 

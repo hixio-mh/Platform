@@ -142,19 +142,14 @@ schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
   delete ret._id
-  delete _v
+  delete ret.__v
 
   ret
 
 # Return a version of ourselves without an owner (and with a proper id)
 schema.methods.toAnonAPI = ->
-  ret = @toObject()
-  ret.id = ret._id
-
-  delete ret._id
+  ret = @toAPI()
   delete ret.owner
-  delete _v
-
   ret
 
 getIdFromArgument = (arg) ->
