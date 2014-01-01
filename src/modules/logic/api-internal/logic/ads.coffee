@@ -34,16 +34,14 @@ module.exports = (utility) ->
     newAd = db.model("Ad")
       owner: req.user.id
       name: req.param "name"
-      data: ""
       campaigns: []
 
     newAd.save (err) ->
       if err
         spew.error "Error saving new ad [#{err}]"
         res.json 500
-        return
-
-      res.json 200, newAd.toAPI()
+      else
+        res.json 200, newAd.toAnonAPI()
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   #
@@ -88,8 +86,7 @@ module.exports = (utility) ->
       if utility.dbError err, res then return
 
       ret = []
-      if ads then ret.push ad.toAPI() for ad in ads
-
+      if ads then ret.push ad.toAnonAPI() for ad in ads
       res.json 200, ret
 
 
@@ -110,7 +107,7 @@ module.exports = (utility) ->
         return
 
       ad.fetchCompiledStats (stats) ->
-        advertisement = ad.toAPI()
+        advertisement = ad.toAnonAPI()
         advertisement.stats = stats
         res.json advertisement
 
@@ -124,7 +121,6 @@ module.exports = (utility) ->
 
       ad.status = 0
       ad.save()
-
       res.send 200
 
   # Fetch ad stats over a specific period of time
