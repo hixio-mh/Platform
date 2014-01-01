@@ -57,7 +57,7 @@ setup = (options, imports, register) ->
       # @return [Boolean] wasError false if error object invalid
       dbError: (error, res, passive) ->
         if error
-          console.trace error
+          spew.error "DB Error"
           if passive != true then res.send 500
           return true
         false
