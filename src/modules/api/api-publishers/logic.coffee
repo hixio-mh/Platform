@@ -183,13 +183,11 @@ setup = (options, imports, register) ->
       if not req.user.admin and req.user.id != pub.owner
         return res.send 403
 
-      # Switch to "Awaiting Approval"
-      if pub.status != 1
-        pub.status = 0
-
       # If we are admin, approve directly
-      else if req.user.admin and (pub.status != 2)
-        pub.status = 2
+      if req.user.admin
+        pub.approve()
+      else
+        pub.clearApproval()
 
       pub.save()
       res.send 200
@@ -205,11 +203,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      pub.status = 1
-      pub.approvalMessage.push
-        msg: req.param "msg"
-        timestamp: new Date().getTime()
-
+      pub.disaprove req.param "msg"
       pub.save()
       res.send 200
 
@@ -222,7 +216,7 @@ setup = (options, imports, register) ->
       if not req.user.admin and req.user.id != pub.owner
         return res.send 403
 
-      pub.active = true
+      pub.activate()
       pub.save()
       res.send 200
 
@@ -235,7 +229,7 @@ setup = (options, imports, register) ->
       if not req.user.admin and req.user.id != pub.owner
         return res.send 403
 
-      pub.active = false
+      pub.deactivate()
       pub.save()
       res.send 200
 

@@ -84,6 +84,25 @@ schema.methods.toAnonAPI = ->
   ret
 
 ##
+## Approval and status info
+##
+
+schema.methods.isApproved = -> @status == 2
+schema.methods.approve = -> @status = 2
+schema.methods.clearApproval = -> @status = 0
+schema.methods.disaprove = (msg) ->
+  @status = 1
+
+  if msg
+    @approvalMessage.push
+      msg: msg
+      timestamp: new Date().getTime()
+
+schema.methods.activate = -> @active = true
+schema.methods.deactivate = -> @active = false
+schema.methods.isActive = -> @active
+
+##
 ## Thumbnail handling
 ##
 
