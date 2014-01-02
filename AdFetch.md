@@ -57,32 +57,26 @@ At this point we shoot a query into Redis:
       pricing:automobiles:device:nexus4,
       pricing:automobiles:screen:768x1280,
       pricing:automobiles:type:animated,
-      pricing:automobiles:style:1
+      pricing:automobiles:tech:glAd
     ]
 
-The result is stored under `apikey:timestamp`. Now we perform a union between
-that result, and all ads within germany:
+The result is stored under `apikey:timestamp`. If it is empty, we backfill (Backfill.md)
 
-    SUNIONSTORE apikey:timestamp:germany [ apikey:timestamp country:germany ]
+Otherwise, we perform a union between that result, and all ads within germany:
 
-Now check the length of the result. If empty, we take the initial result. If
-that one is empty as well, we attempt to backfill.
+    SUNIONSTORE apikey:timestamp:germany [ apikey:timestamp, country:germany ]
 
-    SCARD apikey:timestamp:germany
-
-    (if empty)
-
-    SCARD apikey:timestamp:germany
-
-If the result is non-empty, we continue onwards with it. If it is, we
-backfill. (Backfill.md)
-
+If the union results in an empty set (length returned), we go with the initial non-country-targeted set.
 
 RTB
 ---
 We now have a set of suitable ads, of the form campaign_id:ad_id. Fetch ad data:
 
-    MGET ad-keys
+    MGET apikey:timestamp:germany
+
+or
+
+    MGET apikey:timestamp 
 
 Ad objects are of the form
 
