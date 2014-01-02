@@ -56,7 +56,7 @@ setup = (options, imports, register) ->
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
 
       if not req.user.admin and not pub.owner.equals req.user.id
         res.json 403
@@ -93,7 +93,7 @@ setup = (options, imports, register) ->
   app.delete "/api/v1/publishers/:id", (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
 
       if not req.user.admin and not pub.owner.equals req.user.id
         res.send 403
@@ -103,15 +103,8 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Fetches owned publisher list.
-  # Admin privileges are required to fetch all.
-  #
-  # @param [Boolean] all fetch all, defaults to false
   app.get "/api/v1/publishers", (req, res) ->
-    if all != true then all = false
-    if all and not req.user.admin then res.json(403); return
-    if all then query = {} else query = { owner: req.user.id }
-
-    db.model("Publisher").find query, (err, publishers) ->
+    db.model("Publisher").find owner: req.user.id, (err, publishers) ->
       if utility.dbError err, res then return
 
       pubCount = publishers.length
@@ -132,6 +125,34 @@ setup = (options, imports, register) ->
       for p in publishers
         fetchPublisher p, res
 
+  # Fetches all publishers. Admin privileges required
+  app.get "/api/v1/publishers/all", (req, res) ->
+    if not req.user.admin then return res.send 401
+
+    db.model("Publisher")
+    .find()
+    .populate("owner")
+    .exec (err, publishers) ->
+      if utility.dbError err, res then return
+
+      pubCount = publishers.length
+      ret = []
+      if pubCount == 0 then return res.json ret
+
+      fetchPublisher = (publisher, res) ->
+        publisher.fetchOverviewStats (stats) ->
+
+          publisherData = publisher.toAPI()
+          publisherData.stats = stats
+          ret.push publisherData
+
+          pubCount--
+          if pubCount == 0 then res.json ret
+
+      # Attach 24 hour stats to publishers, and return with complete data
+      for p in publishers
+        fetchPublisher p, res
+
   # Finds a single publisher by ID
   app.get "/api/v1/publishers/:id", (req, res) ->
     db.model("Publisher").findOne
@@ -139,7 +160,7 @@ setup = (options, imports, register) ->
       owner: req.user.id
     , (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
 
       if not pub.owner.equals req.user.id
         res.send 403
@@ -155,45 +176,66 @@ setup = (options, imports, register) ->
   # If we are not an administator, an admin approval is requested. Otherwise,
   # the publisher is approved directly.
   app.post "/api/v1/publishers/:id/approve", (req, res) ->
-    if not utility.param req.query.id, res, "Publisher id" then return
-
-    db.model("Publisher").findOne
-      _id: req.query.id
-      owner: req.user.id
-    , (err, pub) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
+
+      if not req.user.admin and req.user.id != pub.owner
+        return res.send 403
 
       # Switch to "Awaiting Approval"
-      if pub.status == 0 or pub.status == 1
-        pub.status = 3
-        pub.save()
+      if pub.status != 1
+        pub.status = 0
 
       # If we are admin, approve directly
-      else if req.user.admin and (pub.status == 3 or pub.status == 1)
+      else if req.user.admin and (pub.status != 2)
         pub.status = 2
-        pub.save()
 
+      pub.save()
       res.send 200
 
   # Disapproves the publisher
-  app.post "/api/v1/publishers/:id/disapprove", (req, res) ->
-    if not utility.param req.query.id, res, "Publisher id" then return
-    if not utility.param req.query.msg, res, "Disapproval message" then return
+  app.post "/api/v1/publishers/:id/disaprove/:msg", (req, res) ->
 
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
       return
 
-    db.model("Publisher").findById req.query.id, (err, pub) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
 
       pub.status = 1
       pub.approvalMessage.push
-        msg: req.query.msg
+        msg: req.param "msg"
         timestamp: new Date().getTime()
 
+      pub.save()
+      res.send 200
+
+  # Activates the publisher
+  app.post "/api/v1/publishers/:id/activate", (req, res) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then return res.send 404
+
+      if not req.user.admin and req.user.id != pub.owner
+        return res.send 403
+
+      pub.active = true
+      pub.save()
+      res.send 200
+
+  # De-activates the publisher
+  app.post "/api/v1/publishers/:id/deactivate", (req, res) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
+      if utility.dbError err, res then return
+      if not pub then return res.send 404
+
+      if not req.user.admin and req.user.id != pub.owner
+        return res.send 403
+
+      pub.active = false
       pub.save()
       res.send 200
 
@@ -205,7 +247,7 @@ setup = (options, imports, register) ->
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
-      if not pub then res.send(404); return
+      if not pub then return res.send 404
 
       pub.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data

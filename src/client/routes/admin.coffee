@@ -20,7 +20,7 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
   ##
   ## Admin routes
   ##
-  $routeProvider.when "/admin",
+  $routeProvider.when "/admin/home",
     controller: "AdefyAdminIndexController"
     templateUrl: "/views/dashboard/admin:home"
 

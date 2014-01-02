@@ -1,7 +1,7 @@
 .titlebar.cf.full(ng-controller="AdefyAppsMenuController")
   .name(ng-bind="app.name")
   span(ng-switch="app.status")
-    .label.gray(ng-switch-when="0") Pending
+    .label.gray(ng-switch-when="0") Pending Approval
     .label.red(ng-switch-when="1") Rejected
     .label.green(ng-switch-when="2") Approved
   .menu.full

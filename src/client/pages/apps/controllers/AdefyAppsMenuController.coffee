@@ -14,12 +14,12 @@
 window.AdefyDashboard.controller "AdefyAppsMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.app.active
-      $http.post "/api/v1/publishers/#{$scope.app.id}/activate"
-    else
       $http.post "/api/v1/publishers/#{$scope.app.id}/deactivate"
+    else
+      $http.post "/api/v1/publishers/#{$scope.app.id}/activate"
 
   $scope.requestApproval = ->
-    $http.post "/apps/{{$scope.app.id}}/approval"
+    $http.post("/api/v1/publishers/#{$scope.app.id}/approve")
     .success ->
       $scope.setNotification "Successfully applied for approval!", "success"
       $scope.app.status = 0

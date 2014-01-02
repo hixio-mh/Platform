@@ -15,87 +15,61 @@
 include _menu
 
 .index.dashboard
-  .row.header
-    .col-md-12
-      h3 Publishers
+  h1 Publishers
 
-  .table-wrapper.section
-    .row
-      table.table.table-striped.table-hover
-        thead
-          tr
-            th User
-            th App Name
-            th Status
-            th Requests
-            th Impressions
-            th Clicks
-            th CTR
-            th Earnings
-            th Actions
-        tbody
-          tr(data-ng-repeat="(i, pub) in pubs", data-ng-click="viewPub({{ i }})")
-            td(data-ng-bind="pub.username")
-            td(data-ng-bind="pub.name")
+  table.info
+    thead
+      tr
+        th User
+        th App Name
+        th Status
+        th Impressions
+        th Clicks
+        th CTR
+        th Earnings
+        th Actions
+    tbody
+      tr(ng-repeat="pub in pubs")
+        td {{ pub.owner.username }}
+        td {{ pub.name }}
 
-            td
-              span.label(data-ng-bind="pub.statusText", data-ng-class="pub.statusClass")
-              .spacer
-              span.label(data-ng-bind="pub.activeText", data-ng-class="pub.activeClass")
+        td
+          span.label(ng-class="pub.statusClass") {{ pub.statusText }}
+          .spacer
+          span.label(ng-class="pub.activeClass") {{ pub.activeText }}
 
-            td(data-ng-bind="pub.requests")
-            td(data-ng-bind="pub.impressions")
-            td(data-ng-bind="pub.clicks")
+        td {{ pub.stats.impressions }}
+        td {{ pub.stats.clicks }}
 
-            td
-              | {{ pub.ctr | number:2 }}%
-            td
-              | $ {{ pub.earnings | number:2 }}
+        td {{ pub.stats.ctr | number:2 }}%
+        td $ {{ pub.stats.earnings | number:2 }}
 
-            td
-              a.btn.btn-flat.success.small(data-ng-click="viewPub({{ i }})") View
+        td
+          a.btn.btn-flat.success.small(href="#" ng-click="viewPub(pub)") View
 
-  div(data-ng-if="mode == \"view\" && (pubView.status == 3 || pubView.status == 2)")
-    .separator
-    .row.header
-      .col-md-12
-        h3
-          | {{ pubView.name }} - Details
+.index.dashboard(ng-if="pubView.name")
+  h1
+    span {{ pubView.name }} - Details
+    span.label(ng-class="pubView.statusClass") {{ pubView.statusText }}
+    span.label(ng-class="pubView.activeClass") {{ pubView.activeText }}
 
-    div(data-ng-if="pubView.status == 3")
-      .row.section
-        .col-md-12
-          h4 Awaiting Approval
+  form(ng-if="pubView.status == 0")
+    dl.form.center
+      dt
+        label Message
+        textarea(row="16" col="4" ng-model="pubView.newApprovalMessage" placeholder="Required for disapproval")
+      dt
+      dd
+        button.btn-flat.success(ng-click="approvePub()") Approve
+      dt
+      dd
+        button.btn-flat.danger(ng-click="disapprovePub()") Disapprove
 
-      br
-      br
-
-      .row.section
-        .col-md-7
-          .form-wrapper
-            .container
-              form
-                .field-box
-                  label Message
-                  .col-md-7
-                    textarea.form-control(row="16", col="4", data-ng-model="pubView.newApprovalMessage", placeholder="Required for disapproval")
-                .field-box
-                  label
-                  .col-md-7
-                    button.btn-flat.success(data-ng-click="approvePub()") Approve
-                    button.btn-flat.danger(data-ng-click="disapprovePub()") Disapprove
-
-        .col-md-5
-          div(data-ng-repeat="msg in pubView.approvalMessage")
-            h4
-              | Sent {{ msg.timestamp | date }}
-            br
-            h5(data-ng-bind="msg.msg")
-            br
-            br
-            hr
-
-    div(data-ng-if="pubView.status == 2")
-      .row.section
-        .col-md-12
-          h4 Metrics!
+  div(ng-if="pubView.status != 2" ng-repeat="msg in pubView.approvalMessage")
+    h4
+      | Sent {{ msg.timestamp | date }}
+    br
+    h5(ng-bind="msg.msg")
+    br
+    br
+    hr
