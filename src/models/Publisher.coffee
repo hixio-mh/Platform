@@ -60,8 +60,6 @@ schema = new mongoose.Schema
   # (unsupported) 2 - Windows
   type: { type: Number, default: 0 }
 
-  earnings: { type: Number, default: 0 }
-
   minimumCPM: { type: Number, default: 0 }
   minimumCPC: { type: Number, default: 0 }
   preferredPricing: { type: String, default: "Any" }

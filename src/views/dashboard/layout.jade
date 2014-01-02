@@ -43,7 +43,7 @@ html(lang="en" ng-app="AdefyDashboard")
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body(data-ng-controller="AdefyRootController" ng-class="{withNotification: notification}").tk-proxima-nova
+  body(ng-controller="AdefyRootController" ng-class="{withNotification: notification}").tk-proxima-nova
     header.navbar.cf
       #logo Adefy
       .menu.left.full
@@ -68,7 +68,7 @@ html(lang="en" ng-app="AdefyDashboard")
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
-            a(href="/admin")
+            a(href="/admin/home")
               i.fa.fa-fw.fa-user
               | Admin
             a(href="/settings")
@@ -87,7 +87,7 @@ html(lang="en" ng-app="AdefyDashboard")
     .notification(ng-show="notification" ng-class="notification.type")
       span(ng-bind="notification.text")
       i.fa.fa-fw.fa-times-circle(ng-click="clearNotification()")
-    .content(data-ng-view="")
+    .content(ng-view="")
 
     footer
       script(src="//code.jquery.com/jquery-2.0.3.min.js")

@@ -32,11 +32,11 @@ include _menu
             th Publisher Balance
             th Actions
         tbody
-          tr(data-ng-repeat="(i, u) in userlist")
-            td(data-ng-bind="u.username")
-            td(data-ng-bind="u.fname")
-            td(data-ng-bind="u.lname")
-            td(data-ng-bind="u.email")
+          tr(ng-repeat="(i, u) in userlist")
+            td(ng-bind="u.username")
+            td(ng-bind="u.fname")
+            td(ng-bind="u.lname")
+            td(ng-bind="u.email")
 
             td
               | $ {{ u.advertiserCredit | number:2 }}
@@ -44,4 +44,4 @@ include _menu
               | $ {{ u.publisherBalance | number:2 }}
 
             td
-              button.btn.btn-danger.btn-sm(data-ng-click="delete({{ i }})") Delete
+              button.btn.btn-danger.btn-sm(ng-click="delete({{ i }})") Delete

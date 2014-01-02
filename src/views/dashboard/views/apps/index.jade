@@ -26,7 +26,7 @@ a.new-item(href="/apps/new")
         .desc Total Revenue
     .stats
       .tab
-        .amount(data-ng-bind="app.stats.impressions24h")
+        .amount(ng-bind="app.stats.impressions24h")
         .desc Impressions Today
       .tab
         .amount $ {{ app.stats.earnings24h | number:2 }}
