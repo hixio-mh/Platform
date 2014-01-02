@@ -59,7 +59,8 @@ setup = (options, imports, register) ->
     "/api/v1/invite/add"
 
     # Ad request
-    "/api/r"
+    "/api/v1/serve"
+    "/api/v1/serve/"
   ]
 
   notWhenAuthorized = [

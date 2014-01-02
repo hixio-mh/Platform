@@ -272,6 +272,7 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
 
 schema.methods.logClick = -> @logStatIncrement "clicks"
 schema.methods.logImpression = -> @logStatIncrement "impressions"
+schema.methods.logRequest = -> @logStatIncrement "requests"
 schema.methods.logStatIncrement = (stat) ->
   statsd.increment "#{@getGraphiteId()}.#{stat}"
   redis.incr "#{@getRedisId()}:#{stat}"
@@ -279,6 +280,17 @@ schema.methods.logStatIncrement = (stat) ->
 ##
 ## Redis handling
 ##
+
+# Initialization
+
+schema.methods.ensureRedisStructure = ->
+  setKeyIfNull = (key, val) -> if redis.get key == null then redis.set key, val
+
+  setKeyIfNull "#{@getRedisId()}:impressions", 0
+  setKeyIfNull "#{@getRedisId()}:clicks", 0
+  setKeyIfNull "#{@getRedisId()}:earnings", 0
+
+# Basic stat fetching
 
 schema.methods.fetchImpressions = (cb) ->
   redis.get "#{@getRedisId()}:impressions", (err, result) ->
@@ -300,12 +312,24 @@ schema.methods.fetchEarnings = (cb) ->
     if err then spew.error err
     cb Number result
 
-schema.methods.ensureRedisStructure = ->
-  setKeyIfNull = (key, val) -> if redis.get key == null then redis.set key, val
+schema.methods.fetchPricingInfo = (cb) ->
+  redis.get "#{@getRedisId()}", (err, result) ->
+    if err then spew.error err
+    if result == null then return cb null
 
-  setKeyIfNull "#{@getRedisId()}:impressions", 0
-  setKeyIfNull "#{@getRedisId()}:clicks", 0
-  setKeyIfNull "#{@getRedisId()}:earnings", 0
+    # I broke this out into a try/catch block since JSON.parse may throw an
+    # error of its own.
+    try
+      pricingInfo = JSON.parse result
+
+      if pricingInfo.pricing == undefined then throw "No pricing key"
+      if pricingInfo.floorcpc == undefined then throw "No floorcpc key"
+      if pricingInfo.floorcpm == undefined then throw "No floorcpm key"
+
+      cb pricingInfo
+    catch e
+      spew.error "Publisher redis pricing info error: #{e}"
+      cb null
 
 ##
 ##

@@ -13,6 +13,8 @@
 ##
 
 module.exports = [
+
+  # Core initialization
   "./modules/core/core-express",
   "./modules/core/core-snapshot",
 
@@ -20,26 +22,38 @@ module.exports = [
   "./modules/core/core-userauth",
   "./modules/core/core-init-start",
 
+  # Utility helper
   "./modules/logic/utility",
+
+  # Ad engine itself
   "./modules/engine/engine-ads",
 
+  # Public API
   "./modules/api/api-invites",
+  "./modules/api/api-serve",
+
+  # Locks down API!
   "./modules/core/core-api",
 
+  # Private (authorized) API
   "./modules/api/api-ads",
   "./modules/api/api-campaigns",
   "./modules/api/api-publishers",
   "./modules/api/api-users",
   "./modules/api/api-analytics",
+  "./modules/api/api-editor",
 
+  # Maintenance routes
   "./modules/logic/migration",
   "./modules/logic/seed",
 
+  # Angular route definitions
   "./modules/logic/routes",
+
+  # Login/register page logic
   "./modules/logic/page-login",
   "./modules/logic/page-register",
 
-  "./modules/api/api-editor",
-
+  # End of initialization, starts servers
   "./modules/core/core-init-end"
 ]
