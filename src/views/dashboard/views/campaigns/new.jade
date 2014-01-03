@@ -74,31 +74,20 @@
     dl.form.center.single
       dt: label Device
       dd
-        .field.w50.margin
-          .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="all" id="all_devices")
-            label(for="all_devices") All Devices
-          .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="specific" id="specific_devices")
-            label(for="specific_devices") Specific Devices
-          .radio
-            input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="exclude" id="exclude_devices")
-            label(for="exclude_devices") Exclude Devices
-          select(chosen multiple ng-model="campaign.devices" ng-disabled="campaign.deviceTargetting == 'all'" data-placeholder="Select devices")
-            option Nexus 4
-            option Galaxy S3
-            option iPhone
-        .field.w50
-          .radio
-            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="all" id="all_manufacturers")
-            label(for="all_manufacturers") All Manufacturers
-          .radio
-            input(type="radio" ng-model="campaign.manufacturerTargetting" name="manufacturer_targetting" value="specific" id="specific_manufacturers")
-            label(for="specific_manufacturers") Specific Manufacturers
-          select(chosen multiple ng-model="campaign.manufacturers" ng-disabled="campaign.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
-            option LG
-            option HTC
-            option Sony
+        .radio
+          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="all" id="all_devices")
+          label(for="all_devices") All Devices
+        .radio
+          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="specific" id="specific_devices")
+          label(for="specific_devices") Specific Devices
+        .radio
+          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="exclude" id="exclude_devices")
+          label(for="exclude_devices") Exclude Devices
+        select(chosen multiple ng-model="campaign.devices" ng-disabled="campaign.deviceTargetting == 'all'" data-placeholder="Select devices")
+          option Nexus 4
+          option Galaxy S3
+          option iPhone
+
     dl.form.center
     dt
     dd: button.blue.save(ng-click="submit()") Save

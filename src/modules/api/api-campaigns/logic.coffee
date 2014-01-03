@@ -32,6 +32,32 @@ setup = (options, imports, register) ->
     if not utility.param req.param("bidSystem"), res, "Bid system" then return
     if not utility.param req.param("bid"), res, "Bid" then return
 
+    countries = []
+    networks = []
+    platforms = []
+    devices = []
+
+    # Generate valid filter arrays from data
+    if req.param "geographicalTargetting"
+      if req.param("geographicalTargetting") == "specific"
+        countries = req.param "countries"
+
+    if req.param "networkTargetting"
+      if req.param("networkTargetting") == "mobile"
+        networks = ["mobile"]
+      else if req.param("networkTargetting") == "wifi"
+        networks = ["wifi"]
+
+    if req.param "platformTargetting"
+      if req.param("platformTargetting") == "specific"
+        platforms = req.param "platforms"
+
+    if req.param "deviceTargetting"
+      if req.param("deviceTargetting") == "specific"
+        devices = req.param "devices"
+      else if req.param("deviceTargetting") == "exclude"
+        devices = ["unimplemented"]
+
     # Create new campaign
     newCampaign = db.model("Campaign")
       owner: req.user.id
@@ -45,6 +71,11 @@ setup = (options, imports, register) ->
 
       bidSystem: req.param("bidSystem")
       bid: Number req.param("bid")
+
+      countries: countries
+      networks: networks
+      platforms: platforms
+      devices: devices
 
       status: 0 # 0 is created, no ads
       ads: []
@@ -70,119 +101,178 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then res.send(404); return
+      if not campaign then return res.send 404
 
       # Check if authorized
       if not req.user.admin and not campaign.owner.equals req.user.id
-        res.send 403
-        return
+        return res.send 403
 
       campaign.fetchStats (stats) ->
-        campaign = campaign.toAnonAPI()
-        campaign.stats = stats
-        res.json campaign
 
-  # Saves the campaign and generates new campaign events. User must either be
-  # admin or own the campaign in question!
+        # Clean up ads
+        for ad, i in campaign.ads
+          campaign.ads[i] = ad.toAnonAPI()
+
+        ret = stats: stats
+        ret[key] = val for key, val of campaign.toAnonAPI()
+
+        res.json ret
+
+  # Saves the campaign, and creates campaign references where needed. User must
+  # either be admin or own the campaign in question!
   app.post "/api/v1/campaigns/:id", (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
     # Fetch campaign
     db.model("Campaign")
-    .findById(req.param("id"))
+    .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then res.send(404); return
+      if not campaign then return res.send 404
 
       # Permission check
       if not req.user.admin and not campaign.owner.equals req.user.id
-        res.json 403
-        return
+        return res.json 403
 
-      spew.info JSON.stringify req.body
+      # Store modification information
+      needsAdRefRefresh = false
+      adsToAdd = []
+      adsToRemove = []
 
-      # Go through and apply changes, one by one
-      refreshAdRefs = false
-      for key, val of req.body
-        if campaign[key] != undefined
-          if campaign[key] != val
+      # Keep ad id list, update later once we have the new one
+      newAdList = campaign.ads
 
+      arraysEqual = (a, b) ->
+        if not b or not a then return false
+        if a.length != b.length then return false
+
+        for elementA, i in a
+          if b[i] != elementA then return false
+
+        true
+
+      equalityCheck = (a, b) ->
+        if a instanceof Array and b instanceof Array
+          arraysEqual a, b
+        else
+          a == b
+
+      optionallyDeleteAds = (cb) ->
+        if adsToRemove.length == 0 then cb()
+        else
+          count = adsToRemove.length
+          doneCb = -> if count == 1 then cb() else count--
+
+          for adId in adsToRemove
+            db.model("Ad").findById adId, (err, ad) ->
+              if utility.dbError err, res then return
+              if not ad
+                spew.error "Tried to remove ad from campaign, ad not found"
+                spew.error "Ad id: #{adId}"
+                return res.send 500
+
+              campaign.removeAd ad, -> doneCb()
+
+      optionallyRefreshAdRefs = (cb) ->
+        if not needsAdRefRefresh then cb()
+        else campaign.refreshAdRefs -> cb()
+
+      optionallyAddAds = (cb) ->
+        if adsToAdd.length == 0 then cb()
+        else
+          count = adsToAdd.length
+          doneCb = -> if count == 1 then cb() else count--
+
+          for adId in adsToAdd
+            db.model("Ad").findById adId, (err, ad) ->
+              if utility.dbError err, res then return
+              if not ad
+                spew.error "Tried to add ad to campaign, ad not found"
+                spew.error "Ad id: #{adId}"
+                return res.send 500
+
+              # Register campaign and create targeting references
+              ad.registerCampaignParticipation campaign
+              ad.createCampaignReferences campaign, ->
+                ad.save()
+                doneCb()
+
+      # Process ad list first, so we know what we need to delete before
+      # modifying refs
+      if req.body.ads != undefined
+
+        # Keep track of our current ads, so we know what changes
+        currentAds = {}
+        for ad in campaign.ads
+
+          # We'll mark ads we find on the input array as "unmodified",
+          # meaning untill found they are "deleted"
+          currentAds[ad._id.toString()] = "deleted"
+
+        for ad in req.body.ads
+          adFound = false
+
+          # Mark as either unmodified, or created
+          for currentAd, v of currentAds
+            if currentAd == ad.id
+              adFound = true
+              break
+
+          if adFound then currentAds[ad.id] = "unmodified"
+          else currentAds[ad.id] = "created"
+
+        # Generate new ads array to save in campaign model
+        adIds = []
+
+        # Filter ads into proper arrays
+        for adId, status of currentAds
+          if status == "deleted" then adsToRemove.push adId
+          else if status == "created" then adsToAdd.push adId
+
+          if status == "created" or status == "unmodified"
+            adIds.push adId
+
+        newAdList = adIds
+
+      # At this point, we can clear deleted ad refs
+      optionallyDeleteAds ->
+
+        # Iterate over and change all other properties
+        for key, val of req.body
+          if key != "ads"
+
+            # Properly form empty arguments
             if key == "devices" and val.length == 0 then val = []
             if key == "platforms" and val.length == 0 then val = []
             if key == "countries" and val.length == 0 then val = []
-            if key == "ads" and key.length > 0
+            if key == "networks" and val.length == 0 then val = []
 
-              # This clause is nearly always hit, meaning that a non-empty ad
-              # list was passed in. There are three non-exclusive outcomes:
-              #
-              # 1. New ads were added to the array, and we need to register them
-              #    and update refs
-              # 2. Existing ads were removed from the array. We need to
-              #    de-register them and update refs
-              # 3. The ad array is unchanged
+            # Only make changes if key is modified
+            currentVal = campaign[key]
+            if currentVal != undefined and not equalityCheck currentVal, val
 
-              # Keep track of our current ads, so we know what changes
-              currentAds = {}
-              for ad in campaign.ads
-                currentAds[ad._id.toString()] = true
+              # Set ref refresh flag if needed
+              if not needsAdRefRefresh
+                if key == "bidSystem" then needsAdRefRefresh = true
+                else if key == "bid" then needsAdRefRefresh = true
+                else if key == "devices" then needsAdRefRefresh = true
+                else if key == "platforms" then needsAdRefRefresh = true
+                else if key == "networks" then needsAdRefRefresh = true
+                else if key == "countries" then needsAdRefRefresh = true
 
-              # TODO: Continue from here
-              #
-              # Adding some stuff to break the build in the future
-              # if afsdfsdfafdsdf()
+              # Save final value on campaign
+              campaign[key] = val
 
-              # and; or; and; if; do while; while while();
+        # Refresh ad refs on unchanged ads
+        optionallyRefreshAdRefs ->
 
-              # Build a list of new ads, and flag current ads
-              newAds = []
+          # Generate refs and commit new list
+          optionallyAddAds ->
+            campaign.ads = newAdList
+            campaign.save()
 
-              adIds = []
-              newAds = []
-              removedAds = []
-
-              for ad in val
-
-                # Save *new ads*
-                isNewAd = true
-                for currentAd in campaign.ads
-                  if currentAd._id.equals ad.id
-                    isNewAd = false
-                    break
-
-                if isNewAd then newAds.push ad
-
-                # Keep track of which ads we are removing, by flagging ads we
-                # find as not deleted
-                deletedAds[ad.id] = false
-
-                # Save only ad ids for inclusion on the campaign object
-                adIds.push ad.id
-
-            campaign[key] = adIds
-
-            spew.info "Saving modified key #{key}:#{JSON.stringify val} #{val.length}"
-
-            # Check if we need to refresh our ad refs
-            if key == "bidSystem" then refreshAdRefs = true
-            else if key == "bid" then refreshAdRefs = true
-            else if key == "devices" then refreshAdRefs = true
-            else if key == "platforms" then refreshAdRefs = true
-            else if key == "network" then refreshAdRefs = true
-            else if key == "countries" then refreshAdRefs = true
-
-      campaign.save()
-
-      # If we need to update ad references, then we need to work with a freshly
-      # populated ads field.
-      if refreshAdRefs
-        campaign.populate "ads", (err, populatedCampaign) ->
-          if utility.dbError err, res then return
-
-          populatedCampaign.refreshAdRefs()
-          res.json 200, campaign.toAnonAPI()
-
-      else res.json 200, campaign.toAnonAPI()
+            res.json campaign.toAnonAPI()
 
   # Delete the campaign identified by req.param("id")
   # If we are not the administrator, we must own the campaign!

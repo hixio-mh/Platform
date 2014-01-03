@@ -65,13 +65,35 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
     networkTargetting: "all"
     platformTargetting: "all"
     deviceTargetting: "all"
-    manufacturerTargetting: "all"
     scheduling: "no"
 
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
     # temp:
     $scope.campaign.rules = []
+
+    # Set up valid targeting modes
+    if $scope.campaign.devices.length == 0
+      $scope.campaign.deviceTargetting = "all"
+    else
+      $scope.campaign.deviceTargetting = "specific"
+
+    if $scope.campaign.countries.length == 0
+      $scope.campaign.geographicalTargetting = "all"
+    else
+      $scope.campaign.geographicalTargetting = "specific"
+
+    if $scope.campaign.networks.length == 0
+      $scope.campaign.networkTargetting = "all"
+    else if $scope.campaign.networks[0] == "mobile"
+      $scope.campaign.networks = "mobile"
+    else if $scope.campaign.networks[0] == "wifi"
+      $scope.campaign.networks = "wifi"
+
+    if $scope.campaign.platforms.length == 0
+      $scope.campaign.platformTargetting = "all"
+    else
+      $scope.campaign.platformTargetting = "specific"
 
   Ad.query (ads) -> $scope.ads = ads
 
@@ -84,7 +106,6 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
       networkTargetting: "all"
       platformTargetting: "all"
       deviceTargetting: "all"
-      manufacturerTargetting: "all"
       scheduling: "no"
 
   $scope.submit = ->
