@@ -48,19 +48,19 @@ setup = (options, imports, register) ->
     .exec (err, ad) ->
 
       if utility.dbError err, res then return
-      if not ad then res.send(404); return
+      if not ad then return res.send 404
 
       if not req.user.admin and not ad.owner.equals req.user.id
         res.send 403
         return
 
       # Remove ourselves from all campaigns we are currently part of
-      ad.removeFromCampaigns()
+      ad.removeFromCampaigns ->
 
-      # Now remove ourselves. So sad ;(
-      ad.remove()
+        # Now remove ourselves. So sad ;(
+        ad.remove()
 
-      res.send 200
+        res.send 200
 
   # Fetches owned ads
   app.get "/api/v1/ads", (req, res) ->
@@ -73,7 +73,6 @@ setup = (options, imports, register) ->
       ret = []
       if ads then ret.push ad.toAnonAPI() for ad in ads
       res.json 200, ret
-
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->

@@ -58,6 +58,7 @@ setup = (options, imports, register) ->
       dbError: (error, res, passive) ->
         if error
           spew.error "DB Error: #{error}"
+          console.trace error
           if passive != true then res.send 500
           return true
         false

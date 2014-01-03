@@ -39,7 +39,7 @@ schema = new mongoose.Schema
 
     # Fine-tunning
     countries: { type: Array, default: [] }
-    network: { type: String, default: "" }
+    networks: { type: Array, default: [] }
     platforms: { type: Array, default: [] }
     devices: { type: Array, default: [] }
 
@@ -47,7 +47,7 @@ schema = new mongoose.Schema
     bidSystem: { type: String, default: "" }
 
     # either bid or max bid, inferred from bidSystem
-    bid: { type: Number, default: 0 }
+    bid: { type: Number, default: -1 }
   ]
 
 ##
@@ -67,6 +67,10 @@ schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
   ret
+
+##
+## Stat fetching
+##
 
 # Fetches Spent, Clicks, Impressions and CTR for the past 24 hours, and
 # lifetime (both sums) for all campaigns
@@ -105,165 +109,55 @@ schema.methods.fetchStatsForCampaign = (campaign, cb) ->
 # Fetches a single stat over a specific period of time for a single campaign
 schema.methods.fetchStatForCampaign = (range, stat, campaign, cb) -> cb []
 
+##
+## Campaign operations
+##
+
 # Go through our campaigns, and remove ourselves from each
-# Expects campaigns filed to be populated!
-schema.methods.removeFromCampaigns = ->
+# Expects campaigns field to be populated!
+schema.methods.removeFromCampaigns = (cb) ->
+
+  count = @campaigns.length
+  if count == 0 then cb()
+
+  doneCb = =>
+    if count == 1
+
+      # Clear our campaign list
+      @campaigns = []
+      @save()
+
+      cb()
+    else count--
 
   for c in @campaigns
-    c.removeAd @_id
-    c.save()
-
-  # Clear our campaign list
-  @campaigns = []
-  @save()
+    c.removeAd @_id, ->
+      c.save()
+      doneCb()
 
 # Creates a campaign entry. Use this before clearing or setting campaign
 # references!
 schema.methods.registerCampaignParticipation = (campaign) ->
-  campaigns.push
+  @campaigns.push
     campaign: campaign._id
 
     countries: campaign.countries
-    network: campaign.network
+    networks: campaign.networks
     platforms: campaign.platforms
     devices: campaign.devices
 
     bidSystem: campaign.bidSystem
     bid: campaign.bid
 
-# Remove redis keys and values referencing us as belonging to a campaign.
-# This is called by the campaign when removing us! So we must not modify the
-# campaign itself.
-#
-# @param [Campaign] campaign campaign model
-schema.methods.clearCampaignReferences = (campaign) ->
+# Clear campaign entry, to be used after campaign references are cleared!
+schema.methods.voidCampaignParticipation = (campaign) ->
+  if campaign._id != undefined then id = campaign._id
+  else id = campaign.id
 
-  pricing = campaign.pricing.toLowerCase()
-  category = campaign.category.toLowerCase()
-
-  baseKey = "#{pricing}:#{category}"
-  ref = "#{campaign._id}:#{@_id}"
-
-  # Now fetch targeting info
-  for c in @campaigns
-    if c.campaign.equals campaign._id
-
-      # Fill in our own info if we have it
-      if c.countries.length == 0 then countries = campaign.countries
-      else countries = c.countries
-
-      if c.network.length == 0 then network = campaign.network
-      else network = c.network
-
-      if c.platforms.length == 0 then platforms = campaign.platforms
-      else platforms = c.platforms
-
-      if c.devices.length == 0 then devices = campaign.devices
-      else devices = c.devices
-
+  for c, i in @campaigns
+    if c.campaign == id
+      @campaigns.splice i, 1
       break
-
-  # At this point, ensure we have found targeting info
-  if countries == undefined
-    throw new Error "Campaign not in our campaign list!"
-    return
-
-  ## Remove ourselves from the various redis lists we are part of
-
-  # Countries are special, as they serve as optional targeting at the end.
-  # If we don't filter by country, then we aren't in any country list.
-  #
-  # Otherwise, we are in each country list we are a part of.
-  for country in countries
-    redis.lrem "country:#{country}", 0, ref
-
-  # Network, either "mobile" or "wifi"
-  if network.length == 0 then redis.lrem "#{baseKey}:network:none", 0, ref
-  else redis.lrem "#{baseKey}:network:#{network}", 0, ref
-
-  # Platforms
-  if platforms.length == 0 then redis.lrem "#{baseKey}:platform:none", 0, ref
-  else
-    for platform in platforms
-      redis.lrem "#{baseKey}:platform:#{platform}", 0, ref
-
-  # Devices
-  if devices.length == 0 then redis.lrem "#{baseKey}:device:none", 0, ref
-  else
-    for device in devices
-      redis.lrem "#{baseKey}:device:#{device}", 0, ref
-
-  # Remove our own data entry!
-  redis.del baseKey
-
-  null
-
-# The opposite of clearCampaignReferences, this creates references for the
-# supplied campaign. It must already be in our campaign list!
-#
-# @param [Campaign] campaign campaign model
-schema.methods.createCampaignReferences = (campaign) ->
-
-  pricing = campaign.pricing.toLowerCase()
-  category = campaign.category.toLowerCase()
-
-  baseKey = "#{pricing}:#{category}"
-  ref = "#{campaign._id}:#{@_id}"
-
-  # Now fetch targeting info
-  for c in @campaigns
-    if c.campaign.equals campaign._id
-
-      # Fill in our own info if we have it
-      if c.countries.length == 0 then countries = campaign.countries
-      else countries = c.countries
-
-      if c.network.length == 0 then network = campaign.network
-      else network = c.network
-
-      if c.platforms.length == 0 then platforms = campaign.platforms
-      else platforms = c.platforms
-
-      if c.devices.length == 0 then devices = campaign.devices
-      else devices = c.devices
-
-      # Bid details
-      if c.bid == 0 then bid = campaign.bid else bid = c.bid
-      if c.bidSystem.length == 0 then bidSystem = campaign.bidSystem
-      else bidSystem = c.bidSystem
-
-      break
-
-  # At this point, ensure we have found targeting info
-  if countries == undefined
-    throw new Error "Campaign not in our campaign list!"
-    return
-
-  for country in countries
-    redis.rpush "country:#{country}", ref
-
-  if network.length == 0 then redis.rpush "#{baseKey}:network:none", ref
-  else redis.rpush "#{baseKey}:network:#{network}", ref
-
-  if platforms.length == 0 then redis.rpush "#{baseKey}:platform:none", ref
-  else
-    for platform in platforms
-      redis.rpush "#{baseKey}:platform:#{platform}", ref
-
-  if devices.length == 0 then redis.rpush "#{baseKey}:device:none", ref
-  else
-    for device in devices
-      redis.rpush "#{baseKey}:device:#{device}", ref
-
-  # Format our bid system
-  if bidSystem == "manual" then bidSystem = "m" else bidSystem = "a"
-
-  # Now fill out our data
-  #
-  # bxx...x|rimpressions|avgcpm|impressions|clicks|spent
-  redis.set ref, "#{bidSystem}#{bid}|0|0|0|0|0"
-
-  null
 
 # Return array of campaign documents the ad is a part of
 #
@@ -278,12 +172,158 @@ schema.statics.getCampaigns = (adId, cb) ->
     else if adId._id != undefined then adId = cId._id
     else
       spew.error "Couldn't fech campaigns, no ad id: #{JSON.stringify adId}"
-      cb null
+      cb []
 
-  @findById(adId).populate("campaigns").exec (err, ads) ->
+  @findById(adId).populate("campaigns").exec (err, ad) ->
     if err
       spew.error err
-      cb null
-    else cb ads.campaigns
+      cb []
+    else cb ad.campaigns
+
+##
+##
+## Redis reference management
+##
+##
+
+## Top-level reference management
+
+# Remove redis keys and values referencing us as belonging to a campaign.
+# This is called by the campaign when removing us! So we must not modify the
+# campaign itself.
+#
+# @param [Campaign] campaign
+# @param [Method] cb
+schema.methods.clearCampaignReferences = (campaign, cb) ->
+  ref = @getRedisRefForCampaign campaign
+
+  @clearRedisFilters @getCompiledFetchData(campaign), ref, ->
+    redis.del ref, -> cb()
+
+# The opposite of clearCampaignReferences, this creates references for the
+# supplied campaign. It must already be in our campaign list!
+#
+# @param [Campaign] campaign
+schema.methods.createCampaignReferences = (campaign, cb) ->
+  ref = @getRedisRefForCampaign campaign
+  fetchData = @getCompiledFetchData(campaign)
+
+  @createRedisFilters fetchData, ref, ->
+    spew.info "Created redis filters for #{ref}"
+
+    bidSystem = fetchData.bidSystem
+    bid = fetchData.bid
+
+    # Now fill out our data
+    #
+    # bidSystem|bid|rimpressions|avgcpm|impressions|clicks|spent
+    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0|0", -> cb()
+
+## Redis helpers
+
+# Generate our handle, to be inserted into all redis structures
+#
+# @param [Campaign] campaign
+# @return [String] ref
+schema.methods.getRedisRefForCampaign = (campaign) -> "#{campaign._id}:#{@_id}"
+
+# Fetch final targeting filters (country, network, etc) and bid info for
+# campaign
+#
+# @param [Campaign] campaign
+# @return [Object] data compiled set of filter arrays
+schema.methods.getCompiledFetchData = (campaign) ->
+
+  compiledData =
+    countries: campaign.countries
+    networks: campaign.networks
+    platforms: campaign.platforms
+    devices: campaign.devices
+    bid: campaign.bid
+    bidSystem: campaign.bidSystem
+    pricing: campaign.pricing
+    category: campaign.category
+
+  for c in @campaigns
+    if c.campaign != undefined
+      if c.campaign == campaign._id
+
+        if c.countries.length > 0 then compiledData.countries = c.countries
+        if c.networks.length > 0 then compiledData.networks = c.networks
+        if c.platforms.length > 0 then compiledData.platforms = c.platforms
+        if c.devices.length > 0 then compiledData.devices = c.devices
+
+        if c.bid >= 0 then compiledData.bid = c.bid
+        if c.bidSystem.length > 0 then compiledData.bidSystem = c.bidSystem
+
+        break
+
+  compiledData
+
+# Generate final keys for target filters (each country, platform, etc)
+#
+# @param [Object] data targeting filters to build keys from
+# @return [Object] sets
+schema.methods.buildRedisKeySets = (data) ->
+  baseKey = "#{data.pricing}:#{data.category}"
+
+  sets =
+    countrySets: []
+    platformSets: []
+    deviceSets: []
+    networkSets: []
+
+  for country in data.countries
+    sets.countrySets.push "country:#{country}"
+  for platform in data.platforms
+    sets.platformSets.push "#{baseKey}:platform:#{platform}"
+  for device in data.devices
+    sets.deviceSets.push "#{baseKey}:device:#{device}"
+  for network in data.networks
+    sets.networkSets.push "#{baseKey}:network:#{network}"
+
+  sets
+
+## Actual redis filter manipulation
+
+# Clear redis targeting/ad fetch keys
+#
+# @param [Object] fetchData compiled filter sets
+# @param [String] ref our own redis reference
+# @param [Method] cb
+schema.methods.clearRedisFilters = (data, ref, cb) ->
+  sets = @buildRedisKeySets data
+
+  clearKeyFromSets = (sets, key, cb) ->
+    set = sets.pop()
+    redis.lrem set, 0, key, ->
+      if sets.length > 0 then clearKeyFromSets sets, key, cb
+      else cb()
+
+  clearKeyFromSets sets.countrySets, ref, ->
+    clearKeyFromSets sets.platformSets, ref, ->
+      clearKeyFromSets sets.deviceSets, ref, ->
+        clearKeyFromSets sets.networkSets, ref, ->
+          cb()
+
+# Create redis targeting/ad fetch keys
+#
+# @param [Object] fetchData compiled filter sets
+# @param [String] ref our own redis reference
+# @param [Method] cb
+schema.methods.createRedisFilters = (data, ref, cb) ->
+  sets = @buildRedisKeySets data
+
+  addKeyToSets = (sets, key, cb) ->
+    set = sets.pop()
+    redis.rpush set, key, ->
+      if sets.length > 0 then addKeyToSets sets, key, cb
+      else cb()
+
+  addKeyToSets sets.countrySets, ref, ->
+    addKeyToSets sets.platformSets, ref, ->
+      addKeyToSets sets.deviceSets, ref, ->
+        addKeyToSets sets.networkSets, ref, ->
+          cb()
 
 mongoose.model "Ad", schema

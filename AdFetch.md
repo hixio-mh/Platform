@@ -76,7 +76,7 @@ We now have a set of suitable ads, of the form campaign_id:ad_id. Fetch ad data:
 
 or
 
-    MGET apikey:timestamp 
+    MGET apikey:timestamp
 
 Ad objects are of the form
 

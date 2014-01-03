@@ -55,7 +55,7 @@ schema = new mongoose.Schema
 
   # Global targeting, ads can override the settings here
   countries: { type: Array, default: [] }
-  network: { type: String, default: "" }
+  networks: { type: Array, default: [] }
   platforms: { type: Array, default: [] }
   devices: { type: Array, default: [] }
 
@@ -167,11 +167,14 @@ getIdFromArgument = (arg) ->
 # Expects the ads field to be populated!
 #
 # @param [String, Ad] adId
-schema.methods.removeAd = (adId) ->
+# @param [Method] cb
+schema.methods.removeAd = (adId, cb) ->
 
   if (adId = getIdFromArgument adId) == null
     spew.error "Couldn't remove ad, no id: #{JSON.stringify adId}"
-    return
+    return cb()
+
+  foundAd = false
 
   # Remove ad from our own array if possible
   for ad, i in @ads
@@ -179,47 +182,53 @@ schema.methods.removeAd = (adId) ->
     # Sanity check
     if ad._id == undefined
       throw new Error "Ads field has to be populated for ad removal!"
-      return
+      return cb()
 
     # Perform actual id check
     if ad._id.equals adId
+      foundAd = true
 
       # Clear campaign:ad references from redis
-      ad.clearCampaignReferences @
+      ad.clearCampaignReferences @, =>
 
-      # Remove from our ad array and save
-      @ads.splice i, 1
-      @save()
+        # Remove from our ad array and save
+        @ads.splice i, 1
+        ad.voidCampaignParticipation @
+
+        @save()
+        ad.save()
+
+        cb()
+
       break
 
-  # Remove all keys from redis
-
-  null
+  if not foundAd then cb()
 
 # Refresh all ad refs. This must be done whenever our targeting information
-# is modified
+# is modified.
 #
 # This requires that our ad field be populated!
-schema.methods.refreshAdRefs = ->
+schema.methods.refreshAdRefs = (cb) ->
+  if @ads.length == 0 then cb()
   spew.info "Refreshing ad refs #{JSON.stringify @ads}"
 
-  populateAndRefreshRefs = (ad, campaign) ->
+  # Clear and re-create campaign references for a single ad
+  refreshRefsForAd = (ad, campaign, cb) ->
     ad.populate "campaigns.campaign", (err, populatedAd) ->
       if err
         spew.error "Error populating ad campaigns field"
-        return
+        return cb()
 
-      populatedAd.clearCampaignReferences campaign
-      populatedAd.createCampaignReferences campaign
-      spew.info "Refreshed refs for #{populatedAd.name}"
+      populatedAd.clearCampaignReferences campaign, ->
+        populatedAd.createCampaignReferences campaign, ->
+          spew.info "Refreshed refs for #{populatedAd.name}"
+          cb()
 
-  @populate "ads", (err, populatedCampaign) ->
-    if err
-      spew.error "Error populating ads"
-      return
+  count = @ads.length
+  doneCb = -> if count == 1 then cb() else count--
 
-    for ad in populatedCampaign.ads
-      populateAndRefreshRefs ad, populatedCampaign
+  for ad in @ads
+    refreshRefsForAd ad, @, -> doneCb()
 
 # Return our lifetime aggregated data
 #
