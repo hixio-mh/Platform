@@ -25,8 +25,9 @@ module.exports = [
   # Utility helper
   "./modules/logic/utility",
 
-  # Ad engine itself
+  # Engine logic (not tied to any one route)
   "./modules/engine/engine-ads",
+  "./modules/engine/engine-filters",
 
   # Public API
   "./modules/api/api-invites",
