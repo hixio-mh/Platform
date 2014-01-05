@@ -60,7 +60,7 @@ setup = (options, imports, register) ->
   # @param [Array<String>] excludes specific items to exclude
   # @return [Array<String>] flatList
   generateFlatList = (list, includes, excludes) ->
-    if includes.length == 0 then
+    if includes.length == 0
       flatList = list
     else
       flatList = includes
