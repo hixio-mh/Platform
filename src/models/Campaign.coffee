@@ -56,8 +56,15 @@ schema = new mongoose.Schema
   # Global targeting, ads can override the settings here
   countries: { type: Array, default: [] }
   networks: { type: Array, default: [] }
-  platforms: { type: Array, default: [] }
   devices: { type: Array, default: [] }
+
+  # Non-translated filter lists for nicer client presentation.
+  # Note: Matching lists are combined appropriately to yield the proper plainly
+  # named compiled lists
+  devicesInclude: { type: Array, default: [] }
+  devicesExclude: { type: Array, default: [] }
+  countriesInclude: { type: Array, default: [] }
+  countriesExclude: { type: Array, default: [] }
 
 ##
 ## ID and handle generation
@@ -66,6 +73,8 @@ schema = new mongoose.Schema
 schema.methods.getGraphiteId = -> "campaigns.#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
+  ret.devices = @compileDevicesList()
+  ret.countries = @compileCountriesList()
   ret.id = ret._id
   delete ret._id
   delete ret.__v
@@ -75,6 +84,22 @@ schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
   ret
+
+##
+## List compilation
+##
+
+_compileList = (includes, excludes) ->
+  list = []
+  list.push { name: item, type: "include" } for item in includes
+  list.push { name: item, type: "exclude" } for item in excludes
+  list
+
+schema.methods.compileDevicesList = ->
+  _compileList @devicesInclude, @devicesExclude
+
+schema.methods.compileCountriesList = ->
+  _compileList @countriesInclude, @countriesExclude
 
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!
