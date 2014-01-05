@@ -40,7 +40,6 @@ schema = new mongoose.Schema
     # Fine-tunning
     countries: { type: Array, default: [] }
     networks: { type: Array, default: [] }
-    platforms: { type: Array, default: [] }
     devices: { type: Array, default: [] }
 
     # "manual" or "automatic"
@@ -143,7 +142,6 @@ schema.methods.registerCampaignParticipation = (campaign) ->
 
     countries: campaign.countries
     networks: campaign.networks
-    platforms: campaign.platforms
     devices: campaign.devices
 
     bidSystem: campaign.bidSystem
@@ -237,7 +235,6 @@ schema.methods.getCompiledFetchData = (campaign) ->
   compiledData =
     countries: campaign.countries
     networks: campaign.networks
-    platforms: campaign.platforms
     devices: campaign.devices
     bid: campaign.bid
     bidSystem: campaign.bidSystem
@@ -250,7 +247,6 @@ schema.methods.getCompiledFetchData = (campaign) ->
 
         if c.countries.length > 0 then compiledData.countries = c.countries
         if c.networks.length > 0 then compiledData.networks = c.networks
-        if c.platforms.length > 0 then compiledData.platforms = c.platforms
         if c.devices.length > 0 then compiledData.devices = c.devices
 
         if c.bid >= 0 then compiledData.bid = c.bid
@@ -269,14 +265,11 @@ schema.methods.buildRedisKeySets = (data) ->
 
   sets =
     countrySets: []
-    platformSets: []
     deviceSets: []
     networkSets: []
 
   for country in data.countries
     sets.countrySets.push "country:#{country}"
-  for platform in data.platforms
-    sets.platformSets.push "#{baseKey}:platform:#{platform}"
   for device in data.devices
     sets.deviceSets.push "#{baseKey}:device:#{device}"
   for network in data.networks
@@ -301,10 +294,9 @@ schema.methods.clearRedisFilters = (data, ref, cb) ->
       else cb()
 
   clearKeyFromSets sets.countrySets, ref, ->
-    clearKeyFromSets sets.platformSets, ref, ->
-      clearKeyFromSets sets.deviceSets, ref, ->
-        clearKeyFromSets sets.networkSets, ref, ->
-          cb()
+    clearKeyFromSets sets.deviceSets, ref, ->
+      clearKeyFromSets sets.networkSets, ref, ->
+        cb()
 
 # Create redis targeting/ad fetch keys
 #
@@ -321,9 +313,8 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
       else cb()
 
   addKeyToSets sets.countrySets, ref, ->
-    addKeyToSets sets.platformSets, ref, ->
-      addKeyToSets sets.deviceSets, ref, ->
-        addKeyToSets sets.networkSets, ref, ->
-          cb()
+    addKeyToSets sets.deviceSets, ref, ->
+      addKeyToSets sets.networkSets, ref, ->
+        cb()
 
 mongoose.model "Ad", schema

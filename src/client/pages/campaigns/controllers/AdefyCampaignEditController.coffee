@@ -60,40 +60,17 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
   ]
 
   $scope.campaign =
+    pricing: "CPM"
     bidSystem: "automatic"
-    geographicalTargetting: "all"
     networkTargetting: "all"
-    platformTargetting: "all"
-    deviceTargetting: "all"
     scheduling: "no"
+    devices: []
+    countries: []
 
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
     # temp:
     $scope.campaign.rules = []
-
-    # Set up valid targeting modes
-    if $scope.campaign.devices.length == 0
-      $scope.campaign.deviceTargetting = "all"
-    else
-      $scope.campaign.deviceTargetting = "specific"
-
-    if $scope.campaign.countries.length == 0
-      $scope.campaign.geographicalTargetting = "all"
-    else
-      $scope.campaign.geographicalTargetting = "specific"
-
-    if $scope.campaign.networks.length == 0
-      $scope.campaign.networkTargetting = "all"
-    else if $scope.campaign.networks[0] == "mobile"
-      $scope.campaign.networks = "mobile"
-    else if $scope.campaign.networks[0] == "wifi"
-      $scope.campaign.networks = "wifi"
-
-    if $scope.campaign.platforms.length == 0
-      $scope.campaign.platformTargetting = "all"
-    else
-      $scope.campaign.platformTargetting = "specific"
 
   Ad.query (ads) -> $scope.ads = ads
 
@@ -102,13 +79,27 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
 
   $scope.addRule = ->
     $scope.campaign.rules.push
-      geographicalTargetting: "all"
       networkTargetting: "all"
-      platformTargetting: "all"
-      deviceTargetting: "all"
       scheduling: "no"
 
   $scope.submit = ->
+
+    $scope.campaign.devices = []
+    if $scope.devicesInclude and $scope.devicesInclude.length > 0
+      for device in $scope.devicesInclude
+        $scope.campaign.devices.push { name: device, type: "include" }
+    if $scope.devicesExclude and $scope.devicesExclude.length > 0
+      for device in $scope.devicesExclude
+        $scope.campaign.devices.push { name: device, type: "exclude" }
+
+    $scope.campaign.countries = []
+    if $scope.countriesInclude and $scope.countriesInclude.length > 0
+      for country in $scope.countriesInclude
+        $scope.campaign.countries.push { name: country, type: "include" }
+    if $scope.countriesExclude and $scope.countriesExclude.length > 0
+      for country in $scope.countriesExclude
+        $scope.campaign.countries.push { name: country, type: "exclude" }
+
     $scope.submitted = true
     $scope.campaign.$save().then(
       -> # success

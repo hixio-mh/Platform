@@ -22,6 +22,7 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   utility = imports["logic-utility"]
+  engineFilters = imports["engine-filters"]
 
   # Create new cmapaign
   app.post "/api/v1/campaigns", (req, res) ->
@@ -34,29 +35,49 @@ setup = (options, imports, register) ->
 
     countries = []
     networks = []
-    platforms = []
     devices = []
 
+    devicesInclude = []
+    devicesExclude = []
+    countriesInclude = []
+    countriesExclude = []
+
     # Generate valid filter arrays from data
-    if req.param "geographicalTargetting"
-      if req.param("geographicalTargetting") == "specific"
-        countries = req.param "countries"
+    if req.param "countries"
+      raw = req.param "countries"
 
-    if req.param "networkTargetting"
-      if req.param("networkTargetting") == "mobile"
-        networks = ["mobile"]
-      else if req.param("networkTargetting") == "wifi"
-        networks = ["wifi"]
+      includes = []
+      excludes = []
 
-    if req.param "platformTargetting"
-      if req.param("platformTargetting") == "specific"
-        platforms = req.param "platforms"
+      for item in raw
+        includes.push item.name if item.type == "include"
+        excludes.push item.name if item.type == "exclude"
 
-    if req.param "deviceTargetting"
-      if req.param("deviceTargetting") == "specific"
-        devices = req.param "devices"
-      else if req.param("deviceTargetting") == "exclude"
-        devices = ["unimplemented"]
+      countries = engineFilters.countries.translateInput includes, excludes
+      countriesExclude = excludes
+      countriesInclude = includes
+
+    if req.param "networks"
+      if req.param "networks"[0] == "all"
+        networks = ["mobile", "wifi"]
+      else
+        networks = req.param "networks"
+
+    if req.param "devices"
+      raw = req.param "devices"
+
+      includes = []
+      excludes = []
+
+      spew.info JSON.stringify raw
+
+      for item in raw
+        includes.push item.name if item.type == "include"
+        excludes.push item.name if item.type == "exclude"
+
+      devices = engineFilters.devices.translateInput includes, excludes
+      devicesExclude = excludes
+      devicesInclude = includes
 
     # Create new campaign
     newCampaign = db.model("Campaign")
@@ -74,8 +95,12 @@ setup = (options, imports, register) ->
 
       countries: countries
       networks: networks
-      platforms: platforms
       devices: devices
+
+      devicesInclude: devicesInclude
+      devicesExclude: devicesExclude
+      countriesInclude: countriesInclude
+      countriesExclude: countriesExclude
 
       status: 0 # 0 is created, no ads
       ads: []
@@ -242,23 +267,41 @@ setup = (options, imports, register) ->
         for key, val of req.body
           if key != "ads"
 
-            # Properly form empty arguments
-            if key == "devices" and val.length == 0 then val = []
-            if key == "platforms" and val.length == 0 then val = []
-            if key == "countries" and val.length == 0 then val = []
-            if key == "networks" and val.length == 0 then val = []
-
             # Only make changes if key is modified
             currentVal = campaign[key]
             if currentVal != undefined and not equalityCheck currentVal, val
+
+              # Convert include/exclude array sets
+              if key == "devices" or key == "countries"
+
+                # Properly form empty arguments
+                if val.length == 0 then val = []
+
+                include = []
+                exclude = []
+
+                for entry in val
+                  if entry.type == "exclude"
+                    exclude.push entry.name
+                  else if entry.type == "include"
+                    include.push entry.name
+                  else
+                    spew.warning "Unrecognized entry in filter array: #{entry.type}"
+
+                if key == "devices"
+                  val = engineFilters.devices.translateInput include, exclude
+                  campaign.devicesInclude = include
+                  campaign.devicesExclude = exclude
+                else if key == "countries"
+                  val = engineFilters.countries.translateInput include, exclude
+                  campaign.countriesInclude = include
+                  campaign.countriesExclude = exclude
 
               # Set ref refresh flag if needed
               if not needsAdRefRefresh
                 if key == "bidSystem" then needsAdRefRefresh = true
                 else if key == "bid" then needsAdRefRefresh = true
                 else if key == "devices" then needsAdRefRefresh = true
-                else if key == "platforms" then needsAdRefRefresh = true
-                else if key == "networks" then needsAdRefRefresh = true
                 else if key == "countries" then needsAdRefRefresh = true
 
               # Save final value on campaign

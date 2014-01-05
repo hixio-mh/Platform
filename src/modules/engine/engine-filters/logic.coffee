@@ -27,28 +27,8 @@ setup = (options, imports, register) ->
     obj
 
   _countriesList = arraytoObject countriesList
-  _categoriesList = arraytoObject categoriesList
   _devicesList = arraytoObject devicesList
   _manufacturersList = arraytoObject manufacturersList
-
-  # Generic generation methods
-  generateIncludeList = (listObject, includes) ->
-    validatedIncludes = []
-
-    for include in includes
-      if listObject[include] == true
-        validatedIncludes.push "+#{include}"
-
-    validatedIncludes
-
-  generateExcludeList = (listObject, excludes) ->
-    validatedExcludes = []
-
-    for exclude in excludes
-      if listObject[exclude] == true
-        validatedExcludes.push "-#{exclude}"
-
-    validatedExcludes
 
   # Generate flat list for targeting structure (which only takes into account
   # includes). We simulate targeting exclude support by including everything
@@ -67,6 +47,7 @@ setup = (options, imports, register) ->
 
     for exclude in excludes
       for item, i in list
+        spew.info "#{item}:#{exclude}"
         if item == exclude
           list.splice i, 1
           break
@@ -75,6 +56,21 @@ setup = (options, imports, register) ->
 
   # Todo: Finish
   register null,
-    "engine-filters": null
+    "engine-filters":
+
+      getCategories: -> categoriesList
+
+      # Filters needing translation
+      devices:
+        translateInput: (includes, excludes) ->
+          generateFlatList devicesList, includes, excludes
+
+      manufacturers:
+        translateInput: (includes, excludes) ->
+          generateFlatList manufacturersList, includes, excludes
+
+      countries:
+        translateInput: (includes, excludes) ->
+          generateFlatList countriesList, includes, excludes
 
 module.exports = setup

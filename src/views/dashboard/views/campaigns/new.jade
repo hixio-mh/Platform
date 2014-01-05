@@ -38,52 +38,38 @@
   fieldset: dl.form.center
     legend Targetting
     dl.form.center.single
-      dt: label Geographical
-      dd
-        .radio
-          input(type="radio" ng-model="campaign.geographicalTargetting" value="all" name="geographical_targetting" id="all_countries")
-          label(for="all_countries") All Countries
-        .radio
-          input(type="radio" ng-model="campaign.geographicalTargetting" value="specific" name="geographical_targetting" id="specific_countries")
-          label(for="specific_countries") Specific Countries
-        country-select(chosen multiple ng-model="campaign.countries" ng-disabled="campaign.geographicalTargetting != 'specific'" data-placeholder="Select countries")
-    dl.form.center.single
       dt: label Network
       dd
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="all" id="all_traffic")
+          input(type="radio" ng-model="campaign.networks" value="all")
           label(for="all_traffic") All Traffic
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="mobile" id="mobile_data_traffic")
+          input(type="radio" ng-model="campaign.networks" value="mobile")
           label(for="mobile_data_traffic") Mobile Data Traffic
         .radio
-          input(type="radio" ng-model="campaign.networkTargetting" name="network_targetting" value="wifi" id="wifi_traffic")
+          input(type="radio" ng-model="campaign.networks" value="wifi")
           label(for="wifi_traffic") Wifi Traffic
     dl.form.center.single
-      dt: label Platform
+      dt
+        label Geographical
+        span By default, all countries are included and none are excluded
       dd
-        .radio
-          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="all" id="all_platforms")
-          label(for="all_platforms") All Platforms
-        .radio
-          input(type="radio" ng-model="campaign.platformTargetting" name="platform_targetting" value="specific" id="specific_platforms")
-          label(for="specific_platforms") Specific Platforms
-        select(chosen multiple ng-model="campaign.platforms" ng-disabled="campaign.platformTargetting != 'specific'" data-placeholder="Select platforms")
-          option Austria
-          option France
+        country-select(chosen multiple ng-model="countriesInclude" data-placeholder="Include countries")
+        br
+        br
+        country-select(chosen multiple ng-model="countriesExclude" data-placeholder="Exclude countries")
     dl.form.center.single
-      dt: label Device
+      dt
+        label Device
+        span By default, all devices are included and none are excluded
       dd
-        .radio
-          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="all" id="all_devices")
-          label(for="all_devices") All Devices
-        .radio
-          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="specific" id="specific_devices")
-          label(for="specific_devices") Specific Devices
-        .radio
-          input(type="radio" ng-model="campaign.deviceTargetting" name="device_targetting" value="exclude" id="exclude_devices")
-          label(for="exclude_devices") Exclude Devices
-        select(chosen multiple ng-model="campaign.devices" ng-disabled="campaign.deviceTargetting == 'all'" data-placeholder="Select devices")
+        select(chosen multiple ng-model="devicesInclude" data-placeholder="Include devices")
+          option Nexus 4
+          option Galaxy S3
+          option iPhone
+        br
+        br
+        select(chosen multiple ng-model="devicesExclude" data-placeholder="Exclude devices")
           option Nexus 4
           option Galaxy S3
           option iPhone
