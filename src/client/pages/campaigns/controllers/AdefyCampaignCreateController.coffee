@@ -61,10 +61,10 @@ window.AdefyDashboard.controller "AdefyCampaignCreateController", ($scope, $loca
   $scope.campaign =
     pricing: "CPM"
     bidSystem: "automatic"
-    networkTargetting: "all"
     scheduling: "no"
     devices: []
     countries: []
+    networks: "all"
 
   $scope.submit = ->
     $scope.submitted = true

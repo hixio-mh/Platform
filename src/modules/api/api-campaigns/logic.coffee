@@ -58,18 +58,18 @@ setup = (options, imports, register) ->
       countriesInclude = includes
 
     if req.param "networks"
-      if req.param "networks"[0] == "all"
+      if req.param("networks"[0]) == "all"
         networks = ["mobile", "wifi"]
       else
         networks = req.param "networks"
+
+      spew.info JSON.stringify req.param "networks"
 
     if req.param "devices"
       raw = req.param "devices"
 
       includes = []
       excludes = []
-
-      spew.info JSON.stringify raw
 
       for item in raw
         includes.push item.name if item.type == "include"
@@ -266,6 +266,10 @@ setup = (options, imports, register) ->
         # Iterate over and change all other properties
         for key, val of req.body
           if key != "ads"
+
+            if key == "networks"
+              if val[0] == "all"
+                val = ["mobile", "wifi"]
 
             # Only make changes if key is modified
             currentVal = campaign[key]
