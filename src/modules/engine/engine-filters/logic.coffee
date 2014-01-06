@@ -12,6 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
+Autocomplete = require "triecomplete"
 
 setup = (options, imports, register) ->
 
@@ -30,6 +31,16 @@ setup = (options, imports, register) ->
   _devicesList = arraytoObject devicesList
   _manufacturersList = arraytoObject manufacturersList
 
+  autoCountries = new Autocomplete()
+  autoDevices = new Autocomplete()
+  autoManufacturers = new Autocomplete()
+  autoCategories = new Autocomplete()
+
+  autoCountries.initialize countriesList
+  autoDevices.initialize devicesList
+  autoManufacturers.initialize manufacturersList
+  autoCategories.initialize categoriesList
+
   # Generate flat list for targeting structure (which only takes into account
   # includes). We simulate targeting exclude support by including everything
   # that is included and not excluded. An empty include list implies include
@@ -47,7 +58,6 @@ setup = (options, imports, register) ->
 
     for exclude in excludes
       for item, i in list
-        spew.info "#{item}:#{exclude}"
         if item == exclude
           list.splice i, 1
           break
@@ -59,6 +69,14 @@ setup = (options, imports, register) ->
     "engine-filters":
 
       getCategories: -> categoriesList
+      getCountries: -> countriesList
+      getDevices: -> devicesList
+      getManufacturers: -> manufacturersList
+
+      autocompleteCategories: (q) -> autoCategories.search q
+      autocompleteCountries: (q) -> autoCountries.search q
+      autocompleteDevices: (q) -> autoDevices.search q
+      autocompleteManufacturers: (q) -> autoManufacturers.search q
 
       # Filters needing translation
       devices:

@@ -31,38 +31,32 @@ include _menu
       dt: label Network
       dd
         .radio
-          input(type="radio" ng-model="campaign.networks" value="all")
+          input(type="radio" ng-model="campaign.networks" value="all" name="all_traffic")
           label(for="all_traffic") All Traffic
         .radio
-          input(type="radio" ng-model="campaign.networks" value="mobile")
+          input(type="radio" ng-model="campaign.networks" value="mobile" name="mobile_data_traffic")
           label(for="mobile_data_traffic") Mobile Data Traffic
         .radio
-          input(type="radio" ng-model="campaign.networks" value="wifi")
+          input(type="radio" ng-model="campaign.networks" value="wifi" name="wifi_traffic")
           label(for="wifi_traffic") Wifi Traffic
     dl.form.center.single
       dt
         label Geographical
         span By default, all countries are included and none are excluded
       dd
-        country-select(chosen multiple ng-model="countriesInclude" data-placeholder="Include countries")
+        input.countryInclude(ng-model="countriesInclude" data-placeholder="Include countries")
         br
         br
-        country-select(chosen multiple ng-model="countriesExclude" data-placeholder="Exclude countries")
+        input.countryInclude(ng-model="countriesExclude" data-placeholder="Exclude countries")
     dl.form.center.single
       dt
         label Device
         span By default, all devices are included and none are excluded
       dd
-        select(chosen multiple ng-model="devicesInclude" data-placeholder="Include devices")
-          option Nexus 4
-          option Galaxy S3
-          option iPhone
+        input.deviceInclude(ng-model="devicesInclude" data-placeholder="Include devices")
         br
         br
-        select(chosen multiple ng-model="devicesExclude" data-placeholder="Exclude devices")
-          option Nexus 4
-          option Galaxy S3
-          option iPhone
+        input.deviceInclude(ng-model="devicesExclude" data-placeholder="Exclude devices")
 
   fieldset: dl.form.center
     legend Fine tunning
@@ -77,63 +71,28 @@ include _menu
         .field
           select(chosen ng-options="ad.id as ad.name for ad in campaign.ads" ng-model="rule.ad")
         .column
-          label Geographical
-          .radio
-            input(type="radio" ng-model="rule.geographicalTargetting" value="all")
-            label(for="all_countries") All Countries
-          .radio
-            input(type="radio" ng-model="rule.geographicalTargetting" value="specific")
-            label(for="specific_countries") Specific Countries
-          country-select(chosen multiple ng-model="rule.countries" ng-disabled="rule.geographicalTargetting != 'specific'" data-placeholder="Select countries")
-        .column
           label Network
           .radio
-            input(type="radio" ng-model="rule.networkTargetting" value="all")
+            input(type="radio" ng-model="rule.networks" value="all" name="all_traffic")
             label(for="all_traffic") All Traffic
           .radio
-            input(type="radio" ng-model="rule.networkTargetting" value="mobile")
+            input(type="radio" ng-model="rule.networks" value="mobile" name="mobile_data_traffic")
             label(for="mobile_data_traffic") Mobile Data Traffic
           .radio
-            input(type="radio" ng-model="rule.networkTargetting" value="wifi")
+            input(type="radio" ng-model="rule.networks" value="wifi" name="wifi_traffic")
             label(for="wifi_traffic") Wifi Traffic
         .column
-          label Platforms
-          .radio
-            input(type="radio" ng-model="rule.platformTargetting" value="all")
-            label(for="all_platforms") All Platforms
-          .radio
-            input(type="radio" ng-model="rule.platformTargetting" value="specific")
-            label(for="specific_platforms") Specific Platforms
-          select(chosen multiple ng-model="rule.platforms" ng-disabled="rule.platformTargetting != 'specific'")
-            option Austria
-            option France
+          label Geographical
+          input.countryInclude(ng-model="rule.countriesInclude" data-placeholder="Include countries")
+          br
+          br
+          input.countryInclude(ng-model="rule.countriesExclude" data-placeholder="Exclude countries")
         .column
           label Devices
-          .radio
-            input(type="radio" ng-model="rule.deviceTargetting" value="all")
-            label(for="all_devices") All Devices
-          .radio
-            input(type="radio" ng-model="rule.deviceTargetting" value="specific")
-            label(for="specific_devices") Specific Devices
-          .radio
-            input(type="radio" ng-model="rule.deviceTargetting" value="exclude")
-            label(for="exclude_devices") Exclude Devices
-          select(chosen multiple ng-model="rule.devices" ng-disabled="rule.deviceTargetting == 'all'" data-placeholder="Select devices")
-            option Nexus 4
-            option Galaxy S3
-            option iPhone
-        .column
-          label Manufacturers
-          .radio
-            input(type="radio" ng-model="rule.manufacturerTargetting" value="all")
-            label(for="all_manufacturers") All Manufacturers
-          .radio
-            input(type="radio" ng-model="rule.manufacturerTargetting" value="specific")
-            label(for="specific_manufacturers") Specific Manufacturers
-          select(chosen multiple ng-model="rule.manufacturers" ng-disabled="rule.manufacturerTargetting != 'specific'" data-placeholder="Select manufacturers")
-            option LG
-            option HTC
-            option Sony
+          input.deviceInclude(ng-model="rule.devicesInclude" data-placeholder="Include devices")
+          br
+          br
+          input.deviceInclude(ng-model="rule.devicesExclude" data-placeholder="Exclude devices")
 
     button(ng-click="addRule()" style="margin: 7px") Add new rule
 
@@ -143,5 +102,3 @@ include _menu
       | I want to delete the campaign
 
     button.blue.save(ng-click="submit()") Save
-
-    pre(ng-bind="campaign | json")

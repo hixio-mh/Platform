@@ -11,53 +11,12 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad) ->
+window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout) ->
 
   $scope.min =
     budget: 25
     cpm: 1.00
     cpc: 0.10
-
-  # Campaign categories
-  $scope.categories = [
-    "Alcohol"
-    "Automotive"
-    "Books & Reference"
-    "Business & Productivity"
-    "Careers"
-    "Children/Youth"
-    "Clothing & Apparel"
-    "Communications"
-    "Consumer Electronics"
-    "Contests"
-    "Dating"
-    "eCommerce"
-    "Education"
-    "Fashion"
-    "Financial Services"
-    "Gambling"
-    "Games"
-    "Health & Fitness"
-    "Home & Garden"
-    "Mobile Content"
-    "Movies, TV, and Entertainment"
-    "News, Sports, and Weather"
-    "None"
-    "Personals"
-    "Photos and Videos"
-    "Politics"
-    "Portals and Reference"
-    "Religion"
-    "Retail"
-    "Ringtones and Music"
-    "Social"
-    "Social Networking"
-    "Sports"
-    "Telecom"
-    "Tobacco"
-    "Tools and Utilities"
-    "Travel"
-  ]
 
   $scope.campaign =
     pricing: "CPM"
@@ -67,10 +26,78 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
     devices: []
     countries: []
 
+  initializeSelect2Fields = ->
+
+    $(".deviceInclude").select2
+      placeholder: "Search for a device"
+      minimumInputLength: 1
+      multiple: true
+      ajax:
+        url: "/api/v1/filters/devices"
+        dataType: "json"
+        data: (term, page) -> q: term
+        results: (data, page) -> results: data
+      formatResult: (data) -> "<div>#{data.value}</div>"
+      formatSelection: (data) -> data.value
+      id: (data) -> data.key
+      initSelection: (e, cb) ->
+        data = []
+        $(e.val().split ",").each (i) ->
+          item = @split ":"
+          data.push
+            key: item[0]
+            value: item[1]
+        cb data
+
+    $(".countryInclude").select2
+      placeholder: "Search for a country"
+      minimumInputLength: 1
+      multiple: true
+      ajax:
+        url: "/api/v1/filters/countries"
+        dataType: "json"
+        data: (term, page) -> q: term
+        results: (data, page) -> results: data
+      formatResult: (data) -> "<div>#{data.value}</div>"
+      formatSelection: (data) -> data.value
+      id: (data) -> data.key
+      initSelection: (e, cb) ->
+        data = []
+        $(e.val().split ",").each (i) ->
+          item = @split ":"
+          data.push
+            key: item[0]
+            value: item[1]
+        cb data
+
+  arrayToSelect2Data = (array) ->
+    data = []
+    data.push { key: item, value: item } for item in array
+    data
+
+  validSelect2DataToPreloadString = (array) ->
+    str = ""
+    for item, i in array
+      str += "#{item.key}:#{item.value}"
+      if i != array.length - 1 then str += ","
+    str
+
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
-    # temp:
     $scope.campaign.rules = []
+
+    # Prepare select fields
+    devicesExclude = arrayToSelect2Data campaign.devicesExclude
+    devicesInclude = arrayToSelect2Data campaign.devicesInclude
+    countriesExclude = arrayToSelect2Data campaign.countriesExclude
+    countriesInclude = arrayToSelect2Data campaign.countriesInclude
+
+    $scope.devicesExclude = validSelect2DataToPreloadString devicesExclude
+    $scope.devicesInclude = validSelect2DataToPreloadString devicesInclude
+    $scope.countriesInclude = validSelect2DataToPreloadString countriesInclude
+    $scope.countriesExclude = validSelect2DataToPreloadString countriesExclude
+
+    $timeout -> initializeSelect2Fields()
 
   Ad.query (ads) -> $scope.ads = ads
 
@@ -79,8 +106,14 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
 
   $scope.addRule = ->
     $scope.campaign.rules.push
-      networkTargetting: "all"
+      networks: "all"
       scheduling: "no"
+      devicesExclude: []
+      devicesInclude: []
+      countriesInclude: []
+      countriesExclude: []
+
+    $timeout -> initializeSelect2Fields()
 
   $scope.submit = ->
 
