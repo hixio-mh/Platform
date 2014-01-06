@@ -43,6 +43,7 @@ module.exports = [
   "./modules/api/api-users",
   "./modules/api/api-analytics",
   "./modules/api/api-editor",
+  "./modules/api/api-filters",
 
   # Maintenance routes
   "./modules/logic/migration",
