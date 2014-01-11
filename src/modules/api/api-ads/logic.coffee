@@ -70,6 +70,8 @@ setup = (options, imports, register) ->
     .exec (err, ads) ->
       if utility.dbError err, res then return
 
+      # This is a tad ugly, as we need to fetch stats both for all ads, and
+      # for all campagins within the ads.
       if ads.length == 0 then res.json 200, []
       else
 
@@ -112,9 +114,14 @@ setup = (options, imports, register) ->
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->
-    db.model("Ad").findById req.param("id"), (err, ad) ->
+    db.model("Ad")
+    .find({ _id: req.param "id" })
+    .populate("campaigns.campaign")
+    .exec (err, ads) ->
       if utility.dbError err, res then return
-      if not ad then res.send(404); return
+      if ads.length == 0 then return res.send 404
+
+      ad = ads[0]
 
       if not req.user.admin and not ad.owner.equals req.user.id
         res.send 403
@@ -123,7 +130,7 @@ setup = (options, imports, register) ->
       ad.fetchCompiledStats (stats) ->
         advertisement = ad.toAnonAPI()
         advertisement.stats = stats
-        res.json advertisement
+        res.json 200, advertisement
 
   # Sets ad status as "awaiting approval"
   app.post "/api/v1/ads/:id/approval", (req, res) ->

@@ -8,7 +8,7 @@
     a.active(href="/ads/{{ad.id}}")
       i.fa.fa-fw.fa-signal
       | Metrics
-    a(href="https://app.adefy.eu/editor/{{ad.id}}" target="_self")
+    a(href="/editor/{{ad.id}}" target="_self")
       i.fa.fa-fw.fa-pencil
       | Editor
     a.delete(form-modal template="/views/dashboard/ads:delete" title="Delete ad"
@@ -25,22 +25,22 @@
   h1 Statistics
   .stats.campaign
     .stat: .wrap
-      .amount.large ▲ {{ ad.impressions | number }}
+      .amount.large ▲ {{ ad.stats.impressions | number }}
       .desc Impressions
     .stat: .wrap
-      .amount.large ▲ {{ stats.daily.impressions | number }}
+      .amount.large ▲ {{ ad.stats.impressions24h | number }}
       .desc Impressions (daily)
     .stat: .wrap
-      .amount.large ▲ {{ ad.clicks | number }}
+      .amount.large ▲ {{ ad.stats.clicks | number }}
       .desc Clicks
     .stat: .wrap
-      .amount.large ▲ {{ stats.daily.clicks | number }}
+      .amount.large ▲ {{ ad.stats.clicks24h | number }}
       .desc Clicks (daily)
     .stat: .wrap
-      .amount.large {{ ad.ctr | number }} %
+      .amount.large {{ ad.stats.ctr | number }} %
       .desc CTR
     .stat: .wrap
-      .amount.large {{ stats.daily.ctr | number }} %
+      .amount.large {{ ad.stats.ctr24h | number }} %
       .desc CTR (daily)
 
 .graphs
