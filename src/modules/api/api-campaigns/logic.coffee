@@ -113,12 +113,17 @@ setup = (options, imports, register) ->
   app.get "/api/v1/campaigns", (req, res) ->
     db.model("Campaign").find { owner: req.user.id }, (err, campaigns) ->
       if utility.dbError err, res then return
+      if campaigns.length == 0 then res.json 200, []
 
-      # Remove the owner id, and refactor the id field
       ret = []
-      ret.push c.toAnonAPI() for c in campaigns
+      count = campaigns.length
 
-      res.json ret
+      done = -> count--; if count == 0 then res.json 200, ret
+
+      for c in campaigns
+        c.populateSelfTotalStats (self) ->
+          ret.push self
+          done()
 
   # Finds a single Campaign by ID
   app.get "/api/v1/campaigns/:id", (req, res) ->

@@ -185,11 +185,20 @@ schema.methods.fetch24hStats = (cb) ->
   query = graphiteInterface.query()
   query.addStatIntegralTarget impressionsLists
   query.addStatIntegralTarget clicksLists
-  query.exec (data) ->
+  query.exec (data) -> cb remoteStats
 
-    spew.info "Graphite reply: #{JSON.stringify data}"
+# Stat helpers
+schema.methods.populateSelfTotalStats = (cb) ->
+  @fetchTotalStats (stats) =>
+    cb _.extend @toAnonAPI(), stats: stats
 
-    cb remoteStats
+schema.methods.populateSelf24hStats = (cb) ->
+  @fetch24hStats (stats) =>
+    cb _.extend @toAnonAPI(), stats: stats
+
+schema.methods.populateSelfAllStats = (cb) ->
+  @fetchOverviewStats (stats) =>
+    cb _.extend @toAnonAPI(), stats: stats
 
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!

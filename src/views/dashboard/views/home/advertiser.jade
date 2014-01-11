@@ -43,10 +43,10 @@
     tbody
       tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true | limitTo:10")
         td {{ campaign.name }}
-        td {{ campaign.impressions | number }}
-        td {{ campaign.clicks | number }}
-        td {{ campaign.ctr | number:2 }}%
-        td {{ campaign.spent | currency:$ }}
+        td {{ campaign.stats.impressions | number }}
+        td {{ campaign.stats.clicks | number }}
+        td {{ campaign.stats.ctr | number:2 }}%
+        td {{ campaign.stats.spent | currency:$ }}
   div
     h1 News
     ul.news

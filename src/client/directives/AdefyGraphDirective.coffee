@@ -4,16 +4,18 @@ window.AdefyDashboard.directive "graph", [->
   restrict: "AE"
   scope:
     data: "="
-    type: "="
-    width: "="
-    height: "="
-    unit: "="
+    type: "@"
+    width: "@"
+    height: "@"
+    unit: "@"
+    legend: "@"
 
   link: (scope, element, attrs) ->
     rickshaw = new Rickshaw.Graph
       element: element.find(".rickshaw")[0]
       renderer: scope.type or "line"
       series: scope.data
+      stroke: scope.stroke or true
 
       # temp
       width: scope.width
@@ -23,29 +25,25 @@ window.AdefyDashboard.directive "graph", [->
       return if not graphs or not graphs.length
       rickshaw.update()
 
-    axisX = new Rickshaw.Graph.Axis.Time
-      graph: rickshaw
-      timeUnit: new Rickshaw.Fixtures.Time().unit scope.unit || "day"
+    if scope.axes
+      axisX = new Rickshaw.Graph.Axis.Time graph: rickshaw
+      axisY = new Rickshaw.Graph.Axis.Y
+        graph: rickshaw
+        orientation: "left"
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+        element: element.find(".axis-y")[0]
 
-    axisY = new Rickshaw.Graph.Axis.Y
-      graph: rickshaw
-      orientation: "left"
-      tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-      element: element.find(".axis-y")[0]
+    if scope.legend
+      legend = new Rickshaw.Graph.Legend
+        graph: rickshaw
+        element: element.find(".legend")[0]
 
-    legend = new Rickshaw.Graph.Legend
-      graph: rickshaw
-      element: element.find(".legend")[0]
+    if scope.hover
+      hoverDetails = new Rickshaw.Graph.HoverDetail
+        graph: rickshaw
+        xFormatter: (x) -> "#{x} Days"
+        yFormatter: (y) -> "$#{y}"
 
-    highlighter = new Rickshaw.Graph.Behavior.Series.Highlight
-      graph: rickshaw
-      legend: legend
-
-    shelving = new Rickshaw.Graph.Behavior.Series.Toggle
-      graph: rickshaw
-      legend: legend
-
-    hoverDetails = new Rickshaw.Graph.HoverDetail graph: rickshaw
     rickshaw.render()
 
     scope.$watch "type", (type) ->
