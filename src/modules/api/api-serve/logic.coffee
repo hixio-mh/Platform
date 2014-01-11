@@ -39,6 +39,8 @@ setup = (options, imports, register) ->
       else
         adEngine.fetchTest req, res, publisher
 
+  spew.info "Ad server listening"
+
   register null, {}
 
 module.exports = setup

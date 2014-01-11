@@ -166,12 +166,6 @@ setup = (options, imports, register) ->
   fetchEmpty = (req, res) ->
     res.json 404, error: "Ad not available"
 
-  # Requests are routed here from elsewhere. Regardless of the origin, we reply
-  # with a packaged ad ready for rendering by our engine.
-  #
-  # Targeting happens elsewhere! As does live-ad enabling!
-  fetch = (req, res) ->
-
   register null,
     "engine-ads":
       fetch: (req, res, publisher) -> fetch req, res, publisher
