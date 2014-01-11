@@ -25,7 +25,8 @@
     "node-cache": "~0.4.0",
     "express-validator": "~1.0.1",
     "triecomplete": "0.0.1",
-    "autocomplete": "0.0.1"
+    "autocomplete": "0.0.1",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
