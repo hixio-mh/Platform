@@ -70,9 +70,45 @@ setup = (options, imports, register) ->
     .exec (err, ads) ->
       if utility.dbError err, res then return
 
-      ret = []
-      if ads then ret.push ad.toAnonAPI() for ad in ads
-      res.json 200, ret
+      if ads.length == 0 then res.json 200, []
+      else
+
+        count = ads.length
+        ret = []
+        done = -> count--; if count == 0 then res.json 200, ret
+
+        fetchStatsForCampaign = (campaignIndex, ad, cb) ->
+          campaign = ad.campaigns[campaignIndex].campaign
+          campaign.fetchTotalStatsForAd ad, (stats) -> cb stats, campaignIndex
+
+        fetchStatsforAd = (ad) ->
+          ad.fetchLifetimeStats (adStats) ->
+
+            # Store campaign stats temporarily
+            campaignStats = []
+
+            innerCount = ad.campaigns.length
+            innerDone = ->
+              innerCount--
+
+              if innerCount == 0
+                adObject = ad.toAnonAPI()
+                adObject.stats = adStats
+
+                for stats in campaignStats
+                  adObject.campaigns[stats.i].stats = stats.stats
+
+                ret.push adObject
+
+                done()
+
+            # Populate campaign stats
+            for i in [0...ad.campaigns.length]
+              fetchStatsForCampaign i, ad, (stats, i) ->
+                campaignStats.push { i: i, stats: stats }
+                innerDone()
+
+        fetchStatsforAd ad for ad in ads
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->

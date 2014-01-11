@@ -19,15 +19,6 @@ module.exports = (host) -> {
     if opts == undefined
       spew.error "No stat fetch opts set"
       return
-    else if opts.prefix == undefined
-      spew.error "No stat fetch prefix set"
-      return
-    else if opts.request == undefined
-      spew.error "No stat fetch requests set"
-      return
-
-    # Bail early if no requests passed in
-    if opts.request.length == 0 then opts.cb []
 
     query = @query()
     if opts.filter == true then query.enableFilter()
@@ -70,6 +61,20 @@ module.exports = (host) -> {
         method: method
         name: "stats.#{config.mode}.#{target}"
         args: args
+
+    @addStatSumTarget = (lists) =>
+      if method == undefined then method = null
+      @_targets.push
+        method: "sumSeries"
+        name: lists[0]
+        args: lists[1...]
+
+    @addStatIntegralTarget = (lists) =>
+      if method == undefined then method = null
+      @_targets.push
+        method: "integral"
+        name: lists[0]
+        args: lists[1...]
 
     @addStatCountTarget = (target, method, args) =>
       if method == undefined then method = null

@@ -17,6 +17,7 @@ mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
 spew = require "spew"
+_ = require "underscore"
 NodeCache = require "node-cache"
 redisLib = require "redis"
 redis = redisLib.createClient()
@@ -165,18 +166,7 @@ schema.methods.hasAPIKey = ->
 # Fetches Earnings, Clicks, Impressions and CTR for the past 24 hours, and
 # lifetime (both sums)
 schema.methods.fetchOverviewStats = (cb) ->
-
   statCacheKey = "24hStats:#{@getRedisId()}"
-
-  # Default stats object, since stats that have never been logged
-  # (new publisher) don't even return 0
-  localStats = {}
-
-  mergeStats = (localStats, remoteStats) ->
-    stats = {}
-    stats[key] = value for key, value of remoteStats
-    stats[key] = value for key, value of localStats
-    stats
 
   fetchRemoteStats = (cb) =>
 
@@ -202,7 +192,7 @@ schema.methods.fetchOverviewStats = (cb) ->
 
       # Helper
       assignMatching = (res, stat, statName) ->
-        if res.target.indexOf(statName) != -1 then gstat = res.datapoints[0].y
+        if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
 
       remoteStats =
         impressions24h: 0
@@ -235,12 +225,13 @@ schema.methods.fetchOverviewStats = (cb) ->
 
         if impressions != 0 then localStats.ctr = clicks / impressions
 
-        # Stats are fetched together, so check for only one stat in the cache
+        # We only cache remote stats
         statCache.get statCacheKey, (err, data) ->
           if data[statCacheKey] == undefined
-            fetchRemoteStats (remoteStats) => cb mergeStats localStats, remoteStats
+            fetchRemoteStats (remoteStats) =>
+              cb _.extend localStats, remoteStats
           else
-            cb mergeStats localStats, data[statCacheKey]
+            cb _.extend localStats, data[statCacheKey]
 
 # Fetches a single stat over a specific period of time
 schema.methods.fetchCustomStat = (range, stat, cb) ->

@@ -17,6 +17,7 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+_ = require "underscore"
 
 setup = (options, imports, register) ->
 
@@ -132,16 +133,13 @@ setup = (options, imports, register) ->
       if not req.user.admin and not campaign.owner.equals req.user.id
         return res.send 403
 
-      campaign.fetchStats (stats) ->
+      campaign.fetchOverviewStats (stats) ->
 
         # Clean up ads
         for ad, i in campaign.ads
           campaign.ads[i] = ad.toAnonAPI()
 
-        ret = stats: stats
-        ret[key] = val for key, val of campaign.toAnonAPI()
-
-        res.json ret
+        res.json _.extend campaign.toAnonAPI(), stats: stats
 
   # Saves the campaign, and creates campaign references where needed. User must
   # either be admin or own the campaign in question!

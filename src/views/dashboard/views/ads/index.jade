@@ -12,15 +12,15 @@ ul.list(ng-if="ads")
     table.campaigns
       tr(ng-repeat="campaign in ad.campaigns")
         th {{ campaign.name }}
-        td             
-          .amount {{ campaign.ctr | number }} %
+        td
+          .amount {{ campaign.stats.ctr | number }} %
           .desc CTR
         td
-          .amount ▲ {{ campaign.impressions | number }}
+          .amount ▲ {{ campaign.stats.impressions | number }}
           .desc Impressions
         td
-          .amount ▲ {{ campaign.clicks | number }}
+          .amount ▲ {{ campaign.stats.clicks | number }}
           .desc Clicks
         td
-          .amount {{ campaign.spent | currency:$ }}
+          .amount {{ campaign.stats.spent | currency:$ }}
           .desc Spent

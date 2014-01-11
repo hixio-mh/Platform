@@ -42,6 +42,14 @@ schema = new mongoose.Schema
     networks: { type: Array, default: [] }
     devices: { type: Array, default: [] }
 
+    # Non-translated filter lists for nicer client presentation.
+    # Note: Matching lists are combined appropriately to yield the proper
+    # plainly named compiled lists
+    devicesInclude: { type: Array, default: [] }
+    devicesExclude: { type: Array, default: [] }
+    countriesInclude: { type: Array, default: [] }
+    countriesExclude: { type: Array, default: [] }
+
     # "manual" or "automatic"
     bidSystem: { type: String, default: "" }
 
@@ -57,6 +65,24 @@ schema.methods.getGraphiteId = -> "ads.#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
+
+  for i in [0...ret.campaigns.length]
+    ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id
+
+    delete ret.campaigns[i].campaign._id
+    delete ret.campaigns[i].campaign.__v
+    delete ret.campaigns[i].campaign.version
+    delete ret.campaigns[i].campaign.owner
+    delete ret.campaigns[i].campaign.countries
+    delete ret.campaigns[i].campaign.devices
+
+    delete ret.campaigns[i].countries
+    delete ret.campaigns[i].devices
+
+    # No idea where this comes from.
+    # Todo: Figure this out
+    delete ret.campaigns[i]._id
+
   delete ret._id
   delete ret.__v
   delete ret.version
@@ -88,6 +114,33 @@ schema.methods.fetchCompiledStats = (cb) ->
     clicks: 0
     ctr: 0
     spent: 0
+
+# Fetches redis lifetime stats (sum between campaigns)
+schema.methods.fetchLifetimeStats = (cb) ->
+
+  redis.get @getRedisRefForAllCampaigns(), (err, result) ->
+    if err then spew.error err
+
+    stats =
+      requests: 0
+      impressions: 0
+      clicks: 0
+      spent: 0
+      ctr: 0
+
+    if result == null then cb stats
+    else
+      data = result.split "|"
+
+      stats.requests = Number data[2]
+      stats.impressions = Number data[3]
+      stats.clicks = Number data[4]
+      stats.spent = Number data[5]
+
+      if stats.impressions != 0
+        stats.ctr = stats.clicks / stats.impressions
+
+      cb stats
 
 # Fetches a single stat over a specific period of time for all campaigns
 schema.methods.fetchCompiledStat = (range, stat, cb) -> cb []
@@ -130,7 +183,7 @@ schema.methods.removeFromCampaigns = (cb) ->
     else count--
 
   for c in @campaigns
-    c.removeAd @_id, ->
+    c.campaign.removeAd @_id, ->
       c.save()
       doneCb()
 
@@ -153,7 +206,7 @@ schema.methods.voidCampaignParticipation = (campaign) ->
   else id = campaign.id
 
   for c, i in @campaigns
-    if c.campaign == id
+    if c.campaign.equals id
       @campaigns.splice i, 1
       break
 
@@ -214,8 +267,8 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
 
     # Now fill out our data
     #
-    # bidSystem|bid|rimpressions|avgcpm|impressions|clicks|spent
-    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0|0", -> cb()
+    # bidSystem|bid|requests|impressions|clicks|spent
+    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0", -> cb()
 
 ## Redis helpers
 
@@ -223,7 +276,13 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
 #
 # @param [Campaign] campaign
 # @return [String] ref
-schema.methods.getRedisRefForCampaign = (campaign) -> "#{campaign._id}:#{@_id}"
+schema.methods.getRedisRefForCampaign = (campaign) ->
+  "campaignAd.#{campaign._id}:#{@_id}"
+
+# Generate a key matching all of our campaign entries
+#
+# @return [String] ref
+schema.methods.getRedisRefForAllCampaigns = -> "campaignAd.*:#{@_id}"
 
 # Fetch final targeting filters (country, network, etc) and bid info for
 # campaign

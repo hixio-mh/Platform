@@ -14,6 +14,7 @@
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 mongoose = require "mongoose"
 spew = require "spew"
+_ = require "underscore"
 redisLib = require "redis"
 redis = redisLib.createClient()
 
@@ -71,13 +72,16 @@ schema = new mongoose.Schema
 ##
 
 schema.methods.getGraphiteId = -> "campaigns.#{@_id}"
+schema.methods.getRedisId = -> "campaign:#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
-  ret.devices = @compileDevicesList()
-  ret.countries = @compileCountriesList()
+  # ret.devices = @compileDevicesList()
+  # ret.countries = @compileCountriesList()
   ret.id = ret._id
   delete ret._id
   delete ret.__v
+  delete ret.devices
+  delete ret.countries
   ret
 
 schema.methods.toAnonAPI = ->
@@ -101,56 +105,103 @@ schema.methods.compileDevicesList = ->
 schema.methods.compileCountriesList = ->
   _compileList @countriesInclude, @countriesExclude
 
+schema.methods.fetchTotalStatsForAd = (ad, cb) ->
+  if ad._id == undefined then adId = ad.id
+  else adId = ad._id
+
+  ref = "campaignAd.#{@._id}:#{adId}"
+
+  redis.get ref, (err, result) ->
+    if err then spew.error err
+
+    stats =
+      requests: 0
+      impressions: 0
+      clicks: 0
+      spent: 0
+      ctr: 0
+
+    if result == null then cb stats
+    else
+      data = result.split "|"
+
+      stats.requests = Number data[2]
+      stats.impressions = Number data[3]
+      stats.clicks = Number data[4]
+      stats.spent = Number data[5]
+
+      if stats.impressions != 0
+        stats.ctr = stats.clicks / stats.impressions
+
+      cb stats
+
+# Fetch compiled lifetime stats
+schema.methods.fetchTotalStats = (cb) ->
+  stats =
+    impressions: 0
+    clicks: 0
+    spent: 0
+    ctr: 0
+
+  count = @ads.length
+  if count == 0 then return cb stats
+
+  done = ->
+    count--
+
+    if count == 0
+      if stats.impressions != 0
+        stats.ctr = stats.clicks / stats.impressions
+
+      cb stats
+
+  for ad in @ads
+    @fetchTotalStatsForAd ad, (adStats) ->
+      stats.impressions += adStats.impressions
+      stats.clicks += adStats.clicks
+      stats.spent += adStats.spent
+
+      done()
+
+# Fetch compiled 24h stats (ranges!)
+schema.methods.fetch24hStats = (cb) ->
+  remoteStats =
+    impressions24h: 0
+    clicks24h: 0
+    ctr24h: 0
+    spent24h: 0
+
+  if @ads.length == 0 then return cb remoteStats
+
+  impressionsLists = []
+  clicksLists = []
+
+  for ad in @ads
+    graphitePrefix = "campaignstats.#{ad.getRedisRefForCampaign @}"
+
+    impressionsLists.push "#{graphitePrefix}.impressions"
+    clicksLists.push "#{graphitePrefix}.clicks"
+
+  query = graphiteInterface.query()
+  query.addStatIntegralTarget impressionsLists
+  query.addStatIntegralTarget clicksLists
+  query.exec (data) ->
+
+    spew.info "Graphite reply: #{JSON.stringify data}"
+
+    cb remoteStats
+
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!
 #
 # @param [Method] cb
 # @return [Object] metrics
-schema.methods.fetchStats = (cb) ->
+schema.methods.fetchOverviewStats = (cb) ->
+  statCacheKey = "24hStats:#{@getRedisId()}"
 
-  stats =
-    clicks: 0
-    impressions: 0
-    ctr: 0
-    spent: 0
-
-  # Build request object with all of our ad ids
-  request = []
-
-  for ad in @ads
-
-    # Ensure ads have been populated!
-    if ad.name == undefined
-      throw new Error "Ads must be populated to retrieve lifetime stats!"
-      return
-
-    request.push
-      range: "1year"
-      stats: ["impressions", "clicks", "ctr", "spent"]
-      prefix: ad.getGraphiteId()
-
-  graphiteInterface.fetchStats
-    prefix: @getGraphiteId()
-    filter: true
-    request: request
-    cb: (data) ->
-
-      # Sum! :D
-      for res in data
-
-        if res.target.indexOf(".impressions,") != -1
-          stats.impressions += res.datapoints[0].y
-
-        if res.target.indexOf(".clicks,") != -1
-          stats.clicks += res.datapoints[0].y
-
-        if res.target.indexOf(".ctr,") != -1
-          stats.ctr += res.datapoints[0].y
-
-        if res.target.indexOf(".spent,") != -1
-          stats.spent += res.datapoints[0].y
-
-      cb stats
+  @fetchTotalStats (localStats) =>
+    @fetch24hStats (remoteStats) ->
+      cb _.extend localStats, remoteStats
 
 # (stat is spent, clicks, impressions, or ctr)
 schema.methods.fetchCustomStat = (range, stat, cb) ->
@@ -235,7 +286,6 @@ schema.methods.removeAd = (adId, cb) ->
 # This requires that our ad field be populated!
 schema.methods.refreshAdRefs = (cb) ->
   if @ads.length == 0 then cb()
-  spew.info "Refreshing ad refs #{JSON.stringify @ads}"
 
   # Clear and re-create campaign references for a single ad
   refreshRefsForAd = (ad, campaign, cb) ->
@@ -245,9 +295,7 @@ schema.methods.refreshAdRefs = (cb) ->
         return cb()
 
       populatedAd.clearCampaignReferences campaign, ->
-        populatedAd.createCampaignReferences campaign, ->
-          spew.info "Refreshed refs for #{populatedAd.name}"
-          cb()
+        populatedAd.createCampaignReferences campaign, -> cb()
 
   count = @ads.length
   doneCb = -> if count == 1 then cb() else count--
@@ -260,6 +308,15 @@ schema.methods.refreshAdRefs = (cb) ->
 # @param [Method] callback
 # @return [String] data csv data from graphite
 schema.methods.lifetimeData = (cb) ->
+
+# Cleans up campaign references within ads
+schema.pre "remove", (next) ->
+  @populate "ads", =>
+    count = @ads.length
+    done = -> count--; if count == 0 then next()
+
+    for ad in @ads
+      @removeAd ad.id, -> done()
 
 # Return array of ad documents belonging to a campaign
 #
