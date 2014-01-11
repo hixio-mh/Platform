@@ -24,6 +24,7 @@ setup = (options, imports, register) ->
   server = imports["core-express"]
   auth = imports["core-userauth"]
   utility = imports["logic-utility"]
+  templates = imports["engine-templates"]
 
   # @param [String] ip
   # @return [Boolean] valid
@@ -37,9 +38,29 @@ setup = (options, imports, register) ->
 
     true
 
+  # Returns an object containing request options (user agent, screen size, etc)
+  #
+  # Returns null if request is invalid!
+  #
+  # @param [Object] req request object
+  # @return [Object] options
+  parseRequestOptions = (req) ->
+    options = {}
+
+    if req.param "ua" then options.userAgent = req.param "ua"
+    else options.userAgent = req.headers["user-agent"]
+
+    options.width = Number req.param "width"
+    options.height = Number req.param "height"
+
+    options
+
   validateRequest = (req) ->
     if req.query.ip == undefined then return "IP address required"
     else if not validIP req.query.ip then return "Invalid IP"
+    else if isNaN req.param("width") then return "Invalid width"
+    else if isNaN req.param("height") then return "Invalid height"
+
     null
 
   performBaseTargeting = (publisher, req, cb) ->
@@ -155,8 +176,10 @@ setup = (options, imports, register) ->
   # @param [Object] req request
   # @param [Object] res response
   fetchTest = (req, res, publisher) ->
-    spew.warning "Test ad fetch not implemented"
-    fetchEmpty req, res
+    error = validateRequest req
+    if error != null then return res.json error: error, 400
+
+    templates.generate "test", parseRequestOptions(req), res
 
   # Directly returns an empty response. (Used when a suitable ad is not
   # available)

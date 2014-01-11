@@ -16,7 +16,7 @@
     "request": "2.21.0",
     "spew": "0.0.2",
     "gzippo": "0.2.0",
-    "adm-zip": "0.4.3",
+    "adm-zip": "git+https://github.com/cthackers/adm-zip.git#267ee1327538c112429f042d779870978a7c057b",
     "node-statsd": "0.0.7",
     "microtime": "~0.5.0",
     "redis": "~0.9.1",
@@ -26,7 +26,8 @@
     "express-validator": "~1.0.1",
     "triecomplete": "0.0.1",
     "autocomplete": "0.0.1",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "archiver": "~0.5.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
