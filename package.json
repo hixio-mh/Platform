@@ -16,7 +16,6 @@
     "request": "2.21.0",
     "spew": "0.0.2",
     "gzippo": "0.2.0",
-    "adm-zip": "git+https://github.com/cthackers/adm-zip.git#267ee1327538c112429f042d779870978a7c057b",
     "node-statsd": "0.0.7",
     "microtime": "~0.5.0",
     "redis": "~0.9.1",
