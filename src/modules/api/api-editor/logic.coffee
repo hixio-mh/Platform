@@ -22,7 +22,7 @@ http = require "http"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
+  app = imports["core-express"].server
   utility = imports["logic-utility"]
 
   staticDir = "#{__dirname}/../../../static"
@@ -32,7 +32,7 @@ setup = (options, imports, register) ->
   ##
 
   # Main editor ad serving, assumes a valid req.cookies.user
-  server.server.get "/editor/:ad", (req, res) ->
+  app.get "/api/v1/editor/:ad", (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
 
     res.render "editor.jade", { ad: req.params.ad }, (err, html) ->
@@ -42,7 +42,7 @@ setup = (options, imports, register) ->
       else res.send html
 
   # Editor load/save, expects a valid user
-  server.server.post "/logic/editor/:action", (req, res) ->
+  app.post "/api/v1/editor/:action", (req, res) ->
     if not utility.param req.params.action, res, "Action" then return
 
     if req.params.action == "load" then loadAd req, res
@@ -51,7 +51,7 @@ setup = (options, imports, register) ->
     else res.json 400, { error: "Unknown action #{req.params.action}" }
 
   # Exports
-  server.server.get "/exports/:folder/:file", (req, res) ->
+  app.get "/api/v1/editor/exports/:folder/:file", (req, res) ->
 
     # TODO: Validation?
     folder = req.params.folder
@@ -162,7 +162,7 @@ setup = (options, imports, register) ->
       .save()
 
       localPath = "#{staticDir}/_exports/#{folder}"
-      remotePath = "https://app.adefy.eu/exports/#{folder}/#{file}"
+      remotePath = "https://app.adefy.com/api/v1/editor/exports/#{folder}/#{file}"
 
       # Create _exports directory if it doesn't already exist
       if not fs.existsSync "#{staticDir}/_exports"
@@ -173,8 +173,8 @@ setup = (options, imports, register) ->
 
       res.json { link: remotePath }
 
-    CDN_awgl = "http://cdn.adefy.eu/awgl/awgl-full.js"
-    CDN_ajs = "http://cdn.adefy.eu/ajs/ajs.js"
+    CDN_awgl = "http://cdn.adefy.com/awgl/awgl-full.js"
+    CDN_ajs = "http://cdn.adefy.com/ajs/ajs.js"
 
     # Fetch CDN files
     # TODO: Cache these, fetch only a version # request, and update as needed
