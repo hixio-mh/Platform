@@ -65,6 +65,7 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
     for file in @files
       archive.append file.buffer, name: file.filename
 
+    archive.append JSON.stringify @manifest, name: "package.json"
     archive.append ad, name: "scene.js"
     archive.finalize (err, bytes) ->
       if err
