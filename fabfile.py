@@ -60,7 +60,7 @@ def deploy():
     run("grunt deploy")
 
     # Restart
-    run("forever stop buildProduction/adefy.js")
+    run('bash -c "(forever stop buildProduction/adefy.js) || true"')
     run("forever start buildProduction/adefy.js")
 
 # Staging
@@ -86,7 +86,7 @@ def stage():
     run("grunt stage")
 
     # Restart
-    run("forever stop buildStaging/adefy.js")
+    run('bash -c "(forever stop buildStaging/adefy.js) || true"')
     run("forever start buildStaging/adefy.js")
 
 # Forever controls
