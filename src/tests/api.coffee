@@ -3,12 +3,15 @@ supertest = require "supertest"
 superagent = require "superagent"
 
 api = supertest "http://localhost:8080"
-
-# Auth info
 agent = superagent.agent()
-# agent.attachCookies req
+agentAdmin = superagent.agent()
 
-describe "Authentication", ->
+apiInviteTests = require "./api/api-invites"
+apiAdTests = require "./api/api-ads"
+apiPublisherTests = require "./api/api-publishers"
+
+# Basic authentication test, also sets up user for other tests
+describe "API Authentication", ->
 
   it "Should accept and authenticate test credentials", (done) ->
     api.post("/login").send
@@ -19,28 +22,16 @@ describe "Authentication", ->
       agent.saveCookies res
       done()
 
-describe "Invites", ->
-
-  it "Should reject invalid invite key", (done) ->
-    req = api.get("/logic/invite/add?key=adfsdf&email=t@t.com&test=true")
-    req.expect(200).expect("Content-Type", /json/).end (err, res) ->
-      res.body.should.have.property "error", "Invalid key"
+  it "Should accept and authenticate test admin credentials", (done) ->
+    api.post("/login").send
+      username: "testy-trista-admin"
+      password: "x7aixkrIIKrcaZAvPV52ujHpmhUJjzor"
+    .expect(302)
+    .end (err, res) ->
+      agentAdmin.saveCookies res
       done()
 
-  it "Should accept invite request with two keys", (done) ->
-
-    actuallyDone = -> if @i == undefined then @i = 0 else done()
-
-    req = api.get("/logic/invite/add?key=WtwkqLBTIMwslKnc&email=t1@t.com&test=true")
-    req.expect(200).expect("Content-Type", /json/).end (err, res) ->
-      res.body.should.not.have.property "error"
-      res.body.should.have.property "msg", "Added"
-      actuallyDone()
-
-    req = api.get("/logic/invite/add?key=T13S7UESiorFUWMI&email=t1@t.com&test=true")
-    req.expect(200).expect("Content-Type", /json/).end (err, res) ->
-      res.body.should.not.have.property "error"
-      res.body.should.have.property "msg"
-      res.body.should.have.property "code"
-      res.body.should.have.property "id"
-      actuallyDone()
+# Run all other API tests using authenticated credentials from above
+apiInviteTests agent, agentAdmin
+apiAdTests agent, agentAdmin
+apiPublisherTests agent, agentAdmin

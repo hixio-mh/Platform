@@ -5,9 +5,9 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "line-express",
-      "line-mongodb",
-      "line-userauth"
+      "core-express",
+      "core-userauth",
+      "logic-utility"
     ],
     "provides": []
   }

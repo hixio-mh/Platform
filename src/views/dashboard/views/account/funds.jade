@@ -12,7 +12,32 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#pad-wrapper
-  .row.section
-    .col-md-12
-      h1 Nothing here yet.
+.inner
+    .funds.center(style="text-align: center")
+      .amount.large ${{me.funds | number:2}}
+      .desc Balance
+      .field.w50
+        .amount ${{me.funds | number:2}}
+        .desc Free
+      .field.w50
+        .amount ${{me.funds | number:2}}
+        .desc Reserved
+      .actions
+        button(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
+        ok-button-text="Deposit" form-submit="deposit()" form-object="creditCard") Deposit funds
+        button.blue(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
+        ok-button-text="Withdraw" form-submit="withdraw()" form-object="creditCard") Withdraw funds
+    table.transactions
+      tbody(ng-repeat="t in transactions" ng-switch="t.type")
+        tr.withdraw(ng-switch-when="withdraw")
+          td.desc Withdrawn {{ t.amount | currency:$ }}
+          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number -{{ t.amount | currency:$ }}
+        tr.deposit(ng-switch-when="deposit")
+          td.desc Deposited {{ t.amount | currency:$ }}
+          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number +{{ t.amount | currency:$ }}
+        tr.reserve(ng-switch-when="reserve")
+          td.desc Reserved {{ t.amount | currency:$ }}
+          td.time  {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+          td.number {{ t.amount | currency:$ }}

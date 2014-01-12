@@ -7,7 +7,7 @@ api = supertest "http://localhost:8080"
 # Auth info
 agent = superagent.agent()
 
-describe "Authentication", ->
+describe "General Authentication", ->
 
   it "Expect redirection on root access", (done) ->
     api.get("/").expect 302, done
@@ -28,7 +28,7 @@ describe "Authentication", ->
     api.post("/login").send
       username: "testy-trista"
       password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
-    .expect(302)
+    .expect(200)
     .end (err, res) ->
       agent.saveCookies res
       done()

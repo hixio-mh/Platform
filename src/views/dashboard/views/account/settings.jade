@@ -1,0 +1,46 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+.inner: form
+  fieldset: dl.form.thin.center
+    legend Profile
+    dt: label Username
+    dd: input(type="text" disabled placeholder="{{me.username}}")
+    dt: label Email
+    dd: input(type="email" ng-model="me.email")
+    dt: label Company
+    dd: input(type="text" ng-model="me.company")
+    dt: label Telephone
+    dd: input(type="tel" ng-model="me.phone")
+
+  fieldset: dl.form.thin.center
+    legend Address
+
+    .billing.center
+      .field.w50.margin
+        input(ng-model="me.fname" type="text" placeholder="First name")
+      .field.w50
+        input(ng-model="me.lname" type="text" placeholder="Last name")
+      .field
+        input(ng-model="me.address" type="text" placeholder="Address")
+      .field
+        input(ng-model="me.state" type="text" placeholder="State/Province")
+      .field.w75.margin
+        input(ng-model="me.city" type="text" placeholder="City")
+      .field.w25
+        input(ng-model="me.postalCode" type="text" placeholder="Postal Code")
+      .field
+        country-select(chosen ng-model="me.country" data-placeholder="Select Country")
+    
+  button.blue.save(ng-click="save()") Save

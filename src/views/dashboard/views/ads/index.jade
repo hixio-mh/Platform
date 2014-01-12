@@ -1,0 +1,26 @@
+.new-ad
+  a.new-item(form-modal template="/views/dashboard/ads:new" title="Create ad"
+        ok-button-text="Save" form-submit="create()" form-object="ad")
+    i.fa.fa-plus
+    | New ad
+ul.list(ng-if="ads")
+  li(ng-repeat="ad in ads")
+    a.ad(ng-href="/ads/{{ad.id}}")
+      .name(ng-bind="ad.name")
+      .edit: i.fa.fa-wrench
+
+    table.campaigns
+      tr(ng-repeat="campaign in ad.campaigns")
+        th {{ campaign.name }}
+        td
+          .amount {{ campaign.stats.ctr | number }} %
+          .desc CTR
+        td
+          .amount ▲ {{ campaign.stats.impressions | number }}
+          .desc Impressions
+        td
+          .amount ▲ {{ campaign.stats.clicks | number }}
+          .desc Clicks
+        td
+          .amount {{ campaign.stats.spent | currency:$ }}
+          .desc Spent

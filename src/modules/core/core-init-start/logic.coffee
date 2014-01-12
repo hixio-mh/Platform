@@ -20,41 +20,47 @@
 config = require "../../../config.json"
 express = require "express"
 spew = require "spew"
+mongoose = require "mongoose"
+fs = require "fs"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  sockets = imports["line-socketio"]
-  db = imports["line-mongodb"]
-  snapshot = imports["line-snapshot"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  # sockets = imports["core-socketio"]
+  snapshot = imports["core-snapshot"]
+  auth = imports["core-userauth"]
 
   spew.init "Starting Initialization"
 
-  # Setup db models and connect using config info
-  db.setupModels __dirname + "/../../../models/index.js"
+  # Connect to the db
+  con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
+  con += ":#{config.db.port}/#{config.db.db}"
 
-  db.connect \
-    config.db.user,\
-    config.db.pass,\
-    config.db.host,\
-    config.db.port,\
-    config.db.db
+  dbConnection = mongoose.connect con, (err) ->
+    if err then spew.critical "Error connecting to database [#{err}]"
+    else spew.init "Connected to MongoDB #{config.db.db} as #{config.db.user}"
+
+    # Setup db models
+    modelPath = "#{__dirname}/../../../models"
+    fs.readdirSync(modelPath).forEach (file) ->
+      if ~file.indexOf ".js"
+        spew.init "Loading model #{file}"
+        require "#{modelPath}/#{file}"
 
   ## Set up middleware
 
   # Auth
   publicPages = [
-    "/"
     "/login"
     "/register"
     "/recover"
 
     # Public invite request
-    "/logic/invite/add"
+    "/api/v1/invite/add"
 
     # Ad request
-    "/api/r"
+    "/api/v1/serve"
+    "/api/v1/serve/"
   ]
 
   notWhenAuthorized = [
@@ -121,10 +127,10 @@ setup = (options, imports, register) ->
     ca: "#{__dirname}/../../../#{config['secure-ca']}"
 
   if _secure
-    sockets.secure = true
-    sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
-    sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
-    sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
+    # sockets.secure = true
+    # sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
+    # sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
+    # sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
 
     # Start http server to forward to https
     httpForward = express()

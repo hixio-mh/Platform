@@ -12,41 +12,13 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#main-stats
-  .row.stats-row
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number(data-ng-bind="userCount")
-        | Users
-      span.date Total
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Publishers
-      span.date Total
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Campaigns
-      span.date Total
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Impressions
-      span.date Past Week
+include _menu
 
-#pad-wrapper
-  .row.header
-    .col-md-12
-      h3 Dashboard
+.index.dashboard
+  h1 Users
+  br
+  #chart-userCount(style="height: 250px")
 
-  .row.section
-    .col-md-6
-      h5 Users
-      br
-      #chart-userCount(style="height: 250px")
-
-    .col-md-6
-      h5 Invites
-      br
-      #chart-inviteCount(style="height: 250px")
+  h1 Invites
+  br
+  #chart-inviteCount(style="height: 250px")

@@ -1,0 +1,79 @@
+.inner: form(novalidate ng-class="{submitted: submitted}")
+  fieldset: dl.form.center
+    legend Information
+    dt
+      label Name
+    dd: input(required ng-model="campaign.name" type="text")
+    dt: label Description (optional)
+    dd: textarea(ng-model="campaign.description")
+    dt: label Category
+    dd
+      select(chosen required ng-model="campaign.category", ng-options="c for c in categories")
+  fieldset: dl.form.center
+    legend Bidding
+    dt
+      label Pricing
+      span You, a bobsleder!? That I'd like to see! Noooooo! 
+    dd
+      select(chosen required ng-model="campaign.pricing")
+        option CPM
+        option CPC
+    dt: label Total Budget
+    dd: input(required ng-model="campaign.totalBudget" type="number" min="{{min.budget}}" placeholder="min {{ min.budget | currency:$ }}")
+    dt: label Daily Budget (optional)
+    dd: input(ng-model="campaign.dailyBudget" min="0" type="number")
+    dt
+      label Bid System
+      span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
+    dd
+      select(chosen required ng-model="campaign.bidSystem")
+        option(value="automatic") Automatic
+        option(value="manual") Manual
+    dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
+    dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dt: label CTR Goal
+    dd: input(type="number" step="any" min="0.0" max="100.0" ng-model="campaign.CTRGoal")
+  fieldset: dl.form.center
+    legend Targetting
+    dl.form.center.single
+      dt: label Network
+      dd
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="all")
+          label(for="all_traffic") All Traffic
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="mobile")
+          label(for="mobile_data_traffic") Mobile Data Traffic
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="wifi")
+          label(for="wifi_traffic") Wifi Traffic
+    dl.form.center.single
+      dt
+        label Geographical
+        span By default, all countries are included and none are excluded
+      dd
+        country-select(chosen multiple ng-model="countriesInclude" data-placeholder="Include countries")
+        br
+        br
+        country-select(chosen multiple ng-model="countriesExclude" data-placeholder="Exclude countries")
+    dl.form.center.single
+      dt
+        label Device
+        span By default, all devices are included and none are excluded
+      dd
+        select(chosen multiple ng-model="devicesInclude" data-placeholder="Include devices")
+          option Nexus 4
+          option Galaxy S3
+          option iPhone
+        br
+        br
+        select(chosen multiple ng-model="devicesExclude" data-placeholder="Exclude devices")
+          option Nexus 4
+          option Galaxy S3
+          option iPhone
+
+    dl.form.center
+    dt
+    dd: button.blue.save(ng-click="submit()") Save

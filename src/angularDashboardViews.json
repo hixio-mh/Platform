@@ -1,0 +1,32 @@
+{
+  "views": [
+    "/",
+    "/home/advertiser",
+    "/home/publisher",
+
+    "/reports",
+
+    "/apps",
+    "/apps/new",
+    "/apps/:id",
+    "/apps/:id/edit",
+    "/apps/:id/integration",
+
+    "/ads",
+    "/ads/:id",
+
+    "/campaigns",
+    "/campaigns/new",
+    "/campaigns/:id",
+    "/campaigns/:id/edit",
+
+    "/settings",
+    "/funds",
+    "/feedback",
+
+    "/admin",
+    "/admin/users",
+    "/admin/invites",
+    "/admin/publishers"
+  ]
+}

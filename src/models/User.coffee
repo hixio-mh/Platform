@@ -16,74 +16,71 @@ mongoose = require "mongoose"
 bcrypt = require "bcrypt"
 spew = require "spew"
 
-model = null
-schema = null
+schema = new mongoose.Schema
+  username: String
+  email: String
+  password: String
 
-exports.createSchema = ->
+  session: String
+  hash: String
 
-  schema = new mongoose.Schema
-    username: String
-    email: String
-    password: String
+  fname: String
+  lname: String
 
-    session: String
-    hash: String
-    limit: String
+  address: { type: String, default: "" }
+  city: { type: String, default: "" }
+  state: { type: String, default: "" }
+  postalCode: { type: String, default: "" }
+  country: { type: String, default: "" }
 
-    fname: String
-    lname: String
+  company: { type: String, default: "" }
+  phone: { type: String, default: "" }
+  fax: { type: String, default: "" }
 
-    address: String
-    city: String
-    state: String
-    postalCode: String
-    country: String
+  # 0 - admin (root)
+  # 1 - unassigned
+  # 2 - unassigned
+  # ...
+  # 7 - normal user
+  permissions: { type: Number, default: 7 }
 
-    company: String
-    phone: String
-    fax: String
+  funds: { type: Number, default: 0 }
 
-    # 0 - admin (root)
-    # 1 - unassigned
-    # 2 - unassigned
-    # ...
-    # 7 - normal user
-    permissions: Number
+  # Schema version, used by /migrate
+  version: Number
 
-    publisherBalance: Number
-    advertiserCredit: Number
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+  delete ret.__v
+  delete ret.session
+  delete ret.permissions
+  delete ret.hash
+  ret
 
-  model = null
+schema.pre "save", (next) ->
+  if not @isModified "password" then return next()
 
-  schema.pre "save", (next) ->
+  bcrypt.genSalt 10, (err, salt) =>
+    if err
+      spew.error "Error when generating salt"
+      return next err
 
-    if not @isModified "password" then return next()
-
-    bcrypt.genSalt 10, (err, salt) =>
-
+    bcrypt.hash @password, salt, (err, hash) =>
       if err
-        spew.error "Error when generating salt"
+        spew.error "Error when hashing password"
         return next err
 
-      bcrypt.hash @password, salt, (err, hash) =>
+      @password = hash
+      next()
 
-        if err
-          spew.error "Error when hashing password"
-          return next err
+schema.methods.comparePassword = (candidatePassword, cb) ->
+  bcrypt.compare candidatePassword, @password, (err, isMatch) ->
+    if err
+      spew.error "Error when comparing hashes"
+      return cb err
 
-        @password = hash
-        next()
+    cb null, isMatch
 
-  schema.methods.comparePassword = (candidatePassword, cb) ->
-
-    bcrypt.compare candidatePassword, @password, (err, isMatch) ->
-
-      if err
-        spew.error "Error when comparing hashes"
-        return cb err
-
-      cb null, isMatch
-
-exports.createModel = -> model = mongoose.model "Users", schema
-exports.getModel = -> return model
-exports.getSchema = -> return schema
+mongoose.model "User", schema

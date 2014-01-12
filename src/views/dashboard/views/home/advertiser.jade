@@ -12,40 +12,98 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#main-stats
-  .row.stats-row
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Impressions
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0
-        | Clicks
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number 0%
-        | CTR
-      span.date Today
-    .col-md-3.col-sm-3.stat
-      .data
-        span.number $0.00
-        | Spent
-      span.date Today
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ 8,351
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 251
+    .desc Clicks today
+  .stat: .wrap
+    .amount.large 70,25 %
+    .desc CTR today
+  .stat: .wrap
+    .amount.large $ 472.75
+    .desc Total revenue
 
-#pad-wrapper
-  .row.header
-    h3 Advertiser Dashboard
-    a.below-header(href="#") use the publisher dashboard
-  .row.section
-    .col-md-6
-      h5 Impressions (Cumulative)
-      br
-      #chart-impressions(style="height: 280px")
+.index.dashboard
+  a.switch-view(href="/home/publisher") Switch to publisher view
 
-    .col-md-6
-      h5 CTR
-      br
-      #chart-ctr(style="height: 280px")-
+  div
+    canvas(id="myChart" width="940" height="300")
+
+  h1 Top Campaigns
+  table.info
+    thead: tr
+      th
+      th Impressions
+      th Clicks
+      th CTR
+      th Cost
+    tbody
+      tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true | limitTo:10")
+        td {{ campaign.name }}
+        td {{ campaign.stats.impressions | number }}
+        td {{ campaign.stats.clicks | number }}
+        td {{ campaign.stats.ctr | number:2 }}%
+        td {{ campaign.stats.spent | currency:$ }}
+  div
+    h1 News
+    ul.news
+      li
+        span.title News item
+        span.date Sept 23
+        p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic.
+      li
+        span.title News item
+        span.date Sept 23 
+        p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right.
+      li
+        span.title News item
+        span.date Sept 23 
+        p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+    ul.news
+      li
+        span.title News item
+        span.date Sept 23
+        p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy.
+      li
+        span.title News item
+        span.date Sept 23 
+        p That is seventeen five - your half of the thirty-five thousand. 
+      li
+        span.title News item
+        span.date Sept 23 
+        p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
+
+
+
+script.
+  var data = {
+    labels : ["January","February","March","April","May","June","July"],
+    datasets : [
+      {
+        fillColor : "rgba(220,220,220,0.5)",
+        strokeColor : "rgba(220,220,220,1)",
+        pointColor : "rgba(220,220,220,1)",
+        pointStrokeColor : "#fff",
+        data : [65,49,40,71,56,55,40]
+      },
+      {
+        fillColor : "rgba(151,187,205,0.5)",
+        strokeColor : "rgba(151,187,205,1)",
+        pointColor : "rgba(151,187,205,1)",
+        pointStrokeColor : "#fff",
+        data : [28,98,40,19,56,27,100]
+      }
+    ]
+  }
+
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var options = {
+      //scaleShowLabels: false,
+      //scaleShowGridLines: false,
+      scaleLineColor : "rgba(0,0,0,0)",
+
+  };
+  new Chart(ctx).Line(data,options);

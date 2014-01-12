@@ -1,0 +1,15 @@
+{
+  "name": "engine-ads",
+  "version": "0.0.1",
+  "main": "logic.js",
+  "private": true,
+  "plugin": {
+    "consumes": [
+      "core-express",
+      "core-userauth",
+      "logic-utility",
+      "engine-templates"
+    ],
+    "provides": ["engine-ads"]
+  }
+}

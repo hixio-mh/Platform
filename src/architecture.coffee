@@ -13,26 +13,50 @@
 ##
 
 module.exports = [
-  "./modules/line/express",
-  "./modules/line/mongodb",
-  "./modules/line/snapshot",
-  "./modules/line/socketio",
+
+  # Core initialization
+  "./modules/core/core-express",
+  "./modules/core/core-snapshot",
 
   "./modules/core/core-init-snapshot",
-  "./modules/line/userauth",
+  "./modules/core/core-userauth",
   "./modules/core/core-init-start",
 
+  # Utility helper
   "./modules/logic/utility",
-  "./modules/engine/ad-engine",
 
-  "./modules/logic/api-internal",
-  "./modules/logic/api-analytics",
+  # Engine logic (not tied to any one route)
+  "./modules/engine/engine-templates",
+  "./modules/engine/engine-ads",
+  "./modules/engine/engine-filters",
 
+  # Public API
+  "./modules/api/api-invites",
+  "./modules/api/api-serve",
+
+  # Locks down API!
+  "./modules/core/core-api",
+
+  # Private (authorized) API
+  "./modules/api/api-ads",
+  "./modules/api/api-campaigns",
+  "./modules/api/api-publishers",
+  "./modules/api/api-users",
+  "./modules/api/api-analytics",
+  "./modules/api/api-editor",
+  "./modules/api/api-filters",
+
+  # Maintenance routes
+  "./modules/logic/migration",
+  "./modules/logic/seed",
+
+  # Angular route definitions
   "./modules/logic/routes",
+
+  # Login/register page logic
   "./modules/logic/page-login",
   "./modules/logic/page-register",
 
-  "./modules/logic/api-editor",
-
+  # End of initialization, starts servers
   "./modules/core/core-init-end"
 ]

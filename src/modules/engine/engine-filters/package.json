@@ -1,0 +1,10 @@
+{
+  "name": "engine-filters",
+  "version": "0.0.1",
+  "main": "logic.js",
+  "private": true,
+  "plugin": {
+    "consumes": [],
+    "provides": ["engine-filters"]
+  }
+}

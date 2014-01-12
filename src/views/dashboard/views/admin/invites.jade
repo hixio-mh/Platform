@@ -12,30 +12,32 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-#pad-wrapper
-  div(data-ng-if="invites.length == 0")
+include _menu
+
+.index.dashboard
+  div(ng-if="invites.length == 0")
     .row.header
       .col-md-12
         h3 No invites exist
     .row.section
       button.btn.btn-primary(data-toggle="modal", href="#newInvite") Create one!
 
-  div(data-ng-if="invites.length != 0")
+  div(ng-if="invites.length != 0")
     .row.header
       .col-md-12
         h3 Invites
 
     .table-wrapper.section
       .row
-        table.table.table-striped.table-hover(data-ng-if="invites.length > 0")
+        table.table.table-striped.table-hover(ng-if="invites.length > 0")
           thead
             tr
               th.col-md-6 Email
               th.col-md-6 Invite Code
           tbody
-            tr(data-ng-repeat="(i, invite) in invites", data-ng-click="showModal({{ i }})")
-              td(data-ng-bind="invite.email")
-              td(data-ng-bind="invite.code")
+            tr(ng-repeat="(i, invite) in invites", ng-click="showModal({{ i }})")
+              td(ng-bind="invite.email")
+              td(ng-bind="invite.code")
 
 #inviteInfo.modal.fade
   .modal-dialog
@@ -43,26 +45,26 @@
     .modal-content
       .modal-header
         button(type="button", data-dismiss="modal").close &times;
-        h4.modal-title(data-ng-bind="invites[current].email")
+        h4.modal-title(ng-bind="invites[current].email")
 
       .modal-body
         form
           .form-group
             label(for="inviteEmail") Email
-            input.form-control(name="inviteEmail", type="text", data-ng-model="invites[current].email")
+            input.form-control(name="inviteEmail", type="text", ng-model="invites[current].email")
 
           .form-group
             label(for="inviteCode") Code
-            input.form-control(name="inviteCode", type="text", data-ng-model="invites[current].code")
+            input.form-control(name="inviteCode", type="text", ng-model="invites[current].code")
 
       .modal-footer
-        .col-lg-6(data-ng-if="inviteStatus.length > 0")
-          p.text-left(data-ng-bind="inviteStatus")
-        .col-lg-3(data-ng-if="inviteError.length > 0")
-          .alert.alert-danger.text-left(data-ng-bind="inviteError")
+        .col-lg-6(ng-if="inviteStatus.length > 0")
+          p.text-left(ng-bind="inviteStatus")
+        .col-lg-3(ng-if="inviteError.length > 0")
+          .alert.alert-danger.text-left(ng-bind="inviteError")
         .col-lg-6.pull-right
-          button(type="button", data-ng-click="update()").btn.btn-primary Update
-          button(type="button", data-ng-click="delete()").btn.btn-danger Delete
+          button(type="button", ng-click="update()").btn.btn-primary Update
+          button(type="button", ng-click="delete()").btn.btn-danger Delete
           button(type="button", data-dismiss="modal").btn.btn-default Close
 
 #newInvite.modal.fade
@@ -77,13 +79,13 @@
         form
           .form-group
             label(for="newInviteEmail") Email
-            input.form-control(name="newInviteEmail", type="text", data-ng-model="newInviteEmail")
+            input.form-control(name="newInviteEmail", type="text", ng-model="newInviteEmail")
 
       .modal-footer
-        .col-lg-6(data-ng-if="newInviteStatus.length > 0")
-          p.text-left(data-ng-bind="newInviteStatus")
-        .col-lg-3(data-ng-if="newInviteError.length > 0")
-          .alert.alert-danger.text-left(data-ng-bind="newInviteError")
+        .col-lg-6(ng-if="newInviteStatus.length > 0")
+          p.text-left(ng-bind="newInviteStatus")
+        .col-lg-3(ng-if="newInviteError.length > 0")
+          .alert.alert-danger.text-left(ng-bind="newInviteError")
         .col-lg-6.pull-right
-          button(type="button", data-ng-click="newInvite()").btn.btn-primary Create
+          button(type="button", ng-click="newInvite()").btn.btn-primary Create
           button(type="button", data-dismiss="modal").btn.btn-default Close

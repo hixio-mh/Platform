@@ -18,7 +18,7 @@ spew = require "spew"
 
 setup = (options, imports, register) ->
 
-  imports["line-snapshot"].setup __dirname + "/../../../" + config.snapshot
+  imports["core-snapshot"].setup __dirname + "/../../../" + config.snapshot
   spew.info "Loaded snapshot"
 
   register null, {}

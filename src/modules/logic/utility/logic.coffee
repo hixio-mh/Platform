@@ -11,13 +11,11 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
+db = require "mongoose"
 
 # Utility methods, mostly for validation
 setup = (options, imports, register) ->
-
-  db = imports["line-mongodb"]
 
   register null,
     "logic-utility":
@@ -32,7 +30,7 @@ setup = (options, imports, register) ->
       param: (param, res, label) ->
         if param == undefined
           if res != undefined and label != undefined
-            res.json { error: "#{label} missing"}
+            res.send 400
           return false
         true
 
@@ -50,63 +48,19 @@ setup = (options, imports, register) ->
 
         code
 
-      # Helpful security check, ensures a user cookie object exists
-      # (This does not validate the cookie!)
+      # Log db error and send appropriate response
       #
-      # @param [Object] req request object
+      # @param [Object] error mongoose error object
       # @param [Object] res response object
       # @param [Boolean] passive if false or undefined, issues a res.JSON error
       #
-      # @return [Boolean] exists
-      userCheck: (req, res, passive) ->
-        if passive != true then passive = false
-
-        if req.cookies.user == undefined
-          if not passive then res.json { error: "Not a user!" }
-          return false
-        true
-
-      # Calls the cb with admin status and the fetched user
-      #
-      # @param [Object] req request object
-      # @param [Object] res response object
-      # @param [Method] cb callback
-      # @param [Boolean] passive if false or undefined, issues a res.JSON error
-      verifyAdmin: (req, res, cb, passive) ->
-        if passive != true then passive = false
-
-        if req.cookies.admin != "true"
-          if not passive then res.json { error: "Unauthorized" }
-          cb false
-
-        if req.cookies.user == undefined
-          if not passive then res.json { error: "Not a user!" }
-          cb false
-
-        db.fetch "User", { username: req.cookies.user.id, session: req.cookies.user.sess }, (user) ->
-          if user == undefined or user.length = 0
-            if not passive then res.json { error: "No such user" }
-            cb false, user
-
-          if user.permissions != 0
-            if not passive then res.json { error: "Unauthorized" }
-            cb false, user
-          else cb true, user
-
-      # Verify db response, send an error response if necessary
-      #
-      # @param [Object] obj db response
-      # @param [Object] res response object
-      # @param [String] label name of database object
-      # @param [Boolean] passive if false or undefined, issues a res.JSON error
-      #
-      # @return [Boolean] valid
-      verifyDBResponse: (obj, res, label, passive) ->
-        if passive != true then passive = false
-
-        if obj == undefined and (obj.length != undefined and obj.length == 0)
-          if not passive then res.json { error: "#{label} not found" }
-          return false
-        else return true
+      # @return [Boolean] wasError false if error object invalid
+      dbError: (error, res, passive) ->
+        if error
+          spew.error "DB Error: #{error}"
+          console.trace error
+          if passive != true then res.send 500
+          return true
+        false
 
 module.exports = setup

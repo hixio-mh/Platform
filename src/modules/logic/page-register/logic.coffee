@@ -11,26 +11,28 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 crypto = require "crypto"
+db = require "mongoose"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  db = imports["line-mongodb"]
-  auth = imports["line-userauth"]
+  server = imports["core-express"]
+  auth = imports["core-userauth"]
+  utility = imports["logic-utility"]
 
   server.registerPage "/register", "account/register.jade"
 
   server.server.get "/register", (req, res) ->
     if req.query.invite
-      db.fetch "Invite", { code: req.query.invite }, (inv) ->
-        if inv.length <= 0
+      db.model("Invite").findOne { code: req.query.invite }, (err, inv) ->
+        if utility.dbError err, res then return
+
+        if not inv
           spew.warning "Invalid invite!"
           res.redirect "/"
         else
-          res.render "account/register.jade", { title : 'Register' }
+          res.render "account/register.jade", { title : "Register" }
     else
       res.redirect "/"
       spew.warning "No invite provided"
@@ -62,62 +64,59 @@ setup = (options, imports, register) ->
     if _regCheck(req.body.password, "Password", res) then return
 
     # Check for an invite
-    db.fetch [ "Invite", "User" ],[ \
-    { code: req.body.invitation }, \
-    { username: req.body.username } \
-    ], (results) ->
+    db.model("Invite").findOne { code: req.body.invitation }, (err, inv) ->
+      if utility.dbError err, res then return
 
-      inv = results[0]
-      user = results[1]
-
-      if inv == undefined or (inv.length != undefined and inv.length == 0)
-        spew.warning "Invalid invite, email: #{req.body.email}"
-        res.render "account/register.jade", { error: "Not a valid invite ;(" }
+      if not inv
+        res.render "account/register.jade",
+          error: "Not a valid invite ;("
         return
 
       # Check if user exists [Don't trust client-side check]
-      if user.length > 0
-        spew.error "Username exists! Client-side check has been bypassed."
-        throw server.InternalError
-        # Not sure if this actually breaks execution
-        # TODO
+      db.model("User").findOne { username: req.body.username }, (err, user) ->
+        if utility.dbError err, res then return
 
-      time = new Date().getTime()
-      h = crypto.createHash("md5").update(String(time)).digest "base64"
+        if user
+          res.render "account/register.jade",
+            error: "Username taken"
+          return
 
-      newUser = db.models().User.getModel()
-        username: req.body.username
-        password: req.body.password
-        fname: req.body.fname
-        lname: req.body.lname
-        email: req.body.email
-        hash: h
-        limit: "0"
-        permissions: 7 # Normal user, default
-        publisherBalance: 0
-        advertiserCredit: 0
+        time = new Date().getTime()
+        h = crypto.createHash("md5").update(String(time)).digest "base64"
 
-      inv.remove()
+        newUser = db.model("User")
+          username: req.body.username
+          password: req.body.password
+          fname: req.body.fname
+          lname: req.body.lname
+          email: req.body.email
+          hash: h
+          limit: "0"
+          permissions: 7 # Normal user, default
+          funds: 0
+          version: 1     # Current version. Used in /migrate
 
-      # Authorize new user
-      userData =
-        "id": newUser.username
-        "sess": guid()
-        "hash": h
+        inv.remove()
 
-      newUser.sess = userData.sess
+        # Authorize new user
+        userData =
+          "id": newUser.username
+          "sess": guid()
+          "hash": h
 
-      newUser.save (err) ->
-        if err
-          spew.error "Error saving user sess ID [#{err}]"
-          throw server.InternalError
-        else
-          spew.info "Registered new user! #{userData.id}"
-          spew.info "User #{userData.id} logged in"
+        newUser.sess = userData.sess
 
-          res.cookie "user", userData
-          auth.authorize userData
-          res.redirect "/dashboard"
+        newUser.save (err) ->
+          if err
+            spew.error "Error saving user sess ID [#{err}]"
+            throw server.InternalError
+          else
+            spew.info "Registered new user! #{userData.id}"
+            spew.info "User #{userData.id} logged in"
+
+            res.cookie "user", userData
+            auth.authorize userData
+            res.redirect "/home/publisher"
 
   register null, {}
 

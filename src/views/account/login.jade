@@ -12,13 +12,13 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-!!! 5
-html(lang="en")
+!!!
+html
   head
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
 
-    title Sign In
+    title Login
 
     meta(name="description", content="")
     meta(name="author", content="Spectrum IT")
@@ -26,38 +26,66 @@ html(lang="en")
 
     link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
 
-    link(rel="stylesheet", href="/css/vendor/bootstrap.css")
-    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
+    link(rel="stylesheet", href="/css/reset.css")
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900')
+    link(rel='stylesheet', href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
 
-    link(rel="stylesheet", href="/css/theme/layout.min.css")
-    link(rel="stylesheet", href="/css/theme/elements.min.css")
-    link(rel="stylesheet", href="/css/theme/icons.min.css")
-    link(rel="stylesheet", href="/css/theme/signin.min.css")
 
-    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700|Oleo+Script|")
 
-    | <!--[if lt IE 9]>
-    |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    | <![endif]-->
+    style.
+      .login {margin-top: 50px; text-align: center; }
+      form {
+        display: inline-block;
+        text-align: center;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 30px;
+        min-width: 250px;
+        border-radius: 3px;
+        box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      }
+      input {width: 100%}
+      input:first-of-type {
+        border-radius: 3px 3px 0 0;
+        margin-bottom: 0;
+      }
+      input:last-of-type {
+        border-top: none;
+        margin-top: 0;
+        border-radius: 0 0 3px 3px;
+      }
+      header {
+          height: 60px;
+          line-height: 60px;
+          text-align: center;
 
-  body#page-login
-    .header
-      a(href="/") Adefy
+      }
+      button {margin-top: 20px; padding: 10px 13px}
+      #logo {float: none; font-size: 36px;line-height: 58px; margin-right: 0}
 
-    .login-wrapper
-      form.box(method="post", action="/login")
-        .content-wrap
-          h6 Sign In
+      .alert {
+        margin: 70px auto 0;
+        text-align: center;
+        width: 250px;
+        padding: 15px;
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0,0,0,.2);
+        background: #e74c3c;
+        border: 1px solid #c0392b
+      }
 
-          if locals.error
-            .alert.alert-warning= locals.error
-
-          input.form-control(type="text", name="username", placeholder="Username")
-          input.form-control(type="password", name="password", placeholder="Password")
-          .action
-            button(type="submit").btn-glow.primary.signin Sign In
-
+  body
+    .main
+      header
+        #logo Adefy
       if locals.error
-        .already
-          a(href="/recover").recovery Having trouble?
+        .alert= locals.error
+      .login
+        form(method="post", action="/login")
+
+          input(type="text", name="username", placeholder="Username")
+          input(type="password" name="password" placeholder="Password")
+
+          button.blue(type="submit") Login
 
