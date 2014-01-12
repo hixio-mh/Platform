@@ -7,11 +7,17 @@
 	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
 	"admin": "cris.mihalache@spectrumit.eu",
 
+	"buildDirs": {
+		"development": "buildDevelopment/",
+		"staging": "buildStaging/",
+		"production": "buildProduction/",
+		"testing": "buildTesting/"
+	},
+
 	"modes": {
 		"development": {
 			"log-to-server": false,
 			"catch-critical": false,
-			"socket-log-level": 3,
 
 			"secure": false,
 			"port-http": 8080,
@@ -22,7 +28,6 @@
 		"staging": {
 			"log-to-server": false,
 			"catch-critical": false,
-			"socket-log-level": 3,
 
 			"secure": true,
 			"port-http": 43342,
@@ -33,13 +38,23 @@
 		"production": {
 			"log-to-server": false,
 			"catch-critical": true,
-			"socket-log-level": 1,
 
 			"secure": true,
 			"port-http": 8080,
 			"port-https": 8443,
 
 			"domain": "app.adefy.com"
+		},
+		"testing": {
+			"log-to-server": false,
+			"catch-critical": false,
+
+			"secure": false,
+			"port-http": 18080,
+			"port-https": 18443,
+
+			"domain": "localhost",
+			"db": "adefy_cloud_testing"
 		}
 	},
 

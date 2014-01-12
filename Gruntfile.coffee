@@ -11,9 +11,10 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
-exec = require("child_process").exec
+srcDir = "src/"
 fs = require "fs"
+
+config = JSON.parse fs.readFileSync "./#{srcDir}config.json.base"
 
 module.exports = (grunt) ->
 
@@ -30,31 +31,31 @@ module.exports = (grunt) ->
   # a single style.css. Followed by this comes our client scripts. They are
   # built as they are during development but concated in production.
 
-  # Folder paths
-  srcDir = "src/"
-  _buildDir = "build/"     # Modified internally
-
   # Deployment paths
-  buildDir = "build/"
-  stagingDir = "staging/"
-  productionDir = "production/"
+  devDir = config.buildDirs.development
+  stagingDir = config.buildDirs.staging
+  productionDir = config.buildDirs.production
+  testingDir = config.buildDirs.testing
+
+  # Initial build directory (by default, development)
+  _buildDir = devDir
 
   # Config file generation
   genConfig = (mode) ->
-    config = fs.readFileSync "#{__dirname}/#{srcDir}config.json.sample"
-    config = JSON.parse config
     config.mode = mode
     fs.writeFileSync "#{__dirname}/#{srcDir}config.json", JSON.stringify config
 
   # Generate default config
   genConfig "development"
 
-  # Source paths relative to srcDir/
+  # Source paths relative to src/
   modelSrc = [ "models/*.coffee" ]
   moduleSrc = [
     "*.coffee"
     "modules/**/*.coffee"
     "helpers/*.coffee"
+    "tests/*.coffee"
+    "tests/**/*.coffee"
   ]
   clientSrc = [
     "client/*.coffee"
@@ -117,6 +118,8 @@ module.exports = (grunt) ->
     _buildDir = productionDir
   else if process.argv[2] == "stage"
     _buildDir = stagingDir
+  else if process.argv[2] == "deployTest"
+    _buildDir = testingDir
 
   # Execute here, with default build path
   buildPaths()
@@ -249,6 +252,12 @@ module.exports = (grunt) ->
         src: [
           "#{srcDir}/tests/*.coffee"
         ]
+      selfTest:
+        options:
+          reporter: "spec"
+        src: [
+          "#{_buildDir}/tests/selftest.js"
+        ]
 
     # Watch files for changes and ship updates to build folder
     watch:
@@ -303,7 +312,7 @@ module.exports = (grunt) ->
     "persistentFull"
   ]
 
-  grunt.registerTask "test", [ "mochaTest" ]
+  grunt.registerTask "test", ["mochaTest:test"]
 
   grunt.registerTask "default", [ "full" ]
   grunt.registerTask "dev", [ "concurrent:dev" ]
@@ -311,15 +320,25 @@ module.exports = (grunt) ->
   # Generate a production config file, then build to the production folder
   grunt.registerTask "deploy", "Build to production folder", ->
 
-    genConfig "production"      # Generate config
-    _buildDir = productionDir   # Switch folders
-    buildPaths()                # Rebuild paths
-    grunt.task.run "persistentFull"       # Build
+    genConfig "production"
+    _buildDir = productionDir
+    buildPaths()
+    grunt.task.run "persistentFull"
 
   # Generate a staging config file, then build to the staging folder
   grunt.registerTask "stage", "Build to staging folder", ->
 
-    genConfig "staging"     # Generate config
-    _buildDir = stagingDir  # Switch folders
-    buildPaths()            # Rebuild paths
-    grunt.task.run "persistentFull"   # Build
+    genConfig "staging"
+    _buildDir = stagingDir
+    buildPaths()
+    grunt.task.run "persistentFull"
+
+  # Generates a test config file, builds to testing, and runs our unit tests
+  # This is used server-side to verify deployment
+  grunt.registerTask "deployTest", "Build for testing, and test", ->
+
+    genConfig "testing"
+    _buildDir = testingDir
+    buildPaths()
+    grunt.task.run "full"
+    grunt.task.run "mochaTest:selfTest"

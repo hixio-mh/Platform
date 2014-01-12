@@ -1,13 +1,15 @@
 should = require("chai").should()
 supertest = require "supertest"
 superagent = require "superagent"
-config = require "../config.json"
 mongoose = require "mongoose"
 fs = require "fs"
 spew = require "spew"
 
-api = supertest "http://localhost:8080"
+config = require "../config.json"
+port = config.modes[config.mode]["port-http"]
+
+api = supertest "http://localhost:#{port}"
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 
-require "./helpers/graphiteInterface.coffee"
+require "./helpers/graphiteInterface"

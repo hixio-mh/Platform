@@ -2,7 +2,10 @@ should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
 
-api = supertest "http://localhost:8080"
+config = require "../../config.json"
+port = config.modes[config.mode]["port-http"]
+
+api = supertest "http://localhost:#{port}"
 
 actuallyDone = (done, i) -> i--; if i > 0 then return i; else done()
 

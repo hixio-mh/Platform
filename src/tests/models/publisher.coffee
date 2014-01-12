@@ -2,7 +2,7 @@ spew = require "spew"
 should = require("chai").should()
 expect = require("chai").expect
 mongoose = require "mongoose"
-require "../../models/Publisher.coffee"
+require "../../models/Publisher"
 
 model = mongoose.model "Publisher"
 

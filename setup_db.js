@@ -1,4 +1,5 @@
-use adefy_cloud;
+use adefy_cloud_testing;
+db.dropDatabase();
 
 // Setup db user
 db.addUser("adefy_cloud", "GFtEA468aF73nYZh");
