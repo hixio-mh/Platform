@@ -213,7 +213,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd: "#{srcDir}/modules/engine/engine-templates/templates"
-          src: "*/*.png"
+          src: "*/*"
           dest: "#{_buildDir}/modules/engine/engine-templates/templates"
         ]
 
