@@ -13,8 +13,6 @@
 ##
 
 spew = require "spew"
-admZip = require "adm-zip"
-# Can't seem to install adm-zip on the server.
 
 ##
 ## Handles ad packaging and fetching
