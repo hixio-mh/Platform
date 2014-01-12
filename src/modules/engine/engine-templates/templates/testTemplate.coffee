@@ -57,6 +57,9 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
     ad =  """
     var width = #{options.width};
     var height = #{options.height};
+    var hR = height / 1080;
+    var wR = width / 1920;
+
     (#{@adExec.toString()})()
     """
 
@@ -83,36 +86,29 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
       edgeRight = AJS.createRectangleActor width + 10, height / 2, 10, height
       edgeRight.enablePsyx 0, 0.5, 0.5
 
-      testAd = AJS.createRectangleActor width / 2, (width / 2) * 0.56, height * 0.23703703703, width * 0.53
+      testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 256 * hR, 1024 * wR
       testAd.setTexture "testad"
       testAd.setRotation -90
 
-      circle = AJS.createCircleActor width * 0.92291666666, 148, 128
+      circle = AJS.createCircleActor 1772 * wR, 148 * hR, 128
       circle.setRotation -90
-      circle.attachTexture "adefy", 132, 132
+      circle.attachTexture "adefy", 132 * hR, 132 * wR
 
-      spinner = AJS.createRectangleActor width * 0.92291666666, 146, 252, 252
+      spinner = AJS.createRectangleActor 1772 * wR, 146 * hR, 252 * hR, 252 * wR
       spinner.setTexture "spinner"
       spinner.setRotation -90
 
-      topline = AJS.createRectangleActor width, height * 0.703, 12, width * 0.84375
+      topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 12 * hR, 1620 * wR
       topline.setTexture "line"
       topline.setRotation 90
 
-      bottomline = AJS.createRectangleActor 0, height * 0.333333, 12, width * 0.84375
+      bottomline = AJS.createRectangleActor 0, 260 * hR, 12 * hR, 1620 * wR
       bottomline.setTexture "line"
       bottomline.setRotation -90
 
-      spinIt()
-      swooshIt()
-
-      setTimeout ->
-        makeItRain()
-      , 1001
-
       swooshIt = ->
-        topline.move width * 0.578125, null, 1000, 0
-        bottomline.move width * 0.421875, null, 1000, 0
+        topline.move 1110 * wR, null, 1000, 0
+        bottomline.move 810 * wR, null, 1000, 0
 
       spinIt = ->
         spinner.rotate -1800, 10000, 0
@@ -127,13 +123,20 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
             time += 24
 
             setTimeout ->
-              px = Math.floor Math.random() * width
-              py = Math.floor (Math.random() * 100) + height + 100
+              px = Math.floor Math.random() * 1920 * wR
+              py = Math.floor (Math.random() * 100) + (1100 * hR)
 
-              AJS.createCircleActor(px, py, 10)
+              AJS.createCircleActor(px, py, 10 * hR)
               .setPhysicsLayer(Math.floor(Math.random() * 2) + 1)
               .setColor(color)
               .enablePsyx 1, 0.5, 0.6
             , time
+
+      spinIt()
+      swooshIt()
+
+      setTimeout ->
+        makeItRain()
+      , 1001
 
 module.exports = new AdefyTestAdTemplate
