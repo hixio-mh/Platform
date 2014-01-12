@@ -50,14 +50,17 @@ setup = (options, imports, register) ->
     if req.param "ua" then options.userAgent = req.param "ua"
     else options.userAgent = req.headers["user-agent"]
 
+    if req.param "ip" then options.ip = req.param "ip"
+    else options.ip = req.ip
+
     options.width = Number req.param "width"
     options.height = Number req.param "height"
 
     options
 
   validateRequest = (req) ->
-    if req.query.ip == undefined then return "IP address required"
-    else if not validIP req.query.ip then return "Invalid IP"
+    if req.query.ip != undefined
+      if not validIP req.query.ip then return "Invalid IP"
     else if isNaN req.param("width") then return "Invalid width"
     else if isNaN req.param("height") then return "Invalid height"
 
