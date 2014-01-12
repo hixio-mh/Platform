@@ -13,7 +13,7 @@ before (done) ->
   dbSetup.on "close", ->
 
     adefy = childProcess.fork "#{__dirname}/../../#{serverDir}/adefy.js", [],
-      silent: true
+      silent: false
 
     # Await server ready state
     adefy.on "message", (msg) ->
