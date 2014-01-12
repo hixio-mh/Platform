@@ -63,7 +63,7 @@ def deploy():
     run("grunt deploy")
 
     # Restart
-    run("forever restart production/adefy.js")
+    run("forever restart buildProduction/adefy.js")
 
 # Staging
 @roles("staging")
@@ -91,13 +91,13 @@ def stage():
     run("grunt stage")
 
     # Restart
-    run("forever restart staging/adefy.js")
+    run("forever restart buildStaging/adefy.js")
 
 # Forever controls
 @roles("staging")
 def stage_up():
   with cd(adefy_path):
-    run("forever start staging/adefy.js")
+    run("forever start buildStaging/adefy.js")
 
 @roles("staging")
 def stage_restart():
@@ -107,22 +107,22 @@ def stage_restart():
 @roles("staging")
 def stage_down():
   with cd(adefy_path):
-    run("forever stop staging/adefy.js")
+    run("forever stop buildStaging/adefy.js")
 
 @roles("production")
 def production_up():
   with cd(adefy_path):
-    run("forever start production/adefy.js")
+    run("forever start buildProduction/adefy.js")
 
 @roles("production")
 def production_restart():
   with cd(adefy_path):
-    run("forever restart production/adefy.js")
+    run("forever restart buildProduction/adefy.js")
 
 @roles("production")
 def production_down():
   with cd(adefy_path):
-    run("forever stop production/adefy.js")
+    run("forever stop buildProduction/adefy.js")
 
 @roles("production", "staging")
 def status():
