@@ -86,29 +86,37 @@ setup = (options, imports, register) ->
         fetchStatsforAd = (ad) ->
           ad.fetchLifetimeStats (adStats) ->
 
-            # Store campaign stats temporarily
-            campaignStats = []
+            if ad.campaigns.length == 0
+              adObject = ad.toAnonAPI()
+              adObject.stats = adStats
+              ret.push adObject
 
-            innerCount = ad.campaigns.length
-            innerDone = ->
-              innerCount--
+              done()
+            else
 
-              if innerCount == 0
-                adObject = ad.toAnonAPI()
-                adObject.stats = adStats
+              # Store campaign stats temporarily
+              campaignStats = []
 
-                for stats in campaignStats
-                  adObject.campaigns[stats.i].stats = stats.stats
+              innerCount = ad.campaigns.length
+              innerDone = ->
+                innerCount--
 
-                ret.push adObject
+                if innerCount == 0
+                  adObject = ad.toAnonAPI()
+                  adObject.stats = adStats
 
-                done()
+                  for stats in campaignStats
+                    adObject.campaigns[stats.i].stats = stats.stats
 
-            # Populate campaign stats
-            for i in [0...ad.campaigns.length]
-              fetchStatsForCampaign i, ad, (stats, i) ->
-                campaignStats.push { i: i, stats: stats }
-                innerDone()
+                  ret.push adObject
+
+                  done()
+
+              # Populate campaign stats
+              for i in [0...ad.campaigns.length]
+                fetchStatsForCampaign i, ad, (stats, i) ->
+                  campaignStats.push { i: i, stats: stats }
+                  innerDone()
 
         fetchStatsforAd ad for ad in ads
 
