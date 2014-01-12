@@ -53,17 +53,15 @@ def deploy():
     # Install any new modules
     run("npm install")
 
-    # Build
-    run("grunt full")
-
     # Test (abort on fail)
-    run("grunt test")
+    run("grunt deployTest")
 
     # Deploy
     run("grunt deploy")
 
     # Restart
-    run("forever restart buildProduction/adefy.js")
+    run("forever stop buildProduction/adefy.js")
+    run("forever start buildProduction/adefy.js")
 
 # Staging
 @roles("staging")
@@ -81,17 +79,15 @@ def stage():
     # Install any new modules
     run("npm install")
 
-    # Build
-    run("grunt full")
-
     # Test (abort on fail)
-    run("grunt test")
+    run("grunt deployTest")
 
     # Stage
     run("grunt stage")
 
     # Restart
-    run("forever restart buildStaging/adefy.js")
+    run("forever stop buildStaging/adefy.js")
+    run("forever start buildStaging/adefy.js")
 
 # Forever controls
 @roles("staging")
