@@ -32,6 +32,12 @@ setup = (options, imports, register) ->
 
   spew.init "Starting Initialization"
 
+  # Pick DB to connect to
+  if config.modes[config.mode].db != undefined
+    db = config.modes[config.mode].db
+  else
+    db = config.db.db
+
   # Connect to the db
   con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
   con += ":#{config.db.port}/#{config.db.db}"

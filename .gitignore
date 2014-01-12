@@ -1,6 +1,7 @@
-build/
-staging/
-production/
+buildDevelopment/
+buildStaging/
+buildTesting/
+buildProduction/
 
 node_modules/
 
