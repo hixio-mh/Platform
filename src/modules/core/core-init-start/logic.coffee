@@ -43,7 +43,9 @@ setup = (options, imports, register) ->
   con += ":#{config.db.port}/#{config.db.db}"
 
   dbConnection = mongoose.connect con, (err) ->
-    if err then spew.critical "Error connecting to database [#{err}]"
+    if err
+      spew.critical "Error connecting to database [#{err}]"
+      spew.critical "Using connection: #{con}"
     else spew.init "Connected to MongoDB #{config.db.db} as #{config.db.user}"
 
     # Setup db models
