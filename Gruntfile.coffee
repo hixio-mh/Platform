@@ -20,7 +20,7 @@ module.exports = (grunt) ->
   # To build the site, we must do a few things
   # First, we build our modules to a modules folder inside of our build
   # directory. At this point, we copy the package.json files to the build folder
-  # as well. We then copy over the built line modules alongside our own.
+  # as well.
   #
   # The models have to be built as well, but they are built as they are, no
   # facy stuff.
@@ -32,7 +32,6 @@ module.exports = (grunt) ->
 
   # Folder paths
   srcDir = "src/"
-  lineSrcDir = "line/build/src/"
   _buildDir = "build/"     # Modified internally
 
   # Deployment paths
@@ -55,6 +54,7 @@ module.exports = (grunt) ->
   moduleSrc = [
     "*.coffee"
     "modules/**/*.coffee"
+    "helpers/*.coffee"
   ]
   clientSrc = [
     "client/*.coffee"
@@ -99,7 +99,7 @@ module.exports = (grunt) ->
   buildPaths = ->
 
     stylusMin = {}
-    stylusMin["#{_buildDir}static/css/style.css"] = "#{srcDir}stylus/style.styl"
+    stylusMin["#{_buildDir}static/css/styles.css"] = "#{srcDir}stylus/styles.styl"
 
     clientProdSrc = {}
     clientProdSrc["#{_buildDir}static/client/app.min.js"] = _prodSrc
@@ -180,15 +180,6 @@ module.exports = (grunt) ->
           dest: _buildDir
         ]
 
-      # Copy built line modules
-      line:
-        files: [
-          expand: true
-          cwd: lineSrcDir
-          src: "**"
-          dest: "#{_buildDir}/modules/line"
-        ]
-
       # True static files (images, fonts, etc)
       static:
         files: [
@@ -213,6 +204,14 @@ module.exports = (grunt) ->
           cwd: "#{srcDir}/ssl"
           src: "**"
           dest: "#{_buildDir}/ssl"
+        ]
+
+      templateAssets:
+        files: [
+          expand: true
+          cwd: "#{srcDir}/modules/engine/engine-templates/templates"
+          src: "*/*.png"
+          dest: "#{_buildDir}/modules/engine/engine-templates/templates"
         ]
 
     # CSS Minifier
@@ -242,6 +241,15 @@ module.exports = (grunt) ->
       _buildDir
     ]
 
+    mochaTest:
+      test:
+        options:
+          reporter: "spec"
+          require: "coffee-script"
+        src: [
+          "#{srcDir}/tests/*.coffee"
+        ]
+
     # Watch files for changes and ship updates to build folder
     watch:
       serverCS:
@@ -256,9 +264,6 @@ module.exports = (grunt) ->
       stylus:
         files: WstylusSrc
         tasks: [ "stylus:full" ]
-      lineSrc:
-        files: [ "#{lineSrcDir}/**" ]
-        tasks: [ "copy:line" ]
       packageJSON:
         files: WmodulePackageJSON
         tasks: [ "copy:packageJSON" ]
@@ -277,15 +282,15 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-cssmin"
   grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-nodemon"
+  grunt.loadNpmTasks "grunt-mocha-test"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
     "copy:packageJSON"
-    "copy:line"
     "copy:static"
     "copy:jade"
-    "copy:line"
     "copy:ssl"
+    "copy:templateAssets"
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"
@@ -297,6 +302,8 @@ module.exports = (grunt) ->
     "clean"
     "persistentFull"
   ]
+
+  grunt.registerTask "test", [ "mochaTest" ]
 
   grunt.registerTask "default", [ "full" ]
   grunt.registerTask "dev", [ "concurrent:dev" ]

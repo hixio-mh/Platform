@@ -58,6 +58,11 @@
 		"db": "adefy_cloud"
 	},
 
+	"stats-db": {
+		"host": "stats.adefy.com",
+		"port": 8125
+	},
+
 	"email": {
 		"host": "mail.spectrumcoding.com",
 		"port": "25",

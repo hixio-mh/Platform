@@ -11,14 +11,21 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
+db = require "mongoose"
+microtime = require "microtime"
+config = require "../../../config.json"
+statsdLib = require("node-statsd").StatsD
+statsd = new statsdLib
+  host: config["stats-db"].host
+  port: config["stats-db"].port
+  prefix: "#{config.mode}."
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
-  auth = imports["line-userauth"]
-  db = imports["line-mongodb"]
+  server = imports["core-express"]
+  auth = imports["core-userauth"]
+  utility = imports["logic-utility"]
 
   server.registerPage "/login", "account/login.jade"
 
@@ -35,52 +42,68 @@ setup = (options, imports, register) ->
   # Login POST [username, password]
   server.server.post "/login", (req, res) ->
 
-    if req.body.username and req.body.password
-      db.fetch "User", { username: req.body.username }, (user) ->
+    _timingStart = microtime.now()
 
-        if user.length <= 0
-          res.status(401).render "account/login.jade",
-            error: "wrong username or password"
-          return
+    if not req.body.username or not req.body.password
+      statsd.increment "event.login.401"
 
-        user.comparePassword req.body.password, (err, isMatch) ->
-          if err
-            spew.error "Failed to compare passwords [#{err}]"
-            throw server.InternalError
-            return
-
-          if not isMatch
-            res.status(401).render "account/login.jade",
-              error: "Wrong Username or Password"
-            return
-
-          userData =
-            "id": user.username
-            "sess": guid()
-            "hash": user.hash
-
-          # Actual authorization
-          res.cookie "user", userData
-
-          # Set the admin flag if necessary. Note that we verify admin status
-          # upon each admin-qualified API call!
-          if user.permissions == 0 then res.cookie "admin", true
-          else res.clearCookie "admin"
-
-          auth.authorize userData
-          user.session = userData.sess
-
-          user.save (err) ->
-            if err
-              spew.error "Error saving user sess ID [#{err}]"
-              throw server.InternalError
-            else
-              spew.info "User #{userData.id} logged in"
-              res.redirect "/dashboard"
-
-    else
       res.status(401).render "account/login.jade",
         error: "Wrong Username or Password"
+      return
+
+    db.model("User").findOne { username: req.body.username }, (err, user) ->
+      if utility.dbError err, res then return
+
+      if not user
+        statsd.increment "event.login.incorrect.username"
+
+        res.status(401).render "account/login.jade",
+          error: "wrong username or password"
+        return
+
+      user.comparePassword req.body.password, (err, isMatch) ->
+        if err
+          statsd.increment "event.login.pwerror"
+
+          spew.error "Failed to compare passwords [#{err}]"
+          throw server.InternalError
+          return
+
+        if not isMatch
+          statsd.increment "event.login.incorrect.password"
+
+          res.status(401).render "account/login.jade",
+            error: "Wrong Username or Password"
+          return
+
+        userData =
+          "id": user.username
+          "sess": guid()
+          "hash": user.hash
+
+        # Actual authorization
+        res.cookie "user", userData
+
+        # Set the admin flag if necessary. Note that we verify admin status
+        # upon each admin-qualified API call!
+        if user.permissions == 0 then res.cookie "admin", true
+        else res.clearCookie "admin"
+
+        auth.authorize userData
+        user.session = userData.sess
+
+        user.save (err) ->
+
+          if err
+            statsd.increment "event.login.dberror"
+
+            spew.error "Error saving user sess ID [#{err}]"
+            throw server.InternalError
+          else
+            statsd.increment "event.login.success"
+            statsd.timing "timing.login-us", (microtime.now() - _timingStart)
+
+            res.redirect "/"
 
   register null, {}
 

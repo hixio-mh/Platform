@@ -25,9 +25,9 @@ def _setup(branch):
     run("git init .")
     run("git remote add origin " + adefy_repo)
     run("git pull origin master")
-    run("git fetch origin " + branch + ":" + branch)
-    run("git checkout " + branch)
-    run("git submodule init")
+
+    run("git branch " + branch)
+    run("git pull origin " + branch)
 
     # Install global dependencies
     sudo("npm install -g codo grunt-cli forever")
@@ -49,11 +49,6 @@ def deploy():
     # Update
     run("git checkout production")
     run("git pull origin production")
-    run("git submodule update")
-
-    # Re-build line
-    run("cd line && npm install")
-    run("cd line && grunt")
 
     # Install any new modules
     run("npm install")
@@ -62,7 +57,7 @@ def deploy():
     run("grunt full")
 
     # Test (abort on fail)
-    #run("grunt test")
+    run("grunt test")
 
     # Deploy
     run("grunt deploy")
@@ -82,11 +77,6 @@ def stage():
     # Update
     run("git checkout staging")
     run("git pull origin staging")
-    run("git submodule update")
-
-    # Re-build line
-    run("cd line && npm install")
-    run("cd line && grunt")
 
     # Install any new modules
     run("npm install")
@@ -95,7 +85,7 @@ def stage():
     run("grunt full")
 
     # Test (abort on fail)
-    #run("grunt test")
+    run("grunt test")
 
     # Stage
     run("grunt stage")

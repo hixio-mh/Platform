@@ -14,19 +14,22 @@
 
 mongoose = require "mongoose"
 
-model = null
-schema = null
+schema = new mongoose.Schema
+  folder: String
+  file: String
+  expiration: Date
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 
-exports.createSchema = ->
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id
+  delete ret._id
+  delete ret.__v
+  ret
 
-  schema = new mongoose.Schema
-    folder: String
-    file: String
-    expiration: Date
-    owner: mongoose.Schema.ObjectId
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  delete ret.owner
+  ret
 
-  model = null
-
-exports.createModel = -> model = mongoose.model "Exports", schema
-exports.getModel = -> return model
-exports.getSchema = -> return schema
+mongoose.model "Export", schema

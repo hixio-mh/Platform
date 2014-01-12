@@ -1,0 +1,29 @@
+.titlebar.cf.full(ng-controller="AdefyAdminMenuController")
+  .name Admin Dashboard
+  .menu.full
+    a(ng-href="/admin/home" tab)
+      i.fa.fa-fw.fa-signal
+      | Home
+    a(ng-href="/admin/invites" tab)
+      i.fa.fa-fw.fa-paperclip
+      | Invites
+    a(ng-href="/admin/publishers" tab)
+      i.fa.fa-fw.fa-wrench
+      | Publishers
+    a(ng-href="/admin/users" tab)
+      i.fa.fa-fw.fa-wrench
+      | Users
+
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ 0
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 0
+    .desc Clicks today
+  .stat: .wrap
+    .amount.large 0
+    .desc Users
+  .stat: .wrap
+    .amount.large $ 0.00
+    .desc Revenue Today

@@ -1,0 +1,33 @@
+include _menu
+
+.inner: form(novalidate ng-class="{submitted: submitted}")
+  dl.form.center
+    dt
+      label Application name
+      span Used as a display name in Adefy
+    dd: input(required ng-model="app.name" type="text")
+    dt
+      label Application URL
+      span The Android package name or App Store ID
+    dd: input(ng-model="app.url" type="text" placeholder="com.android.game")
+    dt: label Application category
+    dd
+      select(chosen, ng-model="app.category", ng-options="c for c in categories")
+    dt: label Description
+    dd: textarea(ng-model="app.description")
+    dt: label Preferred Pricing Model
+    dd
+      select(chosen, ng-model="app.preferredPricing" ng-options="o for o in pricingModels")
+    dt(ng-if="app.preferredPricing != 'CPC'"): label Minimum payout (CPM)
+    dd(ng-if="app.preferredPricing != 'CPC'"): input(type="number" ng-model="app.minimumCPM" min="0")
+    dt(ng-if="app.preferredPricing != 'CPM'"): label Minimum payout (CPC)
+    dd(ng-if="app.preferredPricing != 'CPM'"): input(type="number" ng-model="app.minimumCPC" min="0")
+  dl.form.center.single
+    dt
+    dd
+      a.delete(form-modal template="/views/dashboard/apps:delete" title="Delete app" 
+        ok-button-text="Delete" form-submit="delete()" form-object="form") 
+        | I want to delete the application
+  dl.form.center
+    dt
+    dd: button.blue.save(ng-click="submit()") Save

@@ -1,0 +1,836 @@
+*
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+  box-sizing border-box
+
+.cfafter
+  clearboth
+  content"."
+  displayblock
+  font-size0
+  height0
+  line-height0
+  visibilityhidden
+
+.cf{zoom1}
+
+body
+  font-family Source Sans Pro
+  color #333
+  background #f7f7f7
+  line-height 1.6
+  padding-top 52px // navbar
+  padding-bottom 50px
+body.withNotification
+  padding-top 92px // navbar + notification
+
+a
+  color hsl(196, 77%, 55%)
+  text-decoration none
+  cursor pointer
+  &hover
+    color #5897fb
+
+.center
+  margin 0 auto
+
+.select2-container
+  display block !important
+
+button
+  background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
+  border 1px solid #bbb
+  box-shadow inset 0 1px rgba(255,255,255,.2)
+  color #555
+  text-shadow 0 1px white
+  padding 7px
+  border-radius 5px
+  &hover, &active
+    background-image linear-gradient(#eee 20%,#fff 80%)
+    box-shadow 0 1px 0 #fff inset
+
+button.blue
+  color #fff
+  background  -webkit-linear-gradient(top,#34b5e5,#5897fb)
+  border 1px solid #1597c7
+  border-bottom 1px solid rgba(0,0,0,.2)
+  text-shadow 0 1px 1px rgba(0,0,0,0.3)
+  box-shadow inset 0 -1px rgba(255,255,255,0.15)
+  &hover, &active
+    box-shadow 0 1px 0 rgba(255,255,255,.2) inset
+    background #5897fb
+  &focus
+    border-color #385FDA
+
+button.save
+  margin 7px auto
+  display block
+
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], textarea
+  font-family Source Sans Pro
+  display block
+  padding 7px
+  border 1px solid #ccc
+  border-radius 4px
+
+  border1px solid #aaa
+  box-shadow inset 0 15px 15px -15px rgba(0,0,0,.1)
+  &.ng-invalid.ng-dirty, .submitted &.ng-invalid
+    border 1px solid #e74c3c !important //#c0392b
+    //box-shadow 0 0 3px #e74c3c
+inputfocus, textareafocus, buttonfocus
+  outline none
+  border 1px solid #5897fb
+label
+  font-weight 600
+legend, h1
+  display block
+  width 100%
+  margin-bottom 10px
+  font-weight 300
+  color #aaa
+  font-size 32px
+  border-bottom 1px solid #ddd
+  text-shadow 0 1px white
+fieldset:nth-of-type(n+2)
+  margin-top 25px
+
+code, pre
+  padding 0 3px 2px
+  font-family Monaco,Menlo,Consolas,"Courier New",monospace
+  font-size 12px
+  color #333333
+  border-radius 3px
+
+pre
+  display block
+  padding 9.5px
+  margin 0 0 10px
+  font-size 13px
+  line-height 20px
+  word-break break-all
+  word-wrap break-word
+  white-space pre
+  white-space pre-wrap
+  background-color #f5f5f5
+  border 1px solid rgba(0, 0, 0, 0.15)
+  border-radius 4px
+
+header
+  width 100%
+  top 0
+  left 0
+  right 0
+  height 52px
+  line-height 52px
+  color #fff
+  background-color #0a242e
+  border-bottom 1px solid rgba(0,0,0,.1)
+  padding 0 20px
+  text-shadow 0 1px 1px rgba(0,0,0,.3)
+  box-shadow 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
+  position fixed
+  z-index 100
+  .menu > a, .menu > .da
+    border-left 1px solid transparent
+    border-right 1px solid transparent
+    &hover, &.active
+      color #33b5e5
+      border-color rgba(255,255,255,.12)
+      background-color rgba(0,0,0,.3)
+
+#logo
+  font-family Oleo Script
+  font-size 32px
+  float left
+  line-height 50px // font's x-height is fucked up, manually push up
+  margin-right 25px
+
+.menu
+  position relative
+  display inline-block
+  vertical-align top
+  font-size 14px
+
+.menu.left
+  float left
+.menu.right
+  float right
+.menu.full i // a "full" menu has text + icons
+  margin-right 10px
+
+.menu li
+  list-style-type none
+
+.menu a, .menu .da // .da -> dropdown link
+  color inherit
+  display inline-block
+  padding 0 20px
+  cursor pointer
+  &.active, &hover
+    background-color rgba(0,0,0,.1)
+
+.titlebar
+  background-color #ddd
+  border-bottom 1px solid #ccc
+  height 44px
+  line-height 44px
+  padding 0 25px
+
+  .name
+    display inline-block
+    font-size 20px
+    font-weight bold
+  .label
+    vertical-align bottom
+  .menu
+    margin-left 25px
+
+.label
+  color #fff
+  displayinline
+  font-size12px
+  font-weightbold
+  padding 2px 6px
+  margin-left 15px
+  border-radius 4px
+  text-shadow 0 1px rgba(0,0,0,.2)
+  &.green
+    background-color #2ecc71
+  &.red
+    background-color #e74c3c
+  &.gray
+    background-color #95a5a6
+  &.blue
+    background-color #0099CC
+
+.stats
+  border-bottom 1px solid #ccc
+.stats.app, .stats.campaign
+  padding-bottom 20px
+.stats.dashboard .stat
+  width 25%
+  padding-bottom 10px
+
+.stat
+  width 50%
+  line-height 80px
+  display inline-block
+  vertical-align middle
+  padding 0 25px
+  //text-align center
+
+
+.graphs
+  text-align center
+.graph
+  //width calc(50% - 50px)
+  margin 25px
+  padding 15px
+  //height 300px
+  display inline-block
+  border 1px solid #ccc
+  background-color #fcfcfc
+  vertical-align middle
+  border-radius 5px
+  border 1px solid #c7c7c7
+  box-shadow 0 0 1px rgba(0,0,0,.1)
+  h3
+    text-align left
+    font-size 32px
+    margin-bottom 10px
+    margin-left 10px
+  hr
+    height 0
+    border none
+    border-top 1px solid #ccc
+    margin 10px -15px
+
+.wrap
+  display inline-block
+  vertical-align middle
+  line-height 1
+
+.amount
+  font-size 22px
+  line-height 1.2
+  font-weight 100
+  &.large
+    font-size 40px
+
+.desc
+  font-size 14px
+  color #999
+
+.inner
+  padding 25px
+
+/* form styling */
+
+dl.form
+  max-width 760px
+  &.single // sometimes we wrap a single input line
+    padding 10px 0
+    border-bottom 1px solid #e9e9e9
+  .description
+    margin-bottom 15px
+
+  p
+    color #666
+    //font-size .85em
+  h3
+    font-weight 600
+
+  label
+    display block
+    margin 7px 0
+
+  hr
+    height 0
+    border none
+    border-top 1px solid #ccc
+    margin 10px 0
+
+  dt
+    vertical-align top
+    displayinline-block
+    width 40%
+    padding-right 15px
+    span
+      display block
+      color #999
+      font-size .85em
+
+  dd
+    vertical-align top
+    displayinline-block
+    width 60%
+
+  .radio
+    label // labels for radios
+      display inline-block
+      margin 0
+      margin-left 5px
+      font-weight 400
+      font-size .85em
+
+  input[type="text"], input[type="email"], textarea
+    width 100%
+  select, input[type="number"]
+    width 50%
+
+  .chosen-container-single .chosen-single
+    height auto // things get seriously fucked up without this
+  .chosen-container-multi .chosen-choices li.search-field input[type=text]
+    height auto // things get seriously fucked up without this
+
+  textarea
+    min-height 120px
+
+  .rule
+    position relative
+    padding 15px 0
+    border-bottom 1px solid #ddd
+    .column
+      padding 7px
+      width 33.333%
+      display inline-block
+      select
+        width 100%
+    .actions
+      position absolute
+      top 0
+      right 0
+
+
+fieldset
+  dl.form.singlelast-of-type
+    border-bottom none
+
+/* billing form */
+.form.thin
+  max-width 500px
+
+.field
+  margin 5px 0
+  display inline-block
+  width 100%
+
+.field.margin
+  padding-right 15px
+
+.field.w25
+  width 25%
+.field.w50
+  width 50%
+  select
+    width 100%
+.field.w75
+  width 75%
+
+.funds
+  max-width 570px
+  .actions
+    display inline-block
+    text-align center
+    margin-top 25px
+  button
+    margin 5px 10px
+
+/* dropdown */
+.dropdown
+  background-color #fff
+  box-shadow 0 0 0 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1)
+  border-radius 5px
+  position absolute
+  right 4px
+  top 100%
+  color #333
+  text-shadow none
+  line-height 40px
+  width 160px // needed?
+  &.active
+    display block
+  a
+    border-bottom 1px solid #eee
+    display block
+    i
+      margin-right 10px
+    &first-of-type
+      border-radius 5px 5px 0 0
+    &last-of-type
+      border-radius 0 0 5px 5px
+      border none
+    &hover
+      background-color #333
+      color #fff
+
+  &after
+    bottom 100%
+    border solid transparent
+    content ""
+    height 0
+    width 0
+    position absolute
+
+    border-color rgba(136, 183, 213, 0)
+    border-bottom-color #fff
+    border-width 10px
+    right 16px
+    margin-left -10px
+
+/* apps/campaigns grid */
+.grid
+  text-align center
+  .item
+    margin 20px
+    padding 12px 0
+    background white
+    max-width 337px // <canvas> is actually 3px smaller than 340px
+    min-height 250px
+    border-radius 5px
+    border 1px solid #c7c7c7
+    display inline-block
+    box-shadow 0 0 1px rgba(0,0,0,.2)
+    text-align left
+    vertical-align top
+    cursor pointer
+    color inherit !important
+    .icon
+      max-width 100%
+      max-width 48px
+      vertical-align middle
+      margin 0 15px
+      border-radius 4px
+    .name
+      display inline-block
+    .metrics
+      position relative
+      canvas
+        margin-left -2px // it's slightly displaced
+    .wrap
+      position absolute
+      top 0
+      left 0
+      right 0
+      bottom 15px
+      text-align center
+      background-color rgba(255,255,255,.5)
+      line-height 180px // probably a better way to do this, set line height to <canvas> graph height
+      // a lil' bit less, to center it properly
+    .text
+      display inline-block
+      vertical-align middle
+      line-height 1
+  .item
+    .text .amount
+      line-height inherit
+    .desc
+      text-shadow 0 1px white
+    .stats
+      margin-top -15px
+      border-bottom none // temp cleanup
+      .tab
+        width 50%
+        text-align center
+        display inline-block
+
+
+.new-item
+  line-height 1
+  display inline-block
+  margin 20px 40px 0
+  color #aaa
+  text-shadow 0 1px white
+  //background-color #333
+  //border-radius 7px
+  padding 5px
+  border-bottom 1px dashed transparent
+  &hover
+    color #999
+    border-bottom 1px dotted
+  i
+    margin-right 10px
+
+.new-ad
+  display block
+  margin 0 auto
+  max-width 720px
+  margin-bottom 20px // needs margin
+
+/* item lists ad list */
+.list
+  margin 0 auto
+  max-width 720px
+  border 1px solid #ccc
+  border-bottom none
+
+  .ad
+    padding 10px 20px
+    border-bottom 1px solid #ccc
+    background-color #fff
+    color inherit
+    display block
+    .name
+      display inline-block
+      font-weight 600
+      font-size 22px
+    .edit
+      float right
+      text-shadow 0 1px white
+      color #999
+      display none
+
+    &hover
+      color #333
+  lihover .edit
+    display block
+
+  .campaigns
+    width 100%
+    th
+      vertical-align middle
+      text-align right
+      padding-right 20px
+    tr
+      border-bottom 1px solid #e0e0e0
+    td
+      padding 10px 15px
+    .amount
+      font-size 20px
+    .desc
+      font-size 12px
+
+
+/* Login styles */
+.login
+  text-align center
+  form
+    display inline-block
+    text-align center
+
+/* modal styles -- ugly */
+.overlay
+  position fixed
+  top 0
+  bottom 0
+  left 0
+  right 0
+  z-index 999
+  background-color rgba(0,0,0,.7)
+
+.modal-wrap
+  display table
+  height 100%
+  width 100%
+.modal-cell
+  display table-cell
+  vertical-align middle
+.modal
+  max-width 520px
+  margin 0 auto
+  background-color white
+  border-radius 5px
+  border 1px solid rgba(0,0,0,.1)
+  box-shadow 0 1px 105px 15px rgba(0,0,0,.1)
+  p
+    font-size 14px
+    color #666
+  .header
+    border-bottom 1px dotted #ccc
+    padding 3px 15px
+    font-size 22px
+    text-align center
+    font-weight 600
+  .content
+    padding 15px
+  .actions
+    border-top 1px solid #ddd
+    text-align right
+    padding 5px
+  input
+    width 100%
+
+.narrow
+  max-width 760px
+/* main page */
+.news
+  vertical-align top
+  li
+    border-bottom 1px solid #ccc
+    padding 15px
+  lifirst-of-type
+    border-top 1px solid #ccc
+
+.index
+  margin 0 auto
+  max-width 920px
+.stats.dashboard
+  background-color #33b5e5
+  color #fff
+  text-align center
+  border-bottom 1px solid rgba(0,0,0,.1)
+  .stat
+    border-right none
+  .desc
+    color #fff
+    opacity .7
+.news
+  width 50%
+  display inline-block
+  padding 25px
+  .title
+    font-weight 600
+  .date
+    color #999
+    margin-left 15px
+  p
+    font-size .85em
+.switch-view
+  display block
+  text-align right
+  font-size .85em
+  margin 10px
+
+/* tabs */
+.tab-pane
+  display none
+.tab-pane.active
+  display block
+
+/* notification */
+.notification
+  z-index 99
+  position fixed
+  top 52px
+  left 0
+  right 0
+  padding 7px
+  text-align center
+  color #fff
+  border-bottom 1px solid rgba(0,0,0,.1)
+  text-shadow 0 1px 2px rgba(0,0,0,.3)
+  box-shadow 0 1px 1px rgba(0,0,0,.1)
+  background-color #bdc3c7
+  &.info
+    background-color #3498db
+  &.success
+    background-color #2ecc71
+  &.error
+    background-color #e74c3c
+  i
+    cursorpointer
+    position absolute
+    right 15px
+    line-height1.6
+    text-shadownone
+
+/* transactions */
+.transactions
+  margin 20px auto
+  max-width 520px
+  border-top 1px solid #ccc
+  td
+    border-bottom 1px solid #ccc
+    padding 15px 10px
+    line-height 22px
+    vertical-align middle
+  .number
+    font-weight 600
+    font-size 20px
+    margin-left 10px
+    text-align right
+
+  .time
+    font-size 14px
+    margin-left 15px
+    text-align right
+    color gray
+  .desc
+    font-size inherit
+    color inherit
+  .deposit .number
+    color #2ecc71
+  .withdraw .number
+    color #e74c3c
+  .reserve .number
+    color #95a5a6
+
+.contents.center
+  margin 20px auto
+  max-width 720px
+.contents.w920.center
+  margin 20px auto
+  max-width 920px
+
+/* delete link */
+.delete
+  text-align center
+  color #e74c3c
+  font-size 14px
+  display block
+
+/* Dashboard info table */
+table.info
+  width 100%
+  margin 20px 0
+  th, td
+    border 1px solid #ddd
+    padding 6px 13px
+  th
+    border-color #ccc
+  td
+   text-align right
+  thead
+    font-weight 600
+    background-color white
+
+/* reports tabs */
+.tabs-wrap
+  background-color #33b5e5
+  border-bottom 1px solid rgba(0,0,0,.1)
+  margin-bottom 20px
+.tabs
+  display table
+  max-width 920px
+  margin 0 auto
+  margin-bottom -1px
+  .tab
+    cursor pointer
+    displaytable-cell
+    table-layout fixed
+    width 1%
+    padding 15px
+    text-align center
+    border-right 1px solid rgba(0,0,0,.1)
+    color #fff
+  .tabfirst-of-type
+    border-left 1px solid rgba(0,0,0,.1)
+  .tabhover, .tab.active
+    color #33b5e5
+    background-color #fff
+    border-bottom 1px solid rgba(0,0,0,.1)
+
+.right
+  float right
+
+/* feedback */
+.feedback
+  max-width 570px
+  margin 20px auto
+  textarea
+    width 100%
+    min-height 200px
+
+@media (min-width 1600px)
+  .index.dashboard
+    max-width 100%
+    div
+      width 45%
+      display inline-block
+      margin 20px 2.5%
+      vertical-align top
+
+graph
+  display block
+  text-aligncenter
+
+.rickshaw_container, .rickshaw_graph
+  display inline-block
+
+.rickshaw_container
+  position relative
+  margin 1em auto
+
+.rickshaw
+  margin-left 40px
+
+.rickshaw_container .axis-y
+  position absolute
+  top 0
+  bottom 0
+  width 40px
+
+.rickshaw_graph .y_grid .tick, .rickshaw_graph .x_grid_d3 .tick
+  stroke none
+
+.rickshaw_graph .x_tick
+  border-left 1px solid #f7f7f7
+
+.rickshaw_graph .x_tick .title, .rickshaw_graph .y_ticks text, .rickshaw_graph .x_ticks_d3 text, .rickshaw_legend .label
+  font-family "proxima-nova", sans-serif
+  font-weight 100
+  opacity 1
+
+.rickshaw_graph .x_tick .title
+  font-size 18px
+  color white
+
+.rickshaw_graph .y_ticks text
+  fill #aaa
+  stroke none
+  font-size 12px
+
+.rickshaw_graph .y_ticks path, .rickshaw_graph .x_ticks_d3 path
+  stroke #aaa
+
+.rickshaw .detail .dot
+  -moz-box-sizing content-box
+  -webkit-box-sizing content-box
+  box-sizing content-box
+
+.rickshaw_legend
+  padding none
+  background none
+
+  .line .swatch
+    margin-right 8px
+
+  .label
+    color #666
+    font-weight 300
+    opacity 1
+    font-size 14px
+
+.noAxes .rickshaw
+  margin 0

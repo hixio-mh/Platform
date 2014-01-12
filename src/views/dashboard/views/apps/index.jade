@@ -1,0 +1,33 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+a.new-item(href="/apps/new")
+  i.fa.fa-plus
+  | New app
+.grid
+  a.item(ng-repeat="app in apps" ng-href="/apps/{{app.id}}")
+    img.icon(ng-src="{{ app.thumbURL }}")
+    .name(ng-bind="app.name")
+    .metrics
+      canvas(linechart, options="options", data="app.chart", width="340", height="200")
+      .wrap: .text
+        .amount.large $ {{ app.stats.earnings | number:2 }}
+        .desc Total Revenue
+    .stats
+      .tab
+        .amount(ng-bind="app.stats.impressions24h")
+        .desc Impressions Today
+      .tab
+        .amount $ {{ app.stats.earnings24h | number:2 }}
+        .desc Revenue Today

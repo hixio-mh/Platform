@@ -1,0 +1,104 @@
+include _menu
+
+.inner: form(novalidate ng-class="{submitted: submitted}")
+  fieldset: dl.form.center
+    legend Ads
+    p Ads are added to the campaign here.
+    dt
+    dd
+      select(chosen multiple ng-options="ad as ad.name for ad in ads track by ad.id" ng-model="campaign.ads" data-placeholder="Select Ads")
+  fieldset: dl.form.center
+    legend Bidding
+    dt: label Daily Budget (optional)
+    dd: input(ng-model="campaign.dailyBudget" min="0" type="number")
+    dt
+      label Bid System
+      span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
+    dd
+      select(chosen required ng-model="campaign.bidSystem")
+        option(value="automatic") Automatic
+        option(value="manual") Manual
+    dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
+    dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
+    dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
+    dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
+    dt: label CTR Goal
+    dd: input(type="number" step="any" min="0.0" max="100.0" ng-model="campaign.CTRGoal")
+  fieldset: dl.form.center
+    legend Targetting
+    p In this section the general targetting is configured. Later, per-ad fine-tuning is possible, which will override these settings.
+    dl.form.center.single
+      dt: label Network
+      dd
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="all" name="all_traffic")
+          label(for="all_traffic") All Traffic
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="mobile" name="mobile_data_traffic")
+          label(for="mobile_data_traffic") Mobile Data Traffic
+        .radio
+          input(type="radio" ng-model="campaign.networks" value="wifi" name="wifi_traffic")
+          label(for="wifi_traffic") Wifi Traffic
+    dl.form.center.single
+      dt
+        label Geographical
+        span By default, all countries are included and none are excluded
+      dd
+        input.countryInclude(ng-model="countriesInclude" data-placeholder="Include countries")
+        br
+        br
+        input.countryInclude(ng-model="countriesExclude" data-placeholder="Exclude countries")
+    dl.form.center.single
+      dt
+        label Device
+        span By default, all devices are included and none are excluded
+      dd
+        input.deviceInclude(ng-model="devicesInclude" data-placeholder="Include devices")
+        br
+        br
+        input.deviceInclude(ng-model="devicesExclude" data-placeholder="Exclude devices")
+
+  fieldset: dl.form.center
+    legend Fine tunning
+    p Rules can be added, that modify the behavior of individual ads in the campaign.
+    .rule(ng-repeat="rule in campaign.rules" ng-form='targettingRule')
+      .actions
+        a.open(ng-click="closed = !closed")
+          i.fa.fa-fw.fa-chevron-down(ng-if="closed")
+          i.fa.fa-fw.fa-chevron-up(ng-if="!closed")
+        a.remove(ng-click="removeRule($index)"): i.fa.fa-fw.fa-times
+      .config(ng-hide="closed")
+        .field
+          select(chosen ng-options="ad.id as ad.name for ad in campaign.ads" ng-model="rule.ad")
+        .column
+          label Network
+          .radio
+            input(type="radio" ng-model="rule.networks" value="all" name="all_traffic")
+            label(for="all_traffic") All Traffic
+          .radio
+            input(type="radio" ng-model="rule.networks" value="mobile" name="mobile_data_traffic")
+            label(for="mobile_data_traffic") Mobile Data Traffic
+          .radio
+            input(type="radio" ng-model="rule.networks" value="wifi" name="wifi_traffic")
+            label(for="wifi_traffic") Wifi Traffic
+        .column
+          label Geographical
+          input.countryInclude(ng-model="rule.countriesInclude" data-placeholder="Include countries")
+          br
+          br
+          input.countryInclude(ng-model="rule.countriesExclude" data-placeholder="Exclude countries")
+        .column
+          label Devices
+          input.deviceInclude(ng-model="rule.devicesInclude" data-placeholder="Include devices")
+          br
+          br
+          input.deviceInclude(ng-model="rule.devicesExclude" data-placeholder="Exclude devices")
+
+    button(ng-click="addRule()" style="margin: 7px") Add new rule
+
+    hr
+    a.delete(form-modal template="/views/dashboard/campaigns:delete" title="Delete campaign"
+          ok-button-text="Delete" form-submit="delete()" form-object="form") 
+      | I want to delete the campaign
+
+    button.blue.save(ng-click="submit()") Save

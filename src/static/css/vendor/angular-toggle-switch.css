@@ -1,0 +1,71 @@
+.switch {
+    border: 1px solid rgba(0,0,0,.2);
+    cursor: pointer;
+    display: inline-block;
+    text-align: left;
+    overflow: hidden;
+    line-height: 8px;
+    min-width: 60px;
+    vertical-align: middle;
+}
+
+.switch span {
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    width: 33.333%;
+    white-space: nowrap;
+
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.switch > div {
+    position: relative;
+    width: 150%;
+}
+
+.switch .knob {
+    background-color: #f5f5f5;
+    z-index: 100;
+}
+
+.switch .switch-on {
+    left: 0%;
+}
+
+.switch .switch-off {
+    left: -50%
+}
+
+.switch .swtich-left, .switch .switch-right {
+    z-index: 1;
+}
+
+.switch .switch-left {
+    color: #fff;
+    background: -webkit-linear-gradient(top,#34b5e5,#5897fb);
+    border: 1px solid #1597c7;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: inset 0 -1px rgba(255,255,255,0.15);
+}
+
+.switch .switch-right {
+    border-left: 1px solid #ccc;
+    color: #333;
+    background: #f0f0f0;
+}
+
+.switch-animate {
+    transition: left 0.5s;
+    -o-transition: left 0.5s;
+    -moz-transition: left 0.5s;
+    -webkit-transition: left 0.5s;
+}

@@ -11,17 +11,13 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
-routes = require "../../../routes.json"
+routes = require "../../../angularDashboardViews.json"
 
 setup = (options, imports, register) ->
 
-  server = imports["line-express"]
+  server = imports["core-express"]
   utility = imports["logic-utility"]
-
-  # We have no homepage, just redirect to the login (unauth dash -> login)
-  server.server.get "/", (req, res) -> res.redirect "/dashboard"
 
   # Serve layout to each path
   for p in routes.views

@@ -1,0 +1,74 @@
+.tabs-wrap
+  .tabs
+    .tab(ng-click="tab = 'campaigns'" ng-class="{active: tab == 'campaigns'}") Campaigns
+    .tab(ng-click="tab = 'ads'" ng-class="{active: tab == 'ads'}") Ads
+    .tab(ng-click="tab = 'apps'" ng-class="{active: tab == 'apps'}") Apps
+
+.index
+  select.metrics(chosen ng-options="value as key for (key,value) in metrics" ng-model="opts.metric")
+
+  .right: select(chosen ng-options="value as key for (key,value) in ranges" ng-model="opts.range")
+
+  div(ng-switch="tab")
+    .tab(ng-switch-when="campaigns" ng-controller="AdefyReportsCampaignsController")
+      h1 Total
+      graph(data="totals" type="type" width="880" height="300 " unit="decade")
+
+      h1 Comparison
+      table.info
+        thead: tr
+          th
+          th Impressions
+          th Clicks
+          th CTR
+          th Cost
+        tbody
+          tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true")
+            td {{ campaign.name }}
+            td {{ campaign.impressions | number }}
+            td {{ campaign.clicks | number }}
+            td {{ campaign.ctr | number:2 }}%
+            td {{ campaign.spent | currency:$ }}
+      canvas(barchart, data="data2", width="940", height="300")
+
+    .tab(ng-switch-when="ads" ng-controller="AdefyReportsAdsController")
+      h1 Total
+      graph(data="totals" type="type" width="880" height="300" unit="decade")
+
+      h1 Comparison
+      table.info
+        thead: tr
+          th
+          th Impressions
+          th Clicks
+          th CTR
+          th Cost
+        tbody
+          tr(ng-repeat="ad in ads | orderBy:'ctr':true")
+            td {{ ad.name }}
+            td {{ ad.impressions | number }}
+            td {{ ad.clicks | number }}
+            td {{ ad.ctr | number:2 }}%
+            td {{ ad.spent | currency:$ }}
+      canvas(barchart, data="data2", width="940", height="300")
+
+    .tab(ng-switch-when="apps" ng-controller="AdefyReportsAppsController")
+      h1 Total
+      graph(data="totals" type="type" width="880" height="300" unit="decade")
+
+      h1 Comparison
+      table.info
+        thead: tr
+          th
+          th Impressions
+          th Clicks
+          th CTR
+          th Cost
+        tbody
+          tr(ng-repeat="app in apps | orderBy:'earnings':true")
+            td {{ app.name }}
+            td {{ app.impressions | number }}
+            td {{ app.clicks | number }}
+            td {{ app.ctr | number:2 }}%
+            td $ {{ app.earnings | number:2 }}
+      canvas(barchart, data="data2", width="940", height="300")

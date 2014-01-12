@@ -1,0 +1,37 @@
+include _menu
+
+.contents.w920.center
+  h1 Statistics
+  .stats.app
+    .stat: .wrap
+      .amount.large $ {{ app.stats.earnings | number:2 }}
+      .desc Total Revenue
+    .stat: .wrap
+      .amount.large $ {{ app.stats.earnings24h | number:2 }}
+      .desc Earned Today
+    .stat: .wrap
+      .amount.large ▲ {{ app.stats.impressions | number }}
+      .desc Total Impressions
+    .stat: .wrap
+      .amount.large ▲ {{ app.stats.impressions24h | number }}
+      .desc Impressions Today
+    .stat: .wrap
+      .amount.large ▲ {{ app.stats.clicks | number }}
+      .desc Total Clicks
+    .stat: .wrap
+      .amount.large ▲ {{ app.stats.clicks24h | number }}
+      .desc Clicks Today
+    .stat: .wrap
+      .amount.large {{ app.stats.ctr | number }} %
+      .desc Lifetime CTR
+    .stat: .wrap
+      .amount.large {{ app.stats.ctr24h | number }} %
+      .desc Today's CTR
+
+.graphs
+  .graph
+    h3 Earnings
+    canvas(linechart, options="options", data="chart", width="900", height="350")
+    hr
+    h3 Impressions
+    canvas(linechart, options="options", data="chart", width="900", height="350")

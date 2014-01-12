@@ -1,0 +1,11 @@
+.titlebar.cf.full(ng-controller="AdefyCampaignMenuController")
+  .name(ng-bind="campaign.name")
+  .menu.full
+    a(ng-href="/campaigns/{{campaign.id}}" tab partial="false")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(ng-href="/campaigns/{{campaign.id}}/edit" tab)
+      i.fa.fa-fw.fa-wrench
+      | Settings
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="campaign.active")

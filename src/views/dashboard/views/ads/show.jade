@@ -1,0 +1,52 @@
+.titlebar.cf.full(ng-controller="AdefyAdMenuController")
+  .name(ng-bind="ad.name")
+  span(ng-switch="ad.status")
+    .label.gray(ng-switch-when="0") Pending
+    .label.red(ng-switch-when="1") Rejected
+    .label.green(ng-switch-when="2") Approved
+  .menu.full
+    a.active(href="/ads/{{ad.id}}")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(href="/editor/{{ad.id}}" target="_self")
+      i.fa.fa-fw.fa-pencil
+      | Editor
+    a.delete(form-modal template="/views/dashboard/ads:delete" title="Delete ad"
+          ok-button-text="Delete" form-submit="delete()" form-object="form")
+      i.fa.fa-fw.fa-trash-o
+      | Delete
+    a(ng-click="requestApproval()" ng-if="ad.status == '1'")
+      i.fa.fa-fw.fa-question
+      | Request Approval
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="ad.active")
+
+.contents.w920.center
+  h1 Statistics
+  .stats.campaign
+    .stat: .wrap
+      .amount.large ▲ {{ ad.stats.impressions | number }}
+      .desc Impressions
+    .stat: .wrap
+      .amount.large ▲ {{ ad.stats.impressions24h | number }}
+      .desc Impressions (daily)
+    .stat: .wrap
+      .amount.large ▲ {{ ad.stats.clicks | number }}
+      .desc Clicks
+    .stat: .wrap
+      .amount.large ▲ {{ ad.stats.clicks24h | number }}
+      .desc Clicks (daily)
+    .stat: .wrap
+      .amount.large {{ ad.stats.ctr | number }} %
+      .desc CTR
+    .stat: .wrap
+      .amount.large {{ ad.stats.ctr24h | number }} %
+      .desc CTR (daily)
+
+.graphs
+  .graph
+    h3 CTR
+    canvas(linechart, options="options", data="chart", width="900", height="350")
+    hr
+    h3 Impressions
+    canvas(linechart, options="options", data="chart", width="900", height="350")

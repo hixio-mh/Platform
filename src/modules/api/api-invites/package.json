@@ -1,0 +1,13 @@
+{
+  "name": "api-invites",
+  "version": "0.0.1",
+  "main": "logic.js",
+  "private": true,
+  "plugin": {
+    "consumes": [
+      "core-express",
+      "logic-utility"
+    ],
+    "provides": []
+  }
+}
