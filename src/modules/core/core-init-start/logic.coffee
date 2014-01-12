@@ -40,13 +40,14 @@ setup = (options, imports, register) ->
 
   # Connect to the db
   con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
-  con += ":#{config.db.port}/#{config.db.db}"
+  con += ":#{config.db.port}/#{db}"
 
   dbConnection = mongoose.connect con, (err) ->
     if err
       spew.critical "Error connecting to database [#{err}]"
       spew.critical "Using connection: #{con}"
-    else spew.init "Connected to MongoDB #{config.db.db} as #{config.db.user}"
+      spew.critical "Config mode: #{JSON.stringify config.modes[config.mode]}"
+    else spew.init "Connected to MongoDB #{db} as #{config.db.user}"
 
     # Setup db models
     modelPath = "#{__dirname}/../../../models"
