@@ -14,7 +14,7 @@ env.user = "cris"
 env.key_filename = "~/.ssh/id_rsa"
 
 adefy_path = "/var/adefy/"
-adefy_repo = "ssh://gitlab@git.spectrumit.eu:11235/adefy/adefycloud.git"
+adefy_repo = "git@bitbucket.org:spectrumit/adefyplatform.git"
 
 # Sets up the environment and folder on the remote server
 def _setup(branch):
