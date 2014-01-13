@@ -70,6 +70,8 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
 
     archive.append JSON.stringify(@manifest), name: "package.json"
     archive.append ad, name: "scene.js"
+    archive.append @getCachedAJS(), name: "adefy.js"
+
     archive.finalize (err, bytes) ->
       if err
         spew.error err

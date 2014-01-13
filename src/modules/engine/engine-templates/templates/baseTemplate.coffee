@@ -14,8 +14,11 @@
 
 spew = require "spew"
 fs = require "fs"
+request = require "request"
 
 class AdefyBaseAdTemplate
+
+  @AJSCdnUrl: "http://cdn.adefy.com/ajs/ajs.js"
 
   name: "Base Template"
   ready: false
@@ -23,13 +26,17 @@ class AdefyBaseAdTemplate
 
   files: []
 
+  _cachedAJS: null
+  _cachedAJSTimestamp: null
+
   # Base template constructor; loads all base assets into RAM as a zip file,
   # and awaits calls to @create()
   #
   # Any files which do not end in "coffee" or "js" are considered assets!
   constructor: ->
     @loadAssets()
-    @signalReady()
+    @fetchAJS =>
+      @signalReady()
 
   # Loads all files in our @assets directory (relative to our current directory)
   # into our zip archive
@@ -58,5 +65,31 @@ class AdefyBaseAdTemplate
   create: (options, res) ->
     spew.warning "Invalid template, no create present"
     res.json 500, error: "Invalid template"
+
+  fetchAJS: (cb) ->
+    request.head AdefyBaseAdTemplate.AJSCdnUrl, (err, res, body) =>
+      if err then return spew.error err
+
+      timestamp = new Date(res.headers["last-modified"]).getTime()
+
+      if @_cachedAJSTimestamp == null or @_cachedAJSTimestamp < timestamp
+        @_cachedAJSTimestamp = timestamp
+
+        request.get AdefyBaseAdTemplate.AJSCdnUrl, (err, res, body) =>
+          if err
+            @_cachedAJSTimestamp = null
+            return spew.error err
+
+          @_cachedAJS = body
+          spew.info "Updated stored AJS"
+
+          if cb then cb()
+
+      else if cb then cb()
+
+  getCachedAJS: ->
+    @fetchAJS()
+    @_cachedAJS
+
 
 module.exports = AdefyBaseAdTemplate
