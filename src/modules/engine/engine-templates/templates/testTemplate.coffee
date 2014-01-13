@@ -59,6 +59,16 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
     var height = #{options.height};
     var hR = height / 1080;
     var wR = width / 1920;
+    var scaleSmall;
+    var scaleBig;
+
+    if(hR > wR) {
+      scaleSmall = wR;
+      scaleBig = hR;
+    } else {
+      scaleSmall = hR;
+      scaleBig = wR;
+    }
 
     (#{@adExec.toString()})()
     """
@@ -85,60 +95,64 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
       edgeLeft = AJS.createRectangleActor -10, height / 2, 10, height
       edgeLeft.enablePsyx 0, 0.5, 0.5
 
-      edgeRight = AJS.createRectangleActor width + 10, height / 2, 10, height
+      edgeRight = AJS.createRectangleActor width + 10, height * 1.25, 10, height
       edgeRight.enablePsyx 0, 0.5, 0.5
 
-      testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 256 * hR, 1024 * wR
+      testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 256 * scaleSmall, 1024 * scaleSmall
       testAd.setTexture "testad"
       testAd.setRotation -90
 
-      circle = AJS.createCircleActor 1772 * wR, 148 * hR, 128
+      circle = AJS.createCircleActor width / 2, 100 * hR, 128
       circle.setRotation -90
-      circle.attachTexture "adefy", 132 * hR, 132 * wR
+      circle.attachTexture "adefy", 120 * scaleBig, 120 * scaleBig
 
-      spinner = AJS.createRectangleActor 1772 * wR, 146 * hR, 252 * hR, 252 * wR
+      spinner = AJS.createRectangleActor width / 2, 100 * hR, 240 * scaleBig, 240 * scaleBig
       spinner.setTexture "spinner"
       spinner.setRotation -90
 
-      topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 12 * hR, 1620 * wR
+      topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 12 * scaleSmall, 1620 * wR
       topline.setTexture "line"
       topline.setRotation 90
 
-      bottomline = AJS.createRectangleActor 0, 260 * hR, 12 * hR, 1620 * wR
+      bottomline = AJS.createRectangleActor 0, 360 * hR, 12 * scaleSmall, 1620 * wR
       bottomline.setTexture "line"
       bottomline.setRotation -90
 
       swooshIt = ->
-        topline.move 1110 * wR, null, 1000, 0
-        bottomline.move 810 * wR, null, 1000, 0
+        topline.move 1410 * wR, null, 1000, 0
+        bottomline.move 410 * wR, null, 1000, 0
+
+      tiltIt = ->
+        topline.rotate 100, 200, 1000
+        bottomline.rotate -100, 200, 1000
 
       spinIt = ->
-        spinner.rotate -1800, 10000, 0
+        spinner.rotate -18000, 100000, 0
 
       makeItRain = ->
-        topline.enablePsyx 0, 0.5, 1
-        bottomline.enablePsyx 0, 0.5, 1
-        time = 0
+        count = 0
         color = new AJSColor3 10, 36, 46
 
-        for y in [0...100]
-            time += 24
+        spawner = setInterval ->
+          count++
+          if count == 200 then clearInterval spawner
 
-            setTimeout ->
-              px = Math.floor Math.random() * 1920 * wR
-              py = Math.floor (Math.random() * 100) + (1100 * hR)
+          px = Math.floor Math.random() * 1920 * wR
+          py = Math.floor (Math.random() * 100) + (1100 * hR)
+          mass = Math.round (Math.random() * 100) + 25
 
-              AJS.createCircleActor(px, py, 10 * hR)
-              .setPhysicsLayer(Math.floor(Math.random() * 2) + 1)
-              .setColor(color)
-              .enablePsyx 1, 0.5, 0.6
-            , time
+          circle = AJS.createCircleActor px, py, 10 * scaleBig
+          circle.setColor color
+          circle.enablePsyx mass, 0.1, 0.6
+        , 25
 
       spinIt()
       swooshIt()
+      tiltIt()
 
-      setTimeout ->
-        makeItRain()
-      , 1001
+      topline.enablePsyx 0, 0.1, 0.5
+      bottomline.enablePsyx 0, 0.1, 0.5
+
+      setTimeout (-> makeItRain()), 1001
 
 module.exports = new AdefyTestAdTemplate
