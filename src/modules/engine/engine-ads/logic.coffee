@@ -56,6 +56,8 @@ setup = (options, imports, register) ->
     options.width = Number req.param "width"
     options.height = Number req.param "height"
 
+    if req.param("html") != undefined then options.html = true
+
     options
 
   validateRequest = (req) ->

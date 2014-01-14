@@ -217,6 +217,14 @@ module.exports = (grunt) ->
           dest: "#{_buildDir}/modules/engine/engine-templates/templates"
         ]
 
+      templateAssetsRemote:
+        files: [
+          expand: true
+          cwd: "#{srcDir}/modules/engine/engine-templates/templates"
+          src: "*/*"
+          dest: "#{_buildDir}/static/assets"
+        ]
+
     # CSS Minifier
     cssmin:
       minify:
@@ -300,6 +308,7 @@ module.exports = (grunt) ->
     "copy:jade"
     "copy:ssl"
     "copy:templateAssets"
+    "copy:templateAssetsRemote"
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"

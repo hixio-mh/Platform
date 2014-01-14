@@ -15,19 +15,25 @@
 spew = require "spew"
 fs = require "fs"
 request = require "request"
+archiver = require "archiver"
 
 class AdefyBaseAdTemplate
 
   @AJSCdnUrl: "http://cdn.adefy.com/ajs/ajs.js"
+  @AWGLCdnUrl: "http://cdn.adefy.com/awgl/awgl-full.js"
 
   name: "Base Template"
   ready: false
   assets: ""
+  manifest: null
 
   files: []
 
   _cachedAJS: null
+  _cachedAWGL: null
+
   _cachedAJSTimestamp: null
+  _cachedAWGLTimestamp: null
 
   # Base template constructor; loads all base assets into RAM as a zip file,
   # and awaits calls to @create()
@@ -36,7 +42,16 @@ class AdefyBaseAdTemplate
   constructor: ->
     @loadAssets()
     @fetchAJS =>
-      @signalReady()
+      @fetchAWGL =>
+        @signalReady()
+
+  # Prefixes the path to our static assets directory for remote access to an
+  # item
+  #
+  # @param [String] item
+  # @return [String] prefixedPath
+  prefixRemoteAssetPath: (item) ->
+    "/assets/#{@assets}/#{item}"
 
   # Loads all files in our @assets directory (relative to our current directory)
   # into our zip archive
@@ -45,9 +60,9 @@ class AdefyBaseAdTemplate
     files = fs.readdirSync path
 
     for file in files
-      if fs.statSync("#{path}#{file}").isFile()
+      if fs.statSync("#{path}/#{file}").isFile()
         @files.push
-          buffer: fs.readFileSync "#{path}#{file}"
+          buffer: fs.readFileSync "#{path}/#{file}"
           filename: file
 
   # Signals to the engine that we are ready for useage
@@ -60,11 +75,105 @@ class AdefyBaseAdTemplate
       spew.error "Can't use template \"#{@name}\", assets not loaded!"
       res.json 500, error: "Template system not ready!"
     else
-      @create options, res
+      creative = @create options
 
-  create: (options, res) ->
+      if creative == null
+        res.json 500, error: "Invalid template, no creative present"
+      else
+
+        if options.html == true
+          @sendHTML creative, options.width, options.height, res
+        else
+          @sendArchive creative, options.width, options.height, res
+
+  # Sends an HTML ad, pulling in AWGL
+  #
+  # @param [Object] creative
+  # @param [Number] width
+  # @param [Number] height
+  # @param [Object] response
+  sendHTML: (creative, width, height, res) ->
+    manifestHMTL = @manifest
+
+    for texture in manifestHMTL.textures
+      texture.path = @prefixRemoteAssetPath texture.path
+
+    fullAd = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+      <meta charest="utf-8">
+    </head>
+    <body>
+      <script>
+      #{@getCachedAWGL()}
+      </script>
+      <script>
+      #{@getCachedAJS()}
+      </script>
+
+      <script>
+      var width = #{width};
+      var height = #{height};
+
+      #{creative.header}
+
+      var manifest = #{JSON.stringify manifestHMTL};
+
+      AJS.init(function() {
+        AJS.loadManifest(JSON.stringify(manifest), function() {
+          #{creative.body}
+        });
+      }, width, height);
+      </script>
+    </body>
+    </html>
+    """
+
+    res.send fullAd
+
+  # Sends a packaged ad for mobile execution
+  #
+  # @param [Object] creative
+  # @param [Number] width
+  # @param [Number] height
+  # @param [Object] res
+  sendArchive: (creative, width, height, res) ->
+    archive = archiver "zip"
+    archive.on "error", (err) ->
+      spew.error err
+      res.json 500, error: "Internal error"
+
+    archive.pipe res
+
+    for file in @files
+      archive.append file.buffer, name: file.filename
+
+    source = """
+      var width = #{width};
+      var height = #{height};
+
+      #{creative.header}
+
+      #{creative.body}
+    """
+
+    archive.append JSON.stringify(@manifest), name: "package.json"
+    archive.append source, name: "scene.js"
+    archive.append @getCachedAJS(), name: "adefy.js"
+
+    archive.finalize (err, bytes) ->
+      if err
+        spew.error err
+        res.json 500, error: "Internal error"
+
+  # Generate a creative. This needs to be overriden by actual templates!
+  #
+  # @param [Object] options
+  create: (options) ->
     spew.warning "Invalid template, no create present"
-    res.json 500, error: "Invalid template"
+    null
 
   fetchAJS: (cb) ->
     request.head AdefyBaseAdTemplate.AJSCdnUrl, (err, res, body) =>
@@ -81,15 +190,33 @@ class AdefyBaseAdTemplate
             return spew.error err
 
           @_cachedAJS = body
-          spew.info "Updated stored AJS"
-
           if cb then cb()
+      else if cb then cb()
 
+  fetchAWGL: (cb) ->
+    request.head AdefyBaseAdTemplate.AWGLCdnUrl, (err, res, body) =>
+      if err then return spew.error err
+
+      timestamp = new Date(res.headers["last-modified"]).getTime()
+
+      if @_cachedAWGLTimestamp == null or @_cachedAWGLTimestamp < timestamp
+        @_cachedAWGLTimestamp = timestamp
+
+        request.get AdefyBaseAdTemplate.AWGLCdnUrl, (err, res, body) =>
+          if err
+            @_cachedAWGLTimestamp = null
+            return spew.error err
+
+          @_cachedAWGL = body
+          if cb then cb()
       else if cb then cb()
 
   getCachedAJS: ->
     @fetchAJS()
     @_cachedAJS
 
+  getCachedAWGL: ->
+    @fetchAWGL()
+    @_cachedAWGL
 
 module.exports = AdefyBaseAdTemplate
