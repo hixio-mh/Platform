@@ -16,6 +16,7 @@ spew = require "spew"
 fs = require "fs"
 request = require "request"
 archiver = require "archiver"
+_ = require "underscore"
 
 class AdefyBaseAdTemplate
 
@@ -86,6 +87,21 @@ class AdefyBaseAdTemplate
         else
           @sendArchive creative, options.width, options.height, res
 
+  updateHTMLManifest: ->
+    if @manifestHMTL != undefined then return
+
+    @manifestHMTL =
+      ad: @manifest.ad
+      lib: @manifest.lib
+      textures: []
+
+    for texture in @manifest.textures
+      @manifestHMTL.textures.push
+        path: @prefixRemoteAssetPath texture.path
+        compression: texture.compression
+        type: texture.type
+        name: texture.name
+
   # Sends an HTML ad, pulling in AWGL
   #
   # @param [Object] creative
@@ -93,10 +109,7 @@ class AdefyBaseAdTemplate
   # @param [Number] height
   # @param [Object] response
   sendHTML: (creative, width, height, res) ->
-    manifestHMTL = @manifest
-
-    for texture in manifestHMTL.textures
-      texture.path = @prefixRemoteAssetPath texture.path
+    @updateHTMLManifest()
 
     fullAd = """
     <!DOCTYPE html>
@@ -119,7 +132,7 @@ class AdefyBaseAdTemplate
 
       #{creative.header}
 
-      var manifest = #{JSON.stringify manifestHMTL};
+      var manifest = #{JSON.stringify @manifestHMTL};
 
       AJS.init(function() {
         AJS.loadManifest(JSON.stringify(manifest), function() {
