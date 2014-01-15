@@ -29,6 +29,11 @@ setup = (options, imports, register) ->
     else if req.params.request == "invites" then getInviteData req, res
     else res.json 400,  { error: "Unknown request #{req.params.request}" }
 
+  formatResults = (results) ->
+    formatted = []
+    formatted.push { x: res._id, y: res.value } for res in results
+    formatted
+
   # Retrieves data for graphing users in the admin interface. Returns data
   # by week, starting from the previous full week (1st, 8th, 15th, 22st, 29th)
   #
@@ -50,13 +55,14 @@ setup = (options, imports, register) ->
 
         # We return a key representing our creation span, and a value
         # which will be set to the sum of all users in a single span later
-        emit "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}", 1
+        d = "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}"
+        emit new Date(d).getTime(), 1
 
       reduce: (k, vals) -> sum = 0; sum += val for val in vals; sum
 
     db.model("User").mapReduce query, (err, results) ->
       if utility.dbError err, res then return
-      res.json results
+      res.json formatResults results
 
   # Retrieves invite data in a similar format to getUserdata
   getInviteData = (req, res) ->
@@ -74,13 +80,14 @@ setup = (options, imports, register) ->
         else if created.getDate() < 22 then week = 2
         else week = 3
 
-        emit "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}", 1
+        d = "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}"
+        emit new Date(d).getTime(), 1
 
       reduce: (k, vals) -> sum = 0; sum += val for val in vals; sum
 
     db.model("Invite").mapReduce query, (err, results) ->
       if utility.dbError err, res then return
-      res.json results
+      res.json formatResults results
 
   register null, {}
 

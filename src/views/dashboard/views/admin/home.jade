@@ -15,10 +15,6 @@
 include _menu
 
 .index.dashboard
-  h1 Users
+  h1 Users &amp; Invites
   br
-  #chart-userCount(style="height: 250px")
-
-  h1 Invites
-  br
-  #chart-inviteCount(style="height: 250px")
+  div(graph data="adminChartData" width="840" height="250" type="line" legend="true" axes="true" hover="true")
