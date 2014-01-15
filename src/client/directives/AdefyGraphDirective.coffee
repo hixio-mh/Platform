@@ -11,19 +11,39 @@ window.AdefyDashboard.directive "graph", [->
     legend: "@"
 
   link: (scope, element, attrs) ->
+
+    # Returns a data object ready for rickshaw
+    processData = (data) ->
+      processedData = []
+
+      for graph, i in data.static
+        processedData.push
+          name: graph.name
+          color: graph.color
+          data: data.dynamic[i]
+
+      processedData
+
     rickshaw = new Rickshaw.Graph
       element: element.find(".rickshaw")[0]
       renderer: scope.type or "line"
-      series: scope.data
+      series: processData scope.data
       stroke: scope.stroke or true
 
       # temp
       width: scope.width
       height: scope.height
 
-    scope.$watch "data", (graphs) ->
+    scope.$watch "data.dynamic", (graphs) ->
       return if not graphs or not graphs.length
+      console.log "Update called"
+
+      processedData = processData scope.data
+      for item, i in processedData
+        rickshaw.series[i].data = item.data
+        console.log "Updated: #{JSON.stringify rickshaw.series[i].data}"
       rickshaw.update()
+    , true
 
     if scope.axes
       axisX = new Rickshaw.Graph.Axis.Time graph: rickshaw
