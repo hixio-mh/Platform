@@ -18,16 +18,15 @@ include _menu
   h1 Publishers
 
   table.info
-    thead
-      tr
-        th User
-        th App Name
-        th Status
-        th Impressions
-        th Clicks
-        th CTR
-        th Earnings
-        th Actions
+    thead: tr
+      th User
+      th App Name
+      th Status
+      th Impressions
+      th Clicks
+      th CTR
+      th Earnings
+      th Actions
     tbody
       tr(ng-repeat="pub in pubs")
         td {{ pub.owner.username }}
