@@ -29,10 +29,20 @@ setup = (options, imports, register) ->
     else if req.params.request == "invites" then getInviteData req, res
     else res.json 400,  { error: "Unknown request #{req.params.request}" }
 
-  formatResults = (results) ->
-    formatted = []
-    formatted.push { x: res._id, y: res.value } for res in results
-    formatted
+  computeTotals = (results) ->
+    results.sort (a, b) -> a.x - b.x
+
+    for span in [0...results.length]
+      results[span].y = 1
+
+      date = new Date(results[span].x).getTime()
+
+      for update in [0...results.length]
+        if update != span
+          if new Date(results[update].x).getTime() < date
+            results[span].y += 1
+
+    results
 
   # Retrieves data for graphing users in the admin interface. Returns data
   # by week, starting from the previous full week (1st, 8th, 15th, 22st, 29th)
@@ -41,53 +51,27 @@ setup = (options, imports, register) ->
   getUserData = (req, res) ->
     if not req.user.admin then return
 
-    # Map reduce!
-    query =
-      map: ->
-
-        # Figure out week we are in
-        created = new Date Date.parse(@_id.getTimestamp())
-
-        if created.getDate() < 8 then week = 0
-        else if created.getDate() < 15 then week = 1
-        else if created.getDate() < 22 then week = 2
-        else week = 3
-
-        # We return a key representing our creation span, and a value
-        # which will be set to the sum of all users in a single span later
-        d = "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}"
-        emit new Date(d).getTime(), 1
-
-      reduce: (k, vals) -> sum = 0; sum += val for val in vals; sum
-
-    db.model("User").mapReduce query, (err, results) ->
+    db.model("User").find {}, (err, results) ->
       if utility.dbError err, res then return
-      res.json formatResults results
+
+      data = []
+      for user in results
+        data.push x: new Date(Date.parse(user._id.getTimestamp())).getTime()
+
+      res.json { data: computeTotals(data), count: results.length }
 
   # Retrieves invite data in a similar format to getUserdata
   getInviteData = (req, res) ->
     if not req.user.admin then return
 
-    # Map reduce!
-    query =
-      map: ->
-
-        # Figure out week we are in
-        created = new Date Date.parse(@_id.getTimestamp())
-
-        if created.getDate() < 8 then week = 0
-        else if created.getDate() < 15 then week = 1
-        else if created.getDate() < 22 then week = 2
-        else week = 3
-
-        d = "#{created.getFullYear()}-#{created.getMonth() + 1}-#{(week * 7) + 1}"
-        emit new Date(d).getTime(), 1
-
-      reduce: (k, vals) -> sum = 0; sum += val for val in vals; sum
-
-    db.model("Invite").mapReduce query, (err, results) ->
+    db.model("Invite").find {}, (err, results) ->
       if utility.dbError err, res then return
-      res.json formatResults results
+
+      data = []
+      for invite in results
+        data.push x: new Date(Date.parse(invite._id.getTimestamp())).getTime()
+
+      res.json { data: computeTotals(data), count: results.length }
 
   register null, {}
 
