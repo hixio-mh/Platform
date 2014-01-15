@@ -15,6 +15,8 @@
 include _menu
 
 .index.dashboard
+  br
+  br
   h1 Publishers
 
   table.info
@@ -47,6 +49,8 @@ include _menu
           a.btn.btn-flat.success.small(href="#" ng-click="viewPub(pub)") View
 
 .index.dashboard(ng-if="pubView.name")
+  br
+  br
   h1
     span {{ pubView.name }} - Details
     span.label(ng-class="pubView.statusClass") {{ pubView.statusText }}

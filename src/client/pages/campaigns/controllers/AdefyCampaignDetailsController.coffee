@@ -13,28 +13,40 @@
 ##
 window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $routeParams, $http, Campaign) ->
 
-  # Chart.js options
-  $scope.options = {}
-  $scope.stats = {}
-
-  $scope.chart =
-    labels : ["January", "February", "March", "April", "May", "June", "July"]
-    datasets : [
-        fillColor: "rgba(220,220,220,0.5)"
-        strokeColor: "rgba(220,220,220,1)"
-        pointColor: "rgba(220,220,220,1)"
-        pointStrokeColor: "#fff"
-        data: [65, 59, 90, 81, 56, 55, 40]
-      ,
-        fillColor: "rgba(151,187,205,0.5)"
-        strokeColor: "rgba(151,187,205,1)"
-        pointColor: "rgba(151,187,205,1)"
-        pointStrokeColor: "#fff"
-        data: [28, 48, 40, 19, 96, 27, 100]
+  $scope.ctrData =
+    static: [
+      name: "CTR"
+      color: "#97bbcd"
     ]
 
-  refreshCampaign = ->
-    Campaign.get id: $routeParams.id, (campaign) ->
-      $scope.campaign = campaign
+    dynamic: [
+      [
+        { x: 1, y: 65 }
+        { x: 2, y: 59 }
+        { x: 3, y: 90 }
+        { x: 4, y: 81 }
+        { x: 5, y: 56 }
+        { x: 6, y: 55 }
+        { x: 7, y: 40 }
+      ]
+    ]
 
-  refreshCampaign()
+  $scope.impressionsData =
+    static: [
+      name: "Impressions"
+      color: "#97bbcd"
+    ]
+
+    dynamic: [
+      [
+        { x: 1, y: 65 }
+        { x: 2, y: 59 }
+        { x: 3, y: 90 }
+        { x: 4, y: 81 }
+        { x: 5, y: 56 }
+        { x: 6, y: 55 }
+        { x: 7, y: 40 }
+      ]
+    ]
+
+  Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign

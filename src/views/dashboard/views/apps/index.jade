@@ -20,7 +20,7 @@ a.new-item(href="/apps/new")
     img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
     .metrics
-      canvas(linechart, options="options", data="app.chart", width="340", height="200")
+      div.noAxes(graph data="fakeData" width="335" height="200")
       .wrap: .text
         .amount.large $ {{ app.stats.earnings | number:2 }}
         .desc Total Revenue

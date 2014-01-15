@@ -24,8 +24,8 @@ include _menu
 
 .graphs
   .graph
-    h3 Earnings
-    canvas(linechart, options="options", data="chart", width="900", height="350")
+    h3 CTR
+    div(graph data="ctrData" width="900" height="350" type="area" axes="all" hover="true")
     hr
     h3 Impressions
-    canvas(linechart, options="options", data="chart", width="900", height="350")
+    div(graph data="impressionsData" width="900" height="350" type="area" axes="all" hover="true")

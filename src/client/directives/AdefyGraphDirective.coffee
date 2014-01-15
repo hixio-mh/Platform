@@ -12,6 +12,7 @@ window.AdefyDashboard.directive "graph", [->
     hover: "@"
     axes: "@"
     stroke: "@"
+    interpolation: "@"
 
   link: (scope, element, attrs) ->
 
@@ -33,7 +34,7 @@ window.AdefyDashboard.directive "graph", [->
       renderer: scope.type or "line"
       series: processData scope.data
       stroke: scope.stroke or true
-      interpolation: "linear"
+      interpolation: scope.interpolation or "basis"
 
       # temp
       width: scope.width

@@ -14,11 +14,14 @@
 
 window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, $http, $route, Campaign) ->
 
-  Campaign.query (campaigns) ->
-    # Calculate CTR, status, and active text
-    for campaign, i in campaigns
-      # CTR
-      campaign.ctr = (campaign.clicks / campaign.impressions) * 100
-      if isNaN campaign.ctr then campaign.ctr = 0
+  $scope.fakeData =
+    static: [
+      name: "Metrics"
+      color: "#33b5e5"
+    ]
 
-    $scope.campaigns = campaigns
+    dynamic: [
+      [{ x: 1910, y: 92228531 }, { x: 1920, y: 106021568 }, { x: 1930, y: 123202660 }, { x: 1940, y: 132165129 }, { x: 1950, y: 151325798 }, { x: 1960, y: 179323175 }, { x: 1970, y: 203211926 }, { x: 1980, y: 226545805 }, { x: 1990, y: 248709873 }, { x: 2000, y: 281421906 }, { x: 2010, y: 308745538 }]
+    ]
+
+  Campaign.query (campaigns) -> $scope.campaigns = campaigns
