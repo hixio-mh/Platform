@@ -24,7 +24,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   # Delete user
-  app.get "/api/v1/user/delete", (req, res) ->
+  app.delete "/api/v1/user/delete", (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
@@ -32,7 +32,6 @@ setup = (options, imports, register) ->
 
     db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res then return
-      if not utility.verifyDBResponse user, res, "User" then return
 
       if req.cookies.user.sess == user.session
         res.json 500, { error: "You can't delete yourself!" }
