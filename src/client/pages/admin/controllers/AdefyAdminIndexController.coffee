@@ -40,45 +40,15 @@ window.AdefyDashboard.controller "AdefyAdminIndexController", ($scope, $http, $r
   ##
 
   # Fetch data for user graph
-  $http.get("/api/v1/analytics/users").success (data) ->
-    if data.error != undefined then alert data.error; return
+  $http.get("/api/v1/analytics/users").success (result) ->
+    if result.error != undefined then alert result.error; return
 
-    result = computeTotals data
     $scope.adminChartData.dynamic[0] = result.data
-    $scope.userCount = result.largest
+    $scope.userCount = result.count
 
   # Fetch data for invite graph
-  $http.get("/api/v1/analytics/invites").success (data) ->
-    if data.error != undefined then alert data.error; return
+  $http.get("/api/v1/analytics/invites").success (result) ->
+    if result.error != undefined then alert result.error; return
 
-    result = computeTotals data
     $scope.adminChartData.dynamic[1] = result.data
-    $scope.inviteCount = result.largest
-
-# Helper, computes totals for data sets providing deltas
-#
-# Returns an object with the modified data set, and the largest value
-computeTotals = (data) ->
-
-  largest = 0
-
-  # Go through and calculate totals for each timespan
-  for span in [0...data.length]
-
-    data[span].total = data[span].y
-
-    date = new Date(data[span].x).getTime()
-
-    for i in [0...data.length]
-      if i != span
-        otherDate = new Date(data[i].x).getTime()
-        if otherDate < date then data[span].total += data[i].y
-
-    if data[span].total > largest then largest = data[span].total
-
-  # Replace y values with deltas
-  for val in data
-    val.y = val.total
-    delete val.total
-
-  { largest: largest, data: data }
+    $scope.inviteCount = result.count

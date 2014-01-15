@@ -9,6 +9,9 @@ window.AdefyDashboard.directive "graph", [->
     height: "@"
     unit: "@"
     legend: "@"
+    hover: "@"
+    axes: "@"
+    stroke: "@"
 
   link: (scope, element, attrs) ->
 
@@ -16,11 +19,12 @@ window.AdefyDashboard.directive "graph", [->
     processData = (data) ->
       processedData = []
 
-      for graph, i in data.static
-        processedData.push
-          name: graph.name
-          color: graph.color
-          data: data.dynamic[i]
+      if data.static
+        for graph, i in data.static
+          processedData.push
+            name: graph.name
+            color: graph.color
+            data: data.dynamic[i]
 
       processedData
 
@@ -29,6 +33,7 @@ window.AdefyDashboard.directive "graph", [->
       renderer: scope.type or "line"
       series: processData scope.data
       stroke: scope.stroke or true
+      interpolation: "linear"
 
       # temp
       width: scope.width
@@ -36,22 +41,22 @@ window.AdefyDashboard.directive "graph", [->
 
     scope.$watch "data.dynamic", (graphs) ->
       return if not graphs or not graphs.length
-      console.log "Update called"
 
       processedData = processData scope.data
-      for item, i in processedData
-        rickshaw.series[i].data = item.data
-        console.log "Updated: #{JSON.stringify rickshaw.series[i].data}"
+      rickshaw.series[i].data = item.data for item, i in processedData
       rickshaw.update()
+
     , true
 
     if scope.axes
-      axisX = new Rickshaw.Graph.Axis.Time graph: rickshaw
-      axisY = new Rickshaw.Graph.Axis.Y
-        graph: rickshaw
-        orientation: "left"
-        tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-        element: element.find(".axis-y")[0]
+      if scope.axes.indexOf("x") > -1 or scope.axes == "all"
+        axisX = new Rickshaw.Graph.Axis.Time graph: rickshaw
+      if scope.axes.indexOf("y") > -1 or scope.axes == "all"
+        axisY = new Rickshaw.Graph.Axis.Y
+          graph: rickshaw
+          orientation: "left"
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+          element: element.find(".axis-y")[0]
 
     if scope.legend
       legend = new Rickshaw.Graph.Legend
@@ -61,8 +66,8 @@ window.AdefyDashboard.directive "graph", [->
     if scope.hover
       hoverDetails = new Rickshaw.Graph.HoverDetail
         graph: rickshaw
-        xFormatter: (x) -> "#{x} Days"
-        yFormatter: (y) -> "$#{y}"
+        xFormatter: (x) -> new Date(x).toLocaleDateString()
+        yFormatter: (y) -> y
 
     rickshaw.render()
 
