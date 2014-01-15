@@ -6,5 +6,7 @@
         .content
           div(ng-include="template")
         .actions
+          .error(ng-bind="errorMessage" ng-if="errorMessage")
           button(ng-click="close()") Close
           button.blue(ng-click="submit()") {{ okButtonText }}
+          button(ng-click="delete()" ng-if="deleteButtonText.length > 0") {{ deleteButtonText }}
