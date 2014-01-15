@@ -14,7 +14,22 @@
 
 include _menu
 
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ 0
+    .desc Impressions today
+  .stat: .wrap
+    .amount.large ▲ 0
+    .desc Clicks today
+  .stat: .wrap
+    .amount.large {{ userCount }}
+    .desc Users
+  .stat: .wrap
+    .amount.large {{ inviteCount }}
+    .desc Invites
+
 .index.dashboard
+  br
   h1 Users &amp; Invites
   br
   div(graph data="adminChartData" width="840" height="250" type="line" legend="true" hover="true" axes="y")

@@ -25,8 +25,3 @@ window.AdefyDashboard.controller "AdefyDashboardPublisherController", ($scope, $
     ]
 
   App.query (apps) -> $scope.apps = apps
-
-  ## This shouldn't be necessary anymore
-  # for app, i in apps
-  #   app.ctr = (app.clicks / app.impressions) * 100
-  #   if isNaN app.ctr then app.ctr = 0

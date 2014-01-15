@@ -43,10 +43,10 @@
       tbody
         tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
           td {{ app.name }}
-          td {{ app.impressions | number }}
-          td {{ app.clicks | number }}
-          td {{ app.ctr | number:2 }}%
-          td $ {{ app.earnings | number:2 }}
+          td {{ app.stats.impressions | number }}
+          td {{ app.stats.clicks | number }}
+          td {{ app.stats.ctr | number:2 }}%
+          td $ {{ app.stats.earnings | number:2 }}
   div
     h1 News
     ul.news

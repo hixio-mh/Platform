@@ -14,9 +14,10 @@
 
 include _menu
 
-.contents.w920.center
-  button.btn.btn-primary(form-modal href="#" template="/views/dashboard/admin:modals:newInvite" title="Create New Invite" ok-button-text="Create" form-submit="newInvite()" form-object="form") New Invite
-
+.index.dashboard
+  br
+  button.blue(form-modal href="#" template="/views/dashboard/admin:modals:newInvite" title="Create New Invite" ok-button-text="Create" form-submit="newInvite()" form-object="form") New Invite
+  br
   br
 
   div(ng-if="invites.length > 0")
