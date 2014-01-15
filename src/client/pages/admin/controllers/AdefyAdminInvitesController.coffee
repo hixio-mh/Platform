@@ -17,58 +17,47 @@ window.AdefyDashboard.controller "AdefyAdminInvitesController", ($scope, $http, 
   # Fetch invite list
   $http.get("/api/v1/invite/all").success (data) -> $scope.invites = data
 
-  $scope.inviteStatus = ""
-  $scope.inviteError = ""
-  $scope.newInviteStatus = ""
-  $scope.newInviteError = ""
-  $scope.current = 0
+  $scope.invites = []
+  $scope.form = {}
+  $scope.invite = {}
 
-  $scope.showModal = (i) ->
-    $scope.current = i
-    $("#inviteInfo").modal "show"
+  findInviteIndex = (data) ->
+    index = null
 
-  $scope.update = ->
-    $scope.inviteStatus = "Updating..."
-    i = $scope.invites[$scope.current]
+    for invite, i in $scope.invites
+      if invite.code == data.code
+        index = i
+        break
 
-    $http.get("/api/v1/invite/update?id=#{i.id}&email=#{i.email}&code=#{i.code}").success (result) ->
-      if result.error != undefined
-        $scope.inviteError = result.error
-        $scope.inviteStatus = ""
-      else
-        $scope.inviteStatus = "Updated!"
-        setTimeout (-> $scope.$apply -> $scope.inviteStatus = ""), 500
-        $("#inviteInfo").modal "hide"
+    if index == null
+      error: "Couldn't find invite in scope"
+    else
+      index
 
-  $scope.delete = ->
-    bootbox.confirm "Are you sure?", (result) ->
+  $scope.editInvite = (data) ->
+    index = findInviteIndex data
+    if index.error != undefined then return index
 
-      if result then $scope.$apply ->
-        $scope.inviteStatus = "Deleting..."
-        i = $scope.invites[$scope.current]
+    id = $scope.invites[index].id
+    email = data.email
+    code = data.code
 
-        $http.get("/api/v1/invite/delete?id=#{i.id}").success (result) ->
-          if result.error != undefined
-            $scope.inviteError = result.error
-            $scope.inviteStatus = ""
-          else
-            $scope.inviteStatus = "Deleted!"
-            setTimeout (-> $scope.$apply -> $scope.inviteStatus = ""), 500
-            $("#inviteInfo").modal "hide"
-            $scope.invites.splice $scope.current, 1
-            $scope.current = 0
+    $http.get "/api/v1/invite/update?id=#{id}&email=#{email}&code=#{code}"
+
+  $scope.deleteInvite = (data) ->
+    if confirm "Are you sure?"
+      index = findInviteIndex data
+      if index.error != undefined then return index
+
+      id = $scope.invites[index].id
+
+      $http.get("/api/v1/invite/delete?id=#{id}").success (result) ->
+        if result.error == undefined
+          $scope.invites.splice index, 1
 
   $scope.newInvite = ->
-    if $scope.newInvite == undefined
-      $scope.newInviteStatus = "Email required"
+    if $scope.form.email == undefined
+      error: "Email required"
     else
-      $http.get("/api/v1/invite/add?key=T13S7UESiorFUWMI&email=#{$scope.newInviteEmail}").success (result) ->
-        if result.error != undefined
-          $scope.newInviteError = result.error
-          $scope.newInviteStatus = ""
-        else
-          $scope.newInviteStatus = "Created!"
-          setTimeout (-> $scope.$apply -> $scope.newInviteStatus = ""), 500
-          $("#newInvite").modal "hide"
-
-          $scope.invites.push result
+      query = "/api/v1/invite/add?key=T13S7UESiorFUWMI&email=#{$scope.form.email}"
+      $http.get(query).success (result) -> $scope.invites.push result

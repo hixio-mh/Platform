@@ -68,8 +68,7 @@ setup = (options, imports, register) ->
       # Check for error from MailChimp
       if err
         spew.error "MailChimp invite error: #{err}"
-        errorCB "Server error"
-        return
+        return errorCB "Server error"
 
       # Attempt to parse result; fails on invalid JSON
       try
@@ -92,10 +91,8 @@ setup = (options, imports, register) ->
 
     # If in test mode, don't contact mailchimp
     if req.query.test == "true" then testing = true else testing = false
-
     if req.query.key != "WtwkqLBTIMwslKnc" and req.query.key != "T13S7UESiorFUWMI"
-      res.json 400
-      return
+      return res.json 400
 
     email = req.query.email
 
@@ -117,7 +114,7 @@ setup = (options, imports, register) ->
         res.json { email: email, code: invite.code, id: invite.id }
 
     # Error callback
-    , (error) -> res.json { error: error }
+    , (error) -> res.json 500, error: error
 
   # Get invite list
   app.get "/api/v1/invite/all", (req, res) ->

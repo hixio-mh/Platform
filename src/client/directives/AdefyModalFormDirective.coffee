@@ -6,8 +6,12 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
     title: "@"
     template: "@"
     okButtonText: "@"
+    deleteButtonText: "@"
+    formSubmitFunc: "@"
+    formDeleteFunc: "@"
     formSubmit: "&"
     formClear: "&"
+    formDelete: "&"
 
   compile: (element, cAtts) ->
     template = undefined
@@ -17,14 +21,32 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
       template = data
 
     (scope, element, lAtts) ->
-      scope.submit = ->
-        result = scope.formSubmit()
-        if angular.isObject(result) and result.success
-          result.success ->
-            scope.close()
 
+      handleSubmission = (result) ->
+        if angular.isObject result
+          if result.success
+            result.success ->
+              scope.close()
+
+            result.error (error) ->
+              if error.error then scope.errorMessage = error.error
+              else scope.errorMessage = error
+          else if result.error
+            scope.errorMessage = result.error
 
         else scope.close() unless result is false
+
+      scope.submit = ->
+        if scope.formSubmitFunc
+          handleSubmission scope.$parent[scope.formSubmitFunc] scope.formObject
+        else
+          handleSubmission scope.formSubmit()
+
+      scope.delete = ->
+        if scope.formDeleteFunc
+          handleSubmission scope.$parent[scope.formDeleteFunc] scope.formObject
+        else
+          handleSubmission scope.formDelete()
 
       scope.close = ->
         $element.remove()

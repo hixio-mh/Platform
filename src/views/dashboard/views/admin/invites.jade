@@ -14,78 +14,19 @@
 
 include _menu
 
-.index.dashboard
-  div(ng-if="invites.length == 0")
-    .row.header
-      .col-md-12
-        h3 No invites exist
-    .row.section
-      button.btn.btn-primary(data-toggle="modal", href="#newInvite") Create one!
+.contents.w920.center
+  button.btn.btn-primary(form-modal href="#" template="/views/dashboard/admin:modals:newInvite" title="Create New Invite" ok-button-text="Create" form-submit="newInvite()" form-object="form") New Invite
 
-  div(ng-if="invites.length != 0")
-    .row.header
-      .col-md-12
-        h3 Invites
+  br
 
-    .table-wrapper.section
-      .row
-        table.table.table-striped.table-hover(ng-if="invites.length > 0")
-          thead
-            tr
-              th.col-md-6 Email
-              th.col-md-6 Invite Code
-          tbody
-            tr(ng-repeat="(i, invite) in invites", ng-click="showModal({{ i }})")
-              td(ng-bind="invite.email")
-              td(ng-bind="invite.code")
+  div(ng-if="invites.length > 0")
+    h1 Invites
 
-#inviteInfo.modal.fade
-  .modal-dialog
-
-    .modal-content
-      .modal-header
-        button(type="button", data-dismiss="modal").close &times;
-        h4.modal-title(ng-bind="invites[current].email")
-
-      .modal-body
-        form
-          .form-group
-            label(for="inviteEmail") Email
-            input.form-control(name="inviteEmail", type="text", ng-model="invites[current].email")
-
-          .form-group
-            label(for="inviteCode") Code
-            input.form-control(name="inviteCode", type="text", ng-model="invites[current].code")
-
-      .modal-footer
-        .col-lg-6(ng-if="inviteStatus.length > 0")
-          p.text-left(ng-bind="inviteStatus")
-        .col-lg-3(ng-if="inviteError.length > 0")
-          .alert.alert-danger.text-left(ng-bind="inviteError")
-        .col-lg-6.pull-right
-          button(type="button", ng-click="update()").btn.btn-primary Update
-          button(type="button", ng-click="delete()").btn.btn-danger Delete
-          button(type="button", data-dismiss="modal").btn.btn-default Close
-
-#newInvite.modal.fade
-  .modal-dialog
-
-    .modal-content
-      .modal-header
-        button(type="button", data-dismiss="modal").close &times;
-        h4.modal-title New Invite
-
-      .modal-body
-        form
-          .form-group
-            label(for="newInviteEmail") Email
-            input.form-control(name="newInviteEmail", type="text", ng-model="newInviteEmail")
-
-      .modal-footer
-        .col-lg-6(ng-if="newInviteStatus.length > 0")
-          p.text-left(ng-bind="newInviteStatus")
-        .col-lg-3(ng-if="newInviteError.length > 0")
-          .alert.alert-danger.text-left(ng-bind="newInviteError")
-        .col-lg-6.pull-right
-          button(type="button", ng-click="newInvite()").btn.btn-primary Create
-          button(type="button", data-dismiss="modal").btn.btn-default Close
+    table.info
+      thead: tr
+        th Email
+        th Invite Code
+      tbody
+        tr(form-modal ng-repeat="(i, invite) in invites" template="/views/dashboard/admin:modals:editInvite" title="Edit Invite" ok-button-text="Save" delete-button-text="Delete" form-submit-func="editInvite" form-delete-func="deleteInvite" form-object="invite")
+          td {{ invite.email }}
+          td {{ invite.code }}
