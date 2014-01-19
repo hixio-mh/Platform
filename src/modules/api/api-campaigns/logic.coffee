@@ -310,6 +310,7 @@ setup = (options, imports, register) ->
                 else if key == "bid" then needsAdRefRefresh = true
                 else if key == "devices" then needsAdRefRefresh = true
                 else if key == "countries" then needsAdRefRefresh = true
+                else if key == "pricing" then needsAdRefRefresh = true
 
               # Save final value on campaign
               campaign[key] = val
@@ -331,7 +332,7 @@ setup = (options, imports, register) ->
 
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then res.send(404); return
+      if not campaign then return res.send 404
 
       if not req.user.admin and not campaign.owner.equals req.user.id
         res.json 403, { error: "Unauthorized!" }

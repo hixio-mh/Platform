@@ -33,7 +33,7 @@ window.AdefyDashboard.controller "AdefyCampaignCreateController", ($scope, $loca
     "eCommerce"
     "Education"
     "Fashion"
-    "Financial Services"
+    "Finance"
     "Gambling"
     "Games"
     "Health & Fitness"

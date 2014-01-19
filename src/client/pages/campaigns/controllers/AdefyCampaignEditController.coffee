@@ -86,6 +86,10 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
     $scope.campaign = campaign
     $scope.campaign.rules = []
 
+    # Translate network field
+    if $scope.campaign.networks.length == 2
+      $scope.campaign.networks = "all"
+
     # Prepare select fields
     devicesExclude = arrayToSelect2Data campaign.devicesExclude
     devicesInclude = arrayToSelect2Data campaign.devicesInclude

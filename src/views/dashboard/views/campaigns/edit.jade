@@ -2,6 +2,13 @@ include _menu
 
 .inner: form(novalidate ng-class="{submitted: submitted}")
   fieldset: dl.form.center
+    legend Pricing
+    dt Pricing Model
+    dd
+      select(required ng-model="campaign.pricing")
+        option(value="CPC") CPC
+        option(value="CPM") CPM
+  fieldset: dl.form.center
     legend Ads
     p Ads are added to the campaign here.
     dt
@@ -15,15 +22,13 @@ include _menu
       label Bid System
       span What kind of a father would I be if I said no? Yes, except the Dave Matthews Band doesn't rock. Well, then good news! It's a suppository. Incidentally, you have a dime up your nose.
     dd
-      select(chosen required ng-model="campaign.bidSystem")
+      select(required ng-model="campaign.bidSystem")
         option(value="automatic") Automatic
         option(value="manual") Manual
     dt(ng-if="campaign.bidSystem == 'manual'"): label Bid
     dt(ng-if="campaign.bidSystem == 'automatic'"): label Max Bid
     dd(ng-if="campaign.pricing == 'CPM'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpm }}" placeholder="min {{ min.cpm | currency:$ }}")
     dd(ng-if="campaign.pricing == 'CPC'"): input(ng-model="campaign.bid" required type="number" step="any" min="{{ min.cpc }}" placeholder="min {{ min.cpc | currency:$ }}")
-    dt: label CTR Goal
-    dd: input(type="number" step="any" min="0.0" max="100.0" ng-model="campaign.CTRGoal")
   fieldset: dl.form.center
     legend Targetting
     p In this section the general targetting is configured. Later, per-ad fine-tuning is possible, which will override these settings.
