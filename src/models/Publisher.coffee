@@ -176,7 +176,7 @@ schema.methods.fetchOverviewStats = (cb) ->
       filter: true
       request: [
         range: "24hours"
-        stats: ["impressions", "clicks", "earnings"]
+        stats: ["impressions", "clicks", "earnings", "requests"]
       ]
 
     # We need to attach the prefix ourselves, since arguments are not parsed
@@ -199,6 +199,7 @@ schema.methods.fetchOverviewStats = (cb) ->
         clicks24h: 0
         ctr24h: 0
         earnings24h: 0
+        requests24h: 0
 
       # Iterate over the result, and attempt to find matching responses
       for res in data
@@ -207,6 +208,7 @@ schema.methods.fetchOverviewStats = (cb) ->
         assignMatching res, remoteStats.clicks24h, ".clicks,"
         assignMatching res, remoteStats.ctr24h, ".ctr,"
         assignMatching res, remoteStats.earnings24h, ".earnings,"
+        assignMatching res, remoteStats.requests24h, ".requests,"
 
       # Store stats in cache
       statCache.set statCacheKey, remoteStats, (err, success) ->
@@ -216,22 +218,24 @@ schema.methods.fetchOverviewStats = (cb) ->
   @fetchImpressions (impressions) =>
     @fetchClicks (clicks) =>
       @fetchEarnings (earnings) =>
+        @fetchRequests (requests) =>
 
-        localStats =
-          clicks: clicks
-          impressions: impressions
-          earnings: earnings
-          ctr: 0
+          localStats =
+            clicks: clicks
+            impressions: impressions
+            earnings: earnings
+            requests: requests
+            ctr: 0
 
-        if impressions != 0 then localStats.ctr = clicks / impressions
+          if impressions != 0 then localStats.ctr = clicks / impressions
 
-        # We only cache remote stats
-        statCache.get statCacheKey, (err, data) ->
-          if data[statCacheKey] == undefined
-            fetchRemoteStats (remoteStats) =>
-              cb _.extend localStats, remoteStats
-          else
-            cb _.extend localStats, data[statCacheKey]
+          # We only cache remote stats
+          statCache.get statCacheKey, (err, data) ->
+            if data[statCacheKey] == undefined
+              fetchRemoteStats (remoteStats) =>
+                cb _.extend localStats, remoteStats
+            else
+              cb _.extend localStats, data[statCacheKey]
 
 # Fetches a single stat over a specific period of time
 schema.methods.fetchCustomStat = (range, stat, cb) ->
@@ -275,11 +279,17 @@ schema.methods.logStatIncrement = (stat) ->
 # Initialization
 
 schema.methods.ensureRedisStructure = ->
-  setKeyIfNull = (key, val) -> if redis.get key == null then redis.set key, val
+  setKeyIfNull = (key, val) -> if redis.get(key) == null then redis.set key, val
 
   setKeyIfNull "#{@getRedisId()}:impressions", 0
   setKeyIfNull "#{@getRedisId()}:clicks", 0
   setKeyIfNull "#{@getRedisId()}:earnings", 0
+  setKeyIfNull "#{@getRedisId()}:requests", 0
+
+  @generateRedisPricingInfo()
+
+schema.methods.generateRedisPricingInfo = ->
+  redis.set @getRedisId(), "#{@preferredPricing}|#{@minimumCPC}|#{@minimumCPM}"
 
 # Basic stat fetching
 
@@ -290,6 +300,11 @@ schema.methods.fetchImpressions = (cb) ->
 
 schema.methods.fetchClicks = (cb) ->
   redis.get "#{@getRedisId()}:clicks", (err, result) ->
+    if err then spew.error err
+    cb Number result
+
+schema.methods.fetchRequests = (cb) ->
+  redis.get "#{@getRedisId()}:requests", (err, result) ->
     if err then spew.error err
     cb Number result
 
@@ -304,23 +319,22 @@ schema.methods.fetchEarnings = (cb) ->
     cb Number result
 
 schema.methods.fetchPricingInfo = (cb) ->
-  redis.get "#{@getRedisId()}", (err, result) ->
+  redis.get @getRedisId(), (err, result) ->
     if err then spew.error err
     if result == null then return cb null
 
-    # I broke this out into a try/catch block since JSON.parse may throw an
-    # error of its own.
-    try
-      pricingInfo = JSON.parse result
+    result = result.split "|"
 
-      if pricingInfo.pricing == undefined then throw "No pricing key"
-      if pricingInfo.floorcpc == undefined then throw "No floorcpc key"
-      if pricingInfo.floorcpm == undefined then throw "No floorcpm key"
-
-      cb pricingInfo
-    catch e
-      spew.error "Publisher redis pricing info error: #{e}"
+    if result.length != 3
+      spew.error "Pricing info invalid"
       cb null
+
+    pricingInfo =
+      pricing: result[0]
+      floorcpc: result[1]
+      floorcpm: result[2]
+
+    cb pricingInfo
 
 ##
 ##
@@ -328,6 +342,8 @@ schema.methods.fetchPricingInfo = (cb) ->
 
 schema.pre "save", (next) ->
   if not @hasAPIKey() then @createAPIKey()
+
+  # Also generates pricing Info
   @ensureRedisStructure()
 
   if @needsNewThumbnail() then @generateThumbnailUrl -> next()

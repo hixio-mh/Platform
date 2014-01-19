@@ -348,7 +348,7 @@ schema.methods.clearRedisFilters = (data, ref, cb) ->
 
   clearKeyFromSets = (sets, key, cb) ->
     set = sets.pop()
-    redis.lrem set, 0, key, ->
+    redis.srem set, 0, key, ->
       if sets.length > 0 then clearKeyFromSets sets, key, cb
       else cb()
 
@@ -367,7 +367,7 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
 
   addKeyToSets = (sets, key, cb) ->
     set = sets.pop()
-    redis.rpush set, key, ->
+    redis.sadd set, key, ->
       if sets.length > 0 then addKeyToSets sets, key, cb
       else cb()
 

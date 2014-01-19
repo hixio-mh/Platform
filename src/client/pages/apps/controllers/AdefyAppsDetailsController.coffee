@@ -16,38 +16,31 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
 
   $scope.earningsData =
     static: [
-      name: "Earnings"
+      name: "Requests"
       color: "#97bbcd"
-    ]
-
-    dynamic: [
-      [
-        { x: 1, y: 65 }
-        { x: 2, y: 59 }
-        { x: 3, y: 90 }
-        { x: 4, y: 81 }
-        { x: 5, y: 56 }
-        { x: 6, y: 55 }
-        { x: 7, y: 40 }
-      ]
-    ]
-
-  $scope.impressionsData =
-    static: [
+    ,
+      name: "Clicks"
+      color: "#97bbcd"
+    ,
       name: "Impressions"
       color: "#97bbcd"
     ]
 
     dynamic: [
-      [
-        { x: 1, y: 65 }
-        { x: 2, y: 59 }
-        { x: 3, y: 90 }
-        { x: 4, y: 81 }
-        { x: 5, y: 56 }
-        { x: 6, y: 55 }
-        { x: 7, y: 40 }
-      ]
+      [{ x: 0, y: 0 }]
+      [{ x: 0, y: 0 }]
+      [{ x: 0, y: 0 }]
     ]
+
+  fetchPrefix = "/api/v1/publishers/stats/#{$routeParams.id}"
+
+  $http.get("#{fetchPrefix}/requests/24h").success (data) ->
+    $scope.earningsData.dynamic[0] = data
+
+  $http.get("#{fetchPrefix}/clicks/24h").success (data) ->
+    $scope.earningsData.dynamic[1] = data
+
+  $http.get("#{fetchPrefix}/impressions/24h").success (data) ->
+    $scope.earningsData.dynamic[2] = data
 
   App.get id: $routeParams.id, (app) -> $scope.app = app

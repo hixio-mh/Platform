@@ -100,7 +100,6 @@ module.exports = (host) -> {
             if cb then cb body
           catch err
             spew.error "Graphite response parsing error: #{err}"
-            spew.info body
             if cb then cb []
 
     @getPrefixStat = -> "stats.#{config.mode}"
@@ -137,12 +136,17 @@ module.exports = (host) -> {
 
     @_filterResponse = (data) ->
 
-      for res in data
-        for dp in res.datapoints
-          res.datapoints = res.datapoints.splice 0, 1
-          res.datapoints.push
-            x: dp[0]
-            y: dp[1]
+      for set in data
+        newDataPoints = []
+
+        for point in set.datapoints
+
+          # Convert timestamp to ms
+          newDataPoints.push
+            x: point[1] * 1000
+            y: point[0] || 0
+
+        set.datapoints = newDataPoints
 
       data
 

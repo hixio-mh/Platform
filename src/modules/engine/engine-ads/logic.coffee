@@ -13,8 +13,8 @@
 ##
 
 spew = require "spew"
-# admZip = require "adm-zip"
-# Can't seem to install adm-zip on the server.
+redisLib = require "redis"
+redis = redisLib.createClient()
 
 ##
 ## Handles ad packaging and fetching
@@ -72,25 +72,41 @@ setup = (options, imports, register) ->
     targetingKey = "#{publisher.apikey}:#{new Date().getTime()}"
 
     # Publisher filters
-    pricing = "*"
-    category = ""
+    pricing = publisher.preferredPricing
+    category = publisher.category
 
     # Request filters
-    platform = "android"
-    device = "nexus4"
+    platform = "Android"
+    device = "Nexus 4"
     screen = "768x1280"
     type = "animated"
     tech = "glAd"
 
-    targetingFilters = []
-    targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
-    targetingFilters.push "#{pricing}:#{category}:device:#{device}"
-    targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
-    targetingFilters.push "#{pricing}:#{category}:type:#{type}"
-    targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
+    # sinterstore command takes an argument array, with first element being
+    # the destination
+    targetingFilters = [targetingKey]
+    # targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
+    # targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
+    # targetingFilters.push "#{pricing}:#{category}:type:#{type}"
+    # targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
 
-    redis.sunionstore targetingKey, targetingFilters, (err, result) ->
-      cb targetingKey, err, result
+    # If needed to split things up, implement a cache. Have it reset every 30
+    # minutes or so (changes to DB key structure may happen at any time)
+    #
+    # Get all matching device keys
+    redis.keys "#{pricing}:#{category}:device:*#{device}*", (err, results) ->
+      if err then spew.error err
+
+      if results != null
+        for res in results
+
+          # Add matched devices to list
+          targetingFilters.push res
+
+      redis.sinterstore targetingFilters, (err, result) ->
+        spew.warning "Performed union store between: #{JSON.stringify targetingFilters}"
+        spew.warning "Result: #{result}"
+        cb targetingKey, err, result
 
   # Todo: Implement
   #
@@ -105,16 +121,65 @@ setup = (options, imports, register) ->
   # @param [String] targetingKey key of redis value holding valid ads
   # @param [String] country country to target
   # @param [Method]
-  performCountryTargeting = (targetingKey, country, cb) ->
+  execCountryTargeting = (targetingKey, country, cb) ->
 
     countryTargetingKey = "#{targetingKey}:#{country}"
     targetingFilters = [
+
+      # Destination comes first!
+      countryTargetingKey
+
+      # Actual intersect targets
       targetingKey
       "country:#{country}"
     ]
 
-    redis.sunionstore countryTargetingKey, targetingFilters, (err, result) ->
+    redis.sinterstore targetingFilters, (err, result) ->
       cb countryTargetingKey, err, result
+
+  # Target by country (pass null as a country if not identified)
+  #
+  # @param [String] initialResultSetKey key pointing to initial result set
+  # @param [String] country country string to target, may be null!
+  # @param [Object] res response, used to return empty ad on error
+  # @param [Method] cb callback, accepts finalTargetingSetKey and response
+  performCountryTargeting = (targetingKey, country, res, cb) ->
+
+    # If country is null, return same targeting key
+    if country == null then return cb targetingKey
+
+    execCountryTargeting targetingKey, country, (countryKey, err, adCount) =>
+      if err
+        spew.error err
+        redis.del countryKey
+        redis.del targetingKey
+        return fetchEmpty req, res
+
+      # If no ads for the target country are found, we go with the initial
+      # set.
+      if adCount == 0
+        finalTargetingKey = targetingKey
+        redis.del countryKey
+      else
+        finalTargetingKey = countryKey
+        redis.del targetingKey
+
+      cb finalTargetingKey
+
+  # Fetch targeted ad entries at the specified targeting key
+  #
+  # @param [String] targeting key
+  # @param [Object] res response
+  # @param [Method] cb callback, accepts array of ad objects
+  fetchTargetedAdEntries = (targetingKey, res, cb) ->
+    redis.smembers targetingKey, (err, adKeys) ->
+      redis.del targetingKey
+      if err then spew.error err; return fetchEmpty req, res
+
+      redis.mget adKeys, (err, ads) ->
+        if err then spew.error err; return fetchEmpty req, res
+
+        cb ads
 
   # Standard ad fetch call. Assumes publisher is active and approved!
   # Does targeting, bidding, and ad generation.
@@ -126,55 +191,28 @@ setup = (options, imports, register) ->
   # @param [Object] res response
   # @param [Publisher] publisher publisher model
   fetch = (req, res, publisher) ->
-
-    # Validate request
     error = validateRequest req
-    if error != null then res.json error: error, 400
+    if error != null then return fetchEmpty req, res
 
     # Log request and fetch pricing
     publisher.logRequest()
-    pricingInfo = publisher.fetchPricingInfo()
+    publisher.fetchPricingInfo (pricingInfo) ->
+      if pricingInfo == null
+        spew.error "Pricing info invalid"; return fetchEmpty req, res
 
-    # Check for valid pricing info structure
-    if pricingInfo == null then return res.send 500
+      getIPCountry publisher, (country) ->
+        performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
+          if err or adCount == 0
+            if err then spew.error err
+            redis.del targetingKey
+            return fetchEmpty req, res
 
-    # Targeting
-    getIPCountry publisher, (country) ->
-      performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
-        if err
-          spew.error err
-          return res.send 500
+          # Todo: Add more steps to this if needed
+          if country == "None" then country = null
 
-        # No ads available, backfill
-        if adCount == 0
-          return backfill req, res, publisher
-
-        performCountryTargeting targetingKey, country, (countryTargetingKey, err, countryAdCount) ->
-          if err
-            spew.error err
-            return res.send 500
-
-          # If no ads for the target country are found, we go with the initial
-          # set.
-          if countryAdCount == 0
-            finalTargetingKey = targetingKey
-          else
-            finalTargetingKey = countryTargetingKey
-
-          ##
-          ## TODO: Continue. Next step is MGET (RTB)
-          ##
-          fetchEmpty req, res
-
-  # Attempts to backfill an ad from a 3rd-party. Called when we can't serve
-  # a valid request ourselves
-  #
-  # @param [Object] req request
-  # @param [Object] res response
-  # @param [Publisher] publisher publisher model
-  backfill = (req, res, publisher) ->
-    spew.warning "Backfill not implemented"
-    fetchEmpty req, res
+          performCountryTargeting targetingKey, country, res, (finalKey) ->
+            fetchTargetedAdEntries finalKey, res, (ads) ->
+              res.json ads
 
   # Fetches a test ad tuned for the publisher in question.
   #

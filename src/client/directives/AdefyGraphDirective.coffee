@@ -34,7 +34,7 @@ window.AdefyDashboard.directive "graph", [->
       renderer: scope.type or "line"
       series: processData scope.data
       stroke: scope.stroke or true
-      interpolation: scope.interpolation or "basis"
+      interpolation: scope.interpolation or "linear"
 
       # temp
       width: scope.width

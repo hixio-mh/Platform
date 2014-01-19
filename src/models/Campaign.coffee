@@ -320,12 +320,14 @@ schema.methods.lifetimeData = (cb) ->
 
 # Cleans up campaign references within ads
 schema.pre "remove", (next) ->
-  @populate "ads", =>
-    count = @ads.length
-    done = -> count--; if count == 0 then next()
+  if @ads.length == 0 then next()
+  else
+    @populate "ads", =>
+      count = @ads.length
+      done = -> count--; if count == 0 then next()
 
-    for ad in @ads
-      @removeAd ad.id, -> done()
+      for ad in @ads
+        @removeAd ad.id, -> done()
 
 # Return array of ad documents belonging to a campaign
 #
