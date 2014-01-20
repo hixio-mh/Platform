@@ -21,19 +21,31 @@ db = require "mongoose"
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  filterEngine = imports["engine-filters"]
+  filterEngine = require "../../../helpers/filters"
 
   app.get "/api/v1/filters/countries", (req, res) ->
-    res.json filterEngine.autocompleteCountries req.query.q
+    if req.query.q == undefined
+      res.json filterEngine.getCountries()
+    else
+      res.json filterEngine.autocompleteCountries req.query.q
 
   app.get "/api/v1/filters/categories", (req, res) ->
-    res.json filterEngine.autocompleteCategories req.query.q
+    if req.query.q == undefined
+      res.json filterEngine.getCategories()
+    else
+      res.json filterEngine.autocompleteCategories req.query.q
 
   app.get "/api/v1/filters/devices", (req, res) ->
-    res.json filterEngine.autocompleteDevices req.query.q
+    if req.query.q == undefined
+      res.json filterEngine.getDevices()
+    else
+      res.json filterEngine.autocompleteDevices req.query.q
 
   app.get "/api/v1/filters/manufacturers", (req, res) ->
-    res.json filterEngine.autocompleteManufacturers req.query.q
+    if req.query.q == undefined
+      res.json filterEngine.getManufacturers()
+    else
+      res.json filterEngine.autocompleteManufacturers req.query.q
 
   register null, {}
 

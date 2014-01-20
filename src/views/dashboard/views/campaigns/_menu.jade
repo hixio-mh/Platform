@@ -1,3 +1,17 @@
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ {{ campaign.stats.impressions | number }}
+    .desc Total Impressions
+  .stat: .wrap
+    .amount.large ▲ {{ campaign.stats.clicks | number }}
+    .desc Total Clicks
+  .stat: .wrap
+    .amount.large {{ campaign.stats.ctr | number:2 }} %
+    .desc Total CTR
+  .stat: .wrap
+    .amount.large $ {{ campaign.stats.spent | number:2 }}
+    .desc Total Spent
+
 .titlebar.cf.full(ng-controller="AdefyCampaignMenuController")
   .name(ng-bind="campaign.name")
   .menu.full

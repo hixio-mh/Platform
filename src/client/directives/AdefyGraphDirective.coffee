@@ -42,26 +42,29 @@ window.AdefyDashboard.directive "graph", [->
 
         # Go through once and generate scales
         for graph, i in data.static
+          if graph.y != undefined
+            if @scales[graph.y] == undefined
+              @scales[graph.y] =
+                min: Number.MAX_VALUE
+                max: Number.MIN_VALUE
+                orientation: data.axes[graph.y].orientation
 
-          if @scales[graph.y] == undefined
-            @scales[graph.y] =
-              min: Number.MAX_VALUE
-              max: Number.MIN_VALUE
-              orientation: data.axes[graph.y].orientation
-
-          for point in data.dynamic[i]
-            @scales[graph.y].min = Math.min @scales[graph.y].min, point.y
-            @scales[graph.y].max = Math.max @scales[graph.y].max, point.y
+            for point in data.dynamic[i]
+              @scales[graph.y].min = Math.min @scales[graph.y].min, point.y
+              @scales[graph.y].max = Math.max @scales[graph.y].max, point.y
 
         @createScales()
 
         # Go through again and build graphs
         for graph, i in data.static
+          if graph.y != undefined then scale = @scales[graph.y].object
+          else scale = undefined
+
           processedData.push
             name: graph.name
             color: graph.color
             data: data.dynamic[i]
-            scale: @scales[graph.y].object
+            scale: scale
 
       processedData
 
@@ -101,13 +104,14 @@ window.AdefyDashboard.directive "graph", [->
     , true
 
     # Define axes
-    for axis in scope.data.axes
-      if axis.type == "x"
-        new Rickshaw.Graph.Axis.Time graph: rickshaw
-        break
+    if scope.data.axes != undefined
+      for axis in scope.data.axes
+        if axis.type == "x"
+          new Rickshaw.Graph.Axis.Time graph: rickshaw
+          break
 
-      # Axis are generated on data updates
-      # else if axis.type == "y"
+        # Axis are generated on data updates
+        # else if axis.type == "y"
 
     # Legend
     if scope.legend

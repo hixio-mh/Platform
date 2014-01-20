@@ -33,8 +33,8 @@ schema = new mongoose.Schema
   # Once created, budget is subtracted from funds, and expenses are subtracted
   # from budget. If budget cannot pay next CPC/CPM, ad in question is disabled,
   # untill finally all ads are disabled + budget is near-zero.
-  totalBudget: Number
-  dailyBudget: { type: Number, default: 0 }
+  totalBudget: { type: Number, default: 0 }
+  dailyBudget: Number
   pricing: String
 
   # These serve as defaults for ads that belong to us
@@ -50,14 +50,17 @@ schema = new mongoose.Schema
   #   1 - scheduled
   #   3 - paused
   status: { type: Number, default: 0 }
+  active: { type: Boolean, default: false }
 
   # Ads we serve
   ads: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ad" }]
 
   # Global targeting, ads can override the settings here
-  countries: { type: Array, default: [] }
   networks: { type: Array, default: [] }
-  devices: { type: Array, default: [] }
+
+  # We store only diffs, to save DB space and shorten responses
+  # countries: { type: Array, default: [] }
+  # devices: { type: Array, default: [] }
 
   # Non-translated filter lists for nicer client presentation.
   # Note: Matching lists are combined appropriately to yield the proper plainly
@@ -247,6 +250,9 @@ getIdFromArgument = (arg) ->
     else if arg._id != undefined then arg = adId._id
     else arg = null
   arg
+
+schema.methods.activate = -> @active = true
+schema.methods.deactivate = -> @active = false
 
 # Remove specific ad by id, passing either the id or an ad model.
 # Expects the ads field to be populated!

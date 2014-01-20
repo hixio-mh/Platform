@@ -5,8 +5,7 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "core-express",
-      "engine-filters"
+      "core-express"
     ],
     "provides": []
   }

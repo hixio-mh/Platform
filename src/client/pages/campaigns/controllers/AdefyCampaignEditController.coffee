@@ -21,13 +21,12 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
   $scope.campaign =
     pricing: "CPM"
     bidSystem: "automatic"
-    networkTargetting: "all"
+    networks: "all"
     scheduling: "no"
     devices: []
     countries: []
 
   initializeSelect2Fields = ->
-
     $(".deviceInclude").select2
       placeholder: "Search for a device"
       minimumInputLength: 1

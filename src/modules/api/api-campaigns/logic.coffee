@@ -23,14 +23,14 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   utility = imports["logic-utility"]
-  engineFilters = imports["engine-filters"]
+  engineFilters = require "#{__dirname}/../../../helpers/filters"
 
   # Create new cmapaign
   app.post "/api/v1/campaigns", (req, res) ->
     if not utility.param req.param("name"), res, "Campaign name" then return
     if not utility.param req.param("category"), res, "Category" then return
     if not utility.param req.param("pricing"), res, "Pricing" then return
-    if not utility.param req.param("totalBudget"), res, "Total budget" then return
+    if not utility.param req.param("dailyBudget"), res, "Daily budget" then return
     if not utility.param req.param("bidSystem"), res, "Bid system" then return
     if not utility.param req.param("bid"), res, "Bid" then return
 
@@ -54,7 +54,7 @@ setup = (options, imports, register) ->
         includes.push item.name if item.type == "include"
         excludes.push item.name if item.type == "exclude"
 
-      countries = engineFilters.countries.translateInput includes, excludes
+      # countries = engineFilters.countries.translateInput includes, excludes
       countriesExclude = excludes
       countriesInclude = includes
 
@@ -76,7 +76,7 @@ setup = (options, imports, register) ->
         includes.push item.name if item.type == "include"
         excludes.push item.name if item.type == "exclude"
 
-      devices = engineFilters.devices.translateInput includes, excludes
+      # devices = engineFilters.devices.translateInput includes, excludes
       devicesExclude = excludes
       devicesInclude = includes
 
@@ -85,14 +85,14 @@ setup = (options, imports, register) ->
       owner: req.user.id
       name: req.param "name"
       description: req.param("description") || ""
-      category: req.param("category")
+      category: req.param "category"
 
-      totalBudget: Number req.param("totalBudget")
-      dailyBudget: Number req.param("dailyBudget") || 0
-      pricing: req.param("pricing")
+      totalBudget: Number req.param("totalBudget") || 0
+      dailyBudget: Number req.param "dailyBudget"
+      pricing: req.param "pricing"
 
-      bidSystem: req.param("bidSystem")
-      bid: Number req.param("bid")
+      bidSystem: req.param "bidSystem"
+      bid: Number req.param "bid"
 
       countries: countries
       networks: networks
@@ -111,7 +111,10 @@ setup = (options, imports, register) ->
 
   # Fetch campaigns owned by the user identified by the cookie
   app.get "/api/v1/campaigns", (req, res) ->
-    db.model("Campaign").find { owner: req.user.id }, (err, campaigns) ->
+    db.model("Campaign")
+    .find({ owner: req.user.id })
+    .populate("ads")
+    .exec (err, campaigns) ->
       if utility.dbError err, res then return
       if campaigns.length == 0 then res.json 200, []
 
@@ -121,7 +124,7 @@ setup = (options, imports, register) ->
       done = -> count--; if count == 0 then res.json 200, ret
 
       for c in campaigns
-        c.populateSelfTotalStats (self) ->
+        c.populateSelfAllStats (self) ->
           ret.push self
           done()
 
@@ -356,6 +359,32 @@ setup = (options, imports, register) ->
 
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data
+
+  # Activates the campaign
+  app.post "/api/v1/campaigns/:id/activate", (req, res) ->
+    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then return res.send 404
+
+      if not req.user.admin and req.user.id != campaign.owner
+        return res.send 403
+
+      campaign.activate()
+      campaign.save()
+      res.send 200
+
+  # De-activates the campaign
+  app.post "/api/v1/campaigns/:id/deactivate", (req, res) ->
+    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+      if utility.dbError err, res then return
+      if not campaign then return res.send 404
+
+      if not req.user.admin and req.user.id != campaign.owner
+        return res.send 403
+
+      campaign.deactivate()
+      campaign.save()
+      res.send 200
 
   register null, {}
 
