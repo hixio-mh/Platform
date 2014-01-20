@@ -24,6 +24,7 @@
     "/funds",
     "/feedback",
 
+    "/admin/ads",
     "/admin/home",
     "/admin/users",
     "/admin/invites",

@@ -36,6 +36,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "AdefyAdminPublishersController"
     templateUrl: "/views/dashboard/admin:publishers"
 
+  $routeProvider.when "/admin/ads",
+    controller: "AdefyAdminAdsController"
+    templateUrl: "/views/dashboard/admin:ads"
+
   ##
   ## Normal routes
   ##

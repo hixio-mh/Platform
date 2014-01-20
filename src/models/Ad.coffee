@@ -38,7 +38,6 @@ schema = new mongoose.Schema
   # 2 - Approved
   status: { type: Number, default: 0 }
   approvalMessage: [{ msg: String, timestamp: Date }]
-  active: { type: Boolean, default: false }
 
   campaigns: [
 
@@ -118,10 +117,6 @@ schema.methods.disaprove = (msg) ->
     @approvalMessage.push
       msg: msg
       timestamp: new Date().getTime()
-
-schema.methods.activate = -> @active = true
-schema.methods.deactivate = -> @active = false
-schema.methods.isActive = -> @active
 
 ##
 ## Stat fetching

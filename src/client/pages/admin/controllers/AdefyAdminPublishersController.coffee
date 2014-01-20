@@ -14,7 +14,6 @@
 
 window.AdefyDashboard.controller "AdefyAdminPublishersController", ($scope, $http, $route) ->
 
-  $scope.detailMode = "details"  # Publisher view detail mode
   $scope.pubs = []               # Application data for table
   $scope.pubView = {}            # Model for current publisher
 

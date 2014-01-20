@@ -120,6 +120,35 @@ setup = (options, imports, register) ->
 
         fetchStatsforAd ad for ad in ads
 
+  # Fetches all ads. Admin privileges required
+  app.get "/api/v1/ads/all", (req, res) ->
+    if not req.user.admin then return res.send 401
+
+    db.model("Ad")
+    .find()
+    .populate("owner")
+    .exec (err, ads) ->
+      if utility.dbError err, res then return
+
+      adCount = ads.length
+      ret = []
+      if adCount == 0 then return res.json ret
+
+      fetchAd = (ad, res) ->
+        ad.fetchLifetimeStats (stats) ->
+
+          ad.owner = ad.owner.toAPI()
+          adData = ad.toAPI()
+          adData.stats = stats
+          ret.push adData
+
+          adCount--
+          if adCount == 0 then res.json ret
+
+      # Attach 24 hour stats to publishers, and return with complete data
+      for ad in ads
+        fetchAd ad, res
+
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->
     db.model("Ad")
@@ -165,32 +194,6 @@ setup = (options, imports, register) ->
 
       ad.fetchCompiledStat req.param("range"), req.param("stat"), (data) ->
         res.json data
-
-  # Activates the publisher
-  app.post "/api/v1/ads/:id/activate", (req, res) ->
-    db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
-
-      if not req.user.admin and req.user.id != ad.owner
-        return res.send 403
-
-      ad.activate()
-      ad.save()
-      res.send 200
-
-  # De-activates the publisher
-  app.post "/api/v1/ads/:id/deactivate", (req, res) ->
-    db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
-
-      if not req.user.admin and req.user.id != ad.owner
-        return res.send 403
-
-      ad.deactivate()
-      ad.save()
-      res.send 200
 
   # Updates ad status if applicable
   #

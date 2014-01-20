@@ -12,12 +12,6 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 window.AdefyDashboard.controller "AdefyAdMenuController", ($scope, $location, $http) ->
-  $scope.activeToggled = ->
-    if $scope.ad.active
-      $http.post "/api/v1/ads/#{$scope.ad.id}/deactivate"
-    else
-      $http.post "/api/v1/ads/#{$scope.ad.id}/activate"
-
   $scope.requestApproval = ->
     $http.post "/ads/#{$scope.ad.id}/approval"
     .success ->
