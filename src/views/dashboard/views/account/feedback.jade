@@ -13,4 +13,14 @@
 //-
 
 form.feedback
-  textarea(ng-model="formObject")
+  select(chosen ng-model="formCategory" data-placeholder="Select Category" style="width: 50%")
+    option(value="account") Account
+    option(value="apps") Apps
+    option(value="billing") Billing
+    option(value="campaigns") Campaigns
+    option(value="creatives") Creatives
+
+  br
+  br
+
+  textarea(ng-model="formObject" placeholder="Enter message")

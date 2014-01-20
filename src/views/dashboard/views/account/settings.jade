@@ -40,7 +40,7 @@
         input(ng-model="me.city" type="text" placeholder="City")
       .field.w25
         input(ng-model="me.postalCode" type="text" placeholder="Postal Code")
-      .field
-        country-select(chosen ng-model="me.country" data-placeholder="Select Country")
-    
-  button.blue.save(ng-click="save()") Save
+      .field#countrySelect
+        select(ng-model="me.country" placeholder="Select Country" ng-options="c for c in countries")
+
+  button.blue.save.center(ng-click="save()") Save
