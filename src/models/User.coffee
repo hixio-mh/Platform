@@ -57,6 +57,7 @@ schema.methods.toAPI = ->
   delete ret.session
   delete ret.permissions
   delete ret.hash
+  delete ret.password
   ret
 
 schema.pre "save", (next) ->
