@@ -1,0 +1,39 @@
+.stats.dashboard
+  .stat: .wrap
+    .amount.large ▲ {{ ad.stats.impressions | number }}
+    .desc Total Impressions
+  .stat: .wrap
+    .amount.large ▲ {{ ad.stats.clicks | number }}
+    .desc Total Clicks
+  .stat: .wrap
+    .amount.large {{ ad.stats.ctr | number:2 }} %
+    .desc Total CTR
+  .stat: .wrap
+    .amount.large $ {{ ad.stats.spent | number:2 }}
+    .desc Total Spent
+
+.titlebar.cf.full(ng-controller="AdefyAdMenuController")
+  .name(ng-bind="ad.name")
+
+  span(ng-switch="ad.status")
+    .label.gray(ng-switch-when="0") Pending
+    .label.red(ng-switch-when="1") Rejected
+    .label.green(ng-switch-when="2") Approved
+
+  .menu.full
+    a(ng-href="/ads/{{ad.id}}" tab)
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    //- a(ng-ref="/editor/{{ad.id}}" target="_self")
+    //-   i.fa.fa-fw.fa-pencil
+    //-   | Editor
+    a(form-modal template="/views/dashboard/ads:delete" title="Delete ad"
+          ok-button-text="Delete" form-submit="delete()" form-object="form")
+      i.fa.fa-fw.fa-trash-o
+      | Delete
+    a(ng-click="requestApproval()" ng-if="ad.status == '1'")
+      i.fa.fa-fw.fa-question
+      | Request Approval
+
+  .toggle-wrap(style="float:right")
+    toggle-switch(method="activeToggled()" model="ad.active")

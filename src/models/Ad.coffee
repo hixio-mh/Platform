@@ -33,6 +33,13 @@ schema = new mongoose.Schema
   # Added campaign references in v2
   version: { type: Number, default: 2 }
 
+  # 0 - Pending
+  # 1 - Rejected
+  # 2 - Approved
+  status: { type: Number, default: 0 }
+  approvalMessage: [{ msg: String, timestamp: Date }]
+  active: { type: Boolean, default: false }
+
   campaigns: [
 
     # Campaign model
@@ -96,6 +103,25 @@ schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
   ret
+
+##
+## Approval and status info
+##
+
+schema.methods.isApproved = -> @status == 2
+schema.methods.approve = -> @status = 2
+schema.methods.clearApproval = -> @status = 0
+schema.methods.disaprove = (msg) ->
+  @status = 1
+
+  if msg
+    @approvalMessage.push
+      msg: msg
+      timestamp: new Date().getTime()
+
+schema.methods.activate = -> @active = true
+schema.methods.deactivate = -> @active = false
+schema.methods.isActive = -> @active
 
 ##
 ## Stat fetching

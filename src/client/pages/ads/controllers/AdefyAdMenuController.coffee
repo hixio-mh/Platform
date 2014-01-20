@@ -14,14 +14,14 @@
 window.AdefyDashboard.controller "AdefyAdMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.ad.active
-      $http.post "/api/v1/publishers/#{$scope.ad.id}/activate"
+      $http.post "/api/v1/ads/#{$scope.ad.id}/deactivate"
     else
-      $http.post "/api/v1/publishers/#{$scope.ad.id}/deactivate"
+      $http.post "/api/v1/ads/#{$scope.ad.id}/activate"
 
   $scope.requestApproval = ->
-    $http.post "/apps/{{$scope.ad.id}}/approval"
+    $http.post "/ads/#{$scope.ad.id}/approval"
     .success ->
       $scope.setNotification "Successfully applied for approval!", "success"
-      $scope.ad.status = 0
+      $scope.ad.status = 2
     .error ->
       $scope.setNotification "There was an error with your request", "error"

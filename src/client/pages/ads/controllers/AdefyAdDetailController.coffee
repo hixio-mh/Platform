@@ -14,36 +14,52 @@
 
 window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, $routeParams, Ad, $http) ->
 
-  # Chart.js options
-  $scope.options = {}
-  $scope.stats = {}
-  $scope.chart =
-    labels : ["January", "February", "March", "April", "May", "June", "July"],
-    datasets : [
-        fillColor : "rgba(220,220,220,0.5)"
-        strokeColor : "rgba(220,220,220,1)"
-        pointColor : "rgba(220,220,220,1)"
-        pointStrokeColor : "#fff"
-        data : [65, 59, 90, 81, 56, 55, 40]
-      ,
-        fillColor : "rgba(151,187,205,0.5)"
-        strokeColor : "rgba(151,187,205,1)"
-        pointColor : "rgba(151,187,205,1)"
-        pointStrokeColor : "#fff"
-        data : [28, 48, 40, 19, 96, 27, 100]
+  $scope.graphData =
+    static: [
+      name: "Spent"
+      color: "#33b5e5"
+      y: "spent"
+    ,
+      name: "Impressions"
+      color: "#33e444"
+      y: "counts"
+    ,
+      name: "Clicks"
+      color: "#e3de33"
+      y: "counts"
     ]
 
-  refreshAd = ->
-    Ad.get id: $routeParams.id, (ad) ->
-      $scope.ad = ad
+    axes:
+      x:
+        formatter: (x) -> new Date(x).toLocaleDateString()
+      counts:
+        type: "y"
+        orientation: "left"
+      spent:
+        type: "y"
+        orientation: "right"
 
-      $scope.ad.ctr = (ad.clicks / ad.impressions) * 100
-      if isNaN ad.ctr then $scope.ad.ctr = 0
+    dynamic: [
+      [{ x: new Date().getTime(), y: 1 }]
+      [{ x: new Date().getTime(), y: 1 }]
+      [{ x: new Date().getTime(), y: 1 }]
+    ]
 
-  refreshAd()
+  fetchPrefix = "/api/v1/ads/stats/#{$routeParams.id}"
 
-  # modal
-  $scope.form = {} # define the object, or it will not get set inside the modal
+  $http.get("#{fetchPrefix}/spent/24h").success (data) ->
+    if data.length > 0 then $scope.graphData.dynamic[0] = data
+
+  $http.get("#{fetchPrefix}/impressions/24h").success (data) ->
+    if data.length > 0 then $scope.graphData.dynamic[1] = data
+
+  $http.get("#{fetchPrefix}/clicks/24h").success (data) ->
+    if data.length > 0 then $scope.graphData.dynamic[2] = data
+
+  Ad.get id: $routeParams.id, (ad) -> $scope.ad = ad
+
+  # Modal
+  $scope.form = {}
   $scope.delete = ->
     if $scope.ad.name == $scope.form.name
       $scope.ad.$delete().then(

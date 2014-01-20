@@ -47,7 +47,6 @@ schema = new mongoose.Schema
   category: { type: String, default: "" }
   thumbURL: { type: String, default: "" }
 
-  active: { type: Boolean, default: false }
   apikey: String
 
   # 0 - Pending
@@ -55,6 +54,7 @@ schema = new mongoose.Schema
   # 2 - Approved
   status: { type: Number, default: 0 }
   approvalMessage: [{ msg: String, timestamp: Date }]
+  active: { type: Boolean, default: false }
 
   # 0 - Android
   # (unsupported) 1 - iOS
