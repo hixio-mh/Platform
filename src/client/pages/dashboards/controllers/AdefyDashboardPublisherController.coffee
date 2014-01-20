@@ -14,14 +14,47 @@
 
 window.AdefyDashboard.controller "AdefyDashboardPublisherController", ($scope, $http, $route, App) ->
 
-  $scope.fakeData =
+  $scope.totalRevenue = 0
+  $scope.revenue24h = 0
+  $scope.impressions24h = 0
+  $scope.clicks24h = 0
+
+  $scope.graphData =
     static: [
       name: "Earnings"
+      color: "#33e444"
+      y: "earnings"
+    ,
+      name: "Impressions"
       color: "#33b5e5"
+      y: "counts"
+    ,
+      name: "Clicks"
+      color: "#e3de33"
+      y: "counts"
     ]
+
+    axes:
+      x:
+        formatter: (x) -> new Date(x).toLocaleDateString()
+      counts:
+        type: "y"
+        orientation: "left"
+      earnings:
+        type: "y"
+        orientation: "right"
 
     dynamic: [
-      [{ x: 1910, y: 92228531 }, { x: 1920, y: 106021568 }, { x: 1930, y: 123202660 }, { x: 1940, y: 132165129 }, { x: 1950, y: 151325798 }, { x: 1960, y: 179323175 }, { x: 1970, y: 203211926 }, { x: 1980, y: 226545805 }, { x: 1990, y: 248709873 }, { x: 2000, y: 281421906 }, { x: 2010, y: 308745538 }]
+      [{ x: 0, y: 5 }]
+      [{ x: 0, y: 2 }]
+      [{ x: 0, y: 24 }]
     ]
 
-  App.query (apps) -> $scope.apps = apps
+  App.query (apps) ->
+    $scope.apps = apps
+
+    for app in apps
+      $scope.totalRevenue += app.stats.earnings
+      $scope.earnings24h += app.stats.earnings24h
+      $scope.impressions24h += app.stats.impressions24h
+      $scope.clicks24h += app.stats.clicks24h

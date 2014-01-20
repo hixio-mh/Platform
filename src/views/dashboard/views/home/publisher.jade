@@ -14,23 +14,23 @@
 
 .stats.dashboard
   .stat: .wrap
-    .amount.large $ 381.23
+    .amount.large $ {{ revenue24h | number:2 }}
     .desc Earned today
   .stat: .wrap
-    .amount.large ▲ 8,351
+    .amount.large ▲ {{ impressions24h }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ 251
-    .desc Clicks
+    .amount.large ▲ {{ clicks24h }}
+    .desc Clicks today
   .stat: .wrap
-    .amount.large $ 472.75
+    .amount.large $ {{ totalRevenue | number:2 }}
     .desc Total revenue
 
 .index.dashboard
   a.switch-view(href="/home/advertiser") Switch to advertiser view
 
   div
-    div(graph data="fakeData" width="840" height="300" type="area" legend="true" axes="all" hover="true")
+    div(graph data="graphData" width="840" height="300" type="line" legend="true" hover="true")
 
     h1 Top Apps
     table.info
