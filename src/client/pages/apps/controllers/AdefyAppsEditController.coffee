@@ -12,48 +12,13 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsEditController", ($scope, $location, $routeParams, App) ->
+window.AdefyDashboard.controller "AdefyAppsEditController", ($scope, $location, $routeParams, App, $http, $timeout) ->
 
-  # Application categories
-  $scope.categories = [
-    "Alcohol"
-    "Automotive"
-    "Books & Reference"
-    "Business & Productivity"
-    "Careers"
-    "Children/Youth"
-    "Clothing & Apparel"
-    "Communications"
-    "Consumer Electronics"
-    "Contests"
-    "Dating"
-    "eCommerce"
-    "Education"
-    "Fashion"
-    "Finance"
-    "Gambling"
-    "Games"
-    "Health & Fitness"
-    "Home & Garden"
-    "Mobile Content"
-    "Movies, TV, and Entertainment"
-    "News, Sports, and Weather"
-    "None"
-    "Personals"
-    "Photos and Videos"
-    "Politics"
-    "Portals and Reference"
-    "Religion"
-    "Retail"
-    "Ringtones and Music"
-    "Social"
-    "Social Networking"
-    "Sports"
-    "Telecom"
-    "Tobacco"
-    "Tools and Utilities"
-    "Travel"
-  ]
+  $scope.categories = []
+
+  $http.get("/api/v1/filters/categories").success (list) ->
+    $scope.categories = list
+    $timeout -> $("#categorySelect select").chosen()
 
   $scope.pricingModels = ["Any", "CPM", "CPC"]
 
