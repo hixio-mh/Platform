@@ -1,0 +1,73 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+include _menu
+
+.index.dashboard
+  br
+  br
+  h1 Ads
+
+  table.info
+    thead: tr
+      th User
+      th Ad Name
+      th Status
+      th Impressions
+      th Clicks
+      th CTR
+      th Spent
+      th Actions
+    tbody
+      tr(ng-repeat="ad in ads")
+        td {{ ad.owner.username }}
+        td {{ ad.name }}
+
+        td: span.label(ng-class="ad.statusClass") {{ ad.statusText }}
+
+        td {{ ad.stats.impressions }}
+        td {{ ad.stats.clicks }}
+
+        td {{ ad.stats.ctr | number:2 }} %
+        td $ {{ ad.stats.spent | number:2 }}
+
+        td: a.btn.btn-flat.success.small(href="#" ng-click="viewAd(ad)") View
+
+.index.dashboard(ng-if="adView.name")
+  br
+  br
+  h1
+    span {{ adView.name }} - Details
+    span.label(ng-class="adView.statusClass") {{ adView.statusText }}
+    span.label(ng-class="adView.activeClass") {{ adView.activeText }}
+
+  form(ng-if="adView.status == 0")
+    dl.form.center
+      dt
+        label Message
+        textarea(row="16" col="4" ng-model="adView.newApprovalMessage" placeholder="Required for disapproval")
+      dt
+      dd
+        button.btn-flat.success(ng-click="approveAd()") Approve
+      dt
+      dd
+        button.btn-flat.danger(ng-click="disapproveAd()") Disapprove
+
+  div(ng-if="adView.status != 2" ng-repeat="msg in adView.approvalMessage")
+    h4 Sent {{ msg.timestamp | date }}
+    br
+    h5(ng-bind="msg.msg")
+    br
+    br
+    hr

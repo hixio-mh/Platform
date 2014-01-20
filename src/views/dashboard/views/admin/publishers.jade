@@ -69,8 +69,7 @@ include _menu
         button.btn-flat.danger(ng-click="disapprovePub()") Disapprove
 
   div(ng-if="pubView.status != 2" ng-repeat="msg in pubView.approvalMessage")
-    h4
-      | Sent {{ msg.timestamp | date }}
+    h4 Sent {{ msg.timestamp | date }}
     br
     h5(ng-bind="msg.msg")
     br
