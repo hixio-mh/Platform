@@ -109,9 +109,9 @@ setup = (options, imports, register) ->
   # Returns a list of transactions: deposits, withdrawals, reserves
   app.get "/api/v1/user/transactions", (req, res) ->
     res.json [
-      {type: 'deposit', amount: 3.20, time: new Date().getTime() - 200}
-      {type: 'withdraw', amount: 3.20, time: new Date().getTime() - 600}
-      {type: 'reserve', amount: 3.20, time: new Date().getTime() - 3600}
+      {type: "deposit", amount: 3.20, time: new Date().getTime() - 200}
+      {type: "withdraw", amount: 3.20, time: new Date().getTime() - 600}
+      {type: "reserve", amount: 3.20, time: new Date().getTime() - 3600}
     ]
 
   register null, {}

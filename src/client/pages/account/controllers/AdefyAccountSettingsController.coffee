@@ -12,10 +12,12 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAccountSettingsController", ($scope, $http, $route) ->
+window.AdefyDashboard.controller "AdefyAccountSettingsController", ($scope, $http, $route, $timeout) ->
 
-  $http.get("/api/v1/user").success (me) ->
-    $scope.me = me
+  $http.get("/api/v1/user").success (me) -> $scope.me = me
+  $http.get("/api/v1/filters/countries").success (list) ->
+    $scope.countries = list
+    $timeout -> $("#countrySelect select").chosen()
 
   $scope.save = ->
     $http.put("/api/v1/user", $scope.me).success (resp) ->
