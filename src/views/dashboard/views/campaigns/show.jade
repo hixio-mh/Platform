@@ -1,31 +1,21 @@
 include _menu
 
 .contents.w920.center
-  h1 Statistics
   .stats.campaign
-    .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.impressions | number }}
-      .desc Total Impressions
     .stat: .wrap
       .amount.large ▲ {{ campaign.stats.impressions24h | number }}
       .desc Impressions Today
     .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.clicks | number }}
-      .desc Total Clicks
-    .stat: .wrap
       .amount.large ▲ {{ campaign.stats.clicks24h | number }}
       .desc Clicks Today
     .stat: .wrap
-      .amount.large {{ campaign.stats.ctr | number }} %
-      .desc Lifetime CTR
+      .amount.large {{ campaign.stats.ctr24h | number:2 }} %
+      .desc CTR Today
     .stat: .wrap
-      .amount.large {{ campaign.stats.ctr24h | number }} %
-      .desc Today's CTR
+      .amount.large $ {{ campaign.stats.spent24h | number:2 }}
+      .desc Spent Today
 
 .graphs
   .graph
-    h3 CTR
-    div(graph data="ctrData" width="900" height="350" type="area" axes="all" hover="true")
-    hr
-    h3 Impressions
-    div(graph data="impressionsData" width="900" height="350" type="area" axes="all" hover="true")
+    h3 24h Stats
+    div(graph data="graphData" width="900" height="350" type="line" hover="true" legend="true")

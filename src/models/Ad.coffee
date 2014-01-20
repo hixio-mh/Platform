@@ -12,6 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
+engineFilters = require "../helpers/filters"
 mongoose = require "mongoose"
 spew = require "spew"
 redisLib = require "redis"
@@ -38,9 +39,12 @@ schema = new mongoose.Schema
     campaign: { type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }
 
     # Fine-tunning
-    countries: { type: Array, default: [] }
     networks: { type: Array, default: [] }
-    devices: { type: Array, default: [] }
+
+    # Removed relative lists, we'll resort to re-compiling them each time
+    # Saves DB space
+    # countries: { type: Array, default: [] }
+    # devices: { type: Array, default: [] }
 
     # Non-translated filter lists for nicer client presentation.
     # Note: Matching lists are combined appropriately to yield the proper
@@ -291,15 +295,25 @@ schema.methods.getRedisRefForAllCampaigns = -> "campaignAd.*:#{@_id}"
 # @return [Object] data compiled set of filter arrays
 schema.methods.getCompiledFetchData = (campaign) ->
 
+  includes = campaign.countriesInclude
+  excludes = campaign.countriesExclude
+  countries = engineFilters.countries.translateInput includes, excludes
+
+  includes = campaign.devicesInclude
+  excludes = campaign.devicesExclude
+  devices = engineFilters.devices.translateInput includes, excludes
+
   compiledData =
-    countries: campaign.countries
+    countries: countries
     networks: campaign.networks
-    devices: campaign.devices
+    devices: devices
     bid: campaign.bid
     bidSystem: campaign.bidSystem
     pricing: campaign.pricing
     category: campaign.category
 
+  # For now, disallow ad-level settings
+  ###
   for c in @campaigns
     if c.campaign != undefined
       if c.campaign == campaign._id
@@ -312,6 +326,7 @@ schema.methods.getCompiledFetchData = (campaign) ->
         if c.bidSystem.length > 0 then compiledData.bidSystem = c.bidSystem
 
         break
+  ###
 
   compiledData
 

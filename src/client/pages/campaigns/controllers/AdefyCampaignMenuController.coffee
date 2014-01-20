@@ -14,6 +14,6 @@
 window.AdefyDashboard.controller "AdefyCampaignMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.campaign.active
-      $http.post "/api/v1/publishers/#{$scope.campaign.id}/activate"
+      $http.post "/api/v1/campaigns/#{$scope.campaign.id}/deactivate"
     else
-      $http.post "/api/v1/publishers/#{$scope.campaign.id}/deactivate"
+      $http.post "/api/v1/campaigns/#{$scope.campaign.id}/activate"

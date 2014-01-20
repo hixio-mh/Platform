@@ -14,23 +14,23 @@
 
 .stats.dashboard
   .stat: .wrap
-    .amount.large ▲ 8,351
+    .amount.large ▲ {{ impressions24h }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ 251
+    .amount.large ▲ {{ clicks24h }}
     .desc Clicks today
   .stat: .wrap
-    .amount.large 70,25 %
+    .amount.large {{ ctr24h | number:2 }}%
     .desc CTR today
   .stat: .wrap
-    .amount.large $ 472.75
-    .desc Total revenue
+    .amount.large $ {{ spent24h | number:2 }}
+    .desc Spent today
 
 .index.dashboard
   a.switch-view(href="/home/publisher") Switch to publisher view
 
   div
-    div(graph data="fakeData" width="840" height="300" type="area" legend="true" axes="all" hover="true")
+    div(graph data="graphData" width="840" height="300" type="line" legend="true" hover="true")
 
   h1 Top Campaigns
   table.info
@@ -39,7 +39,7 @@
       th Impressions
       th Clicks
       th CTR
-      th Cost
+      th Spent
     tbody
       tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true | limitTo:10")
         td {{ campaign.name }}
@@ -56,11 +56,11 @@
         p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy. You see, hydrofluoric acid won't eat through plastic.
       li
         span.title News item
-        span.date Sept 23 
+        span.date Sept 23
         p That is seventeen five - your half of the thirty-five thousand. Plus there's an extra fifteen in there, it's all yours, you've earned it. We made a deal. That's right.
       li
         span.title News item
-        span.date Sept 23 
+        span.date Sept 23
         p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.
     ul.news
       li
@@ -69,9 +69,9 @@
         p I'm sorry, what were you asking me? Oh, yes, that stupid plastic container I asked you to buy.
       li
         span.title News item
-        span.date Sept 23 
-        p That is seventeen five - your half of the thirty-five thousand. 
+        span.date Sept 23
+        p That is seventeen five - your half of the thirty-five thousand.
       li
         span.title News item
-        span.date Sept 23 
+        span.date Sept 23
         p I will go back to Gotham and I will fight men Iike this but I will not become an executioner.

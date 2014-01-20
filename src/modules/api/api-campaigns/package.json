@@ -6,8 +6,7 @@
   "plugin": {
     "consumes": [
       "core-express",
-      "logic-utility",
-      "engine-filters"
+      "logic-utility"
     ],
     "provides": []
   }

@@ -14,7 +14,7 @@
 
 window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routeParams, App, $http) ->
 
-  $scope.earningsData =
+  $scope.graphData =
     static: [
       name: "Requests"
       color: "#97bbcd"
@@ -35,12 +35,12 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
   fetchPrefix = "/api/v1/publishers/stats/#{$routeParams.id}"
 
   $http.get("#{fetchPrefix}/requests/24h").success (data) ->
-    $scope.earningsData.dynamic[0] = data
+    $scope.graphData.dynamic[0] = data
 
   $http.get("#{fetchPrefix}/clicks/24h").success (data) ->
-    $scope.earningsData.dynamic[1] = data
+    $scope.graphData.dynamic[1] = data
 
   $http.get("#{fetchPrefix}/impressions/24h").success (data) ->
-    $scope.earningsData.dynamic[2] = data
+    $scope.graphData.dynamic[2] = data
 
   App.get id: $routeParams.id, (app) -> $scope.app = app

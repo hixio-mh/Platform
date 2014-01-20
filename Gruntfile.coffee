@@ -192,6 +192,15 @@ module.exports = (grunt) ->
           dest: "#{_buildDir}/static"
         ]
 
+      # Helper data files
+      helperJSON:
+        files: [
+          expand: "true"
+          cwd: "#{srcDir}/helpers"
+          src: "**/*.json"
+          dest: "#{_buildDir}/helpers"
+        ]
+
       # Jade templates
       jade:
         files: [
@@ -309,6 +318,7 @@ module.exports = (grunt) ->
     "copy:ssl"
     "copy:templateAssets"
     "copy:templateAssetsRemote"
+    "copy:helperJSON"
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"

@@ -8,8 +8,8 @@ a.new-item(href="/campaigns/new")
     .metrics
       div.noAxes(graph data="fakeData" width="335" height="200")
       .wrap: .text
-        .amount.large {{ campaign.stats.ctr | number:2 }} %
-        .desc Click-through rate
+        .amount.large {{ campaign.stats.ctr | number:2 }}%
+        .desc CTR
     .stats
       .tab
         .amount {{ campaign.stats.clicks | number }}
