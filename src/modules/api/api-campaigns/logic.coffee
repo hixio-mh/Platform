@@ -103,7 +103,6 @@ setup = (options, imports, register) ->
       countriesInclude: countriesInclude
       countriesExclude: countriesExclude
 
-      status: 0 # 0 is created, no ads
       ads: []
 
     newCampaign.save()

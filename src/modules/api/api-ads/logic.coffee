@@ -166,6 +166,68 @@ setup = (options, imports, register) ->
       ad.fetchCompiledStat req.param("range"), req.param("stat"), (data) ->
         res.json data
 
+  # Activates the publisher
+  app.post "/api/v1/ads/:id/activate", (req, res) ->
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then return res.send 404
+
+      if not req.user.admin and req.user.id != ad.owner
+        return res.send 403
+
+      ad.activate()
+      ad.save()
+      res.send 200
+
+  # De-activates the publisher
+  app.post "/api/v1/ads/:id/deactivate", (req, res) ->
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then return res.send 404
+
+      if not req.user.admin and req.user.id != ad.owner
+        return res.send 403
+
+      ad.deactivate()
+      ad.save()
+      res.send 200
+
+  # Updates ad status if applicable
+  #
+  # If we are not an administator, an admin approval is requested. Otherwise,
+  # the ad is approved directly.
+  app.post "/api/v1/ads/:id/approve", (req, res) ->
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then return res.send 404
+
+      if not req.user.admin and req.user.id != ad.owner
+        return res.send 403
+
+      # If we are admin, approve directly
+      if req.user.admin
+        ad.approve()
+      else
+        ad.clearApproval()
+
+      ad.save()
+      res.send 200
+
+  # Disapproves the ad
+  app.post "/api/v1/ads/:id/disaprove/:msg", (req, res) ->
+
+    if not req.user.admin
+      res.json 403, { error: "Unauthorized" }
+      return
+
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then return res.send 404
+
+      ad.disaprove req.param "msg"
+      ad.save()
+      res.send 200
+
   register null, {}
 
 module.exports = setup

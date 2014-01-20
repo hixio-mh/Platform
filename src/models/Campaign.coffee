@@ -43,13 +43,6 @@ schema = new mongoose.Schema
   bidSystem: String  # "manual" or "automatic"
   bid: Number        # either bid or max bid, inferred from bidSystem
 
-  # Dynamic vals
-  #
-  # Status values
-  #   0 - no ads
-  #   1 - scheduled
-  #   3 - paused
-  status: { type: Number, default: 0 }
   active: { type: Boolean, default: false }
 
   # Ads we serve
