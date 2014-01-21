@@ -40,6 +40,10 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "AdefyAdminAdsController"
     templateUrl: "/views/dashboard/admin:ads"
 
+  $routeProvider.when "/admin/rtbsim",
+    controller: "AdefyAdminRTBSimController"
+    templateUrl: "/views/dashboard/admin:rtbsim"
+
   ##
   ## Normal routes
   ##
