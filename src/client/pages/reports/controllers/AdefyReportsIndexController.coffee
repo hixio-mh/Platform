@@ -24,7 +24,7 @@ window.AdefyDashboard.controller "AdefyReportsIndexController", ($scope, $locati
     "Clicks": "clicks"
     "Impressions": "impressions"
     "CTR": "ctr"
-    "Earnings/Cost": "cost"
+    "Earnings/Spent": "cost"
 
   $scope.ranges =
     "Daily": "1d"

@@ -25,10 +25,10 @@
         tbody
           tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true")
             td {{ campaign.name }}
-            td {{ campaign.impressions | number }}
-            td {{ campaign.clicks | number }}
-            td {{ campaign.ctr | number:2 }}%
-            td {{ campaign.spent | currency:$ }}
+            td {{ campaign.stats.impressions | number }}
+            td {{ campaign.stats.clicks | number }}
+            td {{ campaign.stats.ctr | number:2 }}%
+            td $ {{ campaign.stats.spent | number:2 }}
       canvas(barchart, data="data2", width="940", height="300")
 
     .tab(ng-switch-when="ads" ng-controller="AdefyReportsAdsController")
@@ -46,10 +46,10 @@
         tbody
           tr(ng-repeat="ad in ads | orderBy:'ctr':true")
             td {{ ad.name }}
-            td {{ ad.impressions | number }}
-            td {{ ad.clicks | number }}
-            td {{ ad.ctr | number:2 }}%
-            td {{ ad.spent | currency:$ }}
+            td {{ ad.stats.impressions | number }}
+            td {{ ad.stats.clicks | number }}
+            td {{ ad.stats.ctr | number:2 }}%
+            td $ {{ ad.stats.spent | number:2 }}
       canvas(barchart, data="data2", width="940", height="300")
 
     .tab(ng-switch-when="apps" ng-controller="AdefyReportsAppsController")
@@ -67,8 +67,8 @@
         tbody
           tr(ng-repeat="app in apps | orderBy:'earnings':true")
             td {{ app.name }}
-            td {{ app.impressions | number }}
-            td {{ app.clicks | number }}
-            td {{ app.ctr | number:2 }}%
-            td $ {{ app.earnings | number:2 }}
+            td {{ app.stats.impressions | number }}
+            td {{ app.stats.clicks | number }}
+            td {{ app.stats.ctr | number:2 }}%
+            td $ {{ app.stats.earnings | number:2 }}
       canvas(barchart, data="data2", width="940", height="300")
