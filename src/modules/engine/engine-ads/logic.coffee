@@ -82,31 +82,68 @@ setup = (options, imports, register) ->
     type = "animated"
     tech = "glAd"
 
-    # sinterstore command takes an argument array, with first element being
-    # the destination
-    targetingFilters = [targetingKey]
-    # targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
-    # targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
-    # targetingFilters.push "#{pricing}:#{category}:type:#{type}"
-    # targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
+    # Pricing is "Any", then we need to perform two seperate intersections
+    # and union the results
+    if pricing == "Any"
+      deviceKeySuffix = "#{category}:device:*#{device}*"
 
-    # If needed to split things up, implement a cache. Have it reset every 30
-    # minutes or so (changes to DB key structure may happen at any time)
-    #
-    # Get all matching device keys
-    redis.keys "#{pricing}:#{category}:device:*#{device}*", (err, results) ->
-      if err then spew.error err
+      # Get key sets
+      redis.keys "CPC:#{deviceKeySuffix}", (err, CPCKeys) ->
+        if err then spew.error err
+        redis.keys "CPM:#{deviceKeySuffix}", (err, CPMKeys) ->
+          if err then spew.error err
 
-      if results != null
-        for res in results
+          now = new Date().getTime()
+          CPCIntersectKey = "temp:intersect:CPC:#{now}"
+          CPMIntersectKey = "temp:intersect:CPM:#{now}"
+          FinalIntersectKey = "temp:intersect:Final:#{now}"
 
-          # Add matched devices to list
-          targetingFilters.push res
+          CPCIntersectData = [CPCIntersectKey]
+          CPMIntersectData = [CPMIntersectKey]
 
-      redis.sinterstore targetingFilters, (err, result) ->
-        spew.warning "Performed union store between: #{JSON.stringify targetingFilters}"
-        spew.warning "Result: #{result}"
-        cb targetingKey, err, result
+          CPCIntersectData.push key for key in CPCKeys
+          CPMIntersectData.push key for key in CPMKeys
+
+          # Intersect both key sets
+          redis.sinterstore CPCIntersectData, (err, result) ->
+            if err then spew.error err
+            redis.sinterstore CPMIntersectData, (err, result) ->
+              if err then spew.error err
+
+              # Unionstore the results
+              redis.sunionstore [
+                FinalIntersectKey # Destination
+                CPCIntersectKey
+                CPMIntersectKey
+              ], (err, result) ->
+
+                # Done, ship results
+                cb FinalIntersectKey, err, result
+    else
+
+      # sinterstore command takes an argument array, with first element being
+      # the destination
+      targetingFilters = [targetingKey]
+
+      # targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
+      # targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
+      # targetingFilters.push "#{pricing}:#{category}:type:#{type}"
+      # targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
+
+      # If needed to split things up, implement a cache. Have it reset every 30
+      # minutes or so (changes to DB key structure may happen at any time)
+      #
+      # Get all matching device keys
+      redis.keys "#{pricing}:#{category}:device:*#{device}*", (err, results) ->
+        if err then spew.error err
+
+        # Add matched devices to list
+        if results != null
+          for res in results
+            targetingFilters.push res
+
+        redis.sinterstore targetingFilters, (err, result) ->
+          cb targetingKey, err, result
 
   # Todo: Implement
   #
@@ -179,7 +216,152 @@ setup = (options, imports, register) ->
       redis.mget adKeys, (err, ads) ->
         if err then spew.error err; return fetchEmpty req, res
 
-        cb ads
+        structuredAds = {}
+
+        for key, i in adKeys
+          structuredAds[key] = ads[i]
+
+        cb structuredAds
+
+  generateBid = (ad, publisherStats) ->
+
+    # If ad pricing is CPM, then just divide target CPM by 1000
+    if ad.pricing == "CPM"
+      return ad.targetBid / 1000
+    else
+
+      # This is where it gets kinky. Use publisher lifetime ctr. If it is 0
+      # (publisher has no clicks), then use a CTR of 2.5%
+      if publisherStats.ctr == 0
+        ctr = 0.025
+      else
+        ctr = publisherStats.ctr
+
+      return ad.targetBid * ctr
+
+  getCampaignFromAdKey = (adKey) -> adKey.split(":")[0].split(".")[1]
+
+  performRTB = (structuredAds, publisherStats, req, res, cb) ->
+
+    ##
+    ## Data! Sexy.
+    ##
+
+    secondHighestBid = 0
+    maxBid = 0
+    maxBidAd = null
+
+    # We store campaign pacing data in the form [campaignID] = data
+    campaignPaceData = {}
+    keysToFetch = []
+
+    ##
+    ## Build the list of campaign pacing keys we need to fetch
+    ##
+
+    # First go through and fetch pacing data for campaigns
+    for adKey, d of structuredAds
+      campaignId = getCampaignFromAdKey adKey
+
+      # Add key to fetch list
+      if campaignPaceData[campaignId] != null
+        campaignPaceData[campaignId] = null
+        keysToFetch.push "campaign:#{campaignId}:pacing"
+
+    ##
+    ## Fetch campaign pacing data
+    ##
+
+    redis.mget keysToFetch, (err, data) ->
+      if err then spew.error err; return fetchEmpty req, res
+
+      # Pack data appropriately
+      for key, i in keysToFetch
+        campaignPaceData[key.split(":")[1]] = data[i]
+
+      ##
+      ## Generate bids
+      ##
+
+      # Keep track for statistical reasons
+      bids = []
+
+      # Go through and generate bids
+      for adKey, adData of structuredAds
+
+        campaignId = getCampaignFromAdKey adKey
+        adData = adData.split "|"
+
+        ad =
+          key: adKey
+          system: adData[0]
+          targetBid: Number adData[1]
+          requests: Number adData[2]
+          impressions: Number adData[3]
+          clicks: Number adData[4]
+          spent: Number adData[5]
+          pricing: adData[6]
+
+        # Bid! Magic!
+        ad.bid = generateBid ad, publisherStats
+
+        # Pace! Decide if we bid
+        #
+        # Pacing data is stored in the form "pace:spent:targetSpend:timestamp"
+        # We update the pace every two minutes (timestamp is of last update)
+        paceData = campaignPaceData[campaignId].split ":"
+        paceData =
+          pace: Number paceData[0]
+          spent: Number paceData[1]
+          targetSpend: Number paceData[2]
+          timestamp: Number paceData[3]
+
+        # Zero-out the bid if pacing requires us to do so (not joining in RTB)
+        if Math.random() > paceData.pace
+          ad.bid = 0
+
+        # Update pacing expenditure
+        paceData.spent += ad.bid
+
+        # If it's been two minutes or longer, then calculate a new pace
+        nowTimestamp = new Date().getTime()
+        if nowTimestamp - paceData.timestamp >= 120000
+          paceData.pace = paceData.targetSpend / paceData.spent
+          paceData.timestamp = nowTimestamp
+
+          spew.info "---Updated pacing"
+          spew.info "Spent: $#{paceData.spent}"
+          spew.info "Target: $#{paceData.targetSpend}"
+          spew.info "Pace: #{paceData.pace}"
+          spew.info "---"
+
+          paceData.spent = 0
+
+        # Save pace data
+        redis.set "campaign:#{campaignId}:pacing", [
+          paceData.pace
+          paceData.spent
+          paceData.targetSpend
+          paceData.timestamp
+        ].join ":"
+
+        # Save bid for statistics
+        bids.push
+          bid: ad.bid
+          target: ad.targetBid
+          pricing: ad.pricing
+
+        # Update second-highest bid if necessary
+        if ad.bid > maxBid
+          secondHighestBid = maxBid + 0.01
+          maxBid = ad.bid
+          maxBidAd = ad
+
+      # Call CB...
+      cb maxBidAd
+
+      # Store some action statistics for internal use...
+      spew.info JSON.stringify bids
 
   # Standard ad fetch call. Assumes publisher is active and approved!
   # Does targeting, bidding, and ad generation.
@@ -196,23 +378,33 @@ setup = (options, imports, register) ->
 
     # Log request and fetch pricing
     publisher.logRequest()
-    publisher.fetchPricingInfo (pricingInfo) ->
-      if pricingInfo == null
-        spew.error "Pricing info invalid"; return fetchEmpty req, res
 
-      getIPCountry publisher, (country) ->
-        performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
-          if err or adCount == 0
-            if err then spew.error err
-            redis.del targetingKey
-            return fetchEmpty req, res
+    # Fetching CTR also fetches our click and impression count
+    publisher.fetchCTR (ctr, impressions, clicks) ->
 
-          # Todo: Add more steps to this if needed
-          if country == "None" then country = null
+      publisherStats =
+        ctr: ctr
+        impressions: impressions
+        clicks: clicks
 
-          performCountryTargeting targetingKey, country, res, (finalKey) ->
-            fetchTargetedAdEntries finalKey, res, (ads) ->
-              res.json ads
+      publisher.fetchPricingInfo (pricingInfo) ->
+        if pricingInfo == null
+          spew.error "Pricing info invalid"; return fetchEmpty req, res
+
+        getIPCountry publisher, (country) ->
+          performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
+            if err or adCount == 0
+              if err then spew.error err
+              redis.del targetingKey
+              return fetchEmpty req, res
+
+            # Todo: Add more steps to this if needed
+            if country == "None" then country = null
+
+            performCountryTargeting targetingKey, country, res, (finalKey) ->
+              fetchTargetedAdEntries finalKey, res, (ads) ->
+                performRTB ads, publisherStats, req, res, (ad) ->
+                  res.json ad
 
   # Fetches a test ad tuned for the publisher in question.
   #

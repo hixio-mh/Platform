@@ -15,9 +15,7 @@
 form
   fieldset: dl.form.thin.center
 
-    .field
-      input(type="text" placeholder="Credit Card Number")
-    .field.w50.margin
-      input(type="text" placeholder="Expires MM/YY")
     .field.w50
-      input(type="text" placeholder="CVV Code")
+      label Enter Deposit Amount $
+    .field.w50
+      input.wide(type="number" placeholder="Amount" ng-model="formObject.amount")

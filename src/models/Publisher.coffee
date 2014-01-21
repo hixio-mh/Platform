@@ -292,7 +292,6 @@ schema.methods.generateRedisPricingInfo = ->
   redis.set @getRedisId(), "#{@preferredPricing}|#{@minimumCPC}|#{@minimumCPM}"
 
 # Basic stat fetching
-
 schema.methods.fetchImpressions = (cb) ->
   redis.get "#{@getRedisId()}:impressions", (err, result) ->
     if err then spew.error err
@@ -311,7 +310,13 @@ schema.methods.fetchRequests = (cb) ->
 schema.methods.fetchCTR = (cb) ->
   @fetchClicks (clicks) =>
     @fetchImpressions (impressions) =>
-      cb Number(clicks) / Number(impressions)
+
+      if impressions != 0
+        ctr = Number(clicks) / Number(impressions)
+      else
+        ctr = 0
+
+      cb ctr, impressions, clicks
 
 schema.methods.fetchEarnings = (cb) ->
   redis.get "#{@getRedisId()}:earnings", (err, result) ->

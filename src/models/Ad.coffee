@@ -289,11 +289,12 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
 
     bidSystem = fetchData.bidSystem
     bid = fetchData.bid
+    pricing = fetchData.pricing
 
     # Now fill out our data
     #
     # bidSystem|bid|requests|impressions|clicks|spent
-    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0", -> cb()
+    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0|#{pricing}", -> cb()
 
 ## Redis helpers
 

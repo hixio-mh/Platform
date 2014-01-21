@@ -35,6 +35,8 @@ html(lang="en" ng-app="AdefyDashboard")
     link(rel="stylesheet" href="/css/vendor/select2.css")
     link(rel="stylesheet" href="/css/vendor/angular-toggle-switch.css")
     link(rel="stylesheet" href="/css/vendor/rickshaw.css")
+    link(rel="stylesheet" href="/css/vendor/ng-quick-date.css")
+    link(rel="stylesheet" href="/css/vendor/ng-quick-date-default-theme.css")
     link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900")
     link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
     link(rel="stylesheet" href="//cdn.oesmith.co.uk/morris-0.4.3.min.css")
@@ -65,18 +67,20 @@ html(lang="en" ng-app="AdefyDashboard")
           | Apps
 
       .menu.right
-        a(href="/funds", tab) $ {{me.funds | number:2 }} Funds
+        a(href="/funds", tab) Funds $ {{ me.funds | number:2 }}
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
             a(href="/admin/home")
               i.fa.fa-fw.fa-user
               | Admin
+            a(href="/funds")
+              i.fa.fa-fw.fa-dollar
+              | Payments
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
-            a(form-modal template="/views/dashboard/account:feedback" title="Send feedback" 
-              ok-button-text="Send" form-submit="sendFeedback()" form-object="feedback")
+            a(form-modal template="/views/dashboard/account:feedback" title="Send feedback" ok-button-text="Send" form-submit="sendFeedback()" form-object="feedback")
               i.fa.fa-fw.fa-comment
               | Feedback
             a
@@ -85,9 +89,11 @@ html(lang="en" ng-app="AdefyDashboard")
             a(href="/logout" target="_self")
               i.fa.fa-fw.fa-sign-out
               | Sign out
+
     .notification(ng-show="notification" ng-class="notification.type")
       span(ng-bind="notification.text")
       i.fa.fa-fw.fa-times-circle(ng-click="clearNotification()")
+
     .content(ng-view="")
 
     footer
@@ -101,6 +107,7 @@ html(lang="en" ng-app="AdefyDashboard")
       script(src="/js/vendor/angular-country-select.min.js")
       script(src="/js/vendor/angles.js")
       script(src="/js/vendor/angular.chosen.js")
+      script(src="/js/vendor/ng-quick-date.min.js")
       script(src="/js/vendor/raphael-2.1.0.min.js")
       script(src="/js/vendor/morris-0.4.3.min.js")
 
@@ -109,7 +116,7 @@ html(lang="en" ng-app="AdefyDashboard")
 
       script.
         //var socket = io.connect("", { secure: true });
-        window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "ngResource", "countrySelect", "angles", "toggle-switch", "localytics.directives"]);
+        window.AdefyDashboard = angular.module("AdefyDashboard", ["ngRoute", "ngResource", "countrySelect", "angles", "toggle-switch", "localytics.directives", "ngQuickDate"]);
 
       //--
       //-- Route configs, and root controller
@@ -184,4 +191,4 @@ html(lang="en" ng-app="AdefyDashboard")
       script(src="//use.typekit.net/udl8vci.js")
       script.
         try{Typekit.load();}catch(e){}
-      // ferno │ .tk-proxima-nova
+        // ferno │ .tk-proxima-nova

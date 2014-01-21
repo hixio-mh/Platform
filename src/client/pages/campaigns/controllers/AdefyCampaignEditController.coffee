@@ -14,9 +14,12 @@
 window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout) ->
 
   $scope.min =
-    budget: 25
+    budget: 10
     cpm: 1.00
     cpc: 0.10
+
+  $scope.pricingOptions = ["CPM", "CPC"]
+  $scope.bidSysOptions = ["Automatic", "Manual"]
 
   $scope.campaign =
     pricing: "CPM"
@@ -136,6 +139,9 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
       for country in $scope.countriesExclude
         $scope.campaign.countries.push { name: country, type: "exclude" }
 
+    $scope.campaign.startDate = new Date($scope.campaign.startDate).getTime()
+    $scope.campaign.endDate = new Date($scope.campaign.endDate).getTime()
+
     $scope.submitted = true
     $scope.campaign.$save().then(
       -> # success
@@ -143,6 +149,30 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
       -> #error
         $scope.setNotification "There was an error with your form submission", "error"
     )
+
+  $scope.projectSpend = ->
+    if $scope.$parent.me
+      funds = $scope.$parent.me.funds
+    else
+      funds = $scope.campaign.dailyBudget
+
+    if $scope.campaign.endDate
+      if $scope.campaign.startDate
+        startDate = new Date($scope.campaign.startDate).getTime()
+      else
+        startDate = new Date().getTime()
+
+      endDate = new Date($scope.campaign.endDate).getTime()
+
+      # Get time span in days
+      span = (endDate - startDate) / (1000 * 60 * 60 * 24)
+      spend = $scope.campaign.dailyBudget * span
+
+      if spend > funds then spend = funds
+
+      spend.toFixed 2
+    else
+      funds
 
   # modal
   $scope.form = {} # define the object, or it will not get set inside the modal

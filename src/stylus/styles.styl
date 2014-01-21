@@ -45,9 +45,22 @@ button
   text-shadow 0 1px white
   padding 7px
   border-radius 5px
+
   &hover, &active
     background-image linear-gradient(#eee 20%,#fff 80%)
     box-shadow 0 1px 0 #fff inset
+
+
+button[disabled="disabled"]
+  color #ccc !important
+  background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
+  border 1px solid #bbb !important
+  box-shadow inset 0 1px rgba(255,255,255,.2) !important
+  text-shadow 0 1px white !important
+
+  &hover, &active
+    background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
+    box-shadow inset 0 1px rgba(255,255,255,.2) !important
 
 button.blue
   color #fff
@@ -56,10 +69,11 @@ button.blue
   border-bottom 1px solid rgba(0,0,0,.2)
   text-shadow 0 1px 1px rgba(0,0,0,0.3)
   box-shadow inset 0 -1px rgba(255,255,255,0.15)
-  &hover, &active
+
+  &:hover, &:active
     box-shadow 0 1px 0 rgba(255,255,255,.2) inset
     background #5897fb
-  &focus
+  &:focus
     border-color #385FDA
 
 button.save
@@ -80,7 +94,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
   &.ng-invalid.ng-dirty, .submitted &.ng-invalid
     border 1px solid #e74c3c !important //#c0392b
     //box-shadow 0 0 3px #e74c3c
-inputfocus, textareafocus, buttonfocus
+input:focus, textarea:focus, button:focus
   outline none
   border 1px solid #5897fb
 label
@@ -319,6 +333,9 @@ dl.form
     width 100%
   select, input[type="number"]
     width 50%
+
+  input[type="number"].wide
+    width 100%
 
   .chosen-container-single .chosen-single
     height auto // things get seriously fucked up without this
@@ -591,12 +608,15 @@ fieldset
     padding 5px
     position relative
 
-    .error
+    .error, .info
       max-width 300px
       margin: 4px 0 -32px 4px
       word-wrap break-word
-      color #e74c3c
       text-align left
+    .error
+      color #e74c3c
+    .info
+      color #919191
   input
     width 100%
 

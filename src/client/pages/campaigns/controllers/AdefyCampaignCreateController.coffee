@@ -13,11 +13,14 @@
 ##
 window.AdefyDashboard.controller "AdefyCampaignCreateController", ($scope, $location, Campaign, $http, $timeout) ->
 
+  $scope.pricingOptions = ["CPM", "CPC"]
+  $scope.bidSysOptions = ["Automatic", "Manual"]
+
   $scope.categories = []
   $scope.min = budget: 10
   $scope.campaign =
     pricing: "CPM"
-    bidSystem: "automatic"
+    bidSystem: "Automatic"
     networks: "all"
     scheduling: "no"
     devices: []
@@ -106,9 +109,36 @@ window.AdefyDashboard.controller "AdefyCampaignCreateController", ($scope, $loca
       for country in $scope.countriesExclude
         newCampaign.countries.push { name: country, type: "exclude" }
 
+    newCampaign.startDate = new Date(newCampaign.startDate).getTime()
+    newCampaign.endDate = new Date(newCampaign.endDate).getTime()
+
     newCampaign.$save().then(
       -> # success
         $location.path "/campaigns"
       -> #error
         $scope.setNotification "There was an error with your form submission", "error"
     )
+
+  $scope.projectSpend = ->
+    if $scope.$parent.me
+      funds = $scope.$parent.me.funds
+    else
+      funds = $scope.campaign.dailyBudget
+
+    if $scope.campaign.endDate
+      if $scope.campaign.startDate
+        startDate = new Date($scope.campaign.startDate).getTime()
+      else
+        startDate = new Date().getTime()
+
+      endDate = new Date($scope.campaign.endDate).getTime()
+
+      # Get time span in days
+      span = (endDate - startDate) / (1000 * 60 * 60 * 24)
+      spend = $scope.campaign.dailyBudget * span
+
+      if spend > funds then spend = funds
+
+      spend.toFixed 2
+    else
+      funds

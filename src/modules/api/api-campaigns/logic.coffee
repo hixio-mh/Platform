@@ -64,8 +64,6 @@ setup = (options, imports, register) ->
       else
         networks = req.param "networks"
 
-      spew.info JSON.stringify req.param "networks"
-
     if req.param "devices"
       raw = req.param "devices"
 
@@ -102,6 +100,9 @@ setup = (options, imports, register) ->
       devicesExclude: devicesExclude
       countriesInclude: countriesInclude
       countriesExclude: countriesExclude
+
+      startDate: Number req.param("startDate") || 0
+      endDate: Number req.param("endDate") || 0
 
       ads: []
 

@@ -1,0 +1,33 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+.inner(ng-if="action == 'pending'")
+  .funds.center(style="text-align: center")
+    .amount.large Please wait...
+    .desc Processing
+
+.inner(ng-if="action == 'unknown'")
+  .funds.center(style="text-align: center")
+    .amount.large Unknown transaction
+    .desc Redirecting...
+
+.inner(ng-if="action == 'confirm'")
+  .funds.center(style="text-align: center")
+    .amount.large Deposited ${{ paymentData.amount }}
+    .desc Redirecting...
+
+.inner(ng-if="action == 'cancel'")
+  .funds.center(style="text-align: center")
+    .amount.large Deposit cancelled
+    .desc Redirecting...

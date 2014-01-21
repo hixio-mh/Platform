@@ -46,6 +46,12 @@ schema = new mongoose.Schema
 
   funds: { type: Number, default: 0 }
 
+  transactions: [{ action: String, amount: Number, time: Number }]
+
+  # Used to store intermediate transaction information. String is of the
+  # format id|token
+  pendingDeposit: { type: String, default: "" }
+
   # Schema version, used by /migrate
   version: Number
 
@@ -83,5 +89,15 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
       return cb err
 
     cb null, isMatch
+
+schema.methods.addFunds = (amount) ->
+  @funds += Number amount
+
+  @transactions.push
+    action: "deposit"
+    amount: amount
+    time: new Date().getTime()
+
+  true
 
 mongoose.model "User", schema
