@@ -22,6 +22,8 @@
 
     "/settings",
     "/funds",
+    "/funds/confirm",
+    "/funds/cancel",
     "/feedback",
 
     "/admin/ads",

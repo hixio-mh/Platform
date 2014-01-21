@@ -63,6 +63,9 @@ schema = new mongoose.Schema
   countriesInclude: { type: Array, default: [] }
   countriesExclude: { type: Array, default: [] }
 
+  startDate: Number
+  endDate: Number
+
 ##
 ## ID and handle generation
 ##
@@ -311,6 +314,28 @@ schema.methods.refreshAdRefs = (cb) ->
   for ad in @ads
     refreshRefsForAd ad, @, -> doneCb()
 
+schema.methods.updatePaceData = (cb) ->
+
+  # Calc target spend for a two minute period
+  targetSpend = @dailyBudget / 720
+
+  key = "#{@getRedisId()}:pacing"
+  redis.get key, (err, pacing) ->
+    if err then spew.error err
+
+    if pacing == null
+      pacing = "0.5:0:#{targetSpend}:#{new Date().getTime()}"
+    else
+
+      # Update only target spend
+      pacing = pacing.split ":"
+      pacing[2] = targetSpend
+      pacing = pacing.join ":"
+
+    redis.set key, pacing, (err) ->
+      if err then spew.error err
+      cb()
+
 # Return our lifetime aggregated data
 #
 # @param [Method] callback
@@ -327,6 +352,10 @@ schema.pre "remove", (next) ->
 
       for ad in @ads
         @removeAd ad.id, -> done()
+
+# Ensure our pacing data is up to date (target spend)
+schema.pre "save", (next) ->
+  @updatePaceData -> next()
 
 # Return array of ad documents belonging to a campaign
 #

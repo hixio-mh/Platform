@@ -29,10 +29,10 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
               scope.close()
 
             result.error (error) ->
-              if error.error then scope.errorMessage = error.error
-              else scope.errorMessage = error
+              if error.error then scope.formObject.errorMessage = error.error
+              else scope.formObject.errorMessage = error
           else if result.error
-            scope.errorMessage = result.error
+            scope.formObject.errorMessage = result.error
 
         else scope.close() unless result is false
 

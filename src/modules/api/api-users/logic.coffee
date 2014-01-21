@@ -17,6 +17,15 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+paypalSDK = require "paypal-rest-sdk"
+config = require "../../../config.json"
+adefyDomain = "http://#{config.modes[config.mode].domain}:8080"
+
+paypalSDK.configure
+  host: "api.sandbox.paypal.com"
+  port: ""
+  client_id: "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r"
+  client_secret: "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 
 setup = (options, imports, register) ->
 
@@ -36,8 +45,6 @@ setup = (options, imports, register) ->
       if req.cookies.user.sess == user.session
         res.json 500, { error: "You can't delete yourself!" }
         return
-
-      spew.info "Deleted user #{user.username}"
 
       user.remove()
       res.json 200
@@ -108,11 +115,110 @@ setup = (options, imports, register) ->
 
   # Returns a list of transactions: deposits, withdrawals, reserves
   app.get "/api/v1/user/transactions", (req, res) ->
-    res.json [
-      {type: "deposit", amount: 3.20, time: new Date().getTime() - 200}
-      {type: "withdraw", amount: 3.20, time: new Date().getTime() - 600}
-      {type: "reserve", amount: 3.20, time: new Date().getTime() - 3600}
-    ]
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return res.json 500, error: "User not found"
+
+      res.json user.transactions
+
+  # Deposit creation
+  app.post "/api/v1/user/deposit/:amount", (req, res) ->
+    if isNaN req.param "amount"
+      return res.json 400, error: "Amount not a number"
+
+    amount = Number req.param "amount"
+
+    if amount < 50
+      return res.json 400, error: "Amount below minimum: $50"
+
+    paymentJSON =
+      intent: "sale"
+      payer:
+        payment_method: "paypal"
+      redirect_urls:
+        return_url: "#{adefyDomain}/funds/confirm"
+        cancel_url: "#{adefyDomain}/funds/cancel"
+      transactions: [
+        item_list:
+          items: [
+            name: "Adefy"
+            sku: "1"
+            price: amount
+            currency: "USD"
+            quantity: 1
+          ]
+
+        amount:
+          currency: "USD"
+          total: amount
+
+        description: "$#{amount} Adefy Deposit"
+      ]
+
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return res.json 500, error: "User not found"
+
+      paypalSDK.payment.create paymentJSON, (err, payment) ->
+        if err
+          spew.error err
+          return res.json 500, error: "Paypal error"
+
+        # Save payment links
+        paymentLinks = {}
+        for link in payment.links
+          paymentLinks[link.rel] = link.href
+
+        token = paymentLinks.approval_url.split("token=")[1]
+
+        # Save payment info for execution on confirmation
+        user.pendingDeposit = "#{payment.id}|#{token}"
+
+        user.save ->
+          res.json approval_url: paymentLinks.approval_url
+
+  # Deposit confirmation/cancellation
+  app.put "/api/v1/user/deposit/:token/:action", (req, res) ->
+    action = req.param "action"
+    token = req.param "token"
+    payerID = req.query.payerID
+
+    if action != "confirm" and action != "cancel"
+      return res.json 400, error: "Unknown action"
+    else if action == "confirm" and payerID == undefined
+      return res.json 400, error: "No payer id"
+
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return res.json 500, error: "User not found"
+
+      pendingDeposit = user.pendingDeposit.split "|"
+
+      # Check if this is the same transaction we are waiting for
+      if pendingDeposit.length != 2 or pendingDeposit[1] != token
+        return res.send 404
+
+      paymentID = pendingDeposit[0]
+
+      # Clear out transaction, and save
+      user.pendingDeposit = ""
+      user.save()
+
+      # If cancelling, that's all we need to do, so return
+      if action == "cancel" then return res.send 200
+
+      paypalSDK.payment.execute paymentID, payer_id: payerID, (err, data) ->
+        if err
+          spew.error err
+          return res.json 500, error: "Paypal error"
+
+        user.addFunds data.transactions[0].amount.total
+        user.save ->
+
+          res.json
+            status: data.state
+            amount: data.transactions[0].amount.total
+            currency: data.transactions[0].amount.currency
 
   register null, {}
 

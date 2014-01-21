@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
+window.AdefyDashboard.config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
 
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
@@ -81,6 +81,24 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider) ->
     controller: "AdefyAccountFundsController"
     templateUrl: "/views/dashboard/account:funds"
 
+  $routeProvider.when "/funds/:action",
+    controller: "AdefyAccountFundsController"
+    templateUrl: "/views/dashboard/account:depositFinal"
+
   $routeProvider.otherwise { redirectTo: "/home/publisher" }
+
+  ngQuickDateDefaultsProvider.set
+    closeButtonHtml: "<i class='fa fa-times'></i>"
+    buttonIconHtml: "<i class='fa fa-clock-o'></i>"
+    nextLinkHtml: "<i class='fa fa-chevron-right'></i>"
+    prevLinkHtml: "<i class='fa fa-chevron-left'></i>"
+
+    parseDateFunction: (str) ->
+      d = Date.create str
+
+      if d.isValid()
+        d
+      else
+        null
 
   true

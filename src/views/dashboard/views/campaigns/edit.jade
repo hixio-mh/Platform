@@ -1,6 +1,6 @@
 include _menu
 
-.inner: form(novalidate ng-class="{submitted: submitted}")
+.inner: form(novalidate ng-class="{ submitted: submitted }")
   fieldset: dl.form.center
     legend Ads
     p Add existing creatives
@@ -12,12 +12,11 @@ include _menu
     legend Bidding
     dt: label Pricing Model
     dd
-      select(chosen required ng-model="campaign.pricing")
-        option(value="CPM") CPM
-        option(value="CPC") CPC
-        option(value="CPC")
+      select(chosen required ng-model="campaign.pricing" ng-options="o for o in pricingOptions")
 
-    dt: label Daily Budget $
+    dt
+      label Daily Budget $
+      span(ng-if="campaign.dailyBudget") $ {{ campaign.dailyBudget | number:2 }} is enough for {{ me.funds / campaign.dailyBudget | number:2 }} days
     dd: input(ng-model="campaign.dailyBudget" min="{{ min.budget }}" type="number" placeholder="min {{ min.budget | currency:$ }}")
 
     dt: label Total Budget $ (Optional)
@@ -34,10 +33,22 @@ include _menu
       label Bid System
       span Automatic bidding utilizes our smart bid client and values each impression uniquely, whereas manual bidding treats each impression identically.
     dd
-      select(chosen required ng-model="campaign.bidSystem")
-        option(value="automatic") Automatic
-        option(value="manual") Manual
-        option(value="manual")
+      select(chosen required ng-model="campaign.bidSystem" ng-options="o for o in bidSysOptions")
+
+    br
+    br
+
+    dt: label Start Date (Optional)
+    dd: datepicker(ng-model="campaign.startDate")
+
+    dt: label End Date (Optional)
+    dd: datepicker(ng-model="campaign.endDate")
+
+    br
+    br
+
+    dt: label Projected Spend $
+    dd: input(type="number" disabled="disabled" value="{{ projectSpend() }}")
 
   fieldset: dl.form.center
     legend Targetting

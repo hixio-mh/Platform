@@ -13,31 +13,27 @@
 //-
 
 .inner
-    .funds.center(style="text-align: center")
-      .amount.large ${{me.funds | number:2}}
-      .desc Balance
-      .field.w50
-        .amount ${{me.funds | number:2}}
-        .desc Free
-      .field.w50
-        .amount ${{me.funds | number:2}}
-        .desc Reserved
-      .actions
-        button(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
-        ok-button-text="Deposit" form-submit="deposit()" form-object="creditCard") Deposit funds
-        button.blue(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
-        ok-button-text="Withdraw" form-submit="withdraw()" form-object="creditCard") Withdraw funds
-    table.transactions
-      tbody(ng-repeat="t in transactions" ng-switch="t.type")
-        tr.withdraw(ng-switch-when="withdraw")
-          td.desc Withdrawn {{ t.amount | currency:$ }}
-          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
-          td.number -{{ t.amount | currency:$ }}
-        tr.deposit(ng-switch-when="deposit")
-          td.desc Deposited {{ t.amount | currency:$ }}
-          td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
-          td.number +{{ t.amount | currency:$ }}
-        tr.reserve(ng-switch-when="reserve")
-          td.desc Reserved {{ t.amount | currency:$ }}
-          td.time  {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
-          td.number {{ t.amount | currency:$ }}
+  .funds.center(style="text-align: center")
+    .amount.large ${{ me.funds | number:2 }}
+    .desc Balance
+    .field.w50
+      .amount ${{ me.funds | number:2 }}
+      .desc Spent
+    .field.w50
+      .amount ${{ me.funds | number:2 }}
+      .desc Earned
+    .actions
+      button(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
+      ok-button-text="Withdraw" form-submit="withdraw()" form-object="paymentInfo") Withdraw funds
+      button.blue(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
+      ok-button-text="Deposit via Paypal" form-submit="deposit()" form-object="paymentInfo") Deposit funds
+  table.transactions
+    tbody(ng-repeat="t in transactions" ng-switch="t.action")
+      tr.withdraw(ng-switch-when="withdrawal")
+        td.desc Withdrawn ${{ t.amount | number:2 }}
+        td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+        td.number - ${{ t.amount | number:2 }}
+      tr.deposit(ng-switch-when="deposit")
+        td.desc Deposited ${{ t.amount | number:2 }}
+        td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
+        td.number + ${{ t.amount | number:2 }}
