@@ -290,9 +290,9 @@ schema.methods.ensureRedisStructure = ->
 
 schema.methods.createRedisStruture = (cb) ->
   @generateRedisPricingInfo =>
-    redis.set "#{@getRedisId()}:impressions", 0, ->
-      redis.set "#{@getRedisId()}:clicks", 0, ->
-        redis.set "#{@getRedisId()}:earnings", 0, ->
+    redis.set "#{@getRedisId()}:impressions", 0, =>
+      redis.set "#{@getRedisId()}:clicks", 0, =>
+        redis.set "#{@getRedisId()}:earnings", 0, =>
           redis.set "#{@getRedisId()}:requests", 0, ->
             cb()
 
