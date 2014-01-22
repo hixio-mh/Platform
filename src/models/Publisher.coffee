@@ -99,8 +99,14 @@ schema.methods.disaprove = (msg) ->
       msg: msg
       timestamp: new Date().getTime()
 
-schema.methods.activate = -> @active = true
-schema.methods.deactivate = -> @active = false
+schema.methods.activate = ->
+  @active = true
+  redis.set "#{@getRedisId()}:active", @active
+
+schema.methods.deactivate = ->
+  @active = false
+  redis.set "#{@getRedisId()}:active", @active
+
 schema.methods.isActive = -> @active
 
 ##
@@ -277,30 +283,35 @@ schema.methods.logStatIncrement = (stat) ->
 ##
 
 # Initialization
-schema.methods.ensureRedisStructure = ->
-  setKeyIfNull = (key, val) ->
-    redis.get key, (err, result) -> if result == null then redis.set key, val
-
-  setKeyIfNull "#{@getRedisId()}:impressions", 0
-  setKeyIfNull "#{@getRedisId()}:clicks", 0
-  setKeyIfNull "#{@getRedisId()}:earnings", 0
-  setKeyIfNull "#{@getRedisId()}:requests", 0
-
-  @generateRedisPricingInfo()
-
-schema.methods.createRedisStruture = (cb) ->
-  @generateRedisPricingInfo =>
-    redis.set "#{@getRedisId()}:impressions", 0, =>
-      redis.set "#{@getRedisId()}:clicks", 0, =>
-        redis.set "#{@getRedisId()}:earnings", 0, =>
-          redis.set "#{@getRedisId()}:requests", 0, ->
+schema.methods.updateColdRedisData = (cb) ->
+  ref = @getRedisId()
+  redis.set "#{ref}:active", @active, =>
+    redis.set "#{ref}:pricing", @preferredPricing, =>
+      redis.set "#{ref}:minCPC", @minimumCPC, =>
+        redis.set "#{ref}:minCPM", @minimumCPM, =>
+          redis.set "#{ref}:category", @category, =>
             cb()
 
-schema.methods.generateRedisPricingInfo = (cb) ->
-  pricingInfo = "#{@preferredPricing}|#{@minimumCPC}|#{@minimumCPM}"
-  redis.set @getRedisId(), pricingInfo, (err) ->
-    if err then spew.error err
-    if cb then cb()
+schema.methods.createRedisStruture = (cb) ->
+
+  if @owner._id != undefined
+    ownerId = @owner._id
+  else
+    ownerId = @owner
+
+  ref = @getRedisId()
+  redis.set "#{ref}:impressions", 0, =>
+    redis.set "#{ref}:clicks", 0, =>
+      redis.set "#{ref}:earnings", 0, =>
+        redis.set "#{ref}:requests", 0, =>
+          redis.set "#{ref}:owner", ownerId, =>
+            redis.set "#{ref}:active", @active, =>
+              redis.set "#{ref}:graphiteId", @getGraphiteId(), =>
+                redis.set "#{ref}:pricing", @preferredPricing, =>
+                  redis.set "#{ref}:minCPC", @minimumCPC, =>
+                    redis.set "#{ref}:minCPM", @minimumCPM, =>
+                      redis.set "#{ref}:category", @category, =>
+                        cb()
 
 # Basic stat fetching
 schema.methods.fetchImpressions = (cb) ->
@@ -357,12 +368,18 @@ schema.methods.fetchPricingInfo = (cb) ->
 ##
 
 schema.pre "save", (next) ->
-  if not @hasAPIKey() then @createAPIKey()
+  thumbnailGeneration = =>
+    if @needsNewThumbnail()
+      @generateThumbnailUrl -> next()
+    else
+      next()
 
-  # Also generates pricing Info
-  @ensureRedisStructure()
+  if not @hasAPIKey()
+    @createAPIKey()
 
-  if @needsNewThumbnail() then @generateThumbnailUrl -> next()
-  else next()
+    # No API Key means no redis structure
+    @createRedisStruture -> thumbnailGeneration()
+
+  @updateColdRedisData -> thumbnailGeneration()
 
 mongoose.model "Publisher", schema

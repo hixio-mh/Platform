@@ -312,7 +312,10 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
 # @param [Campaign] campaign
 # @return [String] ref
 schema.methods.getRedisRefForCampaign = (campaign) ->
-  "campaignAd:#{campaign._id}:#{@_id}"
+  if campaign.owner._id == undefined then ownerId = campaign.owner
+  else ownerId = campaign.owner._id
+
+  "campaignAd:#{campaign._id}:#{@_id}:#{ownerId}"
 
 schema.methods.getRedisRef = -> "ads:#{@_id}"
 

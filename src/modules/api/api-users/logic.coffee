@@ -67,9 +67,9 @@ setup = (options, imports, register) ->
     findOne = (username, res) ->
       db.model("User").findOne { username: username }, (err, user) ->
         if utility.dbError err, res then return
-        if not user then res.send(404); return
+        if not user then return res.send 404
 
-        res.json ret.toAPI()
+        user.updateFunds -> res.json user.toAPI()
 
     if req.param("filter") == "all"
       findAll res
@@ -86,7 +86,7 @@ setup = (options, imports, register) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      res.json user.toAPI()
+      user.updateFunds -> res.json user.toAPI()
 
   # Update the user account. Users can only save themselves!
   app.put "/api/v1/user", (req, res) ->

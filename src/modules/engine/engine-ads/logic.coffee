@@ -18,6 +18,11 @@ configMode = config.modes[config.mode]
 adefyDomain = "http://#{configMode.domain}:#{configMode["port-http"]}"
 redisLib = require "redis"
 redis = redisLib.createClient()
+statsdLib = require("node-statsd").StatsD
+statsd = new statsdLib
+  host: config["stats-db"].host
+  port: config["stats-db"].port
+  prefix: "#{config.mode}."
 
 ##
 ## Handles ad packaging and fetching
@@ -72,10 +77,10 @@ setup = (options, imports, register) ->
     null
 
   performBaseTargeting = (publisher, req, cb) ->
-    targetingKey = "#{publisher.apikey}:#{new Date().getTime()}"
+    targetingKey = "#{publisher.ref}:#{new Date().getTime()}"
 
     # Publisher filters
-    pricing = publisher.preferredPricing
+    pricing = publisher.pricing
     category = publisher.category
 
     # Request filters
@@ -251,12 +256,13 @@ setup = (options, imports, register) ->
             targetBid: Number data[6]
             campaignId: getCampaignFromAdKey key
             adId: getAdFromAdKey key
+            ownerRedisId: getUserFromAdKey key
 
           done()
 
       fetchAdKeys key for key in adKeys
 
-  generateBid = (ad, publisherStats) ->
+  generateBid = (ad, publisher) ->
 
     # If ad pricing is CPM, then just divide target CPM by 1000
     if ad.pricing == "CPM"
@@ -265,17 +271,18 @@ setup = (options, imports, register) ->
 
       # This is where it gets kinky. Use publisher lifetime ctr. If it is 0
       # (publisher has no clicks), then use a CTR of 2.5%
-      if publisherStats.ctr == 0
+      if publisher.ctr == 0
         ctr = 0.025
       else
-        ctr = publisherStats.ctr
+        ctr = publisher.ctr
 
       return ad.targetBid * ctr
 
   getCampaignFromAdKey = (adKey) -> adKey.split(":")[1]
   getAdFromAdKey = (adKey) -> adKey.split(":")[2]
+  getUserFromAdKey = (adKey) -> adKey.split(":")[3]
 
-  performRTB = (structuredAds, publisherStats, req, res, cb) ->
+  performRTB = (structuredAds, publisher, req, res, cb) ->
 
     ##
     ## Data! Sexy.
@@ -324,7 +331,7 @@ setup = (options, imports, register) ->
       for key, ad of structuredAds
 
         # Bid! Magic!
-        ad.bid = generateBid ad, publisherStats
+        ad.bid = generateBid ad, publisher
 
         # Pace! Decide if we bid
         #
@@ -380,7 +387,7 @@ setup = (options, imports, register) ->
       cb maxBidAd
 
       # Create redis action key if needed, expires in 12 hours
-      # Format: impression|click|pricing|bid|campaign|ad|publisher
+      # impression|click|pricing|bid|campaign|ad|pubRedis|pubGraph|adUser|pubUser
       if maxBidAd != null
         redis.set "actions:#{actionId}", [
           0
@@ -389,8 +396,10 @@ setup = (options, imports, register) ->
           maxBidAd.bid
           maxBidAd.campaignId
           maxBidAd.adId
-          publisherStats.redisId
-          publisherStats.graphiteId
+          publisher.ref
+          publisher.graphiteId
+          maxBidAd.ownerRedisId
+          publisher.owner
         ].join("|"), (err) ->
 
           if err then spew.error err
@@ -408,42 +417,29 @@ setup = (options, imports, register) ->
   #
   # @param [Object] req request
   # @param [Object] res response
-  # @param [Publisher] publisher publisher model
+  # @param [Object] publisher publisher data set (fetched from redis)
   fetch = (req, res, publisher) ->
     error = validateRequest req
     if error != null then return fetchEmpty req, res
 
-    # Log request and fetch pricing
-    publisher.logRequest()
+    # Log request
+    redis.incr "#{publisher.ref}:requests"
+    statsd.increment "#{publisher.graphiteId}.requests"
 
-    # Fetching CTR also fetches our click and impression count
-    publisher.fetchCTR (ctr, impressions, clicks) ->
+    getIPCountry publisher, (country) ->
+      performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
+        if err or adCount == 0
+          if err then spew.error err
+          redis.del targetingKey
+          return fetchEmpty req, res
 
-      publisherStats =
-        ctr: ctr
-        impressions: impressions
-        clicks: clicks
-        redisId: publisher.getRedisId()
-        graphiteId: publisher.getGraphiteId()
+        # Todo: Add more steps to this if needed
+        if country == "None" then country = null
 
-      publisher.fetchPricingInfo (pricingInfo) ->
-        if pricingInfo == null
-          spew.error "Pricing info invalid"; return fetchEmpty req, res
-
-        getIPCountry publisher, (country) ->
-          performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
-            if err or adCount == 0
-              if err then spew.error err
-              redis.del targetingKey
-              return fetchEmpty req, res
-
-            # Todo: Add more steps to this if needed
-            if country == "None" then country = null
-
-            performCountryTargeting targetingKey, country, res, (finalKey) ->
-              fetchTargetedAdEntries finalKey, res, (ads) ->
-                performRTB ads, publisherStats, req, res, (ad) ->
-                  res.json ad
+        performCountryTargeting targetingKey, country, res, (finalKey) ->
+          fetchTargetedAdEntries finalKey, res, (ads) ->
+            performRTB ads, publisher, req, res, (ad) ->
+              res.json ad
 
   # Fetches a test ad tuned for the publisher in question.
   #

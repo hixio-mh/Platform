@@ -44,7 +44,11 @@ setup = (options, imports, register) ->
             handleError err
             models.push campaign for campaign in campaigns
 
-            cb models
+            db.model("User").find {}, (err, users) ->
+              handleError err
+              models.push user for user in users
+
+              cb models
 
     # First, clear it
     redis.flushall (err, res) ->
