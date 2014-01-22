@@ -23,7 +23,8 @@
 			"port-http": 8080,
 			"port-https": 8443,
 
-			"domain": "localhost"
+			"domain": "localhost",
+			"rebuild-redis": false
 		},
 		"staging": {
 			"log-to-server": false,
@@ -33,7 +34,8 @@
 			"port-http": 43342,
 			"port-https": 43343,
 
-			"domain": "staging.adefy.com"
+			"domain": "staging.adefy.com",
+			"rebuild-redis": false
 		},
 		"production": {
 			"log-to-server": false,
@@ -43,7 +45,8 @@
 			"port-http": 8080,
 			"port-https": 8443,
 
-			"domain": "app.adefy.com"
+			"domain": "app.adefy.com",
+			"rebuild-redis": false
 		},
 		"testing": {
 			"log-to-server": false,
@@ -54,7 +57,8 @@
 			"port-https": 18443,
 
 			"domain": "localhost",
-			"db": "adefy_cloud_testing"
+			"db": "adefy_cloud_testing",
+			"rebuild-redis": false
 		}
 	},
 

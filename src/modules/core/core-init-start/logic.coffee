@@ -32,30 +32,6 @@ setup = (options, imports, register) ->
 
   spew.init "Starting Initialization"
 
-  # Pick DB to connect to
-  if config.modes[config.mode].db != undefined
-    db = config.modes[config.mode].db
-  else
-    db = config.db.db
-
-  # Connect to the db
-  con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
-  con += ":#{config.db.port}/#{db}"
-
-  dbConnection = mongoose.connect con, (err) ->
-    if err
-      spew.critical "Error connecting to database [#{err}]"
-      spew.critical "Using connection: #{con}"
-      spew.critical "Config mode: #{JSON.stringify config.modes[config.mode]}"
-    else spew.init "Connected to MongoDB #{db} as #{config.db.user}"
-
-    # Setup db models
-    modelPath = "#{__dirname}/../../../models"
-    fs.readdirSync(modelPath).forEach (file) ->
-      if ~file.indexOf ".js"
-        spew.init "Loading model #{file}"
-        require "#{modelPath}/#{file}"
-
   ## Set up middleware
 
   # Auth
@@ -113,11 +89,9 @@ setup = (options, imports, register) ->
           if auth.checkAuth req.cookies.user # If user is actually authorized
             next() # Gogo
           else
-            spew.warning "Unauthorized user tried to access " + req.url
             res.clearCookie "user"
             res.redirect "/login"
       else # Credentials required and not avaliable
-        spew.warning "Unauthorized user tried to access " + req.url
         res.redirect "/login"
     else next() # Page doesn't need auth
 
@@ -152,6 +126,30 @@ setup = (options, imports, register) ->
     httpForward.listen _portHTTP
     spew.init "HTTP -> HTTPS redirect on port #{_portHTTP}"
 
-  register null, {}
+  # Pick DB to connect to
+  if config.modes[config.mode].db != undefined
+    db = config.modes[config.mode].db
+  else
+    db = config.db.db
+
+  # Connect to the db
+  con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
+  con += ":#{config.db.port}/#{db}"
+
+  dbConnection = mongoose.connect con, (err) ->
+    if err
+      spew.critical "Error connecting to database [#{err}]"
+      spew.critical "Using connection: #{con}"
+      spew.critical "Config mode: #{JSON.stringify config.modes[config.mode]}"
+    else spew.init "Connected to MongoDB #{db} as #{config.db.user}"
+
+    # Setup db models
+    modelPath = "#{__dirname}/../../../models"
+    fs.readdirSync(modelPath).forEach (file) ->
+      if ~file.indexOf ".js"
+        spew.init "Loading model #{file}"
+        require "#{modelPath}/#{file}"
+
+    register null, {}
 
 module.exports = setup

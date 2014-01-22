@@ -105,7 +105,11 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
 
     $timeout -> initializeSelect2Fields()
 
-  Ad.query (ads) -> $scope.ads = ads
+  Ad.query (ads) ->
+    $scope.ads = []
+
+    for ad in ads
+      if ad.status == 2 then $scope.ads.push ad
 
   $scope.removeRule = (index) ->
     $scope.campaign.rules.splice index, 1

@@ -7,6 +7,12 @@ ul.list(ng-if="ads")
   li(ng-repeat="ad in ads")
     a.ad(ng-href="/ads/{{ad.id}}")
       .name(ng-bind="ad.name")
+
+      span(ng-switch="ad.status")
+        .label.gray(ng-switch-when="0") Pending Approval
+        .label.red(ng-switch-when="1") Rejected
+        .label.green(ng-switch-when="2") Approved
+
       .edit: i.fa.fa-wrench
 
     table.campaigns

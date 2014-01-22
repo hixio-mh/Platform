@@ -277,12 +277,9 @@ schema.methods.logStatIncrement = (stat) ->
 ##
 
 # Initialization
-
 schema.methods.ensureRedisStructure = ->
   setKeyIfNull = (key, val) ->
-    redis.get key, (err, result) ->
-      if result == null
-        redis.set key, val
+    redis.get key, (err, result) -> if result == null then redis.set key, val
 
   setKeyIfNull "#{@getRedisId()}:impressions", 0
   setKeyIfNull "#{@getRedisId()}:clicks", 0
@@ -291,8 +288,19 @@ schema.methods.ensureRedisStructure = ->
 
   @generateRedisPricingInfo()
 
-schema.methods.generateRedisPricingInfo = ->
-  redis.set @getRedisId(), "#{@preferredPricing}|#{@minimumCPC}|#{@minimumCPM}"
+schema.methods.createRedisStruture = (cb) ->
+  @generateRedisPricingInfo =>
+    redis.set "#{@getRedisId()}:impressions", 0, ->
+      redis.set "#{@getRedisId()}:clicks", 0, ->
+        redis.set "#{@getRedisId()}:earnings", 0, ->
+          redis.set "#{@getRedisId()}:requests", 0, ->
+            cb()
+
+schema.methods.generateRedisPricingInfo = (cb) ->
+  pricingInfo = "#{@preferredPricing}|#{@minimumCPC}|#{@minimumCPM}"
+  redis.set @getRedisId(), pricingInfo, (err) ->
+    if err then spew.error err
+    if cb then cb()
 
 # Basic stat fetching
 schema.methods.fetchImpressions = (cb) ->
