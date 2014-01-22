@@ -41,6 +41,7 @@ setup = (options, imports, register) ->
 
   # Try to fetch a real ad
   app.get "/api/v1/serve/:apikey", (req, res) ->
+    startTimestamp = new Date().getTime()
     ref = "pub:#{req.param "apikey"}"
 
     # Fetch all publisher keys
@@ -65,8 +66,8 @@ setup = (options, imports, register) ->
         else
           pubData.ctr = 0
 
-        if pubData.active
-          adEngine.fetch req, res, pubData
+        if pubData.active == "true"
+          adEngine.fetch req, res, pubData, startTimestamp
         else
           adEngine.fetchTest req, res, pubData
 

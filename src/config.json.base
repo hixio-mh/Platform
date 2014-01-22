@@ -24,13 +24,13 @@
 			"port-https": 8443,
 
 			"domain": "localhost",
-			"rebuild-redis": true
+			"rebuild-redis": false
 		},
 		"staging": {
 			"log-to-server": false,
 			"catch-critical": false,
 
-			"secure": false,
+			"secure": true,
 			"port-http": 43342,
 			"port-https": 43343,
 
