@@ -279,7 +279,10 @@ schema.methods.logStatIncrement = (stat) ->
 # Initialization
 
 schema.methods.ensureRedisStructure = ->
-  setKeyIfNull = (key, val) -> if redis.get(key) == null then redis.set key, val
+  setKeyIfNull = (key, val) ->
+    redis.get key, (err, result) ->
+      if result == null
+        redis.set key, val
 
   setKeyIfNull "#{@getRedisId()}:impressions", 0
   setKeyIfNull "#{@getRedisId()}:clicks", 0

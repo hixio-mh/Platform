@@ -72,26 +72,30 @@ schema = new mongoose.Schema
 ##
 
 schema.methods.getGraphiteId = -> "ads.#{@_id}"
+schema.methods.getGraphiteCampaignId = (campaignId) ->
+  "campaigns.#{campaignId}.ads.#{@_id}"
+
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
 
   for i in [0...ret.campaigns.length]
-    ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id
+    if ret.campaigns[i].campaign != null
+      ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id
 
-    delete ret.campaigns[i].campaign._id
-    delete ret.campaigns[i].campaign.__v
-    delete ret.campaigns[i].campaign.version
-    delete ret.campaigns[i].campaign.owner
-    delete ret.campaigns[i].campaign.countries
-    delete ret.campaigns[i].campaign.devices
+      delete ret.campaigns[i].campaign._id
+      delete ret.campaigns[i].campaign.__v
+      delete ret.campaigns[i].campaign.version
+      delete ret.campaigns[i].campaign.owner
+      delete ret.campaigns[i].campaign.countries
+      delete ret.campaigns[i].campaign.devices
 
-    delete ret.campaigns[i].countries
-    delete ret.campaigns[i].devices
+      delete ret.campaigns[i].countries
+      delete ret.campaigns[i].devices
 
-    # No idea where this comes from.
-    # Todo: Figure this out
-    delete ret.campaigns[i]._id
+      # No idea where this comes from.
+      # Todo: Figure this out
+      delete ret.campaigns[i]._id
 
   delete ret._id
   delete ret.__v
@@ -292,9 +296,15 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
     pricing = fetchData.pricing
 
     # Now fill out our data
-    #
-    # bidSystem|bid|requests|impressions|clicks|spent
-    redis.set ref, "#{bidSystem}|#{bid}|0|0|0|0|#{pricing}", -> cb()
+    redis.set "#{ref}:bidSystem", bidSystem
+    redis.set "#{ref}:bid", bid
+    redis.set "#{ref}:requests", 0
+    redis.set "#{ref}:impressions", 0
+    redis.set "#{ref}:clicks", 0
+    redis.set "#{ref}:spent", 0
+    redis.set "#{ref}:pricing", pricing
+
+    cb()
 
 ## Redis helpers
 
@@ -303,12 +313,14 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
 # @param [Campaign] campaign
 # @return [String] ref
 schema.methods.getRedisRefForCampaign = (campaign) ->
-  "campaignAd.#{campaign._id}:#{@_id}"
+  "campaignAd:#{campaign._id}:#{@_id}"
+
+schema.methods.getRedisRef = -> "ads:#{@_id}"
 
 # Generate a key matching all of our campaign entries
 #
 # @return [String] ref
-schema.methods.getRedisRefForAllCampaigns = -> "campaignAd.*:#{@_id}"
+schema.methods.getRedisRefForAllCampaigns = -> "campaignAd:*:#{@_id}"
 
 # Fetch final targeting filters (country, network, etc) and bid info for
 # campaign
@@ -412,5 +424,13 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
     addKeyToSets sets.deviceSets, ref, ->
       addKeyToSets sets.networkSets, ref, ->
         cb()
+
+# Rebuild our redis structures
+schema.pre "save", (next) ->
+  redis.del @getRedisRef(), (err) =>
+    if err then spew.error err
+    redis.set @getRedisRef(), @data, (err) ->
+      if err then spew.error err
+      next()
 
 mongoose.model "Ad", schema

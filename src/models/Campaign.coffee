@@ -108,7 +108,7 @@ schema.methods.fetchTotalStatsForAd = (ad, cb) ->
   if ad._id == undefined then adId = ad.id
   else adId = ad._id
 
-  ref = "campaignAd.#{@._id}:#{adId}"
+  ref = "campaignAd:#{@._id}:#{adId}"
 
   redis.get ref, (err, result) ->
     if err then spew.error err
