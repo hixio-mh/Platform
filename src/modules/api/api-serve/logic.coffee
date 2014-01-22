@@ -93,13 +93,13 @@ setup = (options, imports, register) ->
           if data[2] == "CPM"
             redis.incr "#{campaignRef}:impressions"
             redis.incr "#{publisherRef}:impressions"
-            redis.incrby "#{campaignRef}:spent", data[3]
-            redis.incrby "#{publisherRef}:earnings", data[3]
+            redis.incrbyfloat "#{campaignRef}:spent", data[3]
+            redis.incrbyfloat "#{publisherRef}:earnings", data[3]
 
-            statsd.increment "#{campaignGraphiteId}.#{impressions}"
-            statsd.increment "#{publisherGraphiteId}.#{impressions}"
-            statsd.increment "#{publisherGraphiteId}.#{earnings}", data[3]
-            statsd.increment "#{campaignGraphiteId}.#{spent}", data[3]
+            statsd.increment "#{campaignGraphiteId}.impressions"
+            statsd.increment "#{publisherGraphiteId}.impressions"
+            statsd.increment "#{publisherGraphiteId}.earnings", data[3]
+            statsd.increment "#{campaignGraphiteId}.spent", data[3]
 
           guardCache.del cacheKey
 
@@ -141,13 +141,13 @@ setup = (options, imports, register) ->
             if data[2] == "CPC"
               redis.incr "#{campaignRef}:clicks"
               redis.incr "#{publisherRef}:clicks"
-              redis.incrby "#{campaignRef}:spent", data[3]
-              redis.incrby "#{publisherRef}:earnings", data[3]
+              redis.incrbyfloat "#{campaignRef}:spent", data[3]
+              redis.incrbyfloat "#{publisherRef}:earnings", data[3]
 
-              statsd.increment "#{campaignGraphiteId}.#{clicks}"
-              statsd.increment "#{publisherGraphiteId}.#{clicks}"
-              statsd.increment "#{publisherGraphiteId}.#{earnings}", data[3]
-              statsd.increment "#{campaignGraphiteId}.#{spent}", data[3]
+              statsd.increment "#{campaignGraphiteId}.clicks"
+              statsd.increment "#{publisherGraphiteId}.clicks"
+              statsd.increment "#{publisherGraphiteId}.earnings", data[3]
+              statsd.increment "#{campaignGraphiteId}.spent", data[3]
 
             guardCache.del cacheKey
             res.send 200

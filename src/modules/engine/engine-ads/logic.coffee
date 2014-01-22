@@ -107,10 +107,14 @@ setup = (options, imports, register) ->
           CPCIntersectData.push key for key in CPCKeys
           CPMIntersectData.push key for key in CPMKeys
 
+          # Account for no keys for each pricing model
+          if CPCIntersectData.length == 1 then CPCIntersectData.push ""
+          if CPMIntersectData.length == 1 then CPMIntersectData.push ""
+
           # Intersect both key sets
-          redis.sinterstore CPCIntersectData, (err, result) ->
+          redis.sinterstore CPCIntersectData, (err, resultCPC) ->
             if err then spew.error err
-            redis.sinterstore CPMIntersectData, (err, result) ->
+            redis.sinterstore CPMIntersectData, (err, resultCPM) ->
               if err then spew.error err
 
               # Unionstore the results
@@ -119,6 +123,9 @@ setup = (options, imports, register) ->
                 CPCIntersectKey
                 CPMIntersectKey
               ], (err, result) ->
+
+                redis.del CPCIntersectKey
+                redis.del CPMIntersectKey
 
                 # Done, ship results
                 cb FinalIntersectKey, err, result
@@ -216,15 +223,38 @@ setup = (options, imports, register) ->
       redis.del targetingKey
       if err then spew.error err; return fetchEmpty req, res
 
-      redis.mget adKeys, (err, ads) ->
-        if err then spew.error err; return fetchEmpty req, res
+      structuredAds = {}
 
-        structuredAds = {}
+      # Campaign ad data is stored on multiple keys, so we need to fetch them
+      doneCount = adKeys.length
+      done = -> doneCount--; if doneCount == 0 then cb structuredAds
 
-        for key, i in adKeys
-          structuredAds[key] = ads[i]
+      fetchAdKeys = (key) ->
+        redis.mget [
+          "#{key}:pricing"
+          "#{key}:requests"
+          "#{key}:bidSystem"
+          "#{key}:impressions"
+          "#{key}:spent"
+          "#{key}:clicks"
+          "#{key}:bid"
+        ], (err, data) ->
+          if err then spew.error err; return fetchEmpty req, res
 
-        cb structuredAds
+          structuredAds[key] =
+            pricing: data[0]
+            requests: Number data[1]
+            bidSystem: data[2]
+            impressions: Number data[3]
+            spent: Number data[4]
+            clicks: Number data[5]
+            targetBid: Number data[6]
+            campaignId: getCampaignFromAdKey key
+            adId: getAdFromAdKey key
+
+          done()
+
+      fetchAdKeys key for key in adKeys
 
   generateBid = (ad, publisherStats) ->
 
@@ -242,8 +272,8 @@ setup = (options, imports, register) ->
 
       return ad.targetBid * ctr
 
-  getCampaignFromAdKey = (adKey) -> adKey.split(":")[0].split(".")[1]
-  getAdFromAdKey = (adKey) -> adKey.split(":")[1]
+  getCampaignFromAdKey = (adKey) -> adKey.split(":")[1]
+  getAdFromAdKey = (adKey) -> adKey.split(":")[2]
 
   performRTB = (structuredAds, publisherStats, req, res, cb) ->
 
@@ -265,13 +295,12 @@ setup = (options, imports, register) ->
     ##
 
     # First go through and fetch pacing data for campaigns
-    for adKey, d of structuredAds
-      campaignId = getCampaignFromAdKey adKey
+    for key, ad of structuredAds
 
       # Add key to fetch list
-      if campaignPaceData[campaignId] != null
-        campaignPaceData[campaignId] = null
-        keysToFetch.push "campaign:#{campaignId}:pacing"
+      if campaignPaceData[ad.campaignId] != null
+        campaignPaceData[ad.campaignId] = null
+        keysToFetch.push "campaign:#{ad.campaignId}:pacing"
 
     ##
     ## Fetch campaign pacing data
@@ -292,22 +321,7 @@ setup = (options, imports, register) ->
       bids = []
 
       # Go through and generate bids
-      for adKey, adData of structuredAds
-
-        campaignId = getCampaignFromAdKey adKey
-        adData = adData.split "|"
-
-        ad =
-          key: adKey
-          system: adData[0]
-          targetBid: Number adData[1]
-          requests: Number adData[2]
-          impressions: Number adData[3]
-          clicks: Number adData[4]
-          spent: Number adData[5]
-          pricing: adData[6]
-          campaignId: campaignId
-          adId: getAdFromAdKey adKey
+      for key, ad of structuredAds
 
         # Bid! Magic!
         ad.bid = generateBid ad, publisherStats
@@ -316,7 +330,7 @@ setup = (options, imports, register) ->
         #
         # Pacing data is stored in the form "pace:spent:targetSpend:timestamp"
         # We update the pace every two minutes (timestamp is of last update)
-        paceData = campaignPaceData[campaignId].split ":"
+        paceData = campaignPaceData[ad.campaignId].split ":"
         paceData =
           pace: Number paceData[0]
           spent: Number paceData[1]
@@ -337,7 +351,7 @@ setup = (options, imports, register) ->
           paceData.spent = 0
 
         # Save pace data
-        redis.set "campaign:#{campaignId}:pacing", [
+        redis.set "campaign:#{ad.campaignId}:pacing", [
           paceData.pace
           paceData.spent
           paceData.targetSpend
