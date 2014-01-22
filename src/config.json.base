@@ -30,7 +30,7 @@
 			"log-to-server": false,
 			"catch-critical": false,
 
-			"secure": true,
+			"secure": false,
 			"port-http": 43342,
 			"port-https": 43343,
 
