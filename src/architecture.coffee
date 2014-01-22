@@ -21,6 +21,7 @@ module.exports = [
   "./modules/core/core-init-snapshot",
   "./modules/core/core-userauth",
   "./modules/core/core-init-start",
+  "./modules/core/core-init-redis",
 
   # Utility helper
   "./modules/logic/utility",

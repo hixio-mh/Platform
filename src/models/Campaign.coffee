@@ -342,6 +342,11 @@ schema.methods.updatePaceData = (cb) ->
 # @return [String] data csv data from graphite
 schema.methods.lifetimeData = (cb) ->
 
+schema.methods.createRedisStruture = (cb) ->
+  @updatePaceData =>
+    @populate "ads", =>
+      @refreshAdRefs -> cb()
+
 # Cleans up campaign references within ads
 schema.pre "remove", (next) ->
   if @ads.length == 0 then next()

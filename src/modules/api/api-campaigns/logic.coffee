@@ -222,6 +222,10 @@ setup = (options, imports, register) ->
                 spew.error "Tried to add ad to campaign, ad not found"
                 spew.error "Ad id: #{adId}"
                 return res.send 500
+              else if ad.status != 2
+                spew.error "Tried to add un-approved ad to campaign"
+                spew.error "Client and server-side checks were bypassed!"
+                return res.send 500
 
               # Register campaign and create targeting references
               ad.registerCampaignParticipation campaign
@@ -242,16 +246,17 @@ setup = (options, imports, register) ->
           currentAds[ad._id.toString()] = "deleted"
 
         for ad in req.body.ads
-          adFound = false
+          if ad.status == 2
+            adFound = false
 
-          # Mark as either unmodified, or created
-          for currentAd, v of currentAds
-            if currentAd == ad.id
-              adFound = true
-              break
+            # Mark as either unmodified, or created
+            for currentAd, v of currentAds
+              if currentAd == ad.id
+                adFound = true
+                break
 
-          if adFound then currentAds[ad.id] = "unmodified"
-          else currentAds[ad.id] = "created"
+            if adFound then currentAds[ad.id] = "unmodified"
+            else currentAds[ad.id] = "created"
 
         # Generate new ads array to save in campaign model
         adIds = []

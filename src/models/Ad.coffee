@@ -289,7 +289,6 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
   fetchData = @getCompiledFetchData(campaign)
 
   @createRedisFilters fetchData, ref, ->
-    spew.info "Created redis filters for #{ref}"
 
     bidSystem = fetchData.bidSystem
     bid = fetchData.bid
@@ -425,12 +424,12 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
       addKeyToSets sets.networkSets, ref, ->
         cb()
 
-# Rebuild our redis structures
-schema.pre "save", (next) ->
-  redis.del @getRedisRef(), (err) =>
+schema.methods.createRedisStruture = (cb) ->
+  redis.set @getRedisRef(), @data, (err) ->
     if err then spew.error err
-    redis.set @getRedisRef(), @data, (err) ->
-      if err then spew.error err
-      next()
+    cb()
+
+# Rebuild our redis structures
+schema.pre "save", (next) -> @createRedisStruture -> next()
 
 mongoose.model "Ad", schema
