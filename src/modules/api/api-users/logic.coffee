@@ -59,10 +59,18 @@ setup = (options, imports, register) ->
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
         if utility.dbError err, res then return
+        if users.length == 0 then return res.json []
+
+        doneCount = users.length
+        done = (cb) -> doneCount--; if doneCount == 0 then cb()
 
         ret = []
-        ret.push u.toAPI() for u in users
-        res.json ret
+        updateFundsForUser = (user) ->
+          user.updateFunds ->
+            ret.push user.toAPI()
+            done -> res.json ret
+
+        updateFundsForUser u for u in users
 
     findOne = (username, res) ->
       db.model("User").findOne { username: username }, (err, user) ->

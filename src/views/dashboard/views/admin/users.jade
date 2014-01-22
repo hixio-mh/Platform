@@ -23,16 +23,14 @@ include _menu
     thead: tr
       th Username
       th Email
-      th Advertising Credit
-      th Publisher Balance
+      th Funds
       th
     tbody
       tr(ng-repeat="(i, u) in userlist")
         td {{ u.username }}
         td {{ u.email }}
 
-        td $ {{ u.advertiserCredit | number:2 }}
-        td $ {{ u.publisherBalance | number:2 }}
+        td $ {{ u.funds | number:2 }}
 
         td
           button.btn.btn-danger(ng-click="delete(i)") Delete
