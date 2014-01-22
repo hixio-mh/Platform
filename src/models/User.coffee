@@ -15,6 +15,8 @@
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
 spew = require "spew"
+redisLib = require "redis"
+redis = redisLib.createClient()
 
 schema = new mongoose.Schema
   username: String
@@ -55,6 +57,7 @@ schema = new mongoose.Schema
   # Schema version, used by /migrate
   version: Number
 
+schema.methods.getRedisId = -> "user:#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id
@@ -65,6 +68,19 @@ schema.methods.toAPI = ->
   delete ret.hash
   delete ret.password
   ret
+
+# NOTE: This overwrites the fund count stored in redis!
+schema.methods.createRedisStruture = (cb) ->
+  redis.set "#{@getRedisId()}:funds", @funds, (err) ->
+    if err then spew.error err
+    cb()
+
+schema.methods.updateFunds = (cb) ->
+  redis.get "#{@getRedisId()}:funds", (err, res) =>
+    if err then spew.error err
+    if res != null then @funds = Number res
+
+    cb()
 
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
@@ -92,6 +108,7 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
 
 schema.methods.addFunds = (amount) ->
   @funds += Number amount
+  redis.incrbyfloat "#{@getRedisId()}:funds", amount
 
   @transactions.push
     action: "deposit"

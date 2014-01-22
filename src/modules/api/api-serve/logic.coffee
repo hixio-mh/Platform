@@ -41,15 +41,34 @@ setup = (options, imports, register) ->
 
   # Try to fetch a real ad
   app.get "/api/v1/serve/:apikey", (req, res) ->
+    ref = "pub:#{req.param "apikey"}"
 
-    db.model("Publisher").findOne apikey: req.param("apikey"), (err, publisher) ->
-      if utility.dbError err, res then return adEngine.fetchEmpty req, res
-      if not publisher then return res.send 404
+    # Fetch all publisher keys
+    redis.keys "#{ref}:*", (err, keys) ->
+      if err then spew.error err
 
-      if publisher.isActive() and publisher.isApproved()
-        adEngine.fetch req, res, publisher
-      else
-        adEngine.fetchTest req, res, publisher
+      if keys == null or keys.length == 0
+        return res.send 404
+
+      redis.mget keys, (err, data) ->
+        if err then spew.error err
+
+        pubData = ref: ref
+        pubData[key.split(":")[2]] = data[i] for key, i in keys
+
+        for key of pubData
+          if not isNaN pubData[key]
+            pubData[key] = Number pubData[key]
+
+        if pubData.impressions != 0
+          pubData.ctr = pubData.clicks / pubData.impressions
+        else
+          pubData.ctr = 0
+
+        if pubData.active
+          adEngine.fetch req, res, pubData
+        else
+          adEngine.fetchTest req, res, pubData
 
   # Register impressions
   app.get "/api/v1/impression/:id", (req, res) ->
@@ -88,6 +107,8 @@ setup = (options, imports, register) ->
           publisherRef = data[6]
           publisherGraphiteId = data[7]
           campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"
+          campaignUserRef = data[8]
+          pubUserRef = data[9]
 
           # Log impression if model is CPM :D MONEY!
           if data[2] == "CPM"
@@ -95,6 +116,8 @@ setup = (options, imports, register) ->
             redis.incr "#{publisherRef}:impressions"
             redis.incrbyfloat "#{campaignRef}:spent", data[3]
             redis.incrbyfloat "#{publisherRef}:earnings", data[3]
+            redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
+            redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
 
             statsd.increment "#{campaignGraphiteId}.impressions"
             statsd.increment "#{publisherGraphiteId}.impressions"
@@ -137,12 +160,16 @@ setup = (options, imports, register) ->
             publisherRef = data[6]
             publisherGraphiteId = data[7]
             campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"
+            campaignUserRef = data[8]
+            pubUserRef = data[9]
 
             if data[2] == "CPC"
               redis.incr "#{campaignRef}:clicks"
               redis.incr "#{publisherRef}:clicks"
               redis.incrbyfloat "#{campaignRef}:spent", data[3]
               redis.incrbyfloat "#{publisherRef}:earnings", data[3]
+              redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
+              redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
 
               statsd.increment "#{campaignGraphiteId}.clicks"
               statsd.increment "#{publisherGraphiteId}.clicks"
