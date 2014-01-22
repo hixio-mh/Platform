@@ -294,10 +294,14 @@ schema.methods.updateColdRedisData = (cb) ->
 
 schema.methods.createRedisStruture = (cb) ->
 
-  if @owner._id != undefined
-    ownerId = @owner._id
+  # We don't specify an owner id in some tests
+  if @owner != undefined
+    if @owner._id != undefined
+      ownerId = @owner._id
+    else
+      ownerId = @owner
   else
-    ownerId = @owner
+    ownerId = null
 
   ref = @getRedisId()
   redis.set "#{ref}:impressions", 0, =>
@@ -378,8 +382,8 @@ schema.pre "save", (next) ->
     @createAPIKey()
 
     # No API Key means no redis structure
-    @createRedisStruture -> thumbnailGeneration()
+    @createRedisStruture => thumbnailGeneration()
 
-  @updateColdRedisData -> thumbnailGeneration()
+  @updateColdRedisData => thumbnailGeneration()
 
 mongoose.model "Publisher", schema

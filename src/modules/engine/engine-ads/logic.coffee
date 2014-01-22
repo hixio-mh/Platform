@@ -418,7 +418,8 @@ setup = (options, imports, register) ->
   # @param [Object] req request
   # @param [Object] res response
   # @param [Object] publisher publisher data set (fetched from redis)
-  fetch = (req, res, publisher) ->
+  # @param [Number] startTimestamp
+  fetch = (req, res, publisher, startTimestamp) ->
     error = validateRequest req
     if error != null then return fetchEmpty req, res
 
@@ -439,7 +440,7 @@ setup = (options, imports, register) ->
         performCountryTargeting targetingKey, country, res, (finalKey) ->
           fetchTargetedAdEntries finalKey, res, (ads) ->
             performRTB ads, publisher, req, res, (ad) ->
-              res.json ad
+              res.json new Date().getTime() - startTimestamp
 
   # Fetches a test ad tuned for the publisher in question.
   #
@@ -461,7 +462,7 @@ setup = (options, imports, register) ->
 
   register null,
     "engine-ads":
-      fetch: (req, res, publisher) -> fetch req, res, publisher
+      fetch: (req, res, publisher, time) -> fetch req, res, publisher, time
       fetchTest: (req, res, publisher) -> fetchTest req, res, publisher
       fetchEmpty: (req, res) -> fetchEmpty req, res
 
