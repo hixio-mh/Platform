@@ -13,6 +13,9 @@
 ##
 
 spew = require "spew"
+config = require "../../../config.json"
+configMode = config.modes[config.mode]
+adefyDomain = "http://#{configMode.domain}:#{configMode["port-http"]}"
 redisLib = require "redis"
 redis = redisLib.createClient()
 
@@ -240,6 +243,7 @@ setup = (options, imports, register) ->
       return ad.targetBid * ctr
 
   getCampaignFromAdKey = (adKey) -> adKey.split(":")[0].split(".")[1]
+  getAdFromAdKey = (adKey) -> adKey.split(":")[1]
 
   performRTB = (structuredAds, publisherStats, req, res, cb) ->
 
@@ -250,6 +254,7 @@ setup = (options, imports, register) ->
     secondHighestBid = 0
     maxBid = 0
     maxBidAd = null
+    nowTimestamp = new Date().getTime()
 
     # We store campaign pacing data in the form [campaignID] = data
     campaignPaceData = {}
@@ -301,6 +306,8 @@ setup = (options, imports, register) ->
           clicks: Number adData[4]
           spent: Number adData[5]
           pricing: adData[6]
+          campaignId: campaignId
+          adId: getAdFromAdKey adKey
 
         # Bid! Magic!
         ad.bid = generateBid ad, publisherStats
@@ -324,17 +331,9 @@ setup = (options, imports, register) ->
         paceData.spent += ad.bid
 
         # If it's been two minutes or longer, then calculate a new pace
-        nowTimestamp = new Date().getTime()
         if nowTimestamp - paceData.timestamp >= 120000
           paceData.pace = paceData.targetSpend / paceData.spent
           paceData.timestamp = nowTimestamp
-
-          spew.info "---Updated pacing"
-          spew.info "Spent: $#{paceData.spent}"
-          spew.info "Target: $#{paceData.targetSpend}"
-          spew.info "Pace: #{paceData.pace}"
-          spew.info "---"
-
           paceData.spent = 0
 
         # Save pace data
@@ -357,11 +356,35 @@ setup = (options, imports, register) ->
           maxBid = ad.bid
           maxBidAd = ad
 
-      # Call CB...
+      # Attach action URLs
+      if maxBidAd != null
+        actionId = "#{nowTimestamp}#{Math.ceil(Math.random() * 9000000)}"
+        maxBidAd.impressionURL = "#{adefyDomain}/api/v1/impression/#{actionId}"
+        maxBidAd.clickURL = "#{adefyDomain}/api/v1/click/#{actionId}"
+
+      # Send ad
       cb maxBidAd
 
-      # Store some action statistics for internal use...
-      spew.info JSON.stringify bids
+      # Create redis action key if needed, expires in 12 hours
+      # Format: impression|click|pricing|bid|campaign|ad|publisher
+      if maxBidAd != null
+        redis.set "actions:#{actionId}", [
+          0
+          0
+          maxBidAd.pricing
+          maxBidAd.bid
+          maxBidAd.campaignId
+          maxBidAd.adId
+          publisherStats.redisId
+          publisherStats.graphiteId
+        ].join("|"), (err) ->
+
+          if err then spew.error err
+          redis.expire "actions:#{actionId}", 60 * 60 * 12
+
+      ##
+      ## This would be the place to store some metrics for internal use...
+      ##
 
   # Standard ad fetch call. Assumes publisher is active and approved!
   # Does targeting, bidding, and ad generation.
@@ -386,6 +409,8 @@ setup = (options, imports, register) ->
         ctr: ctr
         impressions: impressions
         clicks: clicks
+        redisId: publisher.getRedisId()
+        graphiteId: publisher.getGraphiteId()
 
       publisher.fetchPricingInfo (pricingInfo) ->
         if pricingInfo == null

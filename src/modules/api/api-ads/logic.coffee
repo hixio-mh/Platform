@@ -109,14 +109,16 @@ setup = (options, imports, register) ->
                     adObject.campaigns[stats.i].stats = stats.stats
 
                   ret.push adObject
-
                   done()
 
               # Populate campaign stats
               for i in [0...ad.campaigns.length]
-                fetchStatsForCampaign i, ad, (stats, i) ->
-                  campaignStats.push { i: i, stats: stats }
+                if ad.campaigns[i].campaign == null
                   innerDone()
+                else
+                  fetchStatsForCampaign i, ad, (stats, i) ->
+                    campaignStats.push { i: i, stats: stats }
+                    innerDone()
 
         fetchStatsforAd ad for ad in ads
 

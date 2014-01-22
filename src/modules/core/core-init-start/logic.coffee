@@ -70,6 +70,8 @@ setup = (options, imports, register) ->
     # Ad request
     "/api/v1/serve"
     "/api/v1/serve/"
+    "/api/v1/impression/"
+    "/api/v1/click/"
   ]
 
   notWhenAuthorized = [
