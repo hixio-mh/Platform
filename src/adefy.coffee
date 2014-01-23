@@ -17,7 +17,6 @@ spew = require "spew"
 config = require "./config.json"
 
 spew.setLogLevel config.loglevel
-
 spew.init "Starting Adefy..."
 
 app = architect.createApp architect.loadConfig(__dirname + "/architecture.js") , (err, app) ->
