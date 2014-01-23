@@ -58,9 +58,12 @@
 }
 
 .switch .switch-right {
-    border-left: 1px solid #ccc;
-    color: #333;
-    background: #f0f0f0;
+    color: #fff;
+    background: -webkit-linear-gradient(top, #e43434, #fa5858);
+    border: 1px solid #b33b3b;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: inset 0 -1px rgba(255,255,255,0.15);
 }
 
 .switch-animate {

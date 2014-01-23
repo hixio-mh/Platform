@@ -25,29 +25,64 @@ module.exports = (host) -> {
   setHost: (@host) ->
   getHost: -> @host
 
-  fetchStats: (opts) ->
-    query = @buildStatFetchQuery opts
-    query.exec (data) -> opts.cb data
+  fetchStats: (options) ->
+    query = @buildStatFetchQuery options
+    query.exec (data) -> options.cb data
 
-  buildStatFetchQuery: (opts) ->
-    if opts == undefined
-      spew.error "No stat fetch opts set"
+  buildStatFetchQuery: (options) ->
+    if options == undefined
+      spew.error "No stat fetch options set"
       return
 
     query = @query()
-    if opts.filter == true then query.enableFilter()
+    if options.filter == true then query.enableFilter()
 
-    for req in opts.request
+    for req in options.request
       for stat in req.stats
 
         if stat.prefix != undefined
           prefix = stat.prefix
         else
-          prefix = opts.prefix
+          prefix = options.prefix
 
         query.addStatCountTarget "#{prefix}.#{stat}", "summarize", req.range
 
     query
+
+  # Used by the analytics API. Uses a standard options object to build a
+  # suitable query.
+  #
+  # @param [Object] options
+  # @param [Method] cb
+  # @option options [String] stat unique stat string, without graphite prefix
+  # @option options [String] start relative time from now (has to be negative)
+  # @option options [String] end relative time from now (has to be negative)
+  # @option options [String] interval data point interval
+  # @option options [Boolean] sum defaults to false, returns a running sum
+  # @option options [Array<String>] multipleSeries optional, triggers sumSeries
+  makeAnalyticsQuery: (options, cb) ->
+    query = @query()
+    query.enableFilter()
+
+    if options.start != null then query.from = options.start
+    if options.end != null then query.until = options.end
+
+    if options.multipleSeries != undefined
+      for series, i in options.multipleSeries
+        options.multipleSeries[i] = "#{@getPrefix()}#{series}"
+
+      ref = "sumSeries(#{options.multipleSeries.join ","})"
+    else
+      ref = "#{@getPrefix()}#{options.stat}"
+
+    if options.sum == "true" or options.sum == true
+      query.addRawTarget "integral(hitcount(#{ref}, '#{options.interval}'))"
+    else
+      query.addRawTarget "hitcount(#{ref}, '#{options.interval}')"
+
+    query.exec (data) ->
+      if data.length == 0 then return cb []
+      cb data[0].datapoints
 
   getPrefix: -> "stats.#{config.mode}."
 
@@ -172,7 +207,7 @@ module.exports = (host) -> {
           # Convert timestamp to ms
           newDataPoints.push
             x: point[1] * 1000
-            y: point[0] || 0
+            y: point[0] or 0
 
         set.datapoints = newDataPoints
 

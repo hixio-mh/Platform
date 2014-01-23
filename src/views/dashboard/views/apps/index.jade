@@ -19,8 +19,8 @@ a.new-item(href="/apps/new")
   a.item(ng-repeat="app in apps" ng-href="/apps/{{app.id}}")
     img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
-    .metrics
-      div.noAxes(graph data="fakeData" width="335" height="200")
+    .metrics(ng-if="app.graphData")
+      div.noAxes(analytics data="app.graphData" width="335" height="200")
       .wrap: .text
         .amount.large $ {{ app.stats.earnings | number:2 }}
         .desc Total Revenue

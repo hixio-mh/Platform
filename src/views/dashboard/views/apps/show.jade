@@ -33,5 +33,5 @@ include _menu
         .w50.contents-left
           input(type="checkbox" name="sum" ng-model="graphSum")
 
-    dib(ng-if="graphData != null")
-      div(graph data="graphData" width="840" height="350" type="line" hover="hoverFormatter" legend="true")
+    div
+      div(analytics data="graphData" width="840" height="350" type="line" hover="hoverFormatter" legend="true" done="graphDone" refresh="graphRefresh")
