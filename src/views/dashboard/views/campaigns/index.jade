@@ -5,8 +5,8 @@ a.new-item(href="/campaigns/new")
   a.item(ng-repeat="campaign in campaigns" ng-href="/campaigns/{{campaign.id}}")
     img.icon(src="http://delfinamassun.files.wordpress.com/2011/09/light-grey-square.jpg")
     .name(ng-bind="campaign.name")
-    .metrics
-      div.noAxes(graph data="fakeData" width="335" height="200")
+    .metrics(ng-if="campaign.graphData")
+      div.noAxes(analytics data="campaign.graphData" width="335" height="200")
       .wrap: .text
         .amount.large {{ campaign.stats.ctr | number:2 }}%
         .desc CTR

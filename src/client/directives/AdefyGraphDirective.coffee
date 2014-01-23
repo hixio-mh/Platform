@@ -72,6 +72,12 @@ window.AdefyDashboard.directive "graph", [->
 
       processedData
 
+    # Cap width
+    if scope.width > 800
+      width = 800
+    else
+      width = scope.width
+
     # Build graph
     rickshaw = new Rickshaw.Graph
       element: element.find(".rickshaw")[0]
@@ -80,8 +86,7 @@ window.AdefyDashboard.directive "graph", [->
       stroke: scope.stroke or true
       interpolation: scope.interpolation or "linear"
 
-      # temp
-      width: scope.width
+      width: width
       height: scope.height
 
     @createAxis = ->

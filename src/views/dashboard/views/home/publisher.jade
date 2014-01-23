@@ -26,27 +26,36 @@
     .amount.large $ {{ totalRevenue | number:2 }}
     .desc Total revenue
 
-.index.dashboard
+.index.dashboard#home-publisher
   a.switch-view(href="/home/advertiser") Switch to advertiser view
 
-  div
-    div(graph data="graphData" width="840" height="300" type="line" legend="true" hover="true")
+  div.w50(ng-if="graph24hStats")
+    h6.block.tcenter 24h Clicks &amp; Impressions
+    div(analytics data="graph24hStats" width="350" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
 
-    h1 Top Apps
-    table.info
-      thead: tr
-        th
-        th Impressions
-        th Clicks
-        th CTR
-        th Earnings
-      tbody
-        tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
-          td {{ app.name }}
-          td {{ app.stats.impressions | number }}
-          td {{ app.stats.clicks | number }}
-          td {{ app.stats.ctr | number:2 }}%
-          td $ {{ app.stats.earnings | number:2 }}
+  div.w50(ng-if="graph24hRevenue")
+    h6.block.tcenter 24h Revenue
+    div(analytics data="graph24hRevenue" width="350" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
+
+  div.block(ng-if="graphLifetimeMetrics")
+    h6.block.tcenter Lifetime Metrics
+    div(analytics data="graphLifetimeMetrics" width="800" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
+
+  h1 Top Apps
+  table.info
+    thead: tr
+      th
+      th Impressions
+      th Clicks
+      th CTR
+      th Earnings
+    tbody
+      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
+        td {{ app.name }}
+        td {{ app.stats.impressions | number }}
+        td {{ app.stats.clicks | number }}
+        td {{ app.stats.ctr | number:2 }}%
+        td $ {{ app.stats.earnings | number:2 }}
   div
     h1 News
     ul.news

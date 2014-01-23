@@ -12,7 +12,11 @@
   line-height 0
   visibility hidden
 
-.cf{zoom1}
+.cf
+  zoom 1
+
+.tcenter
+  text-align center
 
 body
   font-family Source Sans Pro
@@ -238,6 +242,8 @@ header
 
 .graphs
   text-align center
+.graph.dashboard
+  margin 0 0 16px -25px
 .graph
   //width calc(50% - 50px)
   margin 25px
@@ -833,7 +839,7 @@ graph
   margin 1em auto
 
 .rickshaw
-  margin-left 40px
+  margin-left 60px
   margin-right 60px
 
   .x_label
@@ -843,11 +849,10 @@ graph
   position absolute
   top 0
   bottom 0
-  width 40px
+  width 60px
 
   &.right
     right 0
-    width 60px
 
 .rickshaw_graph .y_grid .tick, .rickshaw_graph .x_grid_d3 .tick
   stroke none

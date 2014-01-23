@@ -11,9 +11,8 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $routeParams, $http, Campaign) ->
+window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $routeParams, Campaign) ->
 
-  $scope.graphData = null
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
   $scope.intervalOptions = [
@@ -22,7 +21,6 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     { val: "30minutes", name: "30 Minutes" }
     { val: "1hour", name: "1 Hour" }
     { val: "2hours", name: "2 Hours" }
-    { val: "4hours", name: "4 Hours" }
   ]
 
   $scope.hoverFormatter = (series, x, y) ->
@@ -31,43 +29,32 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     else
       "#{series.name}: #{y}"
 
-  fetchedData = {}
-  fetchedApp = false
-  doneFetching = ->
-    if fetchedData.clicks == undefined then return
-    if fetchedData.spent == undefined then return
-    if fetchedData.impressions == undefined then return
-
-    statics = []
-    dynamics = []
-
-    if fetchedData.spent.length > 0
-      statics.push
-        name: "Spent"
-        color: "#33b5e5"
-        y: "spent"
-
-      dynamics.push fetchedData.spent
-
-    if fetchedData.impressions.length > 0
-      statics.push
-        name: "Impressions"
-        color: "#33e444"
-        y: "counts"
-
-      dynamics.push fetchedData.impressions
-
-    if fetchedData.clicks.length > 0
-      statics.push
-        name: "Clicks"
-        color: "#e3de33"
-        y: "counts"
-
-      dynamics.push fetchedData.clicks
-
+  buildGraphData = ->
     $scope.graphData =
-      static: statics
-      dynamic: dynamics
+      prefix: "/api/v1/analytics/campaigns/#{$routeParams.id}"
+
+      graphs: [
+        name: "Impressions"
+        stat: "impressions"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Clicks"
+        stat: "clicks"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Spent"
+        stat: "spent"
+        y: "spent"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ]
 
       axes:
         x:
@@ -81,42 +68,20 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
           orientation: "right"
           formatter: (y) -> "$ #{y.toFixed 3}"
 
-    if not fetchedApp
-      Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign
-      fetchedApp = true
+  buildGraphData()
 
-  fetchPrefix = "/api/v1/analytics/campaigns/#{$routeParams.id}"
+  update = ->
+    setTimeout ->
+      $scope.$apply ->
+        buildGraphData()
+        $scope.graphRefresh()
+    , 1
 
-  fetchData = ->
-    fetchedData = {}
-
-    interval = "interval=#{$scope.graphInterval}"
-    sum = "sum=#{$scope.graphSum}"
-
-    $http.get("#{fetchPrefix}/spent?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.spent = data
-      doneFetching()
-
-    $http.get("#{fetchPrefix}/impressions?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.impressions = data
-      doneFetching()
-
-    $http.get("#{fetchPrefix}/clicks?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.clicks = data
-      doneFetching()
-
-  fetchData()
+  $scope.graphDone = ->
+    Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign
 
   $("body").off "change", "#campaign-show select[name=interval]"
   $("body").off "change", "#campaign-show input[name=sum]"
 
-  $("body").on "change", "#campaign-show select[name=interval]", ->
-    $scope.$apply -> fetchData()
-
-  $("body").on "change", "#campaign-show input[name=sum]", ->
-    setTimeout ->
-      $scope.$apply -> fetchData()
-    , 1
+  $("body").on "change", "#campaign-show select[name=interval]", -> update()
+  $("body").on "change", "#campaign-show input[name=sum]", -> update()

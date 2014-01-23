@@ -12,9 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routeParams, App, $http) ->
+window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routeParams, App) ->
 
-  $scope.graphData = null
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
   $scope.intervalOptions = [
@@ -23,7 +22,6 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
     { val: "30minutes", name: "30 Minutes" }
     { val: "1hour", name: "1 Hour" }
     { val: "2hours", name: "2 Hours" }
-    { val: "4hours", name: "4 Hours" }
   ]
 
   $scope.hoverFormatter = (series, x, y) ->
@@ -32,52 +30,39 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
     else
       "#{series.name}: #{y}"
 
-  fetchedData = {}
-  fetchedApp = false
-  doneFetching = ->
-    if fetchedData.clicks == undefined then return
-    if fetchedData.earnings == undefined then return
-    if fetchedData.impressions == undefined then return
-    if fetchedData.requests == undefined then return
-
-    statics = []
-    dynamics = []
-
-    if fetchedData.requests.length > 0
-      statics.push
-        name: "Requests"
-        color: "#e3d533"
-        y: "counts"
-
-      dynamics.push fetchedData.requests
-
-    if fetchedData.impressions.length > 0
-      statics.push
-        name: "Impressions"
-        color: "#33e444"
-        y: "counts"
-
-      dynamics.push fetchedData.impressions
-
-    if fetchedData.clicks.length > 0
-      statics.push
-        name: "Clicks"
-        color: "#e3de33"
-        y: "counts"
-
-      dynamics.push fetchedData.clicks
-
-    if fetchedData.earnings.length > 0
-      statics.push
-        name: "Earnings"
-        color: "#33b5e5"
-        y: "earned"
-
-      dynamics.push fetchedData.earnings
-
+  buildGraphData = ->
     $scope.graphData =
-      static: statics
-      dynamic: dynamics
+      prefix: "/api/v1/analytics/publishers/#{$routeParams.id}"
+
+      graphs: [
+        name: "Requests"
+        stat: "requests"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Impressions"
+        stat: "impressions"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Clicks"
+        stat: "clicks"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Earnings"
+        stat: "earnings"
+        y: "earned"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ]
 
       axes:
         x:
@@ -91,47 +76,20 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
           orientation: "right"
           formatter: (y) -> "$ #{y.toFixed 3}"
 
-    if not fetchedApp
-      App.get id: $routeParams.id, (app) -> $scope.app = app
-      fetchedApp = true
+  buildGraphData()
 
-  fetchPrefix = "/api/v1/analytics/publishers/#{$routeParams.id}"
+  update = ->
+    setTimeout ->
+      $scope.$apply ->
+        buildGraphData()
+        $scope.graphRefresh()
+    , 1
 
-  fetchData = ->
-    fetchedData = {}
-
-    interval = "interval=#{$scope.graphInterval}"
-    sum = "sum=#{$scope.graphSum}"
-
-    $http.get("#{fetchPrefix}/requests?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.requests = data
-      doneFetching()
-
-    $http.get("#{fetchPrefix}/clicks?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.clicks = data
-      doneFetching()
-
-    $http.get("#{fetchPrefix}/impressions?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.impressions = data
-      doneFetching()
-
-    $http.get("#{fetchPrefix}/earnings?from=-24h&#{interval}&#{sum}")
-    .success (data) ->
-      fetchedData.earnings = data
-      doneFetching()
-
-  fetchData()
+  $scope.graphDone = ->
+    App.get id: $routeParams.id, (app) -> $scope.app = app
 
   $("body").off "change", "#app-show select[name=interval]"
   $("body").off "change", "#app-show input[name=sum]"
 
-  $("body").on "change", "#app-show select[name=interval]", ->
-    $scope.$apply -> fetchData()
-
-  $("body").on "change", "#app-show input[name=sum]", ->
-    setTimeout ->
-      $scope.$apply -> fetchData()
-    , 1
+  $("body").on "change", "#app-show select[name=interval]", -> update()
+  $("body").on "change", "#app-show input[name=sum]", -> update()
