@@ -15,7 +15,23 @@ include _menu
       .amount.large {{ app.stats.requests | number }}
       .desc 24h Requests
 
-.graphs
+.graphs#app-show
   .graph
-    h3 24h Stats
-    div(graph data="graphData" width="900" height="350" type="line" hover="true" legend="true")
+    .w50
+      h3 24h Stats
+
+    .w50
+      .block
+        .w50.contents-right
+          label(for="interval") Graph Interval:
+        .w50.contents-left
+          select(chosen name="interval" ng-model="graphInterval" ng-options="i.val as i.name for i in intervalOptions")
+
+      .block
+        .w50.contents-right
+          label(for="sum") Sum:
+        .w50.contents-left
+          input(type="checkbox" name="sum" ng-model="graphSum")
+
+    dib(ng-if="graphData != null")
+      div(graph data="graphData" width="840" height="350" type="line" hover="hoverFormatter" legend="true")

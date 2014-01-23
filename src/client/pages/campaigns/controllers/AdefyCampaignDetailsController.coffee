@@ -26,13 +26,13 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
   ]
 
   $scope.hoverFormatter = (series, x, y) ->
-
     if series.name == "Spent"
       "Spent: $#{y.toFixed 3}"
     else
       "#{series.name}: #{y}"
 
   fetchedData = {}
+  fetchedApp = false
   doneFetching = ->
     if fetchedData.clicks == undefined then return
     if fetchedData.spent == undefined then return
@@ -81,6 +81,10 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
           orientation: "right"
           formatter: (y) -> "$ #{y.toFixed 3}"
 
+    if not fetchedApp
+      Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign
+      fetchedApp = true
+
   fetchPrefix = "/api/v1/analytics/campaigns/#{$routeParams.id}"
 
   fetchData = ->
@@ -116,5 +120,3 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     setTimeout ->
       $scope.$apply -> fetchData()
     , 1
-
-  Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign
