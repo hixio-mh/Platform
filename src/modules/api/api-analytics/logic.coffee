@@ -84,6 +84,24 @@ setup = (options, imports, register) ->
 
       campaign.fetchStatGraphData options, (data) -> res.json data
 
+  app.get "/api/v1/analytics/publishers/:id/:stat", (req, res) ->
+    db.model("Publisher")
+    .findById(req.param "id")
+    .exec (err, publisher) ->
+      if utility.dbError err, res then return
+
+      if not req.user.admin and publisher.owner != req.user.id
+        return res.send 401
+
+      options =
+        stat: req.param "stat"
+        start: req.param("from") or null
+        end: req.param("until") or null
+        interval: req.param("interval") or "5min"
+        sum: req.param("sum") or false
+
+      publisher.fetchStatGraphData options, (data) -> res.json data
+
   register null, {}
 
 module.exports = setup

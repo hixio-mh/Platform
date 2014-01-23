@@ -267,6 +267,30 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
 
+# Fetch verbose stat data
+schema.methods.fetchStatGraphData = (options, cb) ->
+  query = graphiteInterface.query()
+  if options.start != null then query.from = options.start
+  if options.end != null then query.until = options.end
+
+  ref = "#{query.getPrefix()}#{@getGraphiteId()}.#{options.stat}"
+
+  if options.sum == "true"
+    query.addRawTarget "integral(hitcount(#{ref}, '#{options.interval}'))"
+  else
+    query.addRawTarget "hitcount(#{ref}, '#{options.interval}')"
+
+  query.exec (data) ->
+    if data.length == 0 then return cb []
+
+    ret = []
+    for point in data[0].datapoints
+      ret.push
+        x: point[1] * 1000
+        y: point[0] or 0
+
+    cb ret
+
 ##
 ## Simple stat logging
 ##

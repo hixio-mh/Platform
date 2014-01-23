@@ -121,9 +121,10 @@ setup = (options, imports, register) ->
             redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
 
             statsd.increment "#{campaignGraphiteId}.impressions"
+            statsd.increment "#{campaignGraphiteId}.spent", data[3]
+
             statsd.increment "#{publisherGraphiteId}.impressions"
             statsd.increment "#{publisherGraphiteId}.earnings", data[3]
-            statsd.increment "#{campaignGraphiteId}.spent", data[3]
 
           guardCache.del cacheKey
 
