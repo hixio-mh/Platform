@@ -440,7 +440,8 @@ setup = (options, imports, register) ->
         performCountryTargeting targetingKey, country, res, (finalKey) ->
           fetchTargetedAdEntries finalKey, res, (ads) ->
             performRTB ads, publisher, req, res, (ad) ->
-              res.json new Date().getTime() - startTimestamp
+              res.json ad
+              spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
 
   # Fetches a test ad tuned for the publisher in question.
   #

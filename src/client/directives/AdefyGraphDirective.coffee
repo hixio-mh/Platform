@@ -16,15 +16,18 @@ window.AdefyDashboard.directive "graph", [->
     height: "@"
     unit: "@"
     legend: "@"
-    hover: "@"
+    hover: "="
     axes: "@"
     stroke: "@"
     interpolation: "@"
 
   link: (scope, element, attrs) ->
+    if scope.data == null then return
 
+    # Created axes are stored in the form [scale.name] = axis
     @scales = {}
-    @clearAxis = -> element.find(".axis-y > *").remove()
+    @createdAxis = {}
+
     @createScales = ->
       for name, scale of @scales
         scale.object = d3.scale.linear().domain([scale.min, scale.max]).nice()
@@ -48,6 +51,7 @@ window.AdefyDashboard.directive "graph", [->
                 min: Number.MAX_VALUE
                 max: Number.MIN_VALUE
                 orientation: data.axes[graph.y].orientation
+                formatter: data.axes[graph.y].formatter or Rickshaw.Fixtures.Number.formatKMBT
 
             for point in data.dynamic[i]
               @scales[graph.y].min = Math.min @scales[graph.y].min, point.y
@@ -81,15 +85,16 @@ window.AdefyDashboard.directive "graph", [->
       height: scope.height
 
     @createAxis = ->
-      @clearAxis()
-
       for name, scale of @scales
-        new Rickshaw.Graph.Axis.Y.Scaled
-          graph: rickshaw
-          orientation: scale.orientation
-          tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-          element: scale.element
-          scale: scale.object
+        if @createdAxis[name] == undefined
+          @createdAxis[name] = new Rickshaw.Graph.Axis.Y.Scaled
+            graph: rickshaw
+            orientation: scale.orientation
+            tickFormat: scale.formatter
+            element: scale.element
+            scale: scale.object
+        else
+          @createdAxis[name].scale = scale.object
 
     @createAxis()
 
@@ -105,26 +110,27 @@ window.AdefyDashboard.directive "graph", [->
 
     # Define axes
     if scope.data.axes != undefined
-      for axis in scope.data.axes
+      for key, axis of scope.data.axes
         if axis.type == "x"
-          new Rickshaw.Graph.Axis.Time graph: rickshaw
+          new Rickshaw.Graph.Axis.X
+            graph: rickshaw
+            tickFormat: axis.formatter
           break
 
-        # Axis are generated on data updates
+        # Y axes are generated on data updates
         # else if axis.type == "y"
 
     # Legend
     if scope.legend
-      legend = new Rickshaw.Graph.Legend
+      new Rickshaw.Graph.Legend
         graph: rickshaw
         element: element.find(".legend")[0]
 
     # Hover element
-    if scope.hover
-      hoverDetails = new Rickshaw.Graph.HoverDetail
+    if scope.hover != undefined
+      new Rickshaw.Graph.HoverDetail
         graph: rickshaw
-        xFormatter: (x) -> new Date(x).toLocaleDateString()
-        yFormatter: (y) -> y
+        formatter: scope.hover
 
     rickshaw.render()
 
