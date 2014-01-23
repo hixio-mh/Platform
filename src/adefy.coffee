@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
+require "newrelic"
 architect = require "architect"
 spew = require "spew"
 config = require "./config.json"
