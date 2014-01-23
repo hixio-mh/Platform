@@ -142,6 +142,7 @@ schema.methods.fetchTotalStats = (cb) ->
     clicks: 0
     spent: 0
     ctr: 0
+    requests: 0
 
   count = @ads.length
   if count == 0 then return cb stats
@@ -192,11 +193,16 @@ schema.methods.fetch24hStats = (cb) ->
 
       # Extract data name
       target = entry.target.split(",").join(".").split(".")[6]
-      point = entry.datapoints[entry.datapoints.length - 1][0]
+
+      if entry.datapoints[0][0] != null
+        point = entry.datapoints[0][0]
+      else
+        point = entry.datapoints[1][0]
+
       remoteStats["#{target}24h"] = Number point
 
-    if remoteStats.impressions != 0
-      remoteStats.ctr = remoteStats.clicks / remoteStats.impressions
+    if remoteStats.impressions24h != 0
+      remoteStats.ctr24h = remoteStats.clicks24h / remoteStats.impressions24h
 
     cb remoteStats
 
