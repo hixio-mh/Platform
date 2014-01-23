@@ -25,7 +25,7 @@ describe "Graphite Interface helper", ->
 
       query = graphiteInterface.query()
       expect(query.from).to.equal ""
-      expect(query.untill).to.equal ""
+      expect(query.until).to.equal ""
 
     it "Should disable result filtering by default", ->
       query = graphiteInterface.query()

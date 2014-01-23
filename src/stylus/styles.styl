@@ -255,6 +255,13 @@ header
     font-size 32px
     margin-bottom 10px
     margin-left 10px
+    float left
+  select, .chosen-container-single
+    text-align left
+    width 150px !important
+  label
+    font-weight 400
+    margin-right 8px
   hr
     height 0
     border none
@@ -377,14 +384,21 @@ fieldset
 .field.margin
   padding-right 15px
 
-.field.w25
+.w25, .w50, .w75
+  display inline-block
+  vertical-align top
+
+.w25
   width 25%
-.field.w50
+.w50
   width 50%
   select
     width 100%
-.field.w75
+.w75
   width 75%
+
+.block
+  display block
 
 .funds
   max-width 570px
@@ -781,8 +795,14 @@ table.info
     background-color #fff
     border-bottom 1px solid rgba(0,0,0,.1)
 
-.right
+.right, .contents-right > *
   float right
+
+.left, .contents-left > *
+  float left
+
+input[type=checkbox]
+  margin-top 6px
 
 /* feedback */
 .feedback
@@ -814,6 +834,10 @@ graph
 
 .rickshaw
   margin-left 40px
+  margin-right 60px
+
+  .x_label
+    display none
 
 .rickshaw_container .axis-y
   position absolute
@@ -822,7 +846,8 @@ graph
   width 40px
 
   &.right
-    right -40px
+    right 0
+    width 60px
 
 .rickshaw_graph .y_grid .tick, .rickshaw_graph .x_grid_d3 .tick
   stroke none
@@ -840,12 +865,15 @@ graph
   color white
 
 .rickshaw_graph .y_ticks text
-  fill #aaa
+  fill black
   stroke none
   font-size 12px
 
 .rickshaw_graph .y_ticks path, .rickshaw_graph .x_ticks_d3 path
   stroke #aaa
+
+.rickshaw_graph .y_ticks .tick, .rickshaw_graph .x_ticks_d3 .tick
+  stroke-width 1px
 
 .rickshaw .detail .dot
   -moz-box-sizing content-box

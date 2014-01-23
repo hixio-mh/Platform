@@ -322,7 +322,7 @@ schema.methods.getRedisRef = -> "ads:#{@_id}"
 # Generate a key matching all of our campaign entries
 #
 # @return [String] ref
-schema.methods.getRedisRefForAllCampaigns = -> "campaignAd:*:#{@_id}"
+schema.methods.getRedisRefForAllCampaigns = -> "campaignAd:*:#{@_id}:*"
 
 # Fetch final targeting filters (country, network, etc) and bid info for
 # campaign

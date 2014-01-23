@@ -105,34 +105,35 @@ schema.methods.compileCountriesList = ->
   _compileList @countriesInclude, @countriesExclude
 
 schema.methods.fetchTotalStatsForAd = (ad, cb) ->
-  if ad._id == undefined then adId = ad.id
-  else adId = ad._id
+  ref = ad.getRedisRefForCampaign @
 
-  ref = "campaignAd:#{@._id}:#{adId}"
+  stats =
+    requests: 0
+    impressions: 0
+    clicks: 0
+    spent: 0
+    ctr: 0
 
-  redis.get ref, (err, result) ->
-    if err then spew.error err
+  redis.mget [
+    "#{ref}:requests"
+    "#{ref}:clicks"
+    "#{ref}:impressions"
+    "#{ref}:spent"
+  ], (err, result) ->
 
-    stats =
-      requests: 0
-      impressions: 0
-      clicks: 0
-      spent: 0
-      ctr: 0
+    if err or result == null or result.length != 4
+      spew.error err
+      return cb stats
 
-    if result == null then cb stats
-    else
-      data = result.split "|"
+    stats.requests = Number result[0]
+    stats.clicks = Number result[1]
+    stats.impressions = Number result[2]
+    stats.spent = Number result[3]
 
-      stats.requests = Number data[2]
-      stats.impressions = Number data[3]
-      stats.clicks = Number data[4]
-      stats.spent = Number data[5]
+    if stats.impressions != 0
+      stats.ctr = stats.clicks / stats.impressions
 
-      if stats.impressions != 0
-        stats.ctr = stats.clicks / stats.impressions
-
-      cb stats
+    cb stats
 
 # Fetch compiled lifetime stats
 schema.methods.fetchTotalStats = (cb) ->
@@ -159,10 +160,11 @@ schema.methods.fetchTotalStats = (cb) ->
       stats.impressions += adStats.impressions
       stats.clicks += adStats.clicks
       stats.spent += adStats.spent
+      stats.requests += adStats.requests
 
       done()
 
-# Fetch compiled 24h stats (ranges!)
+# Fetch compiled 24h stat sums
 schema.methods.fetch24hStats = (cb) ->
   remoteStats =
     impressions24h: 0
@@ -172,19 +174,67 @@ schema.methods.fetch24hStats = (cb) ->
 
   if @ads.length == 0 then return cb remoteStats
 
-  impressionsLists = []
-  clicksLists = []
+  query = graphiteInterface.query()
 
   for ad in @ads
-    graphitePrefix = "campaignstats.#{ad.getRedisRefForCampaign @}"
+    if ad._id != undefined then adId = ad._id
+    else if ad.id != undefined then adId = ad.id
+    else adId = ad
 
-    impressionsLists.push "#{graphitePrefix}.impressions"
-    clicksLists.push "#{graphitePrefix}.clicks"
+    ref = "campaigns.#{@_id}.ads.#{adId}"
+
+    query.addStatCountTarget "#{ref}.impressions", "summarize", "24hours"
+    query.addStatCountTarget "#{ref}.clicks", "summarize", "24hours"
+    query.addStatCountTarget "#{ref}.spent", "summarize", "24hours"
+
+  query.exec (data) ->
+    for entry in data
+
+      # Extract data name
+      target = entry.target.split(",").join(".").split(".")[6]
+      point = entry.datapoints[entry.datapoints.length - 1][0]
+      remoteStats["#{target}24h"] = Number point
+
+    if remoteStats.impressions != 0
+      remoteStats.ctr = remoteStats.clicks / remoteStats.impressions
+
+    cb remoteStats
+
+# Fetch verbose stat data
+schema.methods.fetchStatGraphData = (options, cb) ->
+  if @ads.length == 0 then return cb []
 
   query = graphiteInterface.query()
-  query.addStatIntegralTarget impressionsLists
-  query.addStatIntegralTarget clicksLists
-  query.exec (data) -> cb remoteStats
+  if options.start != null then query.from = options.start
+  if options.end != null then query.until = options.end
+
+  matchingList = []
+
+  for ad in @ads
+    if ad._id != undefined then adId = ad._id
+    else if ad.id != undefined then adId = ad.id
+    else adId = null
+
+    ref = "campaigns.#{@_id}.ads.#{adId}"
+    matchingList.push "#{query.getPrefix()}#{ref}.#{options.stat}"
+
+  matches = matchingList.join ","
+
+  if options.sum == "true"
+    query.addRawTarget "integral(hitcount(sumSeries(#{matches}), '#{options.interval}'))"
+  else
+    query.addRawTarget "hitcount(sumSeries(#{matches}), '#{options.interval}')"
+
+  query.exec (data) ->
+    if data.length == 0 then return cb []
+
+    ret = []
+    for point in data[0].datapoints
+      ret.push
+        x: point[1] * 1000
+        y: point[0] or 0
+
+    cb ret
 
 # Stat helpers
 schema.methods.populateSelfTotalStats = (cb) ->

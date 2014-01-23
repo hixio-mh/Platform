@@ -21,13 +21,8 @@ db = require "mongoose"
 ##
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
+  app = imports["core-express"].server
   utility = imports["logic-utility"]
-
-  server.server.get "/api/v1/analytics/:request", (req, res) ->
-    if req.params.request == "users" then getUserData req, res
-    else if req.params.request == "invites" then getInviteData req, res
-    else res.json 400,  { error: "Unknown request #{req.params.request}" }
 
   computeTotals = (results) ->
     results.sort (a, b) -> a.x - b.x
@@ -44,11 +39,8 @@ setup = (options, imports, register) ->
 
     results
 
-  # Retrieves data for graphing users in the admin interface. Returns data
-  # by week, starting from the previous full week (1st, 8th, 15th, 22st, 29th)
-  #
-  # admin-only
-  getUserData = (req, res) ->
+  # Admin-only
+  app.get "/api/v1/analytics/users", (req, res) ->
     if not req.user.admin then return
 
     db.model("User").find {}, (err, results) ->
@@ -60,8 +52,8 @@ setup = (options, imports, register) ->
 
       res.json { data: computeTotals(data), count: results.length }
 
-  # Retrieves invite data in a similar format to getUserdata
-  getInviteData = (req, res) ->
+  # Admin-only
+  app.get "/api/v1/analytics/invites", (req, res) ->
     if not req.user.admin then return
 
     db.model("Invite").find {}, (err, results) ->
@@ -72,6 +64,25 @@ setup = (options, imports, register) ->
         data.push x: new Date(Date.parse(invite._id.getTimestamp())).getTime()
 
       res.json { data: computeTotals(data), count: results.length }
+
+  app.get "/api/v1/analytics/campaigns/:id/:stat", (req, res) ->
+    db.model("Campaign")
+    .findById(req.param "id")
+    .populate("ads")
+    .exec (err, campaign) ->
+      if utility.dbError err, res then return
+
+      if not req.user.admin and campaign.owner != req.user.id
+        return res.send 401
+
+      options =
+        stat: req.param "stat"
+        start: req.param("from") or null
+        end: req.param("until") or null
+        interval: req.param("interval") or "5min"
+        sum: req.param("sum") or false
+
+      campaign.fetchStatGraphData options, (data) -> res.json data
 
   register null, {}
 

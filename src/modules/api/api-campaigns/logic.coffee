@@ -242,7 +242,7 @@ setup = (options, imports, register) ->
         for ad in campaign.ads
 
           # We'll mark ads we find on the input array as "unmodified",
-          # meaning untill found they are "deleted"
+          # meaning until found they are "deleted"
           currentAds[ad._id.toString()] = "deleted"
 
         for ad in req.body.ads

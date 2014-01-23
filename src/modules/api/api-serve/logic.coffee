@@ -104,7 +104,7 @@ setup = (options, imports, register) ->
 
           data[3] = Number data[3]
 
-          campaignRef = "campaignAd:#{data[4]}:#{data[5]}"
+          campaignRef = "campaignAd:#{data[4]}:#{data[5]}:#{data[9]}"
           publisherRef = data[6]
           publisherGraphiteId = data[7]
           campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"

@@ -49,11 +49,13 @@ module.exports = (host) -> {
 
     query
 
+  getPrefix: -> "stats.#{config.mode}."
+
   # Builds a new query. Todo: Document fully
   query: ->
 
     @from = ""
-    @untill = ""
+    @until = ""
 
     @_filter = false
     @_targets = []
@@ -61,6 +63,9 @@ module.exports = (host) -> {
     @enableFilter = => @_filter = true
     @disableFilter = => @_filter = false
     @isFiltered = => @_filter
+
+    @addRawTarget = (target) =>
+      @_targets.push raw: target
 
     @addTarget = (target, method, args) =>
       if method == undefined then method = null
@@ -80,15 +85,15 @@ module.exports = (host) -> {
       if method == undefined then method = null
       @_targets.push
         method: "sumSeries"
-        name: lists[0]
+        name: "stats.#{config.mode}.#{lists[0]}"
         args: lists[1...]
 
-    @addStatIntegralTarget = (lists) =>
+    @addStatIntegralTarget = (stat, args) =>
       if method == undefined then method = null
       @_targets.push
         method: "integral"
-        name: lists[0]
-        args: lists[1...]
+        name: "stats.#{config.mode}.#{stat}"
+        args: args
 
     @addStatCountTarget = (target, method, args) =>
       if method == undefined then method = null
@@ -103,7 +108,7 @@ module.exports = (host) -> {
       request query, (error, response, body) =>
 
         # Avoid the terrors of having to parse an empty response
-        if body.length == 0 or body == "[]"
+        if body == undefined or body.length == 0 or body == "[]"
           return cb []
 
         if error then spew.error "Graphite request error: #{error}"
@@ -124,26 +129,35 @@ module.exports = (host) -> {
 
       for target, i in @_targets
 
-        query += "&target="
-        if target.method != null then query += "#{target.method}("
-        query += target.name
+        if target.raw != undefined
+          query += "&target=#{target.raw}"
+        else
 
-        # Attach arguments, if any
-        if target.args != undefined
-          if target.args instanceof Array
-            for arg in target.args
+          query += "&target="
+          if target.method != null then query += "#{target.method}("
+          query += target.name
+
+          # Attach arguments, if any
+          if target.args != undefined
+            if target.args instanceof Array
+              for arg in target.args
+                if typeof arg == "string" then arg = "'#{arg}'"
+                query += ", #{arg}"
+            else
+              arg = target.args
+
               if typeof arg == "string" then arg = "'#{arg}'"
               query += ", #{arg}"
-          else
-            arg = target.args
 
-            if typeof arg == "string" then arg = "'#{arg}'"
-            query += ", #{arg}"
+          if target.method != null
+            query += ")"
 
-        if target.method != null then query += ")"
+            # Add another paranthesis for each sub-function in the target
+            for i in [0...target.method.split("(").length]
+              query += ")"
 
       if @from.length > 0 then query += "&from=#{@from}"
-      if @untill.length > 0 then query += "&untill=#{@untill}"
+      if @until.length > 0 then query += "&until=#{@until}"
 
       query += "&format=json"
       query
