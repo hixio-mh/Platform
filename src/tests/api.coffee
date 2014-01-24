@@ -3,14 +3,12 @@ supertest = require "supertest"
 superagent = require "superagent"
 
 config = require "../config.json"
-port = config.modes[config.mode]["port-http"]
-
-api = supertest "http://localhost:#{port}"
+config = config.modes[config.mode]
+api = supertest "http://#{config.domain}:#{config.port}"
 
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 
-apiInviteTests = require "./api/api-invites"
 apiAdTests = require "./api/api-ads"
 apiPublisherTests = require "./api/api-publishers"
 
@@ -36,6 +34,5 @@ describe "API Authentication", ->
       done()
 
 # Run all other API tests using authenticated credentials from above
-apiInviteTests agent, agentAdmin
 apiAdTests agent, agentAdmin
 apiPublisherTests agent, agentAdmin

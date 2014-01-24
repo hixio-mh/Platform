@@ -6,9 +6,9 @@ fs = require "fs"
 spew = require "spew"
 
 config = require "../config.json"
-port = config.modes[config.mode]["port-http"]
+config = config.modes[config.mode]
+api = supertest "http://#{config.domain}:#{config.port}"
 
-api = supertest "http://localhost:#{port}"
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 

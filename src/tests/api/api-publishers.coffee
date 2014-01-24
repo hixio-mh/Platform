@@ -3,9 +3,8 @@ expect = require("chai").expect
 supertest = require "supertest"
 
 config = require "../../config.json"
-port = config.modes[config.mode]["port-http"]
-
-api = supertest "http://localhost:#{port}"
+config = config.modes[config.mode]
+api = supertest "http://#{config.domain}:#{config.port}"
 
 actuallyDone = (done, i) -> i--; if i > 0 then return i; else done()
 

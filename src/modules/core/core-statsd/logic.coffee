@@ -12,14 +12,15 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 config = require "../../../config.json"
+modeConfig = config.modes[config.mode]
 
 # Module that initializes node-statsd and binds it globally
 setup = (options, imports, register) ->
 
   statsdLib = require("node-statsd").StatsD
   statsd = new statsdLib
-    host: config["stats-db"].host
-    port: config["stats-db"].port
+    host: modeConfig.stats.host
+    port: modeConfig.stats.port
     prefix: "#{config.mode}."
     dnsCache: true
     globalize: true

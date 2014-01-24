@@ -1,34 +1,56 @@
-use adefy_cloud_testing;
+///
+/// Setup admin db if needed
+///
+use admin;
+if(db.system.users.find().count() == 0) {
+  db.addUser("admin", "6U22iEbEorpL6sBytss5hsSOLr8ud3rlAg2PyyplW7oJGTkK");
+}
+
+///
+/// Authenticate with mongo
+///
+use admin;
+db.auth("admin", "6U22iEbEorpL6sBytss5hsSOLr8ud3rlAg2PyyplW7oJGTkK");
+
+///
+/// Add database users if needed
+///
+use adefy_development;
+if(db.system.users.find().count() == 0) {
+  db.addUser("adefy", "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ");
+}
+
+use adefy_staging;
+if(db.system.users.find().count() == 0) {
+  db.addUser("adefy", "izSMqB3pcwxEp6oE7m4FuceTJ7MwUkOn6jgq2kx37k32gBcH");
+}
+
+use adefy;
+if(db.system.users.find().count() == 0) {
+  db.addUser("adefy", "CdZcBjub3NRpoQNPhlrFQ6sZMgXI93DZGUE1CwkIgl8FjWCn");
+}
+
+///
+/// Testing DB setup (insert test users)
+///
+use adefy_testing;
 db.dropDatabase();
+db.addUser("adefy", "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn");
 
-// Setup db user
-db.addUser("adefy_cloud", "GFtEA468aF73nYZh");
-
-// Setup test users
 testUser = {
   "email": "test@test.com",
-  "fname": "Testy",
   "funds": 0,
-  "hash": "u9ZaFCuqEWE2wslmKJECgA==",
-  "limit": "0",
-  "lname": "Trista",
   "password": "$2a$10$llkTZagDuZkhY478zjuLWea4pUkPBygitzrNcNy11nbwHYLQqhS8q",
   "permissions": 7,
-  "session": "244b1f0-1ce4-8c0",
   "username": "testy-trista",
   "version": 1
 };
 
 testAdminUser = {
   "email": "test@test.com",
-  "fname": "Testy",
   "funds": 0,
-  "hash": "AWV/mgv1VVPA+MEWvS/jMQ==",
-  "limit": "0",
-  "lname": "Trista Admin",
   "password": "$2a$10$51z8xVel4HABCIZNo/Rk1uS.IbbFrlzem5vpw76ddo2qsw0jYEfG6",
   "permissions": 0,
-  "session": "97423b4-2581-23cf",
   "username": "testy-trista-admin",
   "version": 1
 };
