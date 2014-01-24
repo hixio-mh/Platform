@@ -11,8 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-statsUrl = "http://stats.adefy.com"
-graphiteInterface = require("../../../helpers/graphiteInterface") statsUrl
+graphiteInterface = require "../../../helpers/graphiteInterface"
 spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"

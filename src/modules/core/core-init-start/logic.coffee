@@ -18,7 +18,7 @@
 # Core-init-end completes the bootstraping by registering all queued routes,
 # socket listeners, and then starting the socket IO and express servers.
 config = require "../../../config.json"
-express = require "express"
+modeConfig = config.modes[config.mode]
 spew = require "spew"
 mongoose = require "mongoose"
 fs = require "fs"
@@ -30,9 +30,10 @@ setup = (options, imports, register) ->
 
   spew.init "Starting Initialization"
 
-  ## Set up middleware
+  ##
+  ## Authentication
+  ##
 
-  # Auth
   publicPages = [
     "/login"
     "/register"
@@ -42,7 +43,6 @@ setup = (options, imports, register) ->
     "/api/v1/register"
     "/api/v1/invite/add"
 
-    # Ad request
     "/api/v1/serve"
     "/api/v1/serve/"
     "/api/v1/impression/"
@@ -97,60 +97,37 @@ setup = (options, imports, register) ->
 
         next()
 
-  _secure = config["modes"][config["mode"]].secure
-  _portHTTP = config["modes"][config["mode"]]["port-http"]
-  _postHTTPS = config["modes"][config["mode"]]["port-https"]
+  ##
+  ## Initialize express
+  ##
+  ## Todo: Move core-express into here
 
-  if _secure then port = _postHTTPS else port = _portHTTP
-
-  # Initialize Express server
   server.setup \
-    __dirname + "/../../../views/",  # JADE Views
-    __dirname + "/../../../static/", # Static files
-    port,
-    _secure,
-    key: "#{__dirname}/../../../#{config['secure-key']}"
-    cert: "#{__dirname}/../../../#{config['secure-cert']}"
-    ca: "#{__dirname}/../../../#{config['secure-ca']}"
+    "#{__dirname}/../../../views/",  # JADE Views
+    "#{__dirname}/../../../static/", # Static files
+    modeConfig.port,
+    false
 
-  if _secure
-    # sockets.secure = true
-    # sockets.key = "#{__dirname}/../../../#{config['secure-key']}"
-    # sockets.cert = "#{__dirname}/../../../#{config['secure-cert']}"
-    # sockets.ca = "#{__dirname}/../../../#{config['secure-csr']}"
+  ##
+  ## Connect to MongoDB
+  ##
 
-    # Start http server to forward to https
-    httpForward = express()
-    httpForward.get "*", (req, res) ->
-      domain = config["modes"][config["mode"]]["domain"]
-      res.status(403).redirect "https://#{domain}#{req.url}"
-
-    httpForward.listen _portHTTP
-    spew.init "HTTP -> HTTPS redirect on port #{_portHTTP}"
-
-  # Pick DB to connect to
-  if config.modes[config.mode].db != undefined
-    db = config.modes[config.mode].db
-  else
-    db = config.db.db
-
-  # Connect to the db
-  con = "mongodb://#{config.db.user}:#{config.db.pass}@#{config.db.host}"
-  con += ":#{config.db.port}/#{db}"
+  con = "mongodb://#{modeConfig.mongo.user}:#{modeConfig.mongo.pass}"
+  con += "@#{modeConfig.mongo.host}:#{modeConfig.mongo.port}"
+  con += "/#{modeConfig.mongo.db}"
 
   dbConnection = mongoose.connect con, (err) ->
     if err
       spew.critical "Error connecting to database [#{err}]"
       spew.critical "Using connection: #{con}"
-      spew.critical "Config mode: #{JSON.stringify config.modes[config.mode]}"
-    else spew.init "Connected to MongoDB #{db} as #{config.db.user}"
+      spew.critical "Config mode: #{JSON.stringify modeConfig}"
+    else
+      spew.init "Connected to MongoDB [#{config.mode}]"
 
     # Setup db models
     modelPath = "#{__dirname}/../../../models"
     fs.readdirSync(modelPath).forEach (file) ->
-      if ~file.indexOf ".js"
-        spew.init "Loading model #{file}"
-        require "#{modelPath}/#{file}"
+      if ~file.indexOf ".js" then require "#{modelPath}/#{file}"
 
     register null, {}
 

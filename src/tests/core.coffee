@@ -3,9 +3,8 @@ supertest = require "supertest"
 superagent = require "superagent"
 
 config = require "../config.json"
-port = config.modes[config.mode]["port-http"]
-
-api = supertest "http://localhost:#{port}"
+config = config.modes[config.mode]
+api = supertest "http://#{config.domain}:#{config.port}"
 
 # Auth info
 agent = superagent.agent()
@@ -18,7 +17,7 @@ describe "General Authentication", ->
   it "Should redirect to login on unauth access of existing page", (done) ->
     api.get("/dashboard").expect 302, done
 
-  it "Should redirect to login on unauth access of non-existant page", (done) ->
+  it "Should redirect to login on unauth access of non-existent page", (done) ->
     api.get("/tz4mnKtz4mnKqE03OqzDMWqE03OqzDMW").expect 302, done
 
   it "Should reject incorrect credentials", (done) ->
@@ -36,7 +35,7 @@ describe "General Authentication", ->
       agent.saveCookies res
       done()
 
-  it "Should 404 on authorized access of non-existant page", (done) ->
+  it "Should 404 on authorized access of non-existent page", (done) ->
     req = api.get("/tz4mnKtz4mnKqE03OqzDMWqE03OqzDMW")
     agent.attachCookies req
     req.expect 404, done

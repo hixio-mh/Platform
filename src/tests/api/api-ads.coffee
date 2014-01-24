@@ -3,9 +3,8 @@ expect = require("chai").expect
 supertest = require "supertest"
 
 config = require "../../config.json"
-port = config.modes[config.mode]["port-http"]
-
-api = supertest "http://localhost:#{port}"
+config = config.modes[config.mode]
+api = supertest "http://#{config.domain}:#{config.port}"
 
 testAdName = String Math.floor(Math.random() * 10000)
 

@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
+graphiteInterface = require "../helpers/graphiteInterface"
 config = require "../config.json"
 mongoose = require "mongoose"
 cheerio = require "cheerio"

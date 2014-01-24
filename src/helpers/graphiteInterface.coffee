@@ -11,19 +11,14 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 config = require "../config.json"
+config = config.modes[config.mode]
 request = require "request"
 spew = require "spew"
 
 # Helper for graphite, builds and executes queries, and offers stat fetching
 # helpers
-module.exports = (host) -> {
-
-  host: host
-
-  setHost: (@host) ->
-  getHost: -> @host
+module.exports =
 
   fetchStats: (options) ->
     query = @buildStatFetchQuery options
@@ -160,7 +155,7 @@ module.exports = (host) -> {
     @getPrefixStatCounts = -> "stats_counts.#{config.mode}"
 
     @_buildQuery = ->
-      query = "#{host}/render?"
+      query = "http://#{config.stats.host}/render?"
 
       for target, i in @_targets
 
@@ -214,4 +209,3 @@ module.exports = (host) -> {
       data
 
     @
-  }

@@ -14,8 +14,10 @@
 
 # Redis helper that takes care of selecting the proper database for us
 config = require "../config.json"
+config = config.modes[config.mode]
 redisLib = require "redis"
-redis = redisLib.createClient()
 
-redis.select config.modes[config.mode]["redis-db"]
+redis = redisLib.createClient config.redis.port, config.redis.host
+redis.select config.redis.db
+
 module.exports = redis

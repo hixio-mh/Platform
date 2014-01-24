@@ -1,100 +1,117 @@
 {
-	"appname": "Adefy-Cloud",
 	"mode": "development",
 
-	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
-	"apikey": "wfOmVn4rjwfOmVn4rjzvXuEVPzvXuEVP",
-	"admin": "cris.mihalache@spectrumit.eu",
+	"modes": {
+		"development": {
+			"domain": "adefy.local",
+			"port": 10000,
+			"loglevel": 10,
+			"newrelic": false,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ",
+				"host": "localhost",
+				"port": 45452,
+				"db": "adefy_development"
+			},
+
+			"redis": {
+				"db": 0,
+				"host": "localhost",
+				"port": 23521,
+				"rebuild": false
+			},
+
+			"stats": {
+				"host": "stats.adefy.com",
+				"port": 8125
+			}
+		},
+		"staging": {
+			"domain": "staging.adefy.com",
+			"port": 10000,
+			"loglevel": 0,
+			"newrelic": false,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "izSMqB3pcwxEp6oE7m4FuceTJ7MwUkOn6jgq2kx37k32gBcH",
+				"host": "192.168.195.236",
+				"port": 45452,
+				"db": "adefy_staging"
+			},
+
+			"redis": {
+				"db": 2,
+				"host": "192.168.128.68",
+				"port": 23521,
+				"rebuild": false
+			},
+
+			"stats": {
+				"host": "192.168.152.31",
+				"port": 8125
+			}
+		},
+		"production": {
+			"domain": "app.adefy.com",
+			"port": 10000,
+			"loglevel": 0,
+			"newrelic": true,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "CdZcBjub3NRpoQNPhlrFQ6sZMgXI93DZGUE1CwkIgl8FjWCn",
+				"host": "192.168.195.236",
+				"port": 45452,
+				"db": "adefy"
+			},
+
+			"redis": {
+				"db": 3,
+				"host": "192.168.128.68",
+				"port": 23521,
+				"rebuild": false
+			},
+
+			"stats": {
+				"host": "192.168.152.31",
+				"port": 8125
+			}
+		},
+		"testing": {
+			"domain": "localhost",
+			"port": 10000,
+			"loglevel": 0,
+			"newrelic": false,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
+				"host": "localhost",
+				"port": 45452,
+				"db": "adefy_testing"
+			},
+
+			"redis": {
+				"db": 1,
+				"host": "localhost",
+				"port": 23521,
+				"rebuild": false
+			},
+
+			"stats": {
+				"host": "stats.adefy.com",
+				"port": 8125
+			}
+		}
+	},
 
 	"buildDirs": {
 		"development": "buildDevelopment/",
 		"staging": "buildStaging/",
 		"production": "buildProduction/",
 		"testing": "buildTesting/"
-	},
-
-	"modes": {
-		"development": {
-			"log-to-server": false,
-			"catch-critical": false,
-
-			"secure": false,
-			"port-http": 8080,
-			"port-https": 8443,
-
-			"domain": "localhost",
-			"rebuild-redis": false,
-			"loglevel": 10,
-			"newrelic": false,
-			"redis-db": 0
-		},
-		"staging": {
-			"log-to-server": false,
-			"catch-critical": false,
-
-			"secure": false,
-			"port-http": 43342,
-			"port-https": 43343,
-
-			"domain": "staging.adefy.com",
-			"rebuild-redis": false,
-			"loglevel": 0,
-			"newrelic": false,
-			"redis-db": 2
-		},
-		"production": {
-			"log-to-server": false,
-			"catch-critical": true,
-
-			"secure": false,
-			"port-http": 8080,
-			"port-https": 8443,
-
-			"domain": "app.adefy.com",
-			"rebuild-redis": false,
-			"loglevel": 0,
-			"newrelic": true,
-			"redis-db": 3
-		},
-		"testing": {
-			"log-to-server": false,
-			"catch-critical": false,
-
-			"secure": false,
-			"port-http": 18080,
-			"port-https": 18443,
-
-			"domain": "localhost",
-			"db": "adefy_cloud_testing",
-			"rebuild-redis": false,
-			"loglevel": 0,
-			"newrelic": false,
-			"redis-db": 1
-		}
-	},
-
-	"logfile": "log",
-
-	"secure-key": "ssl/adefy.key",
-	"secure-cert": "ssl/adefy.com.crt",
-	"secure-ca": "ssl/gd_bundle.crt",
-
-	"db": {
-		"user": "adefy_cloud",
-		"pass": "GFtEA468aF73nYZh",
-		"host": "localhost",
-		"port": "27017",
-		"db": "adefy_cloud"
-	},
-
-	"stats-db": {
-		"host": "stats.adefy.com",
-		"port": 8125
-	},
-
-	"email": {
-		"host": "mail.spectrumcoding.com",
-		"port": "25",
-		"domain": "spectrumcoding.com"
 	}
 }

@@ -30,7 +30,6 @@ module.exports = [
   "./modules/engine/engine-ads",
 
   # Public API
-  "./modules/api/api-invites",
   "./modules/api/api-serve",
 
   # Private (authorized) API
