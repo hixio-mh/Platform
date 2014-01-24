@@ -13,55 +13,89 @@
 //-
 
 doctype html
-html(lang="en")
+html(lang="en" ng-app="AdefyRegister")
   head
     meta(charset="utf-8")
-    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
 
     title Register
 
-    meta(name="description", content="")
-    meta(name="author", content="Spectrum IT")
-    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="description" content="")
+    meta(name="author" content="Spectrum IT")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
 
-    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+    link(rel="shortcut icon" href="/img/favicon.ico", type="image/x-icon")
 
-    link(rel="stylesheet", href="/css/vendor/bootstrap.css")
-    link(rel="stylesheet", href="/css/vendor/bootstrap-overrides.css")
-
-    link(rel="stylesheet", href="/css/theme/layout.min.css")
-    link(rel="stylesheet", href="/css/theme/elements.min.css")
-    link(rel="stylesheet", href="/css/theme/icons.min.css")
-    link(rel="stylesheet", href="/css/theme/signup.min.css")
-
-    link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700|Oleo+Script|")
+    link(rel="stylesheet" href="/css/styles.css")
+    link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
 
     | <!--[if lt IE 9]>
     |   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
-  body#page-register
-    .header
-      a(href="/") Adefy
+  body#register-page(ng-controller="AdefyRegisterController")
+    .container.main
+      .header
+        .logo Adefy
 
-    .login-wrapper
-      form.box(method="post", action="/register")
-        .content-wrap
-          h6 Register
+      #subtitle.block.tcenter Registration
+      #teaser.block.tcenter Welcome to Adefy
+      #description.block.tcenter Enter your details to get started
 
-          //- .alert.alert-warning(ng-if="error" ng-bind="error")
+      form(ng-class="{ submitted: submitted }" name="registerForm")
+        .info-box
+          .left
+            .inner
+          .text Main info
+          .right
+            .inner
 
-          input.form-control(type="text", name="username", placeholder="Username")
-          input.form-control(name="fname", type="text", placeholder="First name")
-          input.form-control(name="lname", type="text", placeholder="Last name")
-          input.form-control(name="company", type="text", placeholder="Company name")
-          input.form-control(name="email", type="text", placeholder="Email")
-          input.form-control(type="password", name="password", placeholder="Password")
-          input.form-control(name="password_verify", type="password", placeholder="Repeat password")
-          input.form-control(name="invitation", type="text", placeholder="Invitation code")
+        label Username *
+        input(required type="text" ng-model="username")
 
-          .action
-            button(type="submit").btn-glow.primary.signup Register
+        .w50
+          label Password *
+          input(required type="password" ng-model="password")
 
-      .already
-        a(href="/login") Have an account?
+        .w50.right
+          label Re-enter password *
+          input(required type="password" ng-model="confirm")
+
+        .w50
+          label First name
+          input(type="text" ng-model="fname")
+
+        .w50.right
+          label Last name
+          input(type="text" ng-model="lname")
+
+        label Email *
+        input(required type="email" ng-model="email")
+
+        .info-box.deep
+          .left
+            .inner
+          .text Company Info
+          .right
+            .inner
+
+        label Company name
+        input(type="text" ng-model="company")
+
+        .w50
+          label Phone number
+          input(type="tel" ng-model="phone")
+
+        .w50.right
+          label VAT number
+          input(type="text" ng-model="vat")
+
+  .container
+    div(ng-if="error != null" ng-class="{ error: error != null }") {{ error }}
+    button#register-button(type="button" ng-click="register()")
+      | Register
+      img(src="/img/right_arrow.png" width="20" height="25")
+
+    footer
+      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
+      script(src="/client/register/register.js")
