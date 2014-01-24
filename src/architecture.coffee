@@ -15,11 +15,10 @@
 module.exports = [
 
   # Core initialization
+  "./modules/core/core-redis",
+  "./modules/core/core-statsd",
   "./modules/core/core-express",
-  "./modules/core/core-snapshot",
 
-  "./modules/core/core-init-snapshot",
-  "./modules/core/core-userauth",
   "./modules/core/core-init-start",
   "./modules/core/core-init-redis",
 
@@ -33,9 +32,6 @@ module.exports = [
   # Public API
   "./modules/api/api-invites",
   "./modules/api/api-serve",
-
-  # Locks down API!
-  "./modules/core/core-api",
 
   # Private (authorized) API
   "./modules/api/api-ads",
@@ -52,10 +48,6 @@ module.exports = [
 
   # Angular route definitions
   "./modules/logic/routes",
-
-  # Login/register page logic
-  "./modules/logic/page-login",
-  "./modules/logic/page-register",
 
   # End of initialization, starts servers
   "./modules/core/core-init-end"

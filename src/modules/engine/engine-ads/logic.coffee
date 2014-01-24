@@ -16,13 +16,7 @@ spew = require "spew"
 config = require "../../../config.json"
 configMode = config.modes[config.mode]
 adefyDomain = "http://#{configMode.domain}:#{configMode["port-http"]}"
-redisLib = require "redis"
-redis = redisLib.createClient()
-statsdLib = require("node-statsd").StatsD
-statsd = new statsdLib
-  host: config["stats-db"].host
-  port: config["stats-db"].port
-  prefix: "#{config.mode}."
+redis = require "../../../helpers/redisInterface"
 
 ##
 ## Handles ad packaging and fetching
@@ -30,7 +24,6 @@ statsd = new statsdLib
 setup = (options, imports, register) ->
 
   server = imports["core-express"]
-  auth = imports["core-userauth"]
   utility = imports["logic-utility"]
   templates = imports["engine-templates"]
 

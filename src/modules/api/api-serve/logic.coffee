@@ -18,14 +18,8 @@
 spew = require "spew"
 db = require "mongoose"
 config = require "../../../config.json"
-redisLib = require "redis"
-redis = redisLib.createClient()
-statsdLib = require("node-statsd").StatsD
+redis = require "../../../helpers/redisInterface"
 NodeCache = require "node-cache"
-statsd = new statsdLib
-  host: config["stats-db"].host
-  port: config["stats-db"].port
-  prefix: "#{config.mode}."
 
 # Cache used for guarding against multiple duplicate impressions/clicks
 guardCache = new NodeCache stdTTL: 1

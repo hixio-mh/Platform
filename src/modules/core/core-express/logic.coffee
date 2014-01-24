@@ -121,7 +121,7 @@ setup = (options, imports, register) ->
           app.use express.cookieParser sessionSecret
           app.use express.session sessionSecret
           # app.use connect.static static_root
-          app.use gzippo.staticGzip static_root
+          # app.use gzippo.staticGzip static_root
 
           # Register custom middleware
           for rule in rules
@@ -158,8 +158,8 @@ setup = (options, imports, register) ->
         if hasSetup
 
           # Routes
-          app.get "/500", (req, res) -> throw new eInternalError ""
-          app.get "/*", (req, res) -> throw new NotFound ""
+          app.get "/500", (req, res) -> res.send 500
+          app.get "/*", (req, res) -> res.send 404
 
           # Actually start the server
           if config.secure

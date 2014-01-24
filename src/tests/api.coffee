@@ -18,7 +18,7 @@ apiPublisherTests = require "./api/api-publishers"
 describe "API Authentication", ->
 
   it "Should accept and authenticate test credentials", (done) ->
-    api.post("/login").send
+    api.post("/api/v1/login").send
       username: "testy-trista"
       password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
     .expect(302)
@@ -27,7 +27,7 @@ describe "API Authentication", ->
       done()
 
   it "Should accept and authenticate test admin credentials", (done) ->
-    api.post("/login").send
+    api.post("/api/v1/login").send
       username: "testy-trista-admin"
       password: "x7aixkrIIKrcaZAvPV52ujHpmhUJjzor"
     .expect(302)

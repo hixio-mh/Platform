@@ -19,13 +19,7 @@ request = require "request"
 spew = require "spew"
 _ = require "underscore"
 NodeCache = require "node-cache"
-redisLib = require "redis"
-redis = redisLib.createClient()
-statsdLib = require("node-statsd").StatsD
-statsd = new statsdLib
-  host: config["stats-db"].host
-  port: config["stats-db"].port
-  prefix: "#{config.mode}."
+redis = require "../helpers/redisInterface"
 
 ##
 ## Cache, used for storing remote statistics

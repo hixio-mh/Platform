@@ -27,6 +27,7 @@ setup = (options, imports, register) ->
         if err then spew.error err
         else res.send html
 
+  # Dashboard views
   server.server.get "/views/dashboard/:view", (req, res) ->
     if not utility.param req.params.view, res, "View" then return
 
@@ -39,7 +40,8 @@ setup = (options, imports, register) ->
     if req.params.view.indexOf("..") != -1
       req.params.view = req.params.view.split("..").join ""
 
-    if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
+    auth = {}
+    if req.user and req.user.admin == "true" then auth = admin: true
 
     res.render "dashboard/views/#{req.params.view}.jade", auth
 

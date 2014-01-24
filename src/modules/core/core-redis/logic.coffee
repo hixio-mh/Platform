@@ -12,15 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-# A tad ugly, called first to ensure the snapshot is loaded as required
-config = require "../../../config.json"
-spew = require "spew"
-
-setup = (options, imports, register) ->
-
-  imports["core-snapshot"].setup __dirname + "/../../../" + config.snapshot
-  spew.info "Loaded snapshot"
-
-  register null, {}
-
+# Module that exposes the helper, so we don't have to require (instantiate) it
+# inside of every other module
+redis = require "../../../helpers/redisInterface"
+setup = (options, imports, register) -> register null, "core-redis": redis
 module.exports = setup

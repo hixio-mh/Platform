@@ -15,8 +15,7 @@ graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.
 mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
-redisLib = require "redis"
-redis = redisLib.createClient()
+redis = require "../helpers/redisInterface"
 
 ##
 ## Campaign schema

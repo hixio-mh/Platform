@@ -26,9 +26,7 @@ fs = require "fs"
 setup = (options, imports, register) ->
 
   server = imports["core-express"]
-  # sockets = imports["core-socketio"]
-  snapshot = imports["core-snapshot"]
-  auth = imports["core-userauth"]
+  redis = imports["core-redis"]
 
   spew.init "Starting Initialization"
 
@@ -40,7 +38,8 @@ setup = (options, imports, register) ->
     "/register"
     "/recover"
 
-    # Public invite request
+    "/api/v1/login"
+    "/api/v1/register"
     "/api/v1/invite/add"
 
     # Ad request
@@ -50,50 +49,53 @@ setup = (options, imports, register) ->
     "/api/v1/click/"
   ]
 
-  notWhenAuthorized = [
-    "/login"
-    "/register"
-  ]
-
-  # Set up error page paths
-  server.setErrorViews "error/500.jade", "error/404.jade"
-
   server.registerRule (req, res, next) ->
 
     redirected = false
     needsAuthorization = true
-    subUrl = null
+    subUrl = req.url
 
-    # If url includes GET parameters, strip them
+    # If url includes GET parameters, strip them for later comparison
     if req.url.indexOf("?") >= 0
-      subUrl = req.url.substring 0, req.url.indexOf("?")
-    else subUrl = req.url
+      subUrl = req.url.substring 0, req.url.indexOf "?"
 
-    # Check if page is public
+    # If page is public, skip all auth checks
     for p in publicPages
       if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
-        needsAuthorization = false
-        break
+        return next()
 
-    # Check if page is not visitable when authorized
-    for p in notWhenAuthorized
-      if subUrl.indexOf(p) >= 0 and req.cookies.user
-        res.redirect "/"
-        redirected = true
+    ##
+    ## If we reach this point, then the page requires authorization.
+    ## Check for a user cookie; if we have none, redirect
+    ## If we do, query redis for the session and validate, then attach some
+    ## user info to the request if it is valid
+    ##
+    if req.cookies.user == undefined then return res.redirect "/login"
 
-    if needsAuthorization
-      if req.cookies.user # If credentials are avaliable
+    # Validate cookie by looking up user in redis
+    redis.get "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}", (err, user) ->
+      if err then spew.error err
 
-        # If page is visitable when authorized
-        if !redirected # No else clause, since redirection = page rendered
-          if auth.checkAuth req.cookies.user # If user is actually authorized
-            next() # Gogo
-          else
-            res.clearCookie "user"
-            res.redirect "/login"
-      else # Credentials required and not avaliable
-        res.redirect "/login"
-    else next() # Page doesn't need auth
+      # Session is invalid, return 403
+      if user == null
+        req.user = null
+        res.clearCookie "user"
+        res.send 403
+
+      # Valid session, save user data on request and continue
+      else
+        user = user.split ":"
+
+        req.user =
+          id: user[0]
+          session: user[1]
+          admin: Number(user[2]) == 0
+          permissions: Number user[2]
+          username: user[3]
+
+        res.locals.admin = req.user.admin
+
+        next()
 
   _secure = config["modes"][config["mode"]].secure
   _portHTTP = config["modes"][config["mode"]]["port-http"]

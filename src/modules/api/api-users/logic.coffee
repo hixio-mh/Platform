@@ -20,6 +20,7 @@ db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config.json"
 adefyDomain = "http://#{config.modes[config.mode].domain}:8080"
+redis = require "../../../helpers/redisInterface"
 
 paypalSDK.configure
   host: "api.sandbox.paypal.com"
@@ -31,6 +32,77 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   utility = imports["logic-utility"]
+
+  s4 = -> Math.floor(1 + Math.random() * 10000).toString(16)
+  guid = -> s4() + s4() + '-' + s4() + '-' + s4()
+
+  # Authorize user by creating redis session key, and setting a cookie
+  #
+  # @param [Object] user user model
+  # @param [Object] res
+  # @param [Method] cb
+  authorizeUser = (user, res, cb) ->
+
+    session = guid()
+    redisSessionData = [
+      user._id
+      session
+      user.permissions
+      user.username
+    ].join ":"
+
+    redis.set "sessions:#{user._id}:#{session}", redisSessionData, (err) ->
+      if err then spew.error err
+      res.cookie "user", { id: user._id, sess: session }
+      cb()
+
+  # Logout, clear redis session
+  app.get "/logout", (req, res) ->
+    redis.del "sessions:#{req.user.id}:#{req.user.session}", (err) ->
+      if err then spew.error err
+
+      res.clearCookie "user"
+      if req.user then delete req.user
+
+      res.redirect "/login"
+
+  # Login
+  app.post "/api/v1/login", (req, res) ->
+    if not req.param("username") or not req.param "password"
+      return res.send 403
+
+    db.model("User").findOne { username: req.param "username" }, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return res.send 403
+
+      user.comparePassword req.param("password"), (err, isMatch) ->
+        if err then spew.error err; return res.send 500
+        if not isMatch then return res.send 403
+
+        authorizeUser user, res, -> res.redirect "/home/publisher"
+
+  # Register
+  app.post "/api/v1/register", (req, res) ->
+    if not utility.param req.param("username"), res, "Username" then return
+    if not utility.param req.param("email"), res, "Email" then return
+    if not utility.param req.param("password"), res, "Password" then return
+
+    # Ensure username is not taken (don't trust client-side check)
+    db.model("User").findOne username: req.param("username"), (err, user) ->
+      if utility.dbError err, res then return
+      if user then return res.send 401, error: "Username taken"
+
+      # Create user
+      newUser = db.model("User")
+        username: req.param "username"
+        password: req.param "password"
+        fname: req.param("fname") || ""
+        lname: req.param("lname") || ""
+        email: req.param "email"
+        version: 1
+
+      newUser.save ->
+        authorizeUser user, res, -> res.redirect "/home/publisher"
 
   # Delete user
   app.delete "/api/v1/user/delete", (req, res) ->

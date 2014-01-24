@@ -6,8 +6,7 @@
   "plugin": {
     "consumes": [
       "core-express",
-      "core-snapshot",
-      "core-userauth"
+      "core-redis"
     ],
     "provides": []
   }
