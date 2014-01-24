@@ -20,7 +20,7 @@ include _menu
     dd: input(ng-model="campaign.dailyBudget" min="{{ min.budget }}" type="number" placeholder="min {{ min.budget | currency:$ }}")
 
     dt: label Total Budget $ (Optional)
-    dd: input(ng-model="campaign.totalBudget" type="number" min="campaign.totalBudget")
+    dd: input(ng-model="campaign.totalBudget" type="number")
 
     dt
       label(ng-if="campaign.pricing == 'CPM'") Target CPM $
