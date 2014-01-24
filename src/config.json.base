@@ -29,10 +29,10 @@
 			}
 		},
 		"staging": {
-			"domain": "staging.adefy.com",
+			"domain": "app1.adefy.com",
 			"port": 10000,
-			"loglevel": 0,
-			"newrelic": false,
+			"loglevel": 10,
+			"newrelic": true,
 
 			"mongo": {
 				"user": "adefy",
@@ -50,7 +50,7 @@
 			},
 
 			"stats": {
-				"host": "192.168.152.31",
+				"host": "stats.adefy.com",
 				"port": 8125
 			}
 		},
