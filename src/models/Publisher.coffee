@@ -191,11 +191,14 @@ schema.methods.fetchOverviewStats = (cb) ->
     query.exec (data) =>
 
       # Helper
-      assignMatching = (res, stat, statName) ->
+      assignMatching = (res, statName) ->
+        stat = 0
+
         if res.target.indexOf(statName) != -1
           for point in res.datapoints
-            if point.y != null
-              return stat = point.y
+            if point.y > stat then stat = point.y
+
+        stat
 
       remoteStats =
         impressions24h: 0
@@ -207,11 +210,11 @@ schema.methods.fetchOverviewStats = (cb) ->
       # Iterate over the result, and attempt to find matching responses
       for res in data
 
-        assignMatching res, remoteStats.impressions24h, ".impressions,"
-        assignMatching res, remoteStats.clicks24h, ".clicks,"
-        assignMatching res, remoteStats.ctr24h, ".ctr,"
-        assignMatching res, remoteStats.earnings24h, ".earnings,"
-        assignMatching res, remoteStats.requests24h, ".requests,"
+        remoteStats.impressions24h = assignMatching res, ".impressions,"
+        remoteStats.clicks24h = assignMatching res, ".clicks,"
+        remoteStats.ctr24h = assignMatching res, ".ctr,"
+        remoteStats.earnings24h = assignMatching res, ".earnings,"
+        remoteStats.requests24h = assignMatching res, ".requests,"
 
       # Store stats in cache
       statCache.set statCacheKey, remoteStats, (err, success) ->
