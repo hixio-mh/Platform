@@ -192,7 +192,10 @@ schema.methods.fetchOverviewStats = (cb) ->
 
       # Helper
       assignMatching = (res, stat, statName) ->
-        if res.target.indexOf(statName) != -1 then stat = res.datapoints[0].y
+        if res.target.indexOf(statName) != -1
+          for point in res.datapoints
+            if point.y != null
+              return stat = point.y
 
       remoteStats =
         impressions24h: 0
