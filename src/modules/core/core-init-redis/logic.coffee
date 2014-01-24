@@ -16,8 +16,7 @@
 spew = require "spew"
 db = require "mongoose"
 config = require "../../../config.json"
-redisLib = require "redis"
-redis = redisLib.createClient()
+redis = require "../../../helpers/redisInterface"
 
 handleError = (err) -> if err then spew.error err
 

@@ -4,6 +4,11 @@ childProcess = require("child_process")
 config = require "#{__dirname}/../config.json"
 serverDir = config.buildDirs[config.mode]
 
+# The platform spawns a node process for each core. We need to wait for each
+# process to initialize, so count init messages
+numCPUs = require("os").cpus().length
+initMessages = 0
+
 adefy = null
 
 before (done) ->
@@ -19,8 +24,13 @@ before (done) ->
     adefy.on "message", (msg) ->
       if msg == "init_complete"
 
-        # Give models time to load
-        setTimeout (-> done()), 500
+        initMessages++
+
+        # Last init
+        if initMessages == numCPUs
+
+          # Give models time to load
+          setTimeout (-> done()), 700
 
 after -> if adefy != null then adefy.kill()
 

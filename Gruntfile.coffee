@@ -72,6 +72,7 @@ module.exports = (grunt) ->
 
   stylusMin = {}
   clientProdSrc = {}
+  staticJadeFiles = {}
 
   # Module package.json paths
   modulePackageJSON = [
@@ -104,6 +105,14 @@ module.exports = (grunt) ->
 
     clientProdSrc = {}
     clientProdSrc["#{_buildDir}static/client/app.min.js"] = _prodSrc
+
+    staticJadeFiles = {}
+    buildPref = "#{_buildDir}static"
+    srcPref = "#{srcDir}views/static"
+    staticJadeFiles["#{buildPref}/login.html"] = "#{srcPref}/login.jade"
+    staticJadeFiles["#{buildPref}/register.html"] = "#{srcPref}/register.jade"
+    staticJadeFiles["#{buildPref}/500.html"] = "#{srcPref}/500.jade"
+    staticJadeFiles["#{buildPref}/404.html"] = "#{srcPref}/404.jade"
 
     # Create watch versions of each src array
     WmodelSrc = _watchify modelSrc
@@ -276,6 +285,10 @@ module.exports = (grunt) ->
           "#{_buildDir}/tests/selftest.js"
         ]
 
+    jade:
+      static:
+        files: staticJadeFiles
+
     # Watch files for changes and ship updates to build folder
     watch:
       serverCS:
@@ -306,6 +319,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-clean"
   grunt.loadNpmTasks "grunt-contrib-cssmin"
+  grunt.loadNpmTasks "grunt-contrib-jade"
   grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-nodemon"
   grunt.loadNpmTasks "grunt-mocha-test"
@@ -319,6 +333,7 @@ module.exports = (grunt) ->
     "copy:templateAssets"
     "copy:templateAssetsRemote"
     "copy:helperJSON"
+    "jade:static"
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"

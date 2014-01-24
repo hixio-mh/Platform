@@ -25,10 +25,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   fetchUser = (req, res, cb) ->
-    db.model("User").findOne
-      username: req.cookies.user.id
-      session: req.cookies.user.sess
-    , (err, user) ->
+    db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return cb null
 
       if not user then cb null

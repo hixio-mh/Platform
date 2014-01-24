@@ -45,22 +45,31 @@ window.AdefyDashboard.directive "analytics", ["$http", "$timeout", ($http, $time
 
       for graph in scope.data.graphs
         if fetchedData[graph.stat].length > 0
-          statics.push
-            name: graph.name
-            color: graphColorPalette.color()
-            y: graph.y
+          atLeastOneNonZeroPoint = false
 
-          dynamics.push fetchedData[graph.stat]
+          for point in fetchedData[graph.stat]
+            if point.y != 0
+              atLeastOneNonZeroPoint = true
+              break
 
-      scope.graphData =
-        static: statics
-        dynamic: dynamics
-        axes: scope.data.axes
+          if atLeastOneNonZeroPoint
+            statics.push
+              name: graph.name
+              color: graphColorPalette.color()
+              y: graph.y
 
-      # Ensure we only call done once
-      if scope.done != undefined
-        scope.done()
-        scope.done = undefined
+            dynamics.push fetchedData[graph.stat]
+
+      if statics.length > 0
+        scope.graphData =
+          static: statics
+          dynamic: dynamics
+          axes: scope.data.axes
+
+        # Ensure we only call done once
+        if scope.done != undefined
+          scope.done()
+          scope.done = undefined
 
     requestIndividualDataSet = (graph) ->
       url = "#{prefix}/#{graph.stat}?"

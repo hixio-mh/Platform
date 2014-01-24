@@ -4,11 +4,7 @@
   "main": "logic.js",
   "private": true,
   "plugin": {
-    "consumes": [
-      "core-express",
-      "core-snapshot",
-      "core-userauth"
-    ],
+    "consumes": ["core-express"],
     "provides": []
   }
 }

@@ -6,7 +6,6 @@
   "plugin": {
     "consumes": [
       "core-express",
-      "core-userauth",
       "logic-utility",
       "engine-templates"
     ],

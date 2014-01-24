@@ -15,19 +15,15 @@
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
 spew = require "spew"
-redisLib = require "redis"
-redis = redisLib.createClient()
+redis = require "../helpers/redisInterface"
 
 schema = new mongoose.Schema
   username: String
   email: String
   password: String
 
-  session: String
-  hash: String
-
-  fname: String
-  lname: String
+  fname: { type: String, default: "" }
+  lname: { type: String, default: "" }
 
   address: { type: String, default: "" }
   city: { type: String, default: "" }

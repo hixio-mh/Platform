@@ -13,10 +13,9 @@
 ##
 graphiteInterface = require("../helpers/graphiteInterface") "http://stats.adefy.com"
 engineFilters = require "../helpers/filters"
+redis = require "../helpers/redisInterface"
 mongoose = require "mongoose"
 spew = require "spew"
-redisLib = require "redis"
-redis = redisLib.createClient()
 
 ##
 ## Ad schema

@@ -1,6 +1,5 @@
 {
 	"appname": "Adefy-Cloud",
-	"loglevel": 10,
 	"mode": "development",
 
 	"secret": "drlQSxdrlQSxA6yMne6AqzA6yMne6Aqz",
@@ -24,7 +23,10 @@
 			"port-https": 8443,
 
 			"domain": "localhost",
-			"rebuild-redis": false
+			"rebuild-redis": false,
+			"loglevel": 10,
+			"newrelic": false,
+			"redis-db": 0
 		},
 		"staging": {
 			"log-to-server": false,
@@ -35,18 +37,24 @@
 			"port-https": 43343,
 
 			"domain": "staging.adefy.com",
-			"rebuild-redis": false
+			"rebuild-redis": false,
+			"loglevel": 0,
+			"newrelic": false,
+			"redis-db": 2
 		},
 		"production": {
 			"log-to-server": false,
 			"catch-critical": true,
 
-			"secure": true,
+			"secure": false,
 			"port-http": 8080,
 			"port-https": 8443,
 
 			"domain": "app.adefy.com",
-			"rebuild-redis": false
+			"rebuild-redis": false,
+			"loglevel": 0,
+			"newrelic": true,
+			"redis-db": 3
 		},
 		"testing": {
 			"log-to-server": false,
@@ -58,12 +66,14 @@
 
 			"domain": "localhost",
 			"db": "adefy_cloud_testing",
-			"rebuild-redis": false
+			"rebuild-redis": false,
+			"loglevel": 0,
+			"newrelic": false,
+			"redis-db": 1
 		}
 	},
 
 	"logfile": "log",
-	"snapshot": ".saved_state.json",
 
 	"secure-key": "ssl/adefy.key",
 	"secure-cert": "ssl/adefy.com.crt",

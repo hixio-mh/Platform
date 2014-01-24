@@ -12,7 +12,7 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-!!! 5
+doctype html
 html(lang="en")
   head
     meta(charset="utf-8")
@@ -49,8 +49,7 @@ html(lang="en")
         .content-wrap
           h6 Register
 
-          if locals.error
-            .alert.alert-warning= locals.error
+          //- .alert.alert-warning(ng-if="error" ng-bind="error")
 
           input.form-control(type="text", name="username", placeholder="Username")
           input.form-control(name="fname", type="text", placeholder="First name")
