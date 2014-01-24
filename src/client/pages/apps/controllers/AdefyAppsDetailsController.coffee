@@ -85,8 +85,7 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
         $scope.graphRefresh()
     , 1
 
-  $scope.graphDone = ->
-    App.get id: $routeParams.id, (app) -> $scope.app = app
+  App.get id: $routeParams.id, (app) -> $scope.app = app
 
   $("body").off "change", "#app-show select[name=interval]"
   $("body").off "change", "#app-show input[name=sum]"

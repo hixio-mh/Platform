@@ -19,37 +19,6 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
   $scope.ctr24h = 0
   $scope.spent24h = 0
 
-  $scope.graphData =
-    static: [
-      name: "Spent"
-      color: "#33b5e5"
-      y: "earnings"
-    ,
-      name: "Impressions"
-      color: "#e3de33"
-      y: "counts"
-    ,
-      name: "Clicks"
-      color: "#33e444"
-      y: "counts"
-    ]
-
-    axes:
-      x:
-        formatter: (x) -> new Date(x).toLocaleDateString()
-      counts:
-        type: "y"
-        orientation: "left"
-      earnings:
-        type: "y"
-        orientation: "right"
-
-    dynamic: [
-      [{ x: 0, y: 5 }]
-      [{ x: 0, y: 2 }]
-      [{ x: 0, y: 24 }]
-    ]
-
   Campaign.query (campaigns) ->
     $scope.campaigns = campaigns
 
@@ -60,3 +29,93 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
 
     if $scope.impressions24h != 0
       $scope.ctr24h = ($scope.clicks24h / $scope.impressions24h) * 100
+
+  ##
+  ## Setup graphs
+  ##
+
+  $scope.hoverFormatter = (series, x, y) ->
+    if series.name == "Earnings"
+      "Earned: $#{y.toFixed 3}"
+    else
+      "#{series.name}: #{y}"
+
+  $scope.graph24hStats =
+    prefix: "/api/v1/analytics/totals"
+
+    graphs: [
+      name: "Impressions"
+      stat: "impressionsc"
+      y: "counts"
+      from: "-24h"
+      interval: "30minutes"
+    ,
+      name: "Clicks"
+      stat: "clicksc"
+      y: "counts"
+      from: "-24h"
+      interval: "30minutes"
+    ]
+
+    axes:
+      x:
+        type: "x"
+        formatter: (x) -> moment(x).fromNow()
+      counts:
+        type: "y"
+        orientation: "left"
+
+  $scope.graph24hSpent =
+    prefix: "/api/v1/analytics/totals"
+
+    graphs: [
+      name: "Spent"
+      stat: "spent"
+      y: "spent"
+      from: "-24h"
+      interval: "30minutes"
+    ]
+
+    axes:
+      x:
+        type: "x"
+        formatter: (x) -> moment(x).fromNow()
+      spent:
+        type: "y"
+        orientation: "left"
+        formatter: (y) -> "$ #{y.toFixed 3}"
+
+  $scope.graphLifetimeMetrics =
+    prefix: "/api/v1/analytics/totals"
+
+    graphs: [
+      name: "Impressions"
+      stat: "impressionsc"
+      y: "counts"
+      interval: "2hours"
+      sum: true
+    ,
+      name: "Clicks"
+      stat: "clicksc"
+      y: "counts"
+      interval: "2hours"
+      sum: true
+    ,
+      name: "Spent"
+      stat: "spent"
+      y: "spent"
+      interval: "2hours"
+      sum: true
+    ]
+
+    axes:
+      x:
+        type: "x"
+        formatter: (x) -> moment(x).fromNow()
+      counts:
+        type: "y"
+        orientation: "left"
+      spent:
+        type: "y"
+        orientation: "right"
+        formatter: (y) -> "$ #{y.toFixed 3}"

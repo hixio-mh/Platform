@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 config = require "../config.json"
-config = config.modes[config.mode]
+modeConfig = config.modes[config.mode]
 request = require "request"
 spew = require "spew"
 
@@ -155,7 +155,7 @@ module.exports =
     @getPrefixStatCounts = -> "stats_counts.#{config.mode}"
 
     @_buildQuery = ->
-      query = "http://#{config.stats.host}/render?"
+      query = "http://#{modeConfig.stats.host}/render?"
 
       for target, i in @_targets
 

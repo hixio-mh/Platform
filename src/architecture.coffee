@@ -28,6 +28,7 @@ module.exports = [
   # Engine logic (not tied to any one route)
   "./modules/engine/engine-templates",
   "./modules/engine/engine-ads",
+  "./modules/engine/engine-traffic-generator",
 
   # Public API
   "./modules/api/api-serve",

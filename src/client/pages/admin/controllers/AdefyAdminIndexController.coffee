@@ -25,9 +25,6 @@ window.AdefyDashboard.controller "AdefyAdminIndexController", ($scope, $http, $r
     static: [
       name: "Users"
       color: "#33b5e5"
-    ,
-      name: "Invites"
-      color: "#e3de33"
     ]
 
     dynamic: [
@@ -45,10 +42,3 @@ window.AdefyDashboard.controller "AdefyAdminIndexController", ($scope, $http, $r
 
     $scope.adminChartData.dynamic[0] = result.data
     $scope.userCount = result.count
-
-  # Fetch data for invite graph
-  $http.get("/api/v1/analytics/invites").success (result) ->
-    if result.error != undefined then alert result.error; return
-
-    $scope.adminChartData.dynamic[1] = result.data
-    $scope.inviteCount = result.count
