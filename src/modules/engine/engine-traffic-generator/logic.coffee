@@ -40,7 +40,7 @@ setup = (options, imports, register) ->
 
   redis = imports["core-redis"]
 
-  if config.mode == "development"
+  if config.mode == "development" or config.mode == "staging"
 
     spew.init "Starting traffic generator..."
 
@@ -70,7 +70,14 @@ setup = (options, imports, register) ->
       for key in apikeys
         if Math.random() < keyChance
           request "#{url}/#{key}?width=400&height=400&html", (err, res, body) ->
-            impressionsAndClicks JSON.parse body
+            ad = null
+
+            try
+              ad = JSON.parse body
+            catch e
+              spew.error e
+
+            if ad != null then impressionsAndClicks ad
 
       setTimeout (-> genTraffic()), genDelay()
 
