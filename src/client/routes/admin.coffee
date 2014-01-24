@@ -28,10 +28,6 @@ window.AdefyDashboard.config ($routeProvider, $locationProvider, ngQuickDateDefa
     controller: "AdefyAdminUsersController"
     templateUrl: "/views/dashboard/admin:users"
 
-  $routeProvider.when "/admin/invites",
-    controller: "AdefyAdminInvitesController"
-    templateUrl: "/views/dashboard/admin:invites"
-
   $routeProvider.when "/admin/publishers",
     controller: "AdefyAdminPublishersController"
     templateUrl: "/views/dashboard/admin:publishers"

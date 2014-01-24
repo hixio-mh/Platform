@@ -19,7 +19,8 @@ spew = require "spew"
 db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config.json"
-adefyDomain = "http://#{config.modes[config.mode].domain}:8080"
+modeConfig = config.modes[config.mode]
+adefyDomain = "http://#{modeConfig.domain}"
 redis = require "../../../helpers/redisInterface"
 
 paypalSDK.configure
@@ -99,6 +100,9 @@ setup = (options, imports, register) ->
         fname: req.param("fname") || ""
         lname: req.param("lname") || ""
         email: req.param "email"
+        company: req.param("company") || ""
+        phone: req.param("phone") || ""
+        vat: req.param("vat") || ""
         version: 1
 
       newUser.save -> authorizeUser newUser, res, -> res.send 200
@@ -187,7 +191,7 @@ setup = (options, imports, register) ->
       user.postalCode = req.param("postalCode") || user.postalCode
       user.country = req.param("country") || user.country
       user.phone = req.param("phone") || user.phone
-      user.fax = req.param("fax") || user.fax
+      user.vat = req.param("vat") || user.vat
 
       user.save()
       res.send 200

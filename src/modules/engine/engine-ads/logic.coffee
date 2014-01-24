@@ -15,14 +15,14 @@
 spew = require "spew"
 config = require "../../../config.json"
 configMode = config.modes[config.mode]
-adefyDomain = "http://#{configMode.domain}:#{configMode["port-http"]}"
-redis = require "../../../helpers/redisInterface"
+adefyDomain = "http://#{configMode.domain}"
 
 ##
 ## Handles ad packaging and fetching
 ##
 setup = (options, imports, register) ->
 
+  redis = imports["core-redis"]
   server = imports["core-express"]
   utility = imports["logic-utility"]
   templates = imports["engine-templates"]
@@ -434,7 +434,7 @@ setup = (options, imports, register) ->
           fetchTargetedAdEntries finalKey, res, (ads) ->
             performRTB ads, publisher, req, res, (ad) ->
               res.json ad
-              spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
+              # spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
 
   # Fetches a test ad tuned for the publisher in question.
   #

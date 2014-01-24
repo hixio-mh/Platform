@@ -78,20 +78,13 @@ window.AdefyDashboard.directive "graph", [->
     else
       width = scope.width
 
-    # Build graph
-    rickshaw = new Rickshaw.Graph
-      element: element.find(".rickshaw")[0]
-      renderer: scope.type or "line"
-      series: processData scope.data
-      stroke: scope.stroke or true
-      interpolation: scope.interpolation or "linear"
-
-      width: width
-      height: scope.height
-
     @createAxis = ->
       for name, scale of @scales
         if @createdAxis[name] == undefined
+
+          if scale.formatter == undefined
+            scale.formatter = Rickshaw.Fixtures.Number.formatKMBT
+
           @createdAxis[name] = new Rickshaw.Graph.Axis.Y.Scaled
             graph: rickshaw
             orientation: scale.orientation
@@ -101,7 +94,36 @@ window.AdefyDashboard.directive "graph", [->
         else
           @createdAxis[name].scale = scale.object
 
-    @createAxis()
+    if scope.data and scope.data.static.length > 0
+
+      # Build graph
+      rickshaw = new Rickshaw.Graph
+        element: element.find(".rickshaw")[0]
+        renderer: scope.type or "line"
+        series: processData scope.data
+        stroke: scope.stroke or true
+        interpolation: scope.interpolation or "linear"
+
+        width: width
+        height: scope.height
+
+      @createAxis()
+
+      # Define axes
+      if scope.data.axes != undefined
+        for key, axis of scope.data.axes
+
+          if axis.formatter == undefined
+            axis.formatter = Rickshaw.Fixtures.Number.formatKMBT
+
+          if axis.type == "x"
+            new Rickshaw.Graph.Axis.X
+              graph: rickshaw
+              tickFormat: axis.formatter
+            break
+
+          # Y axes are generated on data updates
+          # else if axis.type == "y"
 
     # Watch data for changes
     scope.$watch "data.dynamic", (graphs) =>
@@ -112,18 +134,6 @@ window.AdefyDashboard.directive "graph", [->
       @createAxis()
 
     , true
-
-    # Define axes
-    if scope.data.axes != undefined
-      for key, axis of scope.data.axes
-        if axis.type == "x"
-          new Rickshaw.Graph.Axis.X
-            graph: rickshaw
-            tickFormat: axis.formatter
-          break
-
-        # Y axes are generated on data updates
-        # else if axis.type == "y"
 
     # Legend
     if scope.legend

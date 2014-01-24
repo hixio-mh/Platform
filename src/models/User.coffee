@@ -33,7 +33,7 @@ schema = new mongoose.Schema
 
   company: { type: String, default: "" }
   phone: { type: String, default: "" }
-  fax: { type: String, default: "" }
+  vat: { type: String, default: "" }
 
   # 0 - admin (root)
   # 1 - unassigned

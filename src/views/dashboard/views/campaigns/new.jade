@@ -18,7 +18,9 @@
     dd
       select(chosen required ng-model="campaign.pricing" ng-options="o for o in pricingOptions")
 
-    dt: label Daily Budget $
+    dt
+      label Daily Budget $
+      span(ng-if="campaign.dailyBudget") $ {{ campaign.dailyBudget | number:2 }} is enough for {{ me.funds / campaign.dailyBudget | number:2 }} days
     dd
       input(required ng-model="campaign.dailyBudget" min="{{ min.budget }}" type="number" placeholder="min {{ min.budget | currency:$ }}")
 

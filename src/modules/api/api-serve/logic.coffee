@@ -105,19 +105,19 @@ setup = (options, imports, register) ->
           campaignUserRef = data[8]
           pubUserRef = data[9]
 
+          redis.incr "#{campaignRef}:impressions"
+          redis.incr "#{publisherRef}:impressions"
+          statsd.increment "#{campaignGraphiteId}.impressions"
+          statsd.increment "#{publisherGraphiteId}.impressions"
+
           # Log impression if model is CPM :D MONEY!
           if data[2] == "CPM"
-            redis.incr "#{campaignRef}:impressions"
-            redis.incr "#{publisherRef}:impressions"
             redis.incrbyfloat "#{campaignRef}:spent", data[3]
             redis.incrbyfloat "#{publisherRef}:earnings", data[3]
             redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
             redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
 
-            statsd.increment "#{campaignGraphiteId}.impressions"
             statsd.increment "#{campaignGraphiteId}.spent", data[3]
-
-            statsd.increment "#{publisherGraphiteId}.impressions"
             statsd.increment "#{publisherGraphiteId}.earnings", data[3]
 
           guardCache.del cacheKey
@@ -152,23 +152,25 @@ setup = (options, imports, register) ->
           redis.del "actions:#{actionId}", (err) ->
             if err then spew.error err
 
-            campaignRef = "campaignAd:#{data[4]}:#{data[5]}"
+            campaignRef = "campaignAd:#{data[4]}:#{data[5]}:#{data[9]}"
             publisherRef = data[6]
             publisherGraphiteId = data[7]
             campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"
             campaignUserRef = data[8]
             pubUserRef = data[9]
 
+            redis.incr "#{campaignRef}:clicks"
+            redis.incr "#{publisherRef}:clicks"
+
+            statsd.increment "#{campaignGraphiteId}.clicks"
+            statsd.increment "#{publisherGraphiteId}.clicks"
+
             if data[2] == "CPC"
-              redis.incr "#{campaignRef}:clicks"
-              redis.incr "#{publisherRef}:clicks"
               redis.incrbyfloat "#{campaignRef}:spent", data[3]
               redis.incrbyfloat "#{publisherRef}:earnings", data[3]
               redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
               redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
 
-              statsd.increment "#{campaignGraphiteId}.clicks"
-              statsd.increment "#{publisherGraphiteId}.clicks"
               statsd.increment "#{publisherGraphiteId}.earnings", data[3]
               statsd.increment "#{campaignGraphiteId}.spent", data[3]
 

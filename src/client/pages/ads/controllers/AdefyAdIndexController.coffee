@@ -26,7 +26,7 @@ window.AdefyDashboard.controller "AdefyAdIndexController", ($scope, $location, A
 
     newAd.$save().then(
       -> # success
-        # just close
+        refreshAds()
       -> #error
         $scope.setNotification("There was an error with your form submission", "error")
     )

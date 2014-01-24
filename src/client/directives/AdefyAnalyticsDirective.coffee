@@ -66,10 +66,7 @@ window.AdefyDashboard.directive "analytics", ["$http", "$timeout", ($http, $time
           dynamic: dynamics
           axes: scope.data.axes
 
-        # Ensure we only call done once
-        if scope.done != undefined
-          scope.done()
-          scope.done = undefined
+      if scope.done then scope.done()
 
     requestIndividualDataSet = (graph) ->
       url = "#{prefix}/#{graph.stat}?"

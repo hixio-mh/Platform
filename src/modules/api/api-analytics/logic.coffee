@@ -90,7 +90,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res then return
 
-      if not req.user.admin and publisher.owner != req.user.id
+      if not req.user.admin and publisher.owner.toString() != req.user.id
         return res.send 401
 
       options = buildOptionsFromQuery req

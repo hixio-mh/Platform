@@ -32,10 +32,10 @@ window.AdefyRegister.controller "AdefyRegisterController", ($scope, $http) ->
     url += "&email=#{$scope.email}"
 
     if $scope.fname != undefined then url += "&fname=#{$scope.fname}"
-    if $scope.lname != undefined then url += "&fname=#{$scope.lname}"
-    if $scope.company != undefined then url += "&fname=#{$scope.company}"
-    if $scope.phone != undefined then url += "&fname=#{$scope.phone}"
-    if $scope.vat != undefined then url += "&fname=#{$scope.vat}"
+    if $scope.lname != undefined then url += "&lname=#{$scope.lname}"
+    if $scope.company != undefined then url += "&company=#{$scope.company}"
+    if $scope.phone != undefined then url += "&phone=#{$scope.phone}"
+    if $scope.vat != undefined then url += "&vat=#{$scope.vat}"
 
     $http.post(url)
     .success(-> window.location.href = "/")
