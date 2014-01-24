@@ -190,16 +190,6 @@ schema.methods.fetchOverviewStats = (cb) ->
     # Gogo!
     query.exec (data) =>
 
-      # Helper
-      assignMatching = (res, statName) ->
-        stat = 0
-
-        if res.target.indexOf(statName) != -1
-          for point in res.datapoints
-            if point.y > stat then stat = point.y
-
-        stat
-
       remoteStats =
         impressions24h: 0
         clicks24h: 0
@@ -207,14 +197,24 @@ schema.methods.fetchOverviewStats = (cb) ->
         earnings24h: 0
         requests24h: 0
 
+      # Helper
+      assignMatching = (res, statName, key) ->
+        stat = remoteStats[key]
+
+        if res.target.indexOf(statName) != -1
+          for point in res.datapoints
+            if point.y > stat then stat = point.y
+
+        remoteStats[key] = stat
+
       # Iterate over the result, and attempt to find matching responses
       for res in data
 
-        remoteStats.impressions24h = assignMatching res, ".impressions,"
-        remoteStats.clicks24h = assignMatching res, ".clicks,"
-        remoteStats.ctr24h = assignMatching res, ".ctr,"
-        remoteStats.earnings24h = assignMatching res, ".earnings,"
-        remoteStats.requests24h = assignMatching res, ".requests,"
+        assignMatching res, ".impressions,", "impressions24h"
+        assignMatching res, ".clicks,", "clicks24h"
+        assignMatching res, ".ctr,", "ctr24h"
+        assignMatching res, ".earnings,", "earnings24h"
+        assignMatching res, ".requests,", "requests24h"
 
       # Store stats in cache
       statCache.set statCacheKey, remoteStats, (err, success) ->
