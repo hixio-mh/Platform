@@ -311,7 +311,7 @@ module.exports = (grunt) ->
         tasks: [ "copy:static" ]
       jade:
         files: WjadeSrc
-        tasks: [ "copy:jade" ]
+        tasks: [ "copy:jade", "jade:static" ]
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"

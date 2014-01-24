@@ -79,7 +79,7 @@ setup = (options, imports, register) ->
         if err then spew.error err; return res.send 500
         if not isMatch then return res.send 403
 
-        authorizeUser user, res, -> res.redirect "/home/publisher"
+        authorizeUser user, res, -> res.send 200
 
   # Register
   app.post "/api/v1/register", (req, res) ->
@@ -101,8 +101,7 @@ setup = (options, imports, register) ->
         email: req.param "email"
         version: 1
 
-      newUser.save ->
-        authorizeUser user, res, -> res.redirect "/home/publisher"
+      newUser.save -> authorizeUser newUser, res, -> res.send 200
 
   # Delete user
   app.delete "/api/v1/user/delete", (req, res) ->
