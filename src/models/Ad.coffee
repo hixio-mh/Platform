@@ -396,16 +396,11 @@ schema.methods.buildRedisKeySets = (data) ->
 schema.methods.clearRedisFilters = (data, ref, cb) ->
   sets = @buildRedisKeySets data
 
-  clearKeyFromSets = (sets, key, cb) ->
-    set = sets.pop()
-    redis.srem set, 0, key, ->
-      if sets.length > 0 then clearKeyFromSets sets, key, cb
-      else cb()
+  redis.srem country, 0, ref for country in sets.countrySets
+  redis.srem device, 0, ref for device in sets.deviceSets
+  redis.srem network, 0, ref for network in sets.networkSets
 
-  clearKeyFromSets sets.countrySets, ref, ->
-    clearKeyFromSets sets.deviceSets, ref, ->
-      clearKeyFromSets sets.networkSets, ref, ->
-        cb()
+  cb()
 
 # Create redis targeting/ad fetch keys
 #
@@ -415,16 +410,11 @@ schema.methods.clearRedisFilters = (data, ref, cb) ->
 schema.methods.createRedisFilters = (data, ref, cb) ->
   sets = @buildRedisKeySets data
 
-  addKeyToSets = (sets, key, cb) ->
-    set = sets.pop()
-    redis.sadd set, key, ->
-      if sets.length > 0 then addKeyToSets sets, key, cb
-      else cb()
+  redis.sadd country, ref for country in sets.countrySets
+  redis.sadd device, ref for device in sets.deviceSets
+  redis.sadd network, ref for network in sets.networkSets
 
-  addKeyToSets sets.countrySets, ref, ->
-    addKeyToSets sets.deviceSets, ref, ->
-      addKeyToSets sets.networkSets, ref, ->
-        cb()
+  cb()
 
 schema.methods.createRedisStruture = (cb) ->
   redis.set @getRedisRef(), @data, (err) ->
