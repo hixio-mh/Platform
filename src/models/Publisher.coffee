@@ -120,7 +120,8 @@ schema.methods.generateThumbnailUrl = (cb) ->
     else
       @_generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", cb
 
-schema.methods.needsNewThumbnail = -> @_previouslyGeneratedUrl != @url
+schema.methods.needsNewThumbnail = ->
+  @_previouslyGeneratedUrl != @url or @thumbURL.length == 0
 
 schema.methods._generateDefaultThumbnailUrl = (cb) ->
   @thumbURL = "/img/default_icon.png"
