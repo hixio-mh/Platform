@@ -15,7 +15,8 @@ graphiteInterface = require "../helpers/graphiteInterface"
 mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
-redis = require "../helpers/redisInterface"
+redisInterface = require "../helpers/redisInterface"
+redis = redisInterface.main
 
 ##
 ## Campaign schema

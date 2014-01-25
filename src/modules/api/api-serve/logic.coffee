@@ -18,7 +18,8 @@
 spew = require "spew"
 db = require "mongoose"
 config = require "../../../config.json"
-redis = require "../../../helpers/redisInterface"
+redisInterface = require "../../../helpers/redisInterface"
+redis = redisInterface.main
 NodeCache = require "node-cache"
 
 # Cache used for guarding against multiple duplicate impressions/clicks

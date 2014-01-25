@@ -38,9 +38,9 @@ minCTR = 0.3
 
 setup = (options, imports, register) ->
 
-  redis = imports["core-redis"]
+  redis = imports["core-redis"].main
 
-  if config.mode == "development" or config.mode == "staging"
+  if modeConfig.trafficgen == true
 
     spew.init "Starting traffic generator..."
 

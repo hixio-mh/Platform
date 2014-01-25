@@ -27,25 +27,25 @@ setup = (options, imports, register) ->
     if req.query.q == undefined
       res.json filterEngine.getCountries()
     else
-      res.json filterEngine.autocompleteCountries req.query.q
+      filterEngine.autocompleteCountries req.query.q, (d) -> res.json d
 
   app.get "/api/v1/filters/categories", (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getCategories()
     else
-      res.json filterEngine.autocompleteCategories req.query.q
+      filterEngine.autocompleteCategories req.query.q, (d) -> res.json d
 
   app.get "/api/v1/filters/devices", (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getDevices()
     else
-      res.json filterEngine.autocompleteDevices req.query.q
+      filterEngine.autocompleteDevices req.query.q, (d) -> res.json d
 
   app.get "/api/v1/filters/manufacturers", (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getManufacturers()
     else
-      res.json filterEngine.autocompleteManufacturers req.query.q
+      filterEngine.autocompleteManufacturers req.query.q, (d) -> res.json d
 
   register null, {}
 

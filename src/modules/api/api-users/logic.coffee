@@ -21,7 +21,8 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config.json"
 modeConfig = config.modes[config.mode]
 adefyDomain = "http://#{modeConfig.domain}"
-redis = require "../../../helpers/redisInterface"
+redisInterface = require "../../../helpers/redisInterface"
+redis = redisInterface.main
 
 paypalSDK.configure
   host: "api.sandbox.paypal.com"
