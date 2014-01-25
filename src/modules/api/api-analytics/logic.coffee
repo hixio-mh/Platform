@@ -80,7 +80,7 @@ setup = (options, imports, register) ->
     .exec (err, campaign) ->
       if utility.dbError err, res then return
 
-      if not req.user.admin and campaign.owner != req.user.id
+      if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
         return res.send 401
 
       options = buildOptionsFromQuery req
@@ -93,7 +93,7 @@ setup = (options, imports, register) ->
     .exec (err, ad) ->
       if utility.dbError err, res then return
 
-      if not req.user.admin and ad.owner != req.user.id
+      if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
         return res.send 401
 
       options = buildOptionsFromQuery req
@@ -103,7 +103,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res then return
 
-      if not req.user.admin and publisher.owner.toString() != req.user.id
+      if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
         return res.send 401
 
       options = buildOptionsFromQuery req
