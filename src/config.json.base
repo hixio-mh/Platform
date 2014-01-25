@@ -122,7 +122,7 @@
 			"redis-autocomplete": {
 				"db": 1,
 				"host": "localhost",
-				"port": 23522
+				"port": 23521
 			},
 
 			"stats": {
