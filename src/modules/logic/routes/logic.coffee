@@ -16,19 +16,19 @@ routes = require "../../../angularDashboardViews.json"
 
 setup = (options, imports, register) ->
 
-  server = imports["core-express"]
+  app = imports["core-express"].server
   utility = imports["logic-utility"]
 
   # Serve layout to each path
   for p in routes.views
-    server.server.get p, (req, res) ->
-      if req.cookies.admin == "true" then auth = { admin: true } else auth = {}
+    app.get p, (req, res) ->
+      if req.user.admin == "true" then auth = { admin: true } else auth = {}
       res.render "dashboard/layout.jade", auth, (err, html) ->
         if err then spew.error err
         else res.send html
 
   # Dashboard views
-  server.server.get "/views/dashboard/:view", (req, res) ->
+  app.get "/views/dashboard/:view", (req, res) ->
     if not utility.param req.params.view, res, "View" then return
 
     # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg

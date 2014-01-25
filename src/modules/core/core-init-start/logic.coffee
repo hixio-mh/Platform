@@ -49,53 +49,82 @@ setup = (options, imports, register) ->
     "/api/v1/click/"
   ]
 
-  server.registerRule (req, res, next) ->
+  hotPaths = [
+    "/api/v1/serve"
+    "/api/v1/serve/"
+    "/api/v1/impression/"
+    "/api/v1/click/"
+  ]
 
-    redirected = false
-    needsAuthorization = true
-    subUrl = req.url
+  server.registerRule (req, res, next) ->
 
     # If url includes GET parameters, strip them for later comparison
     if req.url.indexOf("?") >= 0
       subUrl = req.url.substring 0, req.url.indexOf "?"
+    else
+      subUrl = req.url
 
-    # If page is public, skip all auth checks
-    for p in publicPages
+    # If this is a hot path, then it does not require any auth checks, and
+    # we can simply continue
+    for p in hotPaths
       if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
         return next()
 
+    pageIsPublic = false
+    for p in publicPages
+      if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
+        pageIsPublic = true
+        break
+
     ##
-    ## If we reach this point, then the page requires authorization.
     ## Check for a user cookie; if we have none, redirect
     ## If we do, query redis for the session and validate, then attach some
     ## user info to the request if it is valid
     ##
-    if req.cookies.user == undefined then return res.redirect "/login"
+    if req.cookies.user == undefined and not pageIsPublic
+      res.redirect "/login"
 
     # Validate cookie by looking up user in redis
-    redis.get "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}", (err, user) ->
-      if err then spew.error err
+    else
 
-      # Session is invalid, return 403
-      if user == null
-        req.user = null
-        res.clearCookie "user"
-        res.send 403
-
-      # Valid session, save user data on request and continue
+      # If we have no cookie object, that means the user is invalid and the
+      # page is public. So, specify a random key to get redis to return null.
+      #
+      # We have to do this since some public pages (register + login) need to
+      # know about the user if they can.
+      if req.cookies.user == undefined
+        query = "sessions:#{Math.random()}"
       else
-        user = user.split ":"
+        query = "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}"
 
-        req.user =
-          id: user[0]
-          session: user[1]
-          admin: Number(user[2]) == 0
-          permissions: Number user[2]
-          username: user[3]
+      redis.get query , (err, user) ->
+        if err then spew.error err
 
-        res.locals.admin = req.user.admin
+        # Session is invalid
+        if user == null
+          req.user = null
+          res.clearCookie "user"
+          validUser = false
 
-        next()
+        # Valid session, save user data on request
+        else
+          user = user.split ":"
+          req.user =
+            id: user[0]
+            session: user[1]
+            admin: Number(user[2]) == 0
+            permissions: Number user[2]
+            username: user[3]
+
+          res.locals.admin = req.user.admin
+          validUser = true
+
+        # If page is public, then we don't require auth
+        if pageIsPublic then return next()
+
+        # If we've reached this point, the page requires authorization
+        if validUser then next()
+        else res.send 403
 
   ##
   ## Initialize express
