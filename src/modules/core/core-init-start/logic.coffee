@@ -26,7 +26,7 @@ fs = require "fs"
 setup = (options, imports, register) ->
 
   server = imports["core-express"]
-  redis = imports["core-redis"]
+  redis = imports["core-redis"].main
 
   spew.init "Starting Initialization"
 

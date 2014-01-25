@@ -11,7 +11,8 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-Autocomplete = require "triecomplete"
+redis = require("./redisInterface").autocomplete
+spew = require "spew"
 
 # Countries taken from angular-country-select!
 countriesList = require "./filters/countries.json"
@@ -19,24 +20,7 @@ categoriesList = require "./filters/categories.json"
 devicesList = require "./filters/devices.json"
 manufacturersList = require "./filters/manufacturers.json"
 
-arraytoObject = (array) ->
-  obj = {}
-  obj[val] = true for val in array
-  obj
-
-_countriesList = arraytoObject countriesList
-_devicesList = arraytoObject devicesList
-_manufacturersList = arraytoObject manufacturersList
-
-autoCountries = new Autocomplete()
-autoDevices = new Autocomplete()
-autoManufacturers = new Autocomplete()
-autoCategories = new Autocomplete()
-
-autoCountries.initialize countriesList
-autoDevices.initialize devicesList
-autoManufacturers.initialize manufacturersList
-autoCategories.initialize categoriesList
+AUTOCOMPLETE_VERSION = 1
 
 # Generate flat list for targeting structure (which only takes into account
 # includes). We simulate targeting exclude support by including everything
@@ -61,16 +45,34 @@ generateFlatList = (list, includes, excludes) ->
 
   list
 
+autocomplete = (query, filter, cb) ->
+
+  # Make query safe
+  query = query.toLowerCase().split(" ").join "-"
+
+  query = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{query}:#{filter}"
+  resultSet = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{filter}:*"
+
+  redis.sort query, "ALPHA", "get", resultSet, (err, results) ->
+    if err then spew.error err
+
+    # Format results
+    ret = []
+    ret.push { value: result, key: i } for result, i in results
+    cb ret
+
 module.exports =
   getCategories: -> categoriesList
   getCountries: -> countriesList
   getDevices: -> devicesList
   getManufacturers: -> manufacturersList
 
-  autocompleteCategories: (q) -> autoCategories.search q
-  autocompleteCountries: (q) -> autoCountries.search q
-  autocompleteDevices: (q) -> autoDevices.search q
-  autocompleteManufacturers: (q) -> autoManufacturers.search q
+  getAutocompleteVersion: -> AUTOCOMPLETE_VERSION
+
+  autocompleteCategories: (q, cb) -> autocomplete q, "categories", cb
+  autocompleteCountries: (q, cb) -> autocomplete q, "countries", cb
+  autocompleteDevices: (q, cb) -> autocomplete q, "devices", cb
+  autocompleteManufacturers: (q, cb) -> autocomplete q, "manufacturers", cb
 
   # Filters needing translation
   devices:

@@ -15,9 +15,17 @@
 # Redis helper that takes care of selecting the proper database for us
 config = require "../config.json"
 config = config.modes[config.mode]
+
+mainConfig = config["redis-main"]
+autocompleteConfig = config["redis-autocomplete"]
 redisLib = require "redis"
 
-redis = redisLib.createClient config.redis.port, config.redis.host
-redis.select config.redis.db
+redisMain = redisLib.createClient mainConfig.port, mainConfig.host
+redisMain.select mainConfig.db
 
-module.exports = redis
+redisAutocomplete = redisLib.createClient autocompleteConfig.port, autocompleteConfig.host
+redisAutocomplete.select autocompleteConfig.db
+
+module.exports =
+  main: redisMain
+  autocomplete: redisAutocomplete

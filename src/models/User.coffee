@@ -15,7 +15,8 @@
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
 spew = require "spew"
-redis = require "../helpers/redisInterface"
+redisInterface = require "../helpers/redisInterface"
+redis = redisInterface.main
 
 schema = new mongoose.Schema
   username: String

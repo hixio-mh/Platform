@@ -7,6 +7,7 @@
 			"port": 10000,
 			"loglevel": 10,
 			"newrelic": false,
+			"trafficgen": true,
 
 			"mongo": {
 				"user": "adefy",
@@ -16,11 +17,16 @@
 				"db": "adefy_development"
 			},
 
-			"redis": {
+			"redis-main": {
 				"db": 0,
 				"host": "localhost",
-				"port": 23521,
-				"rebuild": false
+				"port": 23521
+			},
+
+			"redis-autocomplete": {
+				"db": 0,
+				"host": "localhost",
+				"port": 23521
 			},
 
 			"stats": {
@@ -33,6 +39,7 @@
 			"port": 10000,
 			"loglevel": 10,
 			"newrelic": true,
+			"trafficgen": true,
 
 			"mongo": {
 				"user": "adefy",
@@ -42,11 +49,16 @@
 				"db": "adefy_staging"
 			},
 
-			"redis": {
+			"redis-main": {
 				"db": 2,
 				"host": "192.168.128.68",
-				"port": 23521,
-				"rebuild": false
+				"port": 23521
+			},
+
+			"redis-autocomplete": {
+				"db": 2,
+				"host": "192.168.128.68",
+				"port": 23522
 			},
 
 			"stats": {
@@ -59,6 +71,7 @@
 			"port": 10000,
 			"loglevel": 0,
 			"newrelic": true,
+			"trafficgen": false,
 
 			"mongo": {
 				"user": "adefy",
@@ -68,11 +81,16 @@
 				"db": "adefy"
 			},
 
-			"redis": {
+			"redis-main": {
 				"db": 3,
 				"host": "192.168.128.68",
-				"port": 23521,
-				"rebuild": false
+				"port": 23521
+			},
+
+			"redis-autocomplete": {
+				"db": 3,
+				"host": "192.168.128.68",
+				"port": 23522
 			},
 
 			"stats": {
@@ -85,6 +103,7 @@
 			"port": 10000,
 			"loglevel": 0,
 			"newrelic": false,
+			"trafficgen": false,
 
 			"mongo": {
 				"user": "adefy",
@@ -94,11 +113,16 @@
 				"db": "adefy_testing"
 			},
 
-			"redis": {
+			"redis-main": {
 				"db": 1,
 				"host": "localhost",
-				"port": 23521,
-				"rebuild": false
+				"port": 23521
+			},
+
+			"redis-autocomplete": {
+				"db": 1,
+				"host": "localhost",
+				"port": 23522
 			},
 
 			"stats": {

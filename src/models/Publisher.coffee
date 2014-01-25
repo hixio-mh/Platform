@@ -19,7 +19,8 @@ request = require "request"
 spew = require "spew"
 _ = require "underscore"
 NodeCache = require "node-cache"
-redis = require "../helpers/redisInterface"
+redisInterface = require "../helpers/redisInterface"
+redis = redisInterface.main
 
 ##
 ## Cache, used for storing remote statistics

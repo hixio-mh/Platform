@@ -21,6 +21,7 @@ module.exports = [
 
   "./modules/core/core-init-start",
   "./modules/core/core-init-redis",
+  "./modules/core/core-init-autocomplete",
 
   # Utility helper
   "./modules/logic/utility",

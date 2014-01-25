@@ -22,7 +22,7 @@ adefyDomain = "http://#{configMode.domain}"
 ##
 setup = (options, imports, register) ->
 
-  redis = imports["core-redis"]
+  redis = imports["core-redis"].main
   server = imports["core-express"]
   utility = imports["logic-utility"]
   templates = imports["engine-templates"]

@@ -13,7 +13,8 @@
 ##
 graphiteInterface = require "../helpers/graphiteInterface"
 engineFilters = require "../helpers/filters"
-redis = require "../helpers/redisInterface"
+redisInterface = require "../helpers/redisInterface"
+redis = redisInterface.main
 mongoose = require "mongoose"
 spew = require "spew"
 
@@ -80,7 +81,8 @@ schema.methods.toAPI = ->
 
   for i in [0...ret.campaigns.length]
     if ret.campaigns[i].campaign != null
-      ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id.toString()
+      if ret.campaigns[i].campaign._id != undefined
+        ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id.toString()
 
       delete ret.campaigns[i].campaign._id
       delete ret.campaigns[i].campaign.__v
