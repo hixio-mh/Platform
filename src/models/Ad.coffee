@@ -138,6 +138,15 @@ schema.methods.fetchCompiledStats = (cb) ->
 # Fetches redis lifetime stats (sum between campaigns)
 schema.methods.fetchTotalStats = (cb) ->
 
+  stats =
+    requests: 0
+    clicks: 0
+    impressions: 0
+    spent: 0
+    ctr: 0
+
+  if @campaigns.length == 0 then return cb stats
+
   # Go through and generate a key list
   keys = []
   for campaign in @campaigns
@@ -151,13 +160,6 @@ schema.methods.fetchTotalStats = (cb) ->
 
   redis.mget keys, (err, results) ->
     if err then spew.error err
-
-    stats =
-      requests: 0
-      clicks: 0
-      impressions: 0
-      spent: 0
-      ctr: 0
 
     for i in [0...results.length] by 4
       if results[i] != null then stats.requests += Number results[i]
