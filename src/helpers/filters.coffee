@@ -13,6 +13,7 @@
 ##
 redis = require("./redisInterface").autocomplete
 spew = require "spew"
+_ = require "underscore"
 
 # Countries taken from angular-country-select!
 countriesList = require "./filters/countries.json"
@@ -45,21 +46,24 @@ generateFlatList = (list, includes, excludes) ->
 
   list
 
-autocomplete = (query, filter, cb) ->
+# NOTE: This method is used for ad serving! Hot path!
+autocomplete = (options, cb) ->
 
   # Make query safe
-  query = query.toLowerCase().split(" ").join "-"
+  query = options.query.toLowerCase().split(" ").join "-"
 
-  query = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{query}:#{filter}"
-  resultSet = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{filter}:*"
+  query = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{query}:#{options.set}"
+  resultSet = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{options.set}:*"
 
   redis.sort query, "ALPHA", "get", resultSet, (err, results) ->
     if err then spew.error err
 
-    # Format results
-    ret = []
-    ret.push { value: result, key: i } for result, i in results
-    cb ret
+    if options.format
+      ret = []
+      ret.push { value: result, key: i } for result, i in results
+      cb ret
+    else
+      cb results
 
 module.exports =
   getCategories: -> categoriesList
@@ -69,10 +73,17 @@ module.exports =
 
   getAutocompleteVersion: -> AUTOCOMPLETE_VERSION
 
-  autocompleteCategories: (q, cb) -> autocomplete q, "categories", cb
-  autocompleteCountries: (q, cb) -> autocomplete q, "countries", cb
-  autocompleteDevices: (q, cb) -> autocomplete q, "devices", cb
-  autocompleteManufacturers: (q, cb) -> autocomplete q, "manufacturers", cb
+  autocompleteCategories: (q, cb, options) ->
+    autocomplete _.extend({ query: q, set: "categories" }, options), cb
+
+  autocompleteCountries: (q, cb, options) ->
+    autocomplete _.extend({ query: q, set: "countries" }, options), cb
+
+  autocompleteDevices: (q, cb, options) ->
+    autocomplete _.extend({ query: q, set: "devices" }, options), cb
+
+  autocompleteManufacturers: (q, cb, options) ->
+    autocomplete _.extend({ query: q, set: "manufacturers" }, options), cb
 
   # Filters needing translation
   devices:

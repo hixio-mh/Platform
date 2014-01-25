@@ -11,11 +11,11 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 config = require "../../../config.json"
 configMode = config.modes[config.mode]
 adefyDomain = "http://#{configMode.domain}"
+filters = require "../../../helpers/filters"
 
 ##
 ## Handles ad packaging and fetching
@@ -23,6 +23,7 @@ adefyDomain = "http://#{configMode.domain}"
 setup = (options, imports, register) ->
 
   redis = imports["core-redis"].main
+  autocompleteRedis = imports["core-redis"].autocomplete
   server = imports["core-express"]
   utility = imports["logic-utility"]
   templates = imports["engine-templates"]
@@ -78,80 +79,79 @@ setup = (options, imports, register) ->
 
     # Request filters
     platform = "Android"
-    device = "Nexus 4"
+    device = "Google Nexus 4"
     screen = "768x1280"
     type = "animated"
     tech = "glAd"
 
-    # Pricing is "Any", then we need to perform two seperate intersections
-    # and union the results
-    if pricing == "Any"
-      deviceKeySuffix = "#{category}:device:*#{device}*"
+    # Get keys from redis autocomplete db
+    #
+    # NOTE: Format is disabled (options passed after cb)
+    filters.autocompleteDevices device, (devices) ->
 
-      # Get key sets
-      redis.keys "CPC:#{deviceKeySuffix}", (err, CPCKeys) ->
-        if err then spew.error err
-        redis.keys "CPM:#{deviceKeySuffix}", (err, CPMKeys) ->
+      # Pricing is "Any", then we need to perform two seperate intersections
+      # and union the results
+      if pricing == "Any"
+        deviceKeySuffix = "#{category}:device:*#{device}*"
+
+        # Build temp storage keys
+        now = new Date().getTime()
+        CPCIntersectKey = "temp:intersect:CPC:#{now}"
+        CPMIntersectKey = "temp:intersect:CPM:#{now}"
+        FinalIntersectKey = "temp:intersect:Final:#{now}"
+
+        # Pack keys together for the intersect
+        CPCIntersectData = [CPCIntersectKey]
+        CPMIntersectData = [CPMIntersectKey]
+
+        for device in devices
+          CPCIntersectData.push "CPC:#{category}:device:#{device}"
+          CPMIntersectData.push "CPM:#{category}:device:#{device}"
+
+        # Account for no keys for each pricing model
+        if CPCIntersectData.length == 1 then CPCIntersectData.push ""
+        if CPMIntersectData.length == 1 then CPMIntersectData.push ""
+
+        # Intersect both key sets
+        redis.sinterstore CPCIntersectData, (err, resultCPC) ->
           if err then spew.error err
-
-          now = new Date().getTime()
-          CPCIntersectKey = "temp:intersect:CPC:#{now}"
-          CPMIntersectKey = "temp:intersect:CPM:#{now}"
-          FinalIntersectKey = "temp:intersect:Final:#{now}"
-
-          CPCIntersectData = [CPCIntersectKey]
-          CPMIntersectData = [CPMIntersectKey]
-
-          CPCIntersectData.push key for key in CPCKeys
-          CPMIntersectData.push key for key in CPMKeys
-
-          # Account for no keys for each pricing model
-          if CPCIntersectData.length == 1 then CPCIntersectData.push ""
-          if CPMIntersectData.length == 1 then CPMIntersectData.push ""
-
-          # Intersect both key sets
-          redis.sinterstore CPCIntersectData, (err, resultCPC) ->
+          redis.sinterstore CPMIntersectData, (err, resultCPM) ->
             if err then spew.error err
-            redis.sinterstore CPMIntersectData, (err, resultCPM) ->
-              if err then spew.error err
 
-              # Unionstore the results
-              redis.sunionstore [
-                FinalIntersectKey # Destination
-                CPCIntersectKey
-                CPMIntersectKey
-              ], (err, result) ->
+            # Unionstore the results
+            redis.sunionstore [
+              FinalIntersectKey # Destination
+              CPCIntersectKey
+              CPMIntersectKey
+            ], (err, result) ->
 
-                redis.del CPCIntersectKey
-                redis.del CPMIntersectKey
+              redis.del CPCIntersectKey
+              redis.del CPMIntersectKey
 
-                # Done, ship results
-                cb FinalIntersectKey, err, result
-    else
+              # Done, ship results
+              cb FinalIntersectKey, err, result
+      else
 
-      # sinterstore command takes an argument array, with first element being
-      # the destination
-      targetingFilters = [targetingKey]
+        # sinterstore command takes an argument array, with first element being
+        # the destination
+        targetingFilters = [targetingKey]
 
-      # targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
-      # targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
-      # targetingFilters.push "#{pricing}:#{category}:type:#{type}"
-      # targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
+        # targetingFilters.push "#{pricing}:#{category}:platform:#{platform}"
+        # targetingFilters.push "#{pricing}:#{category}:screen:#{screen}"
+        # targetingFilters.push "#{pricing}:#{category}:type:#{type}"
+        # targetingFilters.push "#{pricing}:#{category}:tech:#{tech}"
 
-      # If needed to split things up, implement a cache. Have it reset every 30
-      # minutes or so (changes to DB key structure may happen at any time)
-      #
-      # Get all matching device keys
-      redis.keys "#{pricing}:#{category}:device:*#{device}*", (err, results) ->
-        if err then spew.error err
+        # If needed to split things up, implement a cache. Have it reset every 30
+        # minutes or so (changes to DB key structure may happen at any time)
 
         # Add matched devices to list
-        if results != null
-          for res in results
-            targetingFilters.push res
+        for device in devices
+          targetingFilters.push "#{pricing}:#{category}:device:#{device}"
 
         redis.sinterstore targetingFilters, (err, result) ->
           cb targetingKey, err, result
+
+    , format: false
 
   # Todo: Implement
   #
