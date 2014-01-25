@@ -69,13 +69,11 @@ setup = (options, imports, register) ->
     genTraffic = ->
       for key in apikeys
         if Math.random() < keyChance
-          request "#{url}/#{key}?width=400&height=400&html", (err, res, body) ->
+          request "#{url}/#{key}?width=400&height=400", (err, res, body) ->
             ad = null
 
             try
               ad = JSON.parse body
-            catch e
-              spew.error e
 
             if ad != null then impressionsAndClicks ad
 
