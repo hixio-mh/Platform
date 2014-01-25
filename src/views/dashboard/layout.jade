@@ -58,6 +58,17 @@ html(lang="en" ng-app="AdefyDashboard")
     |   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     | <![endif]-->
 
+    //- Intercom
+    script#IntercomSettingsScriptTag.
+      window.intercomSettings = {
+        name: "#{user.username}",
+        email: "#{user.email}",
+        created_at: #{user.signedup},
+        app_id: "d21334dd55144ac5e033fbfde2dd7227d06023aa"
+      };
+
+      (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://static.intercomcdn.com/intercom.v1.js';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()
+
   body(ng-controller="AdefyRootController" ng-class="{withNotification: notification}").tk-proxima-nova
     header.navbar.cf
       #logo Adefy
@@ -83,7 +94,7 @@ html(lang="en" ng-app="AdefyDashboard")
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
-            if locals.admin
+            if user.admin
               a(href="/admin/home")
                 i.fa.fa-fw.fa-user
                 | Admin
@@ -134,7 +145,7 @@ html(lang="en" ng-app="AdefyDashboard")
       //-- Route configs, and root controller
       //--
 
-      if locals.admin
+      if admin
         script(src="/client/routes/admin.js")
       else
         script(src="/client/routes/normal.js")
@@ -192,7 +203,7 @@ html(lang="en" ng-app="AdefyDashboard")
       script(src="/client/pages/reports/controllers/AdefyReportsCampaignsController.js")
       script(src="/client/pages/reports/controllers/AdefyReportsIndexController.js")
 
-      if locals.admin
+      if locals.user.admin
         script(src="/client/pages/admin/controllers/AdefyAdminIndexController.js")
         script(src="/client/pages/admin/controllers/AdefyAdminPublishersController.js")
         script(src="/client/pages/admin/controllers/AdefyAdminUsersController.js")

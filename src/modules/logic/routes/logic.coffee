@@ -22,8 +22,11 @@ setup = (options, imports, register) ->
   # Serve layout to each path
   for p in routes.views
     app.get p, (req, res) ->
-      if req.user.admin == "true" then auth = { admin: true } else auth = {}
-      res.render "dashboard/layout.jade", auth, (err, html) ->
+
+      viewData = {}
+      viewData.user = req.user
+
+      res.render "dashboard/layout.jade", viewData, (err, html) ->
         if err then spew.error err
         else res.send html
 
@@ -40,10 +43,10 @@ setup = (options, imports, register) ->
     if req.params.view.indexOf("..") != -1
       req.params.view = req.params.view.split("..").join ""
 
-    auth = {}
-    if req.user and req.user.admin == "true" then auth = admin: true
+    viewData = {}
+    viewData.user = req.user
 
-    res.render "dashboard/views/#{req.params.view}.jade", auth
+    res.render "dashboard/views/#{req.params.view}.jade", viewData
 
   register null, {}
 
