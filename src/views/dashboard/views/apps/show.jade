@@ -6,13 +6,13 @@ include _menu
       .amount.large $ {{ app.stats.earnings24h | number:2 }}
       .desc 24h Earnings
     .stat: .wrap
-      .amount.large ▲ {{ app.stats.impressions24h | number:2 }}
+      .amount.large.inner ▲ {{ app.stats.impressions24h | number }}
       .desc 24h Impressions
     .stat: .wrap
-      .amount.large ▲ {{ app.stats.clicks24h | number:2 }}
+      .amount.large.inner ▲ {{ app.stats.clicks24h | number }}
       .desc 24h Clicks
     .stat: .wrap
-      .amount.large {{ app.stats.requests | number:2 }}
+      .amount.large.inner {{ app.stats.requests | number }}
       .desc 24h Requests
 
 .graphs#app-show
