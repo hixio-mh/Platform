@@ -40,3 +40,6 @@ window.AdefyRegister.controller "AdefyRegisterController", ($scope, $http) ->
     $http.post(url)
     .success(-> window.location.href = "/")
     .error (res) -> $scope.error = "Username is in use"
+
+  $scope.enterSubmit = (e) ->
+    if e.which == 10 or e.which == 13 then $scope.login()
