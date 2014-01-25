@@ -194,12 +194,9 @@ schema.methods.fetch24hStats = (cb) ->
       # Extract data name
       target = entry.target.split(",").join(".").split(".")[6]
 
-      if entry.datapoints[0][0] != null
-        point = entry.datapoints[0][0]
-      else
-        point = entry.datapoints[1][0]
-
-      remoteStats["#{target}24h"] = Number point
+      for point in entry.datapoints
+        if point[0] != null
+          remoteStats["#{target}24h"] += Number point[0]
 
     if remoteStats.impressions24h != 0
       remoteStats.ctr24h = remoteStats.clicks24h / remoteStats.impressions24h

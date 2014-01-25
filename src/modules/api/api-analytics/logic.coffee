@@ -86,6 +86,19 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       campaign.fetchStatGraphData options, (data) -> res.json data
 
+  app.get "/api/v1/analytics/ads/:id/:stat", (req, res) ->
+    db.model("Ad")
+    .findById(req.param "id")
+    .populate("campaigns.campaign")
+    .exec (err, ad) ->
+      if utility.dbError err, res then return
+
+      if not req.user.admin and ad.owner != req.user.id
+        return res.send 401
+
+      options = buildOptionsFromQuery req
+      ad.fetchStatGraphData options, (data) -> res.json data
+
   app.get "/api/v1/analytics/publishers/:id/:stat", (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res then return

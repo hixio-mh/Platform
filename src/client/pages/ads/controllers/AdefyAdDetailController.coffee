@@ -14,48 +14,6 @@
 
 window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, $routeParams, Ad, $http) ->
 
-  $scope.graphData =
-    static: [
-      name: "Spent"
-      color: "#33b5e5"
-      y: "spent"
-    ,
-      name: "Impressions"
-      color: "#33e444"
-      y: "counts"
-    ,
-      name: "Clicks"
-      color: "#e3de33"
-      y: "counts"
-    ]
-
-    axes:
-      x:
-        formatter: (x) -> new Date(x).toLocaleDateString()
-      counts:
-        type: "y"
-        orientation: "right"
-        formatter: (y) -> accounting.formatNumber y
-
-    dynamic: [
-      [{ x: new Date().getTime(), y: 1 }]
-      [{ x: new Date().getTime(), y: 1 }]
-      [{ x: new Date().getTime(), y: 1 }]
-    ]
-
-  fetchPrefix = "/api/v1/ads/stats/#{$routeParams.id}"
-
-  $http.get("#{fetchPrefix}/spent/24h").success (data) ->
-    if data.length > 0 then $scope.graphData.dynamic[0] = data
-
-  $http.get("#{fetchPrefix}/impressions/24h").success (data) ->
-    if data.length > 0 then $scope.graphData.dynamic[1] = data
-
-  $http.get("#{fetchPrefix}/clicks/24h").success (data) ->
-    if data.length > 0 then $scope.graphData.dynamic[2] = data
-
-  Ad.get id: $routeParams.id, (ad) -> $scope.ad = ad
-
   # Modal
   $scope.form = {}
   $scope.delete = ->
@@ -67,3 +25,78 @@ window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, 
           $scope.setNotification("There was an error with your form submission", "error")
       )
     return true
+
+  $scope.graphInterval = "30minutes"
+  $scope.graphSum = true
+  $scope.intervalOptions = [
+    { val: "5minutes", name: "5 Minutes" }
+    { val: "15minutes", name: "15 Minutes" }
+    { val: "30minutes", name: "30 Minutes" }
+    { val: "1hour", name: "1 Hour" }
+    { val: "2hours", name: "2 Hours" }
+  ]
+
+  $scope.hoverFormatter = (series, x, y) ->
+    if series.name == "Spent"
+      "Spent: #{accounting.formatMoney y, "$", 2}"
+    else
+      "#{series.name}: #{accounting.formatNumber y, 2}"
+
+  buildGraphData = ->
+    $scope.graphData =
+      prefix: "/api/v1/analytics/ads/#{$routeParams.id}"
+
+      graphs: [
+        name: "Impressions"
+        stat: "impressions"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Clicks"
+        stat: "clicks"
+        y: "counts"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ,
+        name: "Spent"
+        stat: "spent"
+        y: "spent"
+        from: "-24h"
+        interval: $scope.graphInterval
+        sum: $scope.graphSum
+      ]
+
+      axes:
+        x:
+          type: "x"
+          formatter: (x) -> moment(x).fromNow()
+        counts:
+          type: "y"
+          orientation: "left"
+          formatter: (y) -> accounting.formatNumber y
+        spent:
+          type: "y"
+          orientation: "right"
+          formatter: (y) -> accounting.formatMoney y, "$", 2
+
+  buildGraphData()
+
+  update = ->
+    setTimeout ->
+      $scope.$apply ->
+        buildGraphData()
+        $scope.graphRefresh()
+    , 1
+
+  $scope.graphDone = ->
+    Ad.get id: $routeParams.id, (ad) -> $scope.ad = ad
+
+  $("body").off "change", "#ad-show select[name=interval]"
+  $("body").off "change", "#ad-show input[name=sum]"
+
+  $("body").on "change", "#ad-show select[name=interval]", -> update()
+  $("body").on "change", "#ad-show input[name=sum]", -> update()
+
