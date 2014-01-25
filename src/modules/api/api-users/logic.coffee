@@ -51,6 +51,8 @@ setup = (options, imports, register) ->
       session
       user.permissions
       user.username
+      user.email
+      new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
     ].join ":"
 
     redis.set "sessions:#{user._id}:#{session}", redisSessionData, (err) ->

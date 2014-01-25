@@ -115,6 +115,8 @@ setup = (options, imports, register) ->
             admin: Number(user[2]) == 0
             permissions: Number user[2]
             username: user[3]
+            email: user[4]
+            signedup: Number user[5]
 
           res.locals.admin = req.user.admin
           validUser = true
