@@ -39,32 +39,50 @@ setup = (options, imports, register) ->
     startTimestamp = new Date().getTime()
     ref = "pub:#{req.param "apikey"}"
 
+    ##
+    ## Todo: Optimize this to use sets with SORT nosort!
+    ## Better yet, move this into lua, have redis do it itself
+    ##
+
     # Fetch all publisher keys
-    redis.keys "#{ref}:*", (err, keys) ->
+    redis.mget [
+      "#{ref}:impressions"
+      "#{ref}:owner"
+      "#{ref}:requests"
+      "#{ref}:minCPM"
+      "#{ref}:active"
+      "#{ref}:earnings"
+      "#{ref}:clicks"
+      "#{ref}:graphiteId"
+      "#{ref}:category"
+      "#{ref}:pricing"
+      "#{ref}:minCPC"
+    ], (err, data) ->
       if err then spew.error err
 
-      if keys == null or keys.length == 0
-        return res.send 404
+      pubData =
+        ref: ref
+        impressions: Number data[0]
+        owner: data[1]
+        requests: Number data[2]
+        minCPM: Number data[3]
+        active: data[4]
+        earnings: Number data[5]
+        clicks: Number data[6]
+        graphiteId: data[7]
+        category: data[8]
+        pricing: data[9]
+        minCPC: Number data[10]
 
-      redis.mget keys, (err, data) ->
-        if err then spew.error err
+      if pubData.impressions != 0
+        pubData.ctr = pubData.clicks / pubData.impressions
+      else
+        pubData.ctr = 0
 
-        pubData = ref: ref
-        pubData[key.split(":")[2]] = data[i] for key, i in keys
-
-        for key of pubData
-          if not isNaN pubData[key]
-            pubData[key] = Number pubData[key]
-
-        if pubData.impressions != 0
-          pubData.ctr = pubData.clicks / pubData.impressions
-        else
-          pubData.ctr = 0
-
-        if pubData.active == "true"
-          adEngine.fetch req, res, pubData, startTimestamp
-        else
-          adEngine.fetchTest req, res, pubData
+      if pubData.active == "true"
+        adEngine.fetch req, res, pubData, startTimestamp
+      else
+        adEngine.fetchTest req, res, pubData
 
   # Register impressions
   app.get "/api/v1/impression/:id", (req, res) ->
