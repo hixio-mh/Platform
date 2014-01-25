@@ -27,7 +27,7 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     if series.name == "Spent"
       "Spent: #{accounting.formatMoney y, "$", 2}"
     else
-      "#{series.name}: #{Math.round y}"
+      "#{series.name}: #{accounting.formatNumber y, 2}"
 
   buildGraphData = ->
     $scope.graphData =

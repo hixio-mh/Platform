@@ -17,6 +17,7 @@ redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
 mongoose = require "mongoose"
 spew = require "spew"
+_ = require "underscore"
 
 ##
 ## Ad schema
@@ -130,66 +131,95 @@ schema.methods.disaprove = (msg) ->
 # Fetches Spent, Clicks, Impressions and CTR for the past 24 hours, and
 # lifetime (both sums) for all campaigns
 schema.methods.fetchCompiledStats = (cb) ->
-
-  # Todo: We need to iterate over all campaign entries, and return a sum
-  # of all values
-
-  cb
-    impressions24h: 0
-    clicks24h: 0
-    ctr24h: 0
-    spent24h: 0
-
-    impressions: 0
-    clicks: 0
-    ctr: 0
-    spent: 0
+  @fetchTotalStats (localStats) =>
+    @fetch24hStats (remoteStats) ->
+      cb _.extend localStats, remoteStats
 
 # Fetches redis lifetime stats (sum between campaigns)
-schema.methods.fetchLifetimeStats = (cb) ->
+schema.methods.fetchTotalStats = (cb) ->
 
-  redis.get @getRedisRefForAllCampaigns(), (err, result) ->
+  # Go through and generate a key list
+  keys = []
+  for campaign in @campaigns
+    ref = @getRedisRefForCampaign campaign.campaign
+
+    # Note: The order is important, since we parse by it
+    keys.push "#{ref}:requests"
+    keys.push "#{ref}:clicks"
+    keys.push "#{ref}:impressions"
+    keys.push "#{ref}:spent"
+
+  redis.mget keys, (err, results) ->
     if err then spew.error err
 
     stats =
       requests: 0
-      impressions: 0
       clicks: 0
+      impressions: 0
       spent: 0
       ctr: 0
 
-    if result == null then cb stats
-    else
-      data = result.split "|"
+    for i in [0...results.length] by 4
+      if results[i] != null then stats.requests += Number results[i]
+      if results[i + 1] != null then stats.clicks += Number results[i + 1]
+      if results[i + 2] != null then stats.impressions += Number results[i + 2]
+      if results[i + 3] != null then stats.spent += Number results[i + 3]
 
-      stats.requests = Number data[2]
-      stats.impressions = Number data[3]
-      stats.clicks = Number data[4]
-      stats.spent = Number data[5]
+    if stats.impressions != 0
+      stats.ctr = stats.clicks / stats.impressions
 
-      if stats.impressions != 0
-        stats.ctr = stats.clicks / stats.impressions
+    cb stats
 
-      cb stats
-
-# Fetches a single stat over a specific period of time for all campaigns
-schema.methods.fetchCompiledStat = (range, stat, cb) -> cb []
-
-schema.methods.fetchStatsForCampaign = (campaign, cb) ->
-
-  cb
+schema.methods.fetch24hStats = (cb) ->
+  remoteStats =
     impressions24h: 0
     clicks24h: 0
     ctr24h: 0
     spent24h: 0
 
-    impressions: 0
-    clicks: 0
-    ctr: 0
-    spent: 0
+  if @campaigns.length == 0 then return cb remoteStats
 
-# Fetches a single stat over a specific period of time for a single campaign
-schema.methods.fetchStatForCampaign = (range, stat, campaign, cb) -> cb []
+  query = graphiteInterface.query()
+
+  for campaign in @campaigns
+    if campaign.campaign._id == undefined then campaignId = campaign.campaign
+    else campaignId = campaign.campaign._id
+
+    ref = @getGraphiteCampaignId campaignId
+
+    query.addStatCountTarget "#{ref}.impressions", "summarize", "24hours"
+    query.addStatCountTarget "#{ref}.clicks", "summarize", "24hours"
+    query.addStatCountTarget "#{ref}.earnings", "summarize", "24hours"
+    query.addStatCountTarget "#{ref}.requests", "summarize", "24hours"
+
+  query.exec (data) ->
+    for entry in data
+
+      # Extract data name
+      target = entry.target.split(",").join(".").split(".")[6]
+
+      for point in entry.datapoints
+        if point[0] != null
+          remoteStats["#{target}24h"] += Number point[0]
+
+    if remoteStats.impressions24h != 0
+      remoteStats.ctr24h = remoteStats.clicks24h / remoteStats.impressions24h
+
+    cb remoteStats
+
+# Fetch verbose stat data
+schema.methods.fetchStatGraphData = (options, cb) ->
+  matches = []
+
+  for campaign in @campaigns
+    if campaign.campaign._id == undefined then campaignId = campaign.campaign
+    else campaignId = campaign.campaign._id
+
+    matches.push "#{@getGraphiteCampaignId campaignId}.#{options.stat}"
+
+  delete options.stat
+  options.multipleSeries = matches
+  graphiteInterface.makeAnalyticsQuery options, cb
 
 ##
 ## Campaign operations
@@ -319,11 +349,6 @@ schema.methods.getRedisRefForCampaign = (campaign) ->
   "campaignAd:#{campaign._id}:#{@_id}:#{ownerId}"
 
 schema.methods.getRedisRef = -> "ads:#{@_id}"
-
-# Generate a key matching all of our campaign entries
-#
-# @return [String] ref
-schema.methods.getRedisRefForAllCampaigns = -> "campaignAd:*:#{@_id}:*"
 
 # Fetch final targeting filters (country, network, etc) and bid info for
 # campaign

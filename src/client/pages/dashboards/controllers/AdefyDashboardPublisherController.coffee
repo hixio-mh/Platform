@@ -40,7 +40,7 @@ window.AdefyDashboard.controller "AdefyDashboardPublisherController", ($scope, $
     if series.name == "Earnings"
       "Earned: #{accounting.formatMoney y, "$", 2}"
     else
-      "#{series.name}: #{Math.round y}"
+      "#{series.name}: #{accounting.formatNumber y, 2}"
 
   $scope.graph24hStats =
     prefix: "/api/v1/analytics/totals"

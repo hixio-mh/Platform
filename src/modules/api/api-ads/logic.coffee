@@ -84,7 +84,7 @@ setup = (options, imports, register) ->
           campaign.fetchTotalStatsForAd ad, (stats) -> cb stats, campaignIndex
 
         fetchStatsforAd = (ad) ->
-          ad.fetchLifetimeStats (adStats) ->
+          ad.fetchTotalStats (adStats) ->
 
             if ad.campaigns.length == 0
               adObject = ad.toAnonAPI()
@@ -137,7 +137,7 @@ setup = (options, imports, register) ->
       if adCount == 0 then return res.json ret
 
       fetchAd = (ad, res) ->
-        ad.fetchLifetimeStats (stats) ->
+        ad.fetchTotalStats (stats) ->
 
           ad.owner = ad.owner.toAPI()
           adData = ad.toAPI()
@@ -183,19 +183,6 @@ setup = (options, imports, register) ->
       ad.status = 0
       ad.save()
       res.send 200
-
-  # Fetch ad stats over a specific period of time
-  app.get "/api/v1/ads/stats/:id/:stat/:range", (req, res) ->
-    if not utility.param req.param("id"), res, "Ad id" then return
-    if not utility.param req.param("range"), res, "Temporal range" then return
-    if not utility.param req.param("stat"), res, "Stat" then return
-
-    db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then res.send(404); return
-
-      ad.fetchCompiledStat req.param("range"), req.param("stat"), (data) ->
-        res.json data
 
   # Updates ad status if applicable
   #
