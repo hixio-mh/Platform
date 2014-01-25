@@ -30,7 +30,7 @@
 			},
 
 			"stats": {
-				"host": "stats.adefy.com",
+				"host": "stats1.adefy.com",
 				"port": 8125
 			}
 		},
@@ -62,7 +62,7 @@
 			},
 
 			"stats": {
-				"host": "stats.adefy.com",
+				"host": "192.168.152.31",
 				"port": 8125
 			}
 		},
@@ -126,7 +126,7 @@
 			},
 
 			"stats": {
-				"host": "stats.adefy.com",
+				"host": "stats1.adefy.com",
 				"port": 8125
 			}
 		}
