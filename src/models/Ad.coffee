@@ -76,11 +76,11 @@ schema.methods.getGraphiteCampaignId = (campaignId) ->
 
 schema.methods.toAPI = ->
   ret = @toObject()
-  ret.id = ret._id
+  ret.id = ret._id.toString()
 
   for i in [0...ret.campaigns.length]
     if ret.campaigns[i].campaign != null
-      ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id
+      ret.campaigns[i].campaign.id = ret.campaigns[i].campaign._id.toString()
 
       delete ret.campaigns[i].campaign._id
       delete ret.campaigns[i].campaign.__v

@@ -75,7 +75,7 @@ schema.methods.toAPI = ->
   ret = @toObject()
   # ret.devices = @compileDevicesList()
   # ret.countries = @compileCountriesList()
-  ret.id = ret._id
+  ret.id = ret._id.toString()
   delete ret._id
   delete ret.__v
   delete ret.devices

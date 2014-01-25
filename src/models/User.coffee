@@ -56,7 +56,7 @@ schema = new mongoose.Schema
 schema.methods.getRedisId = -> "user:#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
-  ret.id = ret._id
+  ret.id = ret._id.toString()
   delete ret._id
   delete ret.__v
   delete ret.session
