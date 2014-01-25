@@ -26,9 +26,9 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
 
   $scope.hoverFormatter = (series, x, y) ->
     if series.name == "Earnings"
-      "Earned: $#{y.toFixed 3}"
+      "Earned: #{accounting.formatMoney y, "$", 2}"
     else
-      "#{series.name}: #{y}"
+      "#{series.name}: #{accounting.formatNumber y, 0}"
 
   buildGraphData = ->
     $scope.graphData =
@@ -71,10 +71,11 @@ window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routePa
         counts:
           type: "y"
           orientation: "left"
+        formatter: (y) -> accounting.formatNumber y
         earned:
           type: "y"
           orientation: "right"
-          formatter: (y) -> "$ #{y.toFixed 3}"
+          formatter: (y) -> accounting.formatMoney y, "$", 2
 
   buildGraphData()
 

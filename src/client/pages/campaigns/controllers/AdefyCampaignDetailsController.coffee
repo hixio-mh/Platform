@@ -25,9 +25,9 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
 
   $scope.hoverFormatter = (series, x, y) ->
     if series.name == "Spent"
-      "Spent: $#{y.toFixed 3}"
+      "Spent: #{accounting.formatMoney y, "$", 2}"
     else
-      "#{series.name}: #{y}"
+      "#{series.name}: #{Math.round y}"
 
   buildGraphData = ->
     $scope.graphData =
@@ -63,10 +63,11 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
         counts:
           type: "y"
           orientation: "left"
+          formatter: (y) -> accounting.formatNumber y
         spent:
           type: "y"
           orientation: "right"
-          formatter: (y) -> "$ #{y.toFixed 3}"
+          formatter: (y) -> accounting.formatMoney y, "$", 2
 
   buildGraphData()
 
