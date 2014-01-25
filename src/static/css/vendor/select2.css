@@ -9,6 +9,8 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
     zoom: 1;
     *display: inline;
     vertical-align: middle;
+    max-width: 300px;
+    margin: 8px 0;
 }
 
 .select2-container,
@@ -224,9 +226,6 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
     margin: 0;
 
     outline: 0;
-    font-family: sans-serif;
-    font-size: 1em;
-
     border: 1px solid #aaa;
     border-radius: 0;
 
@@ -277,6 +276,11 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
     background-image: linear-gradient(top, #fff 0%, #eee 50%);
 }
 
+.select2-dropdown-open .select2-choices {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
 .select2-dropdown-open.select2-drop-above .select2-choice,
 .select2-dropdown-open.select2-drop-above .select2-choices {
     border: 1px solid #5897fb;
@@ -298,6 +302,10 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
     background-position: -18px 1px;
 }
 
+.select2-input {
+    font-size: 13px;
+}
+
 /* results */
 .select2-results {
     max-height: 200px;
@@ -306,6 +314,7 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
+    font-size: 13px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
@@ -429,6 +438,7 @@ disabled look for disabled choices in the results dropdown
     margin: 0;
     padding: 0;
     position: relative;
+    border-radius: 4px;
 
     border: 1px solid #aaa;
     cursor: text;
@@ -470,8 +480,6 @@ disabled look for disabled choices in the results dropdown
     padding: 5px;
     margin: 1px 0;
 
-    font-family: sans-serif;
-    font-size: 100%;
     color: #666;
     outline: 0;
     border: 0;
@@ -481,7 +489,7 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-container-multi .select2-choices .select2-search-field input.select2-active {
-    background: #fff url('select2-spinner.gif') no-repeat 100% !important;
+    background: #fff url('../../img/vendor/select2/select2-spinner.gif') no-repeat 100% !important;
 }
 
 .select2-default {
@@ -492,6 +500,7 @@ disabled look for disabled choices in the results dropdown
     padding: 3px 5px 3px 18px;
     margin: 3px 0 3px 5px;
     position: relative;
+    font-size: 13px;
 
     line-height: 13px;
     color: #333;

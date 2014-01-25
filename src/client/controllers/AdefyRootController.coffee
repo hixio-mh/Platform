@@ -18,15 +18,6 @@ window.AdefyDashboard.controller "AdefyRootController", ($scope, $rootScope, $ht
   $scope.setNotification = (text, type) ->
     $rootScope.notification = {type: type, text: text}
 
-  $scope.sendFeedback = ->
-    $http.post("/api/v1/feedback", {text: $scope.feedback})
-    .success ->
-      $scope.setNotification("Feedback sent! Thank you for your input", "success")
-    .error ->
-      $scope.setNotification("There was an error with sending your feedback", "error")
-
-  $http.get("/api/v1/user").success (me) ->
-    $scope.me = me
-
-  $rootScope.$on "$locationChangeStart", ->
-    $scope.clearNotification()
+  $scope.showIntercom = -> Intercom "show"
+  $http.get("/api/v1/user").success (me) -> $scope.me = me
+  $rootScope.$on "$locationChangeStart", -> $scope.clearNotification()
