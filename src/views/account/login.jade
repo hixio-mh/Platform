@@ -36,7 +36,7 @@ html(lang="en" ng-app="AdefyLogin")
 
   body.account-page(ng-controller="AdefyLoginController")
     .main
-      header
+      header.absolute
         #logo Adefy
 
     .container
@@ -66,6 +66,10 @@ html(lang="en" ng-app="AdefyLogin")
         div#main-icon
         | Login
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
+
+    #bottom-action
+      a(href="/register") Need to Register?
+
     footer
       script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
       script(src="/client/login/login.js")

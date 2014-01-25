@@ -138,6 +138,7 @@ pre
 
 header
   width 100%
+  position fixed
   top 0
   left 0
   right 0
@@ -149,8 +150,11 @@ header
   padding 0 20px
   text-shadow 0 1px 1px rgba(0,0,0,.3)
   box-shadow 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
-  position fixed
   z-index 100
+
+  &.absolute
+    position absolute
+
   .menu > a, .menu > .da
     border-left 1px solid transparent
     border-right 1px solid transparent
@@ -779,6 +783,18 @@ table.info
     font-weight 600
     background-color white
 
+.noGraph
+  margin 1em auto
+  position relative
+
+  span
+    position absolute
+    bottom 10%
+    display block
+    width 100%
+    text-align center
+    font-size 24px
+
 /* reports tabs */
 .tabs-wrap
   background-color #33b5e5
@@ -914,8 +930,11 @@ graph
 
 .account-page
   background-color #fafafa
-  padding 96px 0 128px 0
+  padding 96px 0 192px 0
   font-weight 300
+
+  &.relative
+    position relative
 
   header
     height 64px
@@ -1055,3 +1074,14 @@ graph
     font-size 24px
     float left
     color #e03535
+
+  #bottom-action
+   position absolute
+   bottom 32px
+   display block
+   width 100%
+   text-align center
+
+   > *
+    color #444
+    font-size 32px

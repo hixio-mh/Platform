@@ -11,6 +11,11 @@ window.AdefyDashboard.directive "analytics", ["$http", "$timeout", ($http, $time
       legend="{{ legend }}"
     ></div>
   </div>
+  <div ng-if="graphData == null" style="padding: 7px 0 0 0">
+    <div class="noGraph" style="width: {{ width }}px; height: {{ height }}px">
+      <span>No Data</span>
+    </div>
+  </div>
   """
   restrict: "AE"
   scope:

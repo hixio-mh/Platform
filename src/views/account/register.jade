@@ -38,9 +38,9 @@ html(lang="en" ng-app="AdefyRegister")
     script(src="http://html5shim.googlecode.com/svn/trunk/html5.js")
     | <![endif]-->
 
-  body.account-page(ng-controller="AdefyRegisterController")
+  body.account-page.relative(ng-controller="AdefyRegisterController")
     .main
-      header
+      header.absolute
         #logo Adefy
 
     .container
@@ -96,11 +96,14 @@ html(lang="en" ng-app="AdefyRegister")
           label VAT number
           input(type="text" ng-model="vat" ng-keypress="enterSubmit($event)")
 
-  .container
-    div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
-    button#main-button(type="button" ng-click="register()")
-      div#main-icon
-      | Register
+    .container
+      div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
+      button#main-button(type="button" ng-click="register()")
+        div#main-icon
+        | Register
+
+    #bottom-action
+      a(href="/login") Need to Login?
 
     footer
       script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
