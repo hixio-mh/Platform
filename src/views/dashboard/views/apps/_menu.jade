@@ -33,3 +33,5 @@
       | Request Approval
   .toggle-wrap(style="float:right" ng-if="app.status == 2")
     toggle-switch(method="activeToggled()" model="app.active")
+  span(style="float:right" ng-if="app.status != 2")
+    .label.gray Approval Required To Enable
