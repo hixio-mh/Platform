@@ -35,10 +35,10 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
   ##
 
   $scope.hoverFormatter = (series, x, y) ->
-    if series.name == "Earnings"
-      "Earned: $#{y.toFixed 3}"
+    if series.name == "Spent"
+      "Spent: #{accounting.formatMoney y, "$", 2}"
     else
-      "#{series.name}: #{y}"
+      "#{series.name}: #{Math.round y}"
 
   $scope.graph24hStats =
     prefix: "/api/v1/analytics/totals"
@@ -64,6 +64,7 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
       counts:
         type: "y"
         orientation: "left"
+        formatter: (y) -> accounting.formatNumber y
 
   $scope.graph24hSpent =
     prefix: "/api/v1/analytics/totals"
@@ -83,7 +84,7 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
       spent:
         type: "y"
         orientation: "left"
-        formatter: (y) -> "$ #{y.toFixed 3}"
+        formatter: (y) -> accounting.formatMoney y, "$", 2
 
   $scope.graphLifetimeMetrics =
     prefix: "/api/v1/analytics/totals"
@@ -115,7 +116,8 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
       counts:
         type: "y"
         orientation: "left"
+        formatter: (y) -> accounting.formatNumber y
       spent:
         type: "y"
         orientation: "right"
-        formatter: (y) -> "$ #{y.toFixed 3}"
+        formatter: (y) -> accounting.formatMoney y, "$", 2

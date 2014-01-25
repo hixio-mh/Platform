@@ -34,10 +34,8 @@ window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, 
         formatter: (x) -> new Date(x).toLocaleDateString()
       counts:
         type: "y"
-        orientation: "left"
-      spent:
-        type: "y"
         orientation: "right"
+        formatter: (y) -> accounting.formatNumber y
 
     dynamic: [
       [{ x: new Date().getTime(), y: 1 }]
