@@ -109,8 +109,6 @@ module.exports = (grunt) ->
     staticJadeFiles = {}
     buildPref = "#{_buildDir}static"
     srcPref = "#{srcDir}views/static"
-    staticJadeFiles["#{buildPref}/login.html"] = "#{srcPref}/login.jade"
-    staticJadeFiles["#{buildPref}/register.html"] = "#{srcPref}/register.jade"
     staticJadeFiles["#{buildPref}/500.html"] = "#{srcPref}/500.jade"
     staticJadeFiles["#{buildPref}/404.html"] = "#{srcPref}/404.jade"
 

@@ -58,6 +58,19 @@ setup = (options, imports, register) ->
       res.cookie "user", { id: user._id, sess: session }
       cb()
 
+  # Login and Register views, redirect if user is already logged in
+  app.get "/login", (req, res) ->
+    if req.user != null and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/login.jade"
+
+  app.get "/register", (req, res) ->
+    if req.user != null and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/register.jade"
+
   # Logout, clear redis session
   app.get "/logout", (req, res) ->
     redis.del "sessions:#{req.user.id}:#{req.user.session}", (err) ->
