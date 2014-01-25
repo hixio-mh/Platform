@@ -17,10 +17,10 @@
     .amount.large $ {{ revenue24h | number:2 }}
     .desc Earned today
   .stat: .wrap
-    .amount.large ▲ {{ impressions24h }}
+    .amount.large ▲ {{ impressions24h | number:2 }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ {{ clicks24h }}
+    .amount.large ▲ {{ clicks24h | number:2 }}
     .desc Clicks today
   .stat: .wrap
     .amount.large $ {{ totalRevenue | number:2 }}

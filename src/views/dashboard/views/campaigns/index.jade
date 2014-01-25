@@ -12,9 +12,9 @@ a.new-item(href="/campaigns/new")
         .desc CTR
     .stats
       .tab
-        .amount {{ campaign.stats.clicks | number }}
+        .amount {{ campaign.stats.clicks | number:2 }}
         .desc Clicks
       .tab
-        .amount {{ campaign.stats.impressions | number }}
+        .amount {{ campaign.stats.impressions | number:2 }}
         .desc Impressions
 

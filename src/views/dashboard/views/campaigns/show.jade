@@ -3,10 +3,10 @@ include _menu
 .contents.w920.center
   .stats.campaign
     .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.impressions24h | number }}
+      .amount.large ▲ {{ campaign.stats.impressions24h | number:2 }}
       .desc Impressions Today
     .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.clicks24h | number }}
+      .amount.large ▲ {{ campaign.stats.clicks24h | number:2 }}
       .desc Clicks Today
     .stat: .wrap
       .amount.large {{ campaign.stats.ctr24h | number:2 }} %

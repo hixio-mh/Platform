@@ -1,9 +1,9 @@
 .stats.dashboard
   .stat: .wrap
-    .amount.large ▲ {{ ad.stats.impressions | number }}
+    .amount.large ▲ {{ ad.stats.impressions | number:2 }}
     .desc Total Impressions
   .stat: .wrap
-    .amount.large ▲ {{ ad.stats.clicks | number }}
+    .amount.large ▲ {{ ad.stats.clicks | number:2 }}
     .desc Total Clicks
   .stat: .wrap
     .amount.large {{ ad.stats.ctr | number:2 }} %
