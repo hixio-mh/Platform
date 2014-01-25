@@ -20,7 +20,7 @@
 
     dt
       label Daily Budget $
-      span(ng-if="campaign.dailyBudget") $ {{ campaign.dailyBudget | number:2 }} is enough for {{ me.funds / campaign.dailyBudget | number:2 }} days
+      span(ng-if="campaign.dailyBudget && me.funds > 0") $ {{ campaign.dailyBudget | number:2 }} is enough for {{ me.funds / campaign.dailyBudget | number:2 }} days
     dd
       input(required ng-model="campaign.dailyBudget" min="{{ min.budget }}" type="number" placeholder="min {{ min.budget | currency:$ }}")
 

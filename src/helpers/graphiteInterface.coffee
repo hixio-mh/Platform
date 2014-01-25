@@ -190,7 +190,6 @@ module.exports =
       if @until.length > 0 then query += "&until=#{@until}"
 
       query += "&format=json"
-      spew.info query
       query
 
     @_filterResponse = (data) ->
