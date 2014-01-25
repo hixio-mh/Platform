@@ -34,11 +34,31 @@ window.AdefyDashboard.directive "analytics", ["$http", "$timeout", ($http, $time
     # Expect prefix on data
     prefix = scope.data.prefix
 
+    graphColorPalette = new Rickshaw.Color.Palette scheme: "munin"
+
+    colors =
+      earnings: graphColorPalette.color()
+      clicks: graphColorPalette.color()
+      impressions: graphColorPalette.color()
+
+      # This is an un-used color, simple to force the color palette to cycle
+      # once more. We don't like this color :(
+      _: graphColorPalette.color()
+
+      requests: graphColorPalette.color()
+      spent: graphColorPalette.color()
+
+    # Advertiser-specific
+    colors.clicksa = colors.clicksc = colors.clicks
+    colors.impressionsa = colors.impressionsc = colors.impressions
+
+    # Publisher-specific
+    colors.clicksp = colors.clicks
+    colors.impressionsp = colors.impressions
+
     doneFetching = ->
       for graph in scope.data.graphs
         if fetchedData[graph.stat] == undefined then return
-
-      graphColorPalette = new Rickshaw.Color.Palette scheme: "munin"
 
       statics = []
       dynamics = []
@@ -55,7 +75,7 @@ window.AdefyDashboard.directive "analytics", ["$http", "$timeout", ($http, $time
           if atLeastOneNonZeroPoint
             statics.push
               name: graph.name
-              color: graphColorPalette.color()
+              color: colors[graph.stat]
               y: graph.y
 
             dynamics.push fetchedData[graph.stat]
