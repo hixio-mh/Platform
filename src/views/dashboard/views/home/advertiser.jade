@@ -14,10 +14,10 @@
 
 .stats.dashboard
   .stat: .wrap
-    .amount.large ▲ {{ impressions24h }}
+    .amount.large ▲ {{ impressions24h | number:2 }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ {{ clicks24h }}
+    .amount.large ▲ {{ clicks24h | number:2 }}
     .desc Clicks today
   .stat: .wrap
     .amount.large {{ ctr24h | number:2 }}%

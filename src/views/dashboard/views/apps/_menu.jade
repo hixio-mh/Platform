@@ -1,15 +1,15 @@
 .stats.dashboard
   .stat: .wrap
-    .amount.large ▲ {{ app.stats.impressions | number }}
+    .amount.large ▲ {{ app.stats.impressions | number:2 }}
     .desc Total Impressions
   .stat: .wrap
-    .amount.large ▲ {{ app.stats.clicks | number }}
+    .amount.large ▲ {{ app.stats.clicks | number:2 }}
     .desc Total Clicks
   .stat: .wrap
     .amount.large $ {{ app.stats.earnings | number:2 }}
     .desc Total Earnings
   .stat: .wrap
-    .amount.large {{ app.stats.requests | number }}
+    .amount.large {{ app.stats.requests | number:2 }}
     .desc Total Requests
 
 .titlebar.cf.full(ng-controller="AdefyAppsMenuController")
