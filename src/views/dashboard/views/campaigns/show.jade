@@ -3,16 +3,16 @@ include _menu
 .contents.w920.center
   .stats.campaign
     .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.impressions24h | number:2 }}
+      .amount.large.inner ▲ {{ campaign.stats.impressions24h | number }}
       .desc Impressions Today
     .stat: .wrap
-      .amount.large ▲ {{ campaign.stats.clicks24h | number:2 }}
+      .amount.large.inner ▲ {{ campaign.stats.clicks24h | number }}
       .desc Clicks Today
     .stat: .wrap
-      .amount.large {{ campaign.stats.ctr24h | number:2 }} %
+      .amount.large.inner {{ campaign.stats.ctr24h | number:2 }} %
       .desc CTR Today
     .stat: .wrap
-      .amount.large $ {{ campaign.stats.spent24h | number:2 }}
+      .amount.large.inner $ {{ campaign.stats.spent24h | number:2 }}
       .desc Spent Today
 
 .graphs#campaign-show

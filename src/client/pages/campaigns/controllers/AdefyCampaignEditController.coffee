@@ -84,6 +84,11 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
       if i != array.length - 1 then str += ","
     str
 
+  getRawDate = (smartDate) -> new Date(smartDate).getTime()
+  getSmartDate = (rawDate) ->
+    if rawDate == 0 then return null
+    else return new Date rawDate
+
   Campaign.get id: $routeParams.id, (campaign) ->
     $scope.campaign = campaign
     $scope.campaign.rules = []
@@ -102,6 +107,9 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
     $scope.devicesInclude = validSelect2DataToPreloadString devicesInclude
     $scope.countriesInclude = validSelect2DataToPreloadString countriesInclude
     $scope.countriesExclude = validSelect2DataToPreloadString countriesExclude
+
+    $scope.campaign.startDate = getSmartDate $scope.campaign.startDate
+    $scope.campaign.endDate = getSmartDate $scope.campaign.endDate
 
     $timeout -> initializeSelect2Fields()
 
@@ -143,11 +151,11 @@ window.AdefyDashboard.controller "AdefyCampaignEditController", ($scope, $locati
       for country in $scope.countriesExclude
         $scope.campaign.countries.push { name: country, type: "exclude" }
 
-    $scope.campaign.startDate = new Date($scope.campaign.startDate).getTime()
-    $scope.campaign.endDate = new Date($scope.campaign.endDate).getTime()
-
     $scope.submitted = true
-    $scope.campaign.$save().then(
+    saveCampaign = angular.copy $scope.campaign
+    saveCampaign.startDate = getRawDate saveCampaign.startDate
+    saveCampaign.endDate = getRawDate saveCampaign.endDate
+    saveCampaign.$save().then(
       -> # success
         $location.path "/campaigns/#{$scope.campaign.id}"
       -> #error
