@@ -55,15 +55,33 @@ autocomplete = (options, cb) ->
   query = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{query}:#{options.set}"
   resultSet = "autocomplete:#{AUTOCOMPLETE_VERSION}:#{options.set}:*"
 
-  redis.sort query, "ALPHA", "get", resultSet, (err, results) ->
-    if err then spew.error err
+  if options.uniqueIDs == true
+    redis.sort query, "ALPHA", (err, resultIDs) ->
+      redis.sort query, "ALPHA", "get", resultSet, (err, resultKeys) ->
+        if err then spew.error err
 
-    if options.format != false
-      ret = []
-      ret.push { value: result, key: i } for result, i in results
-      cb ret
-    else
-      cb results
+        if options.format != false
+          ret = []
+          for i in [0...resultIDs.length]
+            ret.push
+              value: resultKeys[i]
+              key: resultIDs[i]
+          cb ret
+        else
+          cb results
+
+  # NOTE: Hot path! Front-end autocomplete requires unique IDs. This route
+  #       gets hit by the ad serve routine
+  else
+    redis.sort query, "ALPHA", "get", resultSet, (err, results) ->
+      if err then spew.error err
+
+      if options.format != false
+        ret = []
+        ret.push { value: result, key: i } for result, i in results
+        cb ret
+      else
+        cb results
 
 module.exports =
   getCategories: -> categoriesList

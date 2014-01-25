@@ -104,11 +104,8 @@ html(lang="en" ng-app="AdefyDashboard")
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
-            a(form-modal template="/views/dashboard/account:feedback" title="Send feedback" ok-button-text="Send" form-submit="sendFeedback()" form-object="feedback")
+            a(ng-click="showIntercom()")
               i.fa.fa-fw.fa-comment
-              | Feedback
-            a
-              i.fa.fa-fw.fa-question
               | Support
             a(href="/logout" target="_self")
               i.fa.fa-fw.fa-sign-out
