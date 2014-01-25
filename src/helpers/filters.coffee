@@ -21,7 +21,7 @@ categoriesList = require "./filters/categories.json"
 devicesList = require "./filters/devices.json"
 manufacturersList = require "./filters/manufacturers.json"
 
-AUTOCOMPLETE_VERSION = 1
+AUTOCOMPLETE_VERSION = 2
 
 # Generate flat list for targeting structure (which only takes into account
 # includes). We simulate targeting exclude support by including everything
@@ -58,7 +58,7 @@ autocomplete = (options, cb) ->
   redis.sort query, "ALPHA", "get", resultSet, (err, results) ->
     if err then spew.error err
 
-    if options.format
+    if options.format != false
       ret = []
       ret.push { value: result, key: i } for result, i in results
       cb ret
