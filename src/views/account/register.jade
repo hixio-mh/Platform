@@ -30,18 +30,20 @@ html(lang="en" ng-app="AdefyRegister")
 
     link(rel="icon" href="/img/favicon.png" type="image/png")
 
-    link(rel="stylesheet" href="/css/styles.css")
+    link(rel="stylesheet" href="/css/reset.css")
+    link(rel="stylesheet" href="/css/styles.min.css")
     link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
 
     | <!--[if lt IE 9]>
     script(src="http://html5shim.googlecode.com/svn/trunk/html5.js")
     | <![endif]-->
 
-  body#register-page(ng-controller="AdefyRegisterController")
-    .container.main
-      .header
-        .logo Adefy
+  body.account-page(ng-controller="AdefyRegisterController")
+    .main
+      header
+        #logo Adefy
 
+    .container
       #subtitle.block.tcenter Registration
       #teaser.block.tcenter Welcome to Adefy
       #description.block.tcenter Enter your details to get started
@@ -74,7 +76,7 @@ html(lang="en" ng-app="AdefyRegister")
           input(type="text" ng-model="lname")
 
         label Email *
-        input(required type="email" ng-model="email")
+        input(required type="email" ng-model="email" ng-keypress="enterSubmit($event)")
 
         .info-box.deep
           .left
@@ -84,20 +86,20 @@ html(lang="en" ng-app="AdefyRegister")
             .inner
 
         label Company name
-        input(type="text" ng-model="company")
+        input(type="text" ng-model="company" ng-keypress="enterSubmit($event)")
 
         .w50
           label Phone number
-          input(type="tel" ng-model="phone")
+          input(type="tel" ng-model="phone" ng-keypress="enterSubmit($event)")
 
         .w50.right
           label VAT number
-          input(type="text" ng-model="vat")
+          input(type="text" ng-model="vat" ng-keypress="enterSubmit($event)")
 
   .container
-    div(ng-if="error != null" ng-class="{ error: error != null }") {{ error }}
-    button#register-button(type="button" ng-click="register()")
-      div#register-icon
+    div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
+    button#main-button(type="button" ng-click="register()")
+      div#main-icon
       | Register
 
     footer

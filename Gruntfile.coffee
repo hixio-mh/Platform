@@ -300,7 +300,7 @@ module.exports = (grunt) ->
         tasks: [ "coffee:client_dev" ]
       stylus:
         files: WstylusSrc
-        tasks: [ "stylus:full" ]
+        tasks: [ "stylus:full", "cssmin:minify" ]
       packageJSON:
         files: WmodulePackageJSON
         tasks: [ "copy:packageJSON" ]

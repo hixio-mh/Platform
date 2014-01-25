@@ -908,23 +908,22 @@ graph
 .noAxes .rickshaw
   margin 0
 
-#register-page
+.account-page
   background-color #fafafa
-  padding 50px 0 100px 0
+  padding 96px 0 128px 0
   font-weight 300
 
-  .header
-    background-color #33b5e5
-    padding 40px 0
-    width 100%
-    margin-bottom 40px
+  header
+    height 64px
+    line-height 64px
+    text-align center
 
-    .logo
-      font-family "Oleo Script"
-      font-size 48px
-      color white
+    #logo
+      float none
+      font-size 36px
+      line-height 58px
+      margin-right 0
       text-align center
-      display block
 
   .info-box
     display block
@@ -967,18 +966,30 @@ graph
     margin 0 auto
     display block
 
-    &.main
-      border 1px solid #d9d9d9
-      box-shadow 0 0 2px rgba(0, 0, 0, 0.1)
-
-  form
-    padding 10px 20px
-
     .w50
       width 299px
       &.right
         margin-left 20px
         float none
+
+    &.small
+      width 300px
+
+      .info-box
+        .left, .right
+          width 30%
+
+        .text
+          width 40%
+
+        .inner
+          width 20px
+
+  form
+    padding 10px 20px
+    border 1px solid #d9d9d9
+    box-shadow 0 0 2px rgba(0, 0, 0, 0.1)
+    margin-top 32px
 
     input, label
       width 100%
@@ -997,14 +1008,14 @@ graph
       padding 8px
       margin-bottom 16px
 
-  #register-button
+  #main-button
     border none
     background transparent
     margin-top 16px
     float right
     font-size 24px
 
-    #register-icon
+    #main-icon
       width 20px
       height 25px
 
@@ -1019,7 +1030,7 @@ graph
       cursor hand
       cursor pointer
 
-      #register-icon
+      #main-icon
         background-image url("/img/right_arrow_filled.png")
 
   #subtitle
