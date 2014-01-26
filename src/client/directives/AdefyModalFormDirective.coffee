@@ -12,7 +12,7 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
     formSubmit: "&"
     formClear: "&"
     formDelete: "&"
-    close: "="
+    close: "=?"
 
   compile: (element, cAtts) ->
     template = undefined
