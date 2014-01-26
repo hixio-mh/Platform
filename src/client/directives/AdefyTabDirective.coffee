@@ -10,17 +10,20 @@ unless String::startsWith
 window.AdefyDashboard.directive "tab", ($location) ->
   return {
     link: (scope, element, attrs) ->
-      attrs.$observe "href", (value) ->
-        href = value
-        updateClass()
 
+      attrs.$observe "href", (value) -> updateClass()
+      attrs.$observe "alias", (value) -> updateClass()
       scope.$on "$routeChangeSuccess", (event, current, previous) ->
         updateClass()
 
       updateClass = ->
         if attrs.partial == "false" and $location.path() == attrs.href
           element.addClass "active"
+        else if attrs.partial == "false" and $location.path() == atrrs.alias
+          element.addClass "active"
         else if not attrs.partial and $location.path().startsWith attrs.href
+          element.addClass "active"
+        else if not attrs.partial and $location.path().startsWith attrs.alias
           element.addClass "active"
         else
           element.removeClass "active"
