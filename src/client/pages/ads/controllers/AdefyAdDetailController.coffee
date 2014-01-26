@@ -92,7 +92,16 @@ window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, 
     , 1
 
   $scope.graphDone = ->
-    Ad.get id: $routeParams.id, (ad) -> $scope.ad = ad
+    Ad.get id: $routeParams.id, (ad) ->
+      if ad.stats.ctr then ad.stats.ctr *= 100
+      if ad.stats.ctr24h then ad.stats.ctr24h *= 100
+
+      for c in ad.campaigns
+        if c.stats
+          if c.stats.ctr then c.stats.ctr *= 100
+          if c.stats.ctr24h then c.stats.ctr24h *= 100
+
+      $scope.ad = ad
 
   $("body").off "change", "#ad-show select[name=interval]"
   $("body").off "change", "#ad-show input[name=sum]"

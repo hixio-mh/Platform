@@ -32,6 +32,9 @@ window.AdefyDashboard.controller "AdefyDashboardPublisherController", ($scope, $
       $scope.impressions24h += app.stats.impressions24h
       $scope.clicks24h += app.stats.clicks24h
 
+      if app.stats.ctr then app.stats.ctr *= 100
+      if app.stats.ctr24h then app.stats.ctr24h *= 100
+
   ##
   ## Setup graphs
   ##

@@ -30,5 +30,10 @@ window.AdefyDashboard.controller "AdefyCampaignIndexController", ($scope, Campai
       ]
 
   Campaign.query (campaigns) ->
+
+    for c in campaigns
+      c.stats.ctr *= 100
+      c.stats.ctr24h *= 100
+
     $scope.campaigns = campaigns
     buildGraphData c for c in $scope.campaigns

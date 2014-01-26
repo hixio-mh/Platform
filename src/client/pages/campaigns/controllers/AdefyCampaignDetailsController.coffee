@@ -79,7 +79,10 @@ window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $rou
     , 1
 
   $scope.graphDone = ->
-    Campaign.get id: $routeParams.id, (campaign) -> $scope.campaign = campaign
+    Campaign.get id: $routeParams.id, (campaign) ->
+      campaign.stats.ctr *= 100
+      campaign.stats.ctr24h *= 100
+      $scope.campaign = campaign
 
   $("body").off "change", "#campaign-show select[name=interval]"
   $("body").off "change", "#campaign-show input[name=sum]"

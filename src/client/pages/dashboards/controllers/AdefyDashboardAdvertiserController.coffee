@@ -27,6 +27,9 @@ window.AdefyDashboard.controller "AdefyDashboardAdvertiserController", ($scope, 
       $scope.clicks24h += campaign.stats.clicks24h
       $scope.spent24h += campaign.stats.spent24h
 
+      if campaign.stats.ctr then campaign.stats.ctr *= 100
+      if campaign.stats.ctr24h then campaign.stats.ctr24h *= 100
+
     if $scope.impressions24h != 0
       $scope.ctr24h = ($scope.clicks24h / $scope.impressions24h) * 100
 
