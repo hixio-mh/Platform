@@ -12,6 +12,7 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
     formSubmit: "&"
     formClear: "&"
     formDelete: "&"
+    close: "="
 
   compile: (element, cAtts) ->
     template = undefined
@@ -51,6 +52,9 @@ window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $h
       scope.close = ->
         $element.remove()
         scope.formClear()
+
+      scope.enterSubmit = (e) ->
+        if e.which == 10 or e.which == 13 then scope.submit()
 
       element.on "click", (e) ->
         e.preventDefault()

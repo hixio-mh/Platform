@@ -13,23 +13,23 @@
 ##
 window.AdefyDashboard.controller "AdefyAdIndexController", ($scope, $location, Ad) ->
 
-  refreshAds = ->
-    Ad.query (ads) ->
-      $scope.ads = ads
-
+  refreshAds = -> Ad.query (ads) -> $scope.ads = ads
   refreshAds()
 
-  # modal
-  $scope.ad = {} # define the object, or it will not get set inside the modal
+  $scope.adForm = disabled: false
   $scope.create = ->
-    newAd = new Ad this.ad
+    newAd = new Ad $scope.adForm
 
-    newAd.$save().then(
-      -> # success
-        refreshAds()
-      -> #error
-        $scope.setNotification("There was an error with your form submission", "error")
-    )
+    $scope.adForm.disabled = true
+    $scope.adForm.infoMessage = "Creating ad...."
+    $scope.adForm.errorMessage = ""
 
-    refreshAds()
-    true
+    newAd.$save().then ->
+      refreshAds()
+      $scope.adForm.disabled = false
+      $scope.adForm.infoMessage = ""
+      $scope.closeForm()
+    , (error) ->
+      $scope.adForm.disabled = false
+      $scope.adForm.infoMessage = ""
+      $scope.adForm.errorMessage = "Unknown server-side error"

@@ -36,7 +36,7 @@ setup = (options, imports, register) ->
     newAd.save (err) ->
       if err
         spew.error "Error saving new ad [#{err}]"
-        res.json 500
+        res.send 500
       else
         res.json 200, newAd.toAnonAPI()
 

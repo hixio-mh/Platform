@@ -159,7 +159,9 @@ schema.methods.fetchTotalStats = (cb) ->
     keys.push "#{ref}:spent"
 
   redis.mget keys, (err, results) ->
-    if err then spew.error err
+    if err
+      spew.error err
+      return cb stats
 
     for i in [0...results.length] by 4
       if results[i] != null then stats.requests += Number results[i]
