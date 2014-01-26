@@ -15,6 +15,8 @@
 # Redis helper that takes care of selecting the proper database for us
 config = require "../config.json"
 config = config.modes[config.mode]
+cluster = require "cluster"
+spew = require "spew"
 
 mainConfig = config["redis-main"]
 autocompleteConfig = config["redis-autocomplete"]
@@ -29,3 +31,14 @@ redisAutocomplete.select autocompleteConfig.db
 module.exports =
   main: redisMain
   autocomplete: redisAutocomplete
+
+process.on "disconnect", ->
+  spew.info "W#{cluster.worker.id - 1} killing redis connections..."
+  redisMain.quit()
+  redisAutocomplete.quit()
+
+  try
+    spew.info "W#{cluster.worker.id - 1} closing statsd socket..."
+    GLOBAL.statsd.close()
+  catch
+    spew.warning "Statsd wasn't running"
