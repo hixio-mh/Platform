@@ -19,7 +19,7 @@ window.AdefyDashboard.directive "tab", ($location) ->
       updateClass = ->
         if attrs.partial == "false" and $location.path() == attrs.href
           element.addClass "active"
-        else if attrs.partial == "false" and $location.path() == atrrs.alias
+        else if attrs.partial == "false" and $location.path() == attrs.alias
           element.addClass "active"
         else if not attrs.partial and $location.path().startsWith attrs.href
           element.addClass "active"
