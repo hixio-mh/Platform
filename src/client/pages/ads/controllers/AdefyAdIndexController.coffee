@@ -13,7 +13,19 @@
 ##
 window.AdefyDashboard.controller "AdefyAdIndexController", ($scope, $location, Ad) ->
 
-  refreshAds = -> Ad.query (ads) -> $scope.ads = ads
+  refreshAds = ->
+    Ad.query (ads) ->
+
+      for a in ads
+        if a.stats.ctr then a.stats.ctr *= 100
+        if a.stats.ctr24h then a.stats.ctr24h *= 100
+
+        for c in a.campaigns
+          if c.stats.ctr then c.stats.ctr *= 100
+          if c.stats.ctr24h then c.stats.ctr24h *= 100
+
+      $scope.ads = ads
+
   refreshAds()
 
   $scope.adForm = disabled: false

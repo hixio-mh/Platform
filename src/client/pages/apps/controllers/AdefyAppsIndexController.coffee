@@ -31,5 +31,8 @@ window.AdefyDashboard.controller "AdefyAppsIndexController", ($scope, $location,
       ]
 
   App.query (apps) ->
+    for a in apps
+      a.stats.ctr *= 100
+      a.stats.ctr24h *= 100
     $scope.apps = apps
     buildGraphData a for a in $scope.apps
