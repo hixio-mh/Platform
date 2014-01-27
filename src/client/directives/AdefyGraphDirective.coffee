@@ -1,4 +1,4 @@
-window.AdefyDashboard.directive "graph", [->
+window.AdefyApp.directive "graph", [->
 
   template: """
   <div class="rickshaw_container">

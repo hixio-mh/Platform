@@ -31,10 +31,10 @@ module.exports = [
   "./modules/engine/engine-ads",
   "./modules/engine/engine-traffic-generator",
 
-  # Public API
+  # APIs
   "./modules/api/api-serve",
+  "./modules/api/api-creator",
 
-  # Private (authorized) API
   "./modules/api/api-ads",
   "./modules/api/api-campaigns",
   "./modules/api/api-publishers",

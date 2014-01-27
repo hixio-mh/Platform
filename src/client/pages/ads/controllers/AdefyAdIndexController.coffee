@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyAdIndexController", ($scope, $location, Ad) ->
+window.AdefyApp.controller "AdefyAdIndexController", ($scope, $location, Ad) ->
 
   refreshAds = ->
     Ad.query (ads) ->

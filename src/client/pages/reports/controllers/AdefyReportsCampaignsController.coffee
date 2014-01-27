@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyReportsCampaignsController", ($scope, $location, Campaign, $http) ->
+window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, $location, Campaign, $http) ->
   # get total app statistics
   # get barchart app statistics
 

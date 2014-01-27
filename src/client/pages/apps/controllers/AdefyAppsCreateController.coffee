@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsCreateController", ($scope, $location, App) ->
+window.AdefyApp.controller "AdefyAppsCreateController", ($scope, $location, App) ->
 
   # Application categories
   $scope.categories = [

@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignMenuController", ($scope, $location, $http) ->
+window.AdefyApp.controller "AdefyCampaignMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.campaign.active
       $http.post "/api/v1/campaigns/#{$scope.campaign.id}/deactivate"

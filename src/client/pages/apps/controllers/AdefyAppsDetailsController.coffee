@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsDetailsController", ($scope, $routeParams, App) ->
+window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, App) ->
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true

@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyReportsIndexController", ($scope, $location) ->
+window.AdefyApp.controller "AdefyReportsIndexController", ($scope, $location) ->
   $scope.tab = "apps"
 
   $scope.totals = [

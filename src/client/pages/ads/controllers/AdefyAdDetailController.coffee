@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAdDetailController", ($scope, $location, $routeParams, Ad, $http) ->
+window.AdefyApp.controller "AdefyAdDetailController", ($scope, $location, $routeParams, Ad, $http) ->
 
   # Modal
   $scope.form = {}

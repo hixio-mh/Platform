@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignDetailsController", ($scope, $routeParams, Campaign) ->
+window.AdefyApp.controller "AdefyCampaignDetailsController", ($scope, $routeParams, Campaign) ->
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true

@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyRootController", ($scope, $rootScope, $http, $route) ->
+window.AdefyApp.controller "AdefyRootController", ($scope, $rootScope, $http, $route) ->
   $scope.clearNotification = ->
     $rootScope.notification = null
   $scope.setNotification = (text, type) ->

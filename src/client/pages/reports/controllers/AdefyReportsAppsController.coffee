@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyReportsAppsController", ($scope, $location, App, $http) ->
+window.AdefyApp.controller "AdefyReportsAppsController", ($scope, $location, App, $http) ->
 
   App.query (apps) ->
     # Calculate CTR, status, and active text

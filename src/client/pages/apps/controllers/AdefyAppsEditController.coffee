@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsEditController", ($scope, $location, $routeParams, App, $http, $timeout) ->
+window.AdefyApp.controller "AdefyAppsEditController", ($scope, $location, $routeParams, App, $http, $timeout) ->
 
   $scope.categories = []
 
