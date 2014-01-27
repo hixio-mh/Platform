@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
+window.AdefyApp.config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
 
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"

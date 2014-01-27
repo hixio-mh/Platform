@@ -1,0 +1,46 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
+doctype html
+html(lang="en" ng-app="AdefyApp")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
+
+    title Ad Creator
+
+    meta(name="description" content="")
+    meta(name="author" content="Spectrum IT")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+
+    | <!--[if IE]>
+    link(rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon")
+    | <![endif]-->
+
+    link(rel="icon" href="/img/favicon.png" type="image/png")
+
+    link(rel="stylesheet" href="/css/reset.css")
+    link(rel="stylesheet" href="/css/styles.min.css")
+    link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
+    link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
+
+  body
+    ad-creator(url="https://play.google.com/store/apps/details?id=com.Phosphor.WWZ" onmousedown="return false")
+
+    footer
+      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
+      script.
+        window.AdefyApp = angular.module("AdefyApp", []);
+      script(src="//zeptojs.com/zepto.min.js")
+      script(src="/client/directives/AdefyCreatorDirective.js")

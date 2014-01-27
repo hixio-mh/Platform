@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAppsIndexController", ($scope, $location, App, $http) ->
+window.AdefyApp.controller "AdefyAppsIndexController", ($scope, $location, App, $http) ->
 
   buildGraphData = (publisher) ->
     publisher.graphData =

@@ -30,9 +30,12 @@ setup = (options, imports, register) ->
         if err then spew.error err
         else res.send html
 
+  ##
+  ## Todo: Cleanup the routines below
+  ##
+
   # Dashboard views
   app.get "/views/dashboard/:view", (req, res) ->
-    if not utility.param req.params.view, res, "View" then return
 
     # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
     if req.params.view.indexOf(":") != -1
@@ -47,6 +50,23 @@ setup = (options, imports, register) ->
     viewData.user = req.user
 
     res.render "dashboard/views/#{req.params.view}.jade", viewData
+
+  # Creator view
+  app.get "/views/creator/:view", (req, res) ->
+
+    # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
+    if req.params.view.indexOf(":") != -1
+      req.params.view = req.params.view.split(":").join "/"
+
+    # Sanitize req.params.view
+    # TODO: figure out if this is enough
+    if req.params.view.indexOf("..") != -1
+      req.params.view = req.params.view.split("..").join ""
+
+    viewData = {}
+    viewData.user = req.user
+
+    res.render "creator/#{req.params.view}.jade", viewData
 
   register null, {}
 

@@ -1,4 +1,4 @@
-window.AdefyDashboard.directive "dropdown", ["$document", ($document) ->
+window.AdefyApp.directive "dropdown", ["$document", ($document) ->
   return {
     restrict: "A"
     scope: true

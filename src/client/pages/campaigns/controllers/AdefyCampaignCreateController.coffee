@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignCreateController", ($scope, $location, Campaign, $http, $timeout) ->
+window.AdefyApp.controller "AdefyCampaignCreateController", ($scope, $location, Campaign, $http, $timeout) ->
 
   $scope.pricingOptions = ["CPM", "CPC"]
   $scope.bidSysOptions = ["Automatic", "Manual"]

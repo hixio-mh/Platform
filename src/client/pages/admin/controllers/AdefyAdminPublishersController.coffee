@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAdminPublishersController", ($scope, $http, $route) ->
+window.AdefyApp.controller "AdefyAdminPublishersController", ($scope, $http, $route) ->
 
   $scope.pubs = []               # Application data for table
   $scope.pubView = {}            # Model for current publisher

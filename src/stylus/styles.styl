@@ -170,6 +170,11 @@ header
   line-height 50px // font's x-height is fucked up, manually push up
   margin-right 25px
 
+  &.centered
+    text-align center
+    float none
+    margin 0
+
 .menu
   position relative
   display inline-block
@@ -928,6 +933,10 @@ graph
 .noAxes .rickshaw
   margin 0
 
+.container
+  width 1140px
+  margin 0 auto
+
 .account-page
   background-color #fafafa
   padding 96px 0 192px 0
@@ -1085,3 +1094,222 @@ graph
    > *
     color #444
     font-size 32px
+
+#ad-creator
+  width 1170px
+  marign 0 auto
+  position relative
+  font-weight 300
+  color white
+
+  #col-left, #col-right, #device-container
+    display inline-block
+    vertical-align top
+
+  #device-container
+    user-select none
+    -moz-user-select none
+    -webkit-user-select none
+    -ms-user-select none
+
+    *
+      cursor default !important
+
+  #col-left
+    width 270px
+
+    .panel
+      background-color #f7f7f5
+      border-radius 4px
+      border 1px solid #e0e0df
+      box-shadow 0 0 2px #e0e0df
+      margin-bottom 10px
+
+      > *
+        padding 0 20px
+
+      .header
+        padding 12px 20px
+        color #535353
+        border-bottom 1px solid #e0e0df
+        text-align left
+        margin-bottom 20px
+
+      button
+        text-align center
+        background-color #f7f7f5
+        color #7e7e80
+        border-radius 4px
+        padding 8px 0
+        margin 20px 0
+        border 1px solid #dfdfdf
+
+        &:hover
+          cursor hand
+          cursor pointer
+
+      i
+        color #7e7e80
+
+      .image-options
+        padding 10px
+        border-radius 4px
+        border 1px solid #d1d1d1
+        background-color #e8e8e8
+
+        li
+          display inline-block
+          vertical-align top
+          margin-left 8px
+
+          img
+            width 42px
+
+    button
+      width 100%
+
+  #col-right
+    width 96px
+
+  &.tablet
+    #col-left
+      margin-right 64px
+
+    #col-right
+      margin-left 64px
+
+    #device-container
+      width 494px
+
+  button
+    border none
+    border-radius 16px
+    background #33b5e5
+    padding 8px 16px
+    color white
+    font-size 14px
+    text-shadow none
+
+  #device
+    background-size cover !important
+    position relative
+
+  #appImage
+    position absolute
+    border-radius 8px
+
+  #ad-label
+    position absolute
+    font-size 12px
+    margin-left 4px
+
+  #app-title
+    font-size 16px
+    font-weight bold
+
+  #app-subtitle
+    font-size 14px
+    margin-bottom 16px
+
+  #app-developer
+    margin-bottom 16px
+
+  #app-developer, #app-description
+    font-size 12px
+    line-height 1.3
+
+  #ad-left-col, #ad-right-col
+    position absolute
+
+  #remind-me-later
+    width 100%
+    height 55px
+    text-align center
+    font-size 14px
+    font-family "Source Sans Pro"
+    font-weight 300
+
+    border-radius 4px
+    padding 4px 0
+    height auto
+    margin 32px 0
+
+    border-top 3px solid #fbeba0
+    border-left 3px solid #fff34f
+    border-right 3px solid #fff34f
+    border-bottom 3px solid #d8971f
+
+    background #31669a
+    background -moz-linear-gradient(top, #31669a 0%, #040b25 100%)
+    background -webkit-gradient(linear, left top, left bottom, color-stop(0%,#31669a), color-stop(100%,#040b25))
+    background -webkit-linear-gradient(top, #31669a 0%,#040b25 100%)
+    background -o-linear-gradient(top, #31669a 0%,#040b25 100%)
+    background -ms-linear-gradient(top, #31669a 0%,#040b25 100%)
+    background linear-gradient(to bottom, #31669a 0%,#040b25 100%)
+
+    color #ffeb94
+
+  #ad-screenshots-header
+    position absolute
+    width 100%
+    font-size 12px
+
+    > * > *
+      display inline-block
+      vertical-align top
+
+    > *, > * > *
+      line-height 1
+
+  #device-container
+    background transparent url(/img/phone.png) no-repeat
+    width 400px
+    padding-left 17px
+    padding-top 100px
+    padding-bottom 96px
+
+  .header
+    margin-bottom 8px
+
+  .gray
+    color #868897
+
+  i
+    color #d9971c
+    margin-right 8px
+
+    &.fa.fa-eye
+      margin-top 1px
+
+  .right i
+    margin-right 0
+
+  #ad-screenshots
+    position absolute
+    width 100%
+    overflow-x scroll
+    left 0
+
+    ul
+      display inline-block
+      height 180px
+      white-space nowrap
+
+      li
+        height 100%
+        display inline-block
+
+        img
+          border 2px solid white
+          border-left-width 1px
+          border-right-width 1px
+
+        &:first-child img
+          border-left-width 2px
+
+        &:last-child img
+          border-right-width 2px
+
+button:hover
+  cursor hand
+  cursor pointer

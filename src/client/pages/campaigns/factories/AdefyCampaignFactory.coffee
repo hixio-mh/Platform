@@ -12,5 +12,5 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.factory "Campaign", ($resource) ->
+window.AdefyApp.factory "Campaign", ($resource) ->
   return $resource "/api/v1/campaigns/:id", id: "@id"

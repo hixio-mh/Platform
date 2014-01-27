@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyDashboard.controller "AdefyCampaignIndexController", ($scope, Campaign, $http) ->
+window.AdefyApp.controller "AdefyCampaignIndexController", ($scope, Campaign, $http) ->
 
   buildGraphData = (campaign) ->
     campaign.graphData =

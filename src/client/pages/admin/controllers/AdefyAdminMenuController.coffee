@@ -12,4 +12,4 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyDashboard.controller "AdefyAdminMenuController", ($scope, $location, $http) ->
+window.AdefyApp.controller "AdefyAdminMenuController", ($scope, $location, $http) ->

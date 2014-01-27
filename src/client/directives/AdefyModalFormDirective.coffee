@@ -1,5 +1,5 @@
 # adapted from https://github.com/nazar/parlmnt/blob/master/app/assets/javascripts/app/directives/form_modal.js
-window.AdefyDashboard.directive "formModal", ["$compile", "$http", ($compile, $http) ->
+window.AdefyApp.directive "formModal", ["$compile", "$http", ($compile, $http) ->
   scope:
     formObject: "="
     formErrors: "="

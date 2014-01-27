@@ -39,6 +39,11 @@ setup = (options, imports, register) ->
     "/register"
     "/recover"
 
+    "/creator"
+    "/views/creator/creator"
+    "/api/v1/creator"
+    "/api/v1/creator/"
+
     "/api/v1/login"
     "/api/v1/register"
     "/api/v1/invite/add"
