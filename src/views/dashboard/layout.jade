@@ -90,7 +90,8 @@ html(lang="en" ng-app="AdefyDashboard")
           | Apps
 
       .menu.right
-        a(href="/funds", tab) Funds $ {{ me.funds | number:2 }}
+        a(href="/funds", tab) Advertiser $ {{ me.funds | number:2 }}
+        a(href="/funds", tab) Publisher $ 0.00
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
