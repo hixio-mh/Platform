@@ -42,6 +42,8 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   app.get "/creator", (req, res) -> res.render "creator/standalone.jade"
+
+  ### Remove this when it's certain it won't be needed
   app.get "/api/v1/creator/image/:image", (req, res) ->
     image = req.param "image"
     if not validImage image then return res.send 400
@@ -51,6 +53,24 @@ setup = (options, imports, register) ->
     request { url: image, encoding: null }, (error, response, body) ->
       res.setHeader "Content-Type", response.headers["content-type"]
       res.end body, "binary"
+  ###
+
+  # Fetch top paid games list from google
+  app.get "/api/v1/creator/suggestions", (req, res) ->
+    request "https://play.google.com/store/apps/category/GAME/collection/topselling_paid", (error, response, body) ->
+      if error
+        spew.error error
+        return res.send 500
+
+      $ = cheerio.load body
+      apps = []
+
+      for app in $ ".card-list .card.apps"
+        apps.push
+          url: $(app).find("a.card-click-target").attr "href"
+          cover: $(app).find("img.cover-image").attr "src"
+
+      res.json apps
 
   app.get "/api/v1/creator/:url", (req, res) ->
     urlObj = url.parse req.param "url"
@@ -66,7 +86,7 @@ setup = (options, imports, register) ->
       details = $ ".details-section-contents"
 
       app =
-        image: encodeURIComponent $(".details-wrapper.apps img.cover-image").attr "src"
+        image: $(".details-wrapper.apps img.cover-image").attr "src"
         title: $(info).find(".document-title div").text()
         author: $(info).find("a.document-subtitle span").text()
         date: $(info).find("div.document-subtitle").text()[2...]
@@ -82,8 +102,10 @@ setup = (options, imports, register) ->
 
         screenshots: []
 
+
+      # TODO: Figure out a way to avoid duplicates (not as easy as it seems)
       for screenshot in $ ".thumbnails img.screenshot"
-        app.screenshots.push encodeURIComponent $(screenshot).attr "src"
+        app.screenshots.push $(screenshot).attr "src"
 
       res.json app
 
