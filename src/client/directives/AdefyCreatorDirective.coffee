@@ -9,9 +9,10 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
 
     scope.data = null
     scope.loading = false
-    scope.blur = 12
+    scope.blur = 30
     scope.styleClass = "palette-red"
     scope.buttonStyleClass = "button-round"
+    scope.bgOverlayClass = "overlay-bright1"
     scope.suggestions = null
 
     scope.generateBlurCSS = (blur) -> """
@@ -24,9 +25,10 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
 
     scope.setPalette = (suffix) -> scope.styleClass = "palette-#{suffix}"
     scope.setButtonStyle = (suffix) -> scope.buttonStyleClass = "button-#{suffix}"
+    scope.setBGOverlay = (suffix) -> scope.bgOverlayClass = "overlay-#{suffix}"
 
-    pendingTimeout = null
-    pendingInterval = null
+    pendingTimeouts = null
+    pendingIntervals = null
 
     scope.pickSuggestion = (suggestionURL) ->
       scope.url = "https://play.google.com#{suggestionURL}"
@@ -34,11 +36,13 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
 
     # Funky load sequence
     animateLoadBar = ->
-      pendingTimeout = setTimeout ->
+      if pendingTimeouts == null then pendingTimeouts = []
+
+      pendingTimeouts.push setTimeout ->
         $("#ad-screenshots ul").animate
           marginLeft: "#{-($("#ad-screenshots ul").width() - 343)}px"
         , 4000, "linear", ->
-          setTimeout ->
+          pendingTimeouts.push setTimeout ->
             $("#ad-screenshots ul").animate marginLeft: "0px", 4000
           , 2000
 
@@ -54,8 +58,14 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
       , 1000
 
     clearAnimations = ->
-      if pendingTimeout != null then clearTimeout pendingTimeout
-      if pendingInterval != null then clearInterval pendingInterval
+      if pendingTimeouts != null
+        clearTimeout timeout for timeout in pendingTimeouts
+
+      if pendingIntervals != null
+        clearInterval interval for interval in pendingIntervals
+
+      pendingTimeouts = null
+      pendingIntervals = null
 
     scope.updateTemplateURL = ->
       scope.data = null
@@ -74,11 +84,14 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
           developer: data.author
           screenshots: data.screenshots
           rating: data.rating
+          price: data.price
 
         # Start animation
         $timeout ->
           animateLoadBar()
-          pendingInterval = setInterval (-> animateLoadBar()), 12300
+
+          if pendingIntervals == null then pendingIntervals = []
+          pendingIntervals.push setInterval (-> animateLoadBar()), 12300
 
     scope.setScreenshotBG = (screenie) -> scope.currentBG = screenie
 

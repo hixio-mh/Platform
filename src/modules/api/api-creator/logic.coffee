@@ -88,7 +88,8 @@ setup = (options, imports, register) ->
       app =
         image: $(".details-wrapper.apps img.cover-image").attr "src"
         title: $(info).find(".document-title div").text()
-        author: $(info).find("a.document-subtitle span").text()
+        author: $(info).find("a.document-subtitle span[itemprop=name]").text()
+        category: $(info).find("a.document-subtitle span[itemprop=genre]").text()
         date: $(info).find("div.document-subtitle").text()[2...]
         rating: accounting.parse $(info).find(".stars-container .current-rating").css "width"
         ratingCount: Math.abs accounting.parse($(info).find(".stars-count").text()) * 1000
@@ -99,6 +100,8 @@ setup = (options, imports, register) ->
         installs: deSpace $(details).find(".meta-info .content[itemprop=numDownloads]").text()
         version: deSpace $(details).find(".meta-info .content[itemprop=softwareVersion]").text()
         contentRating: deSpace $(details).find(".meta-info .content[itemprop=contentRating]").text()
+
+        price: deSpace $(info).find("button.price.buy span[itemprop=offers] meta[itemprop=price]").attr "content"
 
         screenshots: []
 
