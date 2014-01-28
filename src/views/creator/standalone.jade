@@ -32,7 +32,6 @@ html(lang="en" ng-app="AdefyApp")
 
     link(rel="stylesheet" href="/css/reset.css")
     link(rel="stylesheet" href="/css/styles.min.css")
-    link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
     link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
 
   body
@@ -43,11 +42,13 @@ html(lang="en" ng-app="AdefyApp")
     br
     br
 
-    ad-creator(url="https://play.google.com/store/apps/details?id=com.Phosphor.WWZ" onmousedown="return false")
+    ad-creator(url="https://play.google.com/store/apps/details?id=com.joybits.doodlekingdom")
 
     footer
+      script(src="//zeptojs.com/zepto.min.js")
+      script(src="/js/vendor/zepto.fx.min.js")
+
       script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
       script.
         window.AdefyApp = angular.module("AdefyApp", []);
-      script(src="//zeptojs.com/zepto.min.js")
       script(src="/client/directives/AdefyCreatorDirective.js")
