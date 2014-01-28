@@ -1,0 +1,378 @@
+#ad-creator
+  width 1170px
+  marign 0 auto
+  position relative
+  font-weight 300
+  color white
+
+  .col, #device-container
+    display inline-block
+    vertical-align top
+
+  #device-container
+    user-select none
+    -moz-user-select none
+    -webkit-user-select none
+    -ms-user-select none
+
+    width 448px
+    height 768px
+    padding-bottom 196px
+    background-size cover !important
+
+    *
+      cursor default !important
+
+  .col
+    width 270px
+    margin-right 64px
+
+    .panel
+      background-color #f7f7f5
+      border-radius 4px
+      border 1px solid #e0e0df
+      box-shadow 0 0 2px #e0e0df
+      margin-bottom 10px
+
+      > *
+        padding 0 20px
+        margin 20px 0
+
+      :first-child
+
+        &.header
+          margin 0
+          padding 12px 20px
+
+      .header
+        color #535353
+        border-bottom 1px solid #e0e0df
+        text-align left
+
+        margin 0
+        padding 12px 20px
+
+        &.inner
+          border none
+          margin-bottom -12px
+          padding-bottom 0
+
+      > * > button
+        text-align center
+        background #f7f7f5
+        color #7e7e80
+        border-radius 4px
+        padding 8px 0
+        border 1px solid #dfdfdf
+
+        &:hover
+          cursor hand
+          cursor pointer
+
+      i
+        color #7e7e80
+
+      .inset-list
+        padding 10px
+        border-radius 4px
+        border 1px solid #d1d1d1
+        background-color #e8e8e8
+
+        li
+          display inline-block
+          vertical-align top
+          margin-left 8px
+
+          img
+            width 42px
+
+            &:hover
+              cursor pointer
+              cursor hand
+
+          &.fullw
+            display block
+            margin auto 8px
+
+      input[type=text], textarea
+        width 100%
+
+    button
+      width 100%
+
+  #device, #device-bg
+    top 62px
+    left 51px
+    width 344px
+    height 613px
+
+  #device-bg
+    clip rect(0px,344px,610px,1px)
+    background-size cover !important
+
+  #device
+    background-color rgba(0, 0, 0, 0.4)
+    position relative
+
+  button
+    border none
+    border-radius 16px
+    font-size 14px
+    text-shadow none
+
+  #appImage
+    border-radius 8px
+    width 60px
+    height 60px
+    margin-top 13px
+
+  #ad-label
+    font-size 12px
+    margin-left 4px
+    margin-top 20px
+
+  #app-title
+    font-size 16px
+    font-weight bold
+
+  #app-subtitle
+    font-size 14px
+    margin-bottom 16px
+
+  #app-developer
+    margin-bottom 16px
+
+  #app-developer, #app-description
+    font-size 12px
+    line-height 1.3
+
+  #ad-left-col, #ad-right-col
+    display inline-block
+    vertical-align top
+
+  #ad-left-col
+    margin-left 20px
+    width 60px
+
+  #ad-right-col
+    margin-left 20px
+    margin-top 46px
+    width 225px
+
+  #remind-me-later
+    margin 32px auto
+    height auto
+
+  #device-container
+    background transparent url(/img/nexus_large.png) no-repeat
+    position relative
+
+    #device, #device-bg
+      position absolute
+
+  .screenieBG
+    background-size cover
+
+  .header
+    margin-bottom 8px
+
+  .gray
+    color #999
+
+  i
+    margin-right 8px
+
+    &.fa.fa-eye
+      margin-top 1px
+
+  .right i
+    margin-right 0
+
+  #ad-screenshots-header
+    width 100%
+    font-size 12px
+    padding 0 10px
+    height 12px
+    position absolute
+    bottom 207px
+
+    > * > *
+      display inline-block
+      vertical-align top
+
+    > *, > * > *
+      line-height 1
+
+  #ad-screenshots
+    width 100%
+    overflow hidden
+    position absolute
+    bottom 29px
+    left 0
+
+    ul
+      display inline-block
+      height 160px
+      white-space nowrap
+      padding 0 10px
+
+      li
+        height 100%
+        display inline-block
+
+        img
+          border 2px solid white
+          border-left-width 1px
+          border-right-width 1px
+
+        &:first-child img
+          border-left-width 2px
+
+        &:last-child img
+          border-right-width 2px
+
+  #loader-bg
+    border 1px solid #ccc
+    background transparent
+    height 16px
+    width 326px
+    position absolute
+    left 10px
+    bottom 10px
+
+    #loader
+      background white !important
+      border 1px solid rgba(0, 0, 0, 0.5)
+      border-right-width 0
+      height 100%
+      width 0px
+
+  #rating-bg
+    background url(/assets/flatAssets/starfullnone.png)
+    width 100%
+
+  #rating
+    background url(/assets/flatAssets/starfull.png)
+
+  #rating-bg, #rating
+    height 12px
+    background-size 12px
+    background-repeat repeat-x
+
+  #ad-screenshots-bg
+    position absolute
+    bottom 0
+    left 1px
+    width 343px
+    height 229px
+    background-color #222
+    border-top 1px solid #232323
+    box-shadow inset 0 1px 1px #444
+
+  .color-option
+    width 32px
+    height 32px
+    border-radius 8px
+    margin-bottom 8px
+
+    &:hover
+      cursor hand
+      cursor pointer
+
+////
+//// Different color styles
+////
+
+// Also defines button styles!
+generateColorStyle(light, dark, borderCol, borderWidth)
+  button#remind-me-later.button-round, button.button-round, &.color-option
+    border borderWidth solid borderCol
+
+    background light
+    background -moz-linear-gradient(top, light 0%, dark 100%)
+    background -webkit-gradient(linear, left top, left bottom, color-stop(0%, light), color-stop(100%, dark))
+    background -webkit-linear-gradient(top, light 0%, dark 100%)
+    background -o-linear-gradient(top, light 0%, dark 100%)
+    background -ms-linear-gradient(top, light 0%, dark 100%)
+    background linear-gradient(to bottom, light 0%, dark 100%)
+
+    border-radius 32px
+
+  button#remind-me-later.button-round, button.button-round
+    padding 10px 48px
+
+    &.example
+      padding 10px 24px
+      margin-bottom 8px
+
+  button.button-square, button#remind-me-later.button-square
+    border-radius 4px !important
+    padding 10px 16px !important
+
+    background light
+    border-bottom 2px solid dark !important
+
+  button.button-square, button.button-round
+    color white
+    text-align center
+    font-size 14px
+    font-family "Source Sans Pro"
+    font-weight 300
+
+  i
+    color light
+
+// Round buttons
+style_LightCol_RedRound = #9b010d
+style_DarkCol_RedRound = #650409
+style_LightCol_BlueRound = #00559b
+style_DarkCol_BlueRound = #043664
+style_LightCol_GreenRound = #009b00
+style_DarkCol_GreenRound = #046310
+style_LightCol_YellowRound = #9A9b00
+style_DarkCol_YellowRound = #616404
+style_LightCol_OrangeRound = #9b5000
+style_DarkCol_OrangeRound = #643904
+
+style_LightCol_RedBrightRound = #ca0110
+style_DarkCol_RedBrightRound = #93050d
+style_LightCol_BlueBrightRound = #006dc6
+style_DarkCol_BlueBrightRound = #054c8e
+style_LightCol_GreenBrightRound = #00c600
+style_DarkCol_GreenBrightRound = #058e16
+style_LightCol_YellowBrightRound = #c5c600
+style_DarkCol_YellowBrightRound = #898e05
+style_LightCol_OrangeBrightRound = #c66600
+style_DarkCol_OrangeBrightRound = #8e5105
+
+// Normal (dark)
+.palette-red
+  generateColorStyle(style_LightCol_RedRound, style_DarkCol_RedRound, black, 0)
+
+.palette-blue
+  generateColorStyle(style_LightCol_BlueRound, style_DarkCol_BlueRound, black, 0)
+
+.palette-green
+  generateColorStyle(style_LightCol_GreenRound, style_DarkCol_GreenRound, black, 0)
+
+.palette-yellow
+  generateColorStyle(style_LightCol_YellowRound, style_DarkCol_YellowRound, black, 0)
+
+.palette-orange
+  generateColorStyle(style_LightCol_OrangeRound, style_DarkCol_OrangeRound, black, 0)
+
+// Bright
+.palette-redbright
+  generateColorStyle(style_LightCol_RedBrightRound, style_DarkCol_RedBrightRound, black, 0)
+
+.palette-bluebright
+  generateColorStyle(style_LightCol_BlueBrightRound, style_DarkCol_BlueBrightRound, black, 0)
+
+.palette-greenbright
+  generateColorStyle(style_LightCol_GreenBrightRound, style_DarkCol_GreenBrightRound, black, 0)
+
+.palette-yellowbright
+  generateColorStyle(style_LightCol_YellowBrightRound, style_DarkCol_YellowBrightRound, black, 0)
+
+.palette-orangebright
+  generateColorStyle(style_LightCol_OrangeBrightRound, style_DarkCol_OrangeBrightRound, black, 0)

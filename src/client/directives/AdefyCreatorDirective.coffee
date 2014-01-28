@@ -1,4 +1,4 @@
-window.AdefyApp.directive "adCreator", ["$http", ($http) ->
+window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) ->
 
   templateUrl: "/views/creator/creator"
   restrict: "AE"
@@ -7,73 +7,59 @@ window.AdefyApp.directive "adCreator", ["$http", ($http) ->
 
   link: (scope, element, attrs) ->
 
-    width = 365
-    height = 610
+    scope.data = null
+    scope.blur = 12
+    scope.styleClass = "palette-red"
+    scope.buttonStyleClass = "button-round"
 
-    wScaleFactor = width / 720
-    hScaleFactor = height / 1280
+    scope.generateBlurCSS = (blur) -> """
+      -webkit-filter: blur(#{blur}px);
+      -moz-filter: blur(#{blur}px);
+      -o-filter: blur(#{blur}px);
+      -ms-filter: blur(#{blur}px);
+      filter: blur(#{blur}px);
+    """
 
-    wScale = (w) -> w * wScaleFactor
-    hScale = (h) -> h * hScaleFactor
+    scope.setPalette = (suffix) -> scope.styleClass = "palette-#{suffix}"
+    scope.setButtonStyle = (suffix) -> scope.buttonStyleClass = "button-#{suffix}"
+
+    # Funky load sequence
+    animateLoadBar = ->
+      setTimeout ->
+        $("#ad-screenshots ul").animate
+          marginLeft: "#{-($("#ad-screenshots ul").width() - 343)}px"
+        , 4000, "linear", ->
+          setTimeout ->
+            $("#ad-screenshots ul").animate marginLeft: "0px", 4000
+          , 2000
+
+        $("#loader").animate width: "25%", 1000, "linear", ->
+          $("#loader").animate width: "33%", 2500, "linear", ->
+            $("#loader").animate width: "59%", 700, "linear", ->
+              $("#loader").animate width: "85%", 1300, "linear", ->
+                $("#loader").animate width: "92%", 3500, "linear", ->
+                  $("#loader").animate width: "100%", 1000, "linear", ->
+
+                    # Bounce back and restart!
+                    $("#loader").animate width: "0%", 1000
+      , 1000
 
     $http.get("/api/v1/creator/#{encodeURIComponent scope.url}").success (data) ->
 
-      $("#device").css
-        width: width
-        height: height
-        background: "url(/assets/flatAssets/layer4.png)"
+      scope.currentBG = data.screenshots[0]
+      scope.data =
+        image: data.image
+        subtitle: "Enter a subtitle"
+        description: data.description[0...200]
+        title: data.title
+        developer: data.author
+        screenshots: data.screenshots
+        rating: data.rating
 
-      ##
-      ## Left column
-      ##
+      # Start animation
+      $timeout ->
+        animateLoadBar()
+        setInterval (-> animateLoadBar()), 12300
 
-      $("#ad-left-col").css
-        left: wScale 40
-        top: 0
-
-      $("#appImage").attr "src", "/api/v1/creator/image/#{data.image}"
-      $("#appImage").css
-        width: wScale 160
-        height: wScale 160
-        top: hScale 80
-
-      $("#ad-label").css
-        top: hScale 25
-
-      ##
-      ## Right column
-      ##
-
-      $("#ad-right-col").css
-        left: wScale 240
-        top: hScale 80
-        width: wScale 440
-
-      $("#app-title").text data.title
-      $("#app-subtitle").text "Subtitle"
-      $("#app-developer span").text data.author
-      $("#app-description span").text data.description[0...200]
-
-      ##
-      ## Screenshots
-      ##
-
-      $("#ad-screenshots-header").css
-        top: hScale(80) + $("#ad-right-col").height()
-        paddingLeft: wScale 40
-        paddingRight: wScale 40
-
-      $("#ad-screenshots").css
-        top: hScale(120) + $("#ad-right-col").height() + $("#ad-screenshots-header").height()
-
-      $("#ad-screenshots ul").css
-        paddingLeft: wScale 20
-        paddingRight: wScale 20
-
-      for screenshot in data.screenshots
-        $("#ad-screenshots ul").append """
-          <li>
-            <img src="/api/v1/creator/image/#{screenshot}" alt="" height="180"/>
-          </li>
-        """
+    scope.setScreenshotBG = (screenie) -> scope.currentBG = screenie
 ]
