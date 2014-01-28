@@ -8,9 +8,11 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
   link: (scope, element, attrs) ->
 
     scope.data = null
+    scope.loading = false
     scope.blur = 12
     scope.styleClass = "palette-red"
     scope.buttonStyleClass = "button-round"
+    scope.suggestions = null
 
     scope.generateBlurCSS = (blur) -> """
       -webkit-filter: blur(#{blur}px);
@@ -23,9 +25,16 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
     scope.setPalette = (suffix) -> scope.styleClass = "palette-#{suffix}"
     scope.setButtonStyle = (suffix) -> scope.buttonStyleClass = "button-#{suffix}"
 
+    pendingTimeout = null
+    pendingInterval = null
+
+    scope.pickSuggestion = (suggestionURL) ->
+      scope.url = "https://play.google.com#{suggestionURL}"
+      scope.updateTemplateURL()
+
     # Funky load sequence
     animateLoadBar = ->
-      setTimeout ->
+      pendingTimeout = setTimeout ->
         $("#ad-screenshots ul").animate
           marginLeft: "#{-($("#ad-screenshots ul").width() - 343)}px"
         , 4000, "linear", ->
@@ -44,22 +53,35 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
                     $("#loader").animate width: "0%", 1000
       , 1000
 
-    $http.get("/api/v1/creator/#{encodeURIComponent scope.url}").success (data) ->
+    clearAnimations = ->
+      if pendingTimeout != null then clearTimeout pendingTimeout
+      if pendingInterval != null then clearInterval pendingInterval
 
-      scope.currentBG = data.screenshots[0]
-      scope.data =
-        image: data.image
-        subtitle: "Enter a subtitle"
-        description: data.description[0...200]
-        title: data.title
-        developer: data.author
-        screenshots: data.screenshots
-        rating: data.rating
+    scope.updateTemplateURL = ->
+      scope.data = null
+      scope.loading = true
+      clearAnimations()
 
-      # Start animation
-      $timeout ->
-        animateLoadBar()
-        setInterval (-> animateLoadBar()), 12300
+      $http.get("/api/v1/creator/#{encodeURIComponent scope.url}").success (data) ->
+
+        scope.loading = false
+        scope.currentBG = data.screenshots[0]
+        scope.data =
+          image: data.image
+          subtitle: "Enter a subtitle"
+          description: data.description[0...200]
+          title: data.title
+          developer: data.author
+          screenshots: data.screenshots
+          rating: data.rating
+
+        # Start animation
+        $timeout ->
+          animateLoadBar()
+          pendingInterval = setInterval (-> animateLoadBar()), 12300
 
     scope.setScreenshotBG = (screenie) -> scope.currentBG = screenie
+
+    $http.get("/api/v1/creator/suggestions").success (data) ->
+      scope.suggestions = data
 ]

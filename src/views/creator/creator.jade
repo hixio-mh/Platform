@@ -1,109 +1,126 @@
 .container#ad-creator
 
-  .col
-    .panel
-      .header Background
-      .header.inner Blur
-      div
-        input(type="number" placeholder="Enter blur amount" min="8" ng-model="blur")
-      .header.inner Select Background
-      div
-        ul.inset-list
-          li(ng-repeat="screenshot in data.screenshots")
-            img.screenieBG(ng-src="/api/v1/creator/image/{{ screenshot }}" ng-click="setScreenshotBG(screenshot)")
-      div
-        button
-          i.fa.fa-plus
-          | Upload Texture
+  .mainURL
+    input(type="url" placeholder="Enter Google Play URL" ng-model="url")
+    button(ng-click="updateTemplateURL()") Generate Creative
 
-  .col
-    .panel
-      .header Text Content
-      .header.inner Subtitle
-      div
-        input(type="text" placeholder="Subtitle" ng-model="data.subtitle")
-      .header.inner Description
-      div
-        textarea(placeholder="Description" ng-model="data.description" rows="6")
+  div(ng-if="data == null && loading == false").tcenter
+    .waiting-message Waiting for URL
 
-    .panel
-      .header Styling
+  div(ng-if="data == null && loading == true").tcenter
+    .waiting-message Generating creative...
 
-      .header.inner Color Palette
-      div
-        ul.inset-list
-          li
-            div.color-option.palette-redbright(ng-click="setPalette('redbright')")
-          li
-            div.color-option.palette-bluebright(ng-click="setPalette('bluebright')")
-          li
-            div.color-option.palette-greenbright(ng-click="setPalette('greenbright')")
-          li
-            div.color-option.palette-yellowbright(ng-click="setPalette('yellowbright')")
-          li
-            div.color-option.palette-orangebright(ng-click="setPalette('orangebright')")
+  div(ng-if="data == null && suggestions != null")#suggestions
+    .header Some suggestions
+    ul
+      li(ng-repeat="suggestion in suggestions | limitTo:10" ng-click="pickSuggestion(suggestion.url)")
+        img(ng-src="{{ suggestion.cover }}")
 
-          li
-            div.color-option.palette-red(ng-click="setPalette('red')")
-          li
-            div.color-option.palette-blue(ng-click="setPalette('blue')")
-          li
-            div.color-option.palette-green(ng-click="setPalette('green')")
-          li
-            div.color-option.palette-yellow(ng-click="setPalette('yellow')")
-          li
-            div.color-option.palette-orange(ng-click="setPalette('orange')")
+  div(ng-if="data")
+    .col
+      .panel
+        .header Background
+        .header.inner Blur
+        div
+          input(type="number" placeholder="Enter blur amount" min="8" ng-model="blur")
+        .header.inner Select Background
+        div
+          ul.inset-list
+            li(ng-repeat="screenshot in data.screenshots")
+              img.screenieBG(ng-src="{{ screenshot }}" ng-click="setScreenshotBG(screenshot)")
+        div
+          button
+            i.fa.fa-plus
+            | Upload Texture
 
-      .header.inner Button Style
-      div
-        ul.inset-list
-          li(class="fullw {{ styleClass }}")
-            button.button-round.example(ng-click="setButtonStyle('round')") Remind me later!
-          li(class="fullw {{ styleClass }}")
-            button.button-square.example(ng-click="setButtonStyle('square')") Remind me later!
+    .col
+      .panel
+        .header Text Content
+        .header.inner Subtitle
+        div
+          input(type="text" placeholder="Subtitle" ng-model="data.subtitle")
+        .header.inner Description
+        div
+          textarea(placeholder="Description" ng-model="data.description" rows="6")
 
-  #device-container(onmousedown="return false" ng-if="data" class="{{ styleClass }}")
-    #device-bg(style="background: url(/api/v1/creator/image/{{ currentBG }}); {{ generateBlurCSS(blur) }}")
-    #device
-      #ad-left-col
-        #ad-label.gray Advertisment
-        img#appImage(ng-src="/api/v1/creator/image/{{ data.image }}" alt="")
-        #rating-bg
-          #rating(style="width: {{ data.rating }}%")
+      .panel
+        .header Styling
 
-      #ad-right-col
-        #app-title(ng-bind="data.title")
-        #app-subtitle(ng-bind="data.subtitle")
+        .header.inner Color Palette
+        div
+          ul.inset-list
+            li
+              div.color-option.palette-redbright(ng-click="setPalette('redbright')")
+            li
+              div.color-option.palette-bluebright(ng-click="setPalette('bluebright')")
+            li
+              div.color-option.palette-greenbright(ng-click="setPalette('greenbright')")
+            li
+              div.color-option.palette-yellowbright(ng-click="setPalette('yellowbright')")
+            li
+              div.color-option.palette-orangebright(ng-click="setPalette('orangebright')")
 
-        #app-developer
-          .header.gray
-            i.fa.fa-user
-            | Developer
-          span(ng-bind="data.developer")
+            li
+              div.color-option.palette-red(ng-click="setPalette('red')")
+            li
+              div.color-option.palette-blue(ng-click="setPalette('blue')")
+            li
+              div.color-option.palette-green(ng-click="setPalette('green')")
+            li
+              div.color-option.palette-yellow(ng-click="setPalette('yellow')")
+            li
+              div.color-option.palette-orange(ng-click="setPalette('orange')")
 
-        #app-description
-          .header.gray
-            i.fa.fa-bars
-            | Description
-          span(ng-bind="data.description")
+        .header.inner Button Style
+        div
+          ul.inset-list
+            li(class="fullw {{ styleClass }}")
+              button.button-round.example(ng-click="setButtonStyle('round')") Remind me later!
+            li(class="fullw {{ styleClass }}")
+              button.button-square.example(ng-click="setButtonStyle('square')") Remind me later!
 
-        button#remind-me-later(class="{{ buttonStyleClass }}") Remind me later!
+    #device-container(onmousedown="return false" class="{{ styleClass }}")
+      #device-bg(style="background: url({{ currentBG }}); {{ generateBlurCSS(blur) }}")
+      #device
+        #ad-left-col
+          #ad-label.gray Advertisment
+          img#appImage(ng-src="{{ data.image }}" alt="")
+          #rating-bg
+            #rating(style="width: {{ data.rating }}%")
 
-      #ad-screenshots-bg
-      #ad-screenshots-header
-        .left
-          i.fa.fa-picture-o
-          .gray Snapshots - 
-          |  {{ data.title }}
+        #ad-right-col
+          #app-title(ng-bind="data.title")
+          #app-subtitle(ng-bind="data.subtitle")
 
-        .right
-          i.fa.fa-eye 
-            | {{ data.screenshots.length }}
+          #app-developer
+            .header.gray
+              i.fa.fa-user
+              | Developer
+            span(ng-bind="data.developer")
 
-      #ad-screenshots
-        ul
-          li(ng-repeat="screenshot in data.screenshots")
-            img(ng-src="/api/v1/creator/image/{{ screenshot }}" alt="" height="160")
+          #app-description
+            .header.gray
+              i.fa.fa-bars
+              | Description
+            span(ng-bind="data.description")
 
-      #loader-bg
-        #loader
+          button#remind-me-later(class="{{ buttonStyleClass }}") Remind me later!
+
+        #ad-screenshots-bg
+        #ad-screenshots-header
+          .left
+            i.fa.fa-picture-o
+            .gray Snapshots - 
+            |  {{ data.title }}
+
+          .right
+            i.fa.fa-eye 
+              | {{ data.screenshots.length }}
+
+        #ad-screenshots
+          ul
+            li(ng-repeat="screenshot in data.screenshots")
+              img(ng-src="{{ screenshot }}" alt="" height="160")
+
+        #loader-bg
+          #loader
