@@ -28,7 +28,8 @@
     "hiredis": "~0.1.16",
     "statsd-client": "0.0.15",
     "accounting": "~0.3.2",
-    "sha1": "~1.1.0"
+    "sha1": "~1.1.0",
+    "recluster": "~0.3.4"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
