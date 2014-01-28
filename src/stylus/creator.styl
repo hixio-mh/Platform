@@ -237,6 +237,10 @@
     > *, > * > *
       line-height 1
 
+    .right i
+      margin-right 4px
+      margin-top -1px
+
   #ad-screenshots
     width 100%
     overflow hidden
@@ -266,20 +270,11 @@
           border-right-width 2px
 
   #loader-bg
-    border 1px solid #ccc
-    background transparent
     height 16px
     width 326px
     position absolute
     left 10px
     bottom 10px
-
-    #loader
-      background white !important
-      border 1px solid rgba(0, 0, 0, 0.5)
-      border-right-width 0
-      height 100%
-      width 0px
 
   #rating-bg
     background url(/assets/flatAssets/starfullnone.png)
@@ -307,16 +302,6 @@
     background-color #222
     border-top 1px solid #232323
     box-shadow inset 0 1px 1px #444
-
-  .color-option
-    width 32px
-    height 32px
-    border-radius 8px
-    margin-bottom 8px
-
-    &:hover
-      cursor hand
-      cursor pointer
 
   #suggestions
     margin-top 32px
@@ -388,6 +373,16 @@ generateColorStyle(light, dark, borderCol, borderWidth)
   i
     color light
 
+.color-option
+  width 32px
+  height 32px
+  border-radius 8px
+  margin-bottom 8px
+
+  &:hover
+    cursor hand
+    cursor pointer
+
 // Round buttons
 style_LightCol_RedRound = #9b010d
 style_DarkCol_RedRound = #650409
@@ -443,15 +438,7 @@ style_DarkCol_OrangeBrightRound = #8e5105
 .palette-orangebright
   generateColorStyle(style_LightCol_OrangeBrightRound, style_DarkCol_OrangeBrightRound, black, 0)
 
-.overlay-option
-  width 32px
-  height 32px
-  margin-bottom 8px
-
-  &:hover
-    cursor hand
-    cursor pointer
-
+// Overlays
 .overlay-bright1
   background rgba(255, 255, 255, 0.1)
 .overlay-bright2
@@ -528,3 +515,103 @@ style_DarkCol_OrangeBrightRound = #8e5105
   background rgba(198, 102, 0, 0.4)
 .overlay-orange5
   background rgba(198, 102, 0, 0.5)
+
+// Loading bar colors
+.loading-white
+  &.color-option, .loading-element
+    background-color white
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid #ccc
+
+.loading-red
+  &.color-option, .loading-element
+    background-color style_LightCol_RedBrightRound
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid style_DarkCol_RedBrightRound
+
+.loading-blue
+  &.color-option, .loading-element
+    background-color style_LightCol_BlueBrightRound
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid style_DarkCol_BlueBrightRound
+
+.loading-green
+  &.color-option, .loading-element
+    background-color style_LightCol_GreenBrightRound
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid style_DarkCol_GreenBrightRound
+
+.loading-yellow
+  &.color-option, .loading-element
+    background-color style_LightCol_YellowBrightRound
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid style_DarkCol_YellowBrightRound
+
+.loading-orange
+  &.color-option, .loading-element
+    background-color style_LightCol_OrangeBrightRound
+
+  &.loading-style-round .loading-element
+    border-bottom 1px solid style_DarkCol_OrangeBrightRound
+
+// Loading bar styles
+.loading-style-option
+  width 100%
+  height 16px
+
+  &:hover
+    cursor hand
+    cursor pointer
+
+.loading-style-options
+  margin 0 8px
+  display block
+
+  li
+    margin 0 !important
+    width 100%
+
+.loading-container
+  position relative
+  width 100%
+  height 100%
+
+  .loading-element
+    position absolute
+    width 75%
+    height 100%
+
+    &.w25
+      width 25%
+
+    &.w50
+      width 50%
+
+    &.w75
+      width 75%
+
+.loading-style-flat
+  .loading-container
+    background rgba(255, 255, 255, 0.1)
+
+  &.loading-style-option .loading-container
+    background rgba(0, 0, 0, 0.1)
+
+.loading-style-round
+  .loading-container
+    border-radius 2px
+    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.1)
+    padding 1px
+    background rgba(255, 255, 255, 0.1)
+
+  &.loading-style-option .loading-container
+    background rgba(0, 0, 0, 0.1)
+
+  .loading-element
+    border-radius 2px
+    height 14px

@@ -33,55 +33,55 @@
             li(ng-repeat="screenshot in data.screenshots")
               img.screenieBG(ng-src="{{ screenshot }}" ng-click="setScreenshotBG(screenshot)")
 
-        .header.inner Background Overlay
-        div
-          ul.inset-list
-            li: div.overlay-option.overlay-dark1(ng-click="setBGOverlay('dark1')")
-            li: div.overlay-option.overlay-dark2(ng-click="setBGOverlay('dark2')")
-            li: div.overlay-option.overlay-dark3(ng-click="setBGOverlay('dark3')")
-            li: div.overlay-option.overlay-dark4(ng-click="setBGOverlay('dark4')")
-            li: div.overlay-option.overlay-dark5(ng-click="setBGOverlay('dark5')")
-
-            li: div.overlay-option.overlay-bright1(ng-click="setBGOverlay('bright1')")
-            li: div.overlay-option.overlay-bright2(ng-click="setBGOverlay('bright2')")
-            li: div.overlay-option.overlay-bright3(ng-click="setBGOverlay('bright3')")
-            li: div.overlay-option.overlay-bright4(ng-click="setBGOverlay('bright4')")
-            li: div.overlay-option.overlay-bright5(ng-click="setBGOverlay('bright5')")
-
-            li: div.overlay-option.overlay-red1(ng-click="setBGOverlay('red1')")
-            li: div.overlay-option.overlay-red2(ng-click="setBGOverlay('red2')")
-            li: div.overlay-option.overlay-red3(ng-click="setBGOverlay('red3')")
-            li: div.overlay-option.overlay-red4(ng-click="setBGOverlay('red4')")
-            li: div.overlay-option.overlay-red5(ng-click="setBGOverlay('red5')")
-
-            li: div.overlay-option.overlay-blue1(ng-click="setBGOverlay('blue1')")
-            li: div.overlay-option.overlay-blue2(ng-click="setBGOverlay('blue2')")
-            li: div.overlay-option.overlay-blue3(ng-click="setBGOverlay('blue3')")
-            li: div.overlay-option.overlay-blue4(ng-click="setBGOverlay('blue4')")
-            li: div.overlay-option.overlay-blue5(ng-click="setBGOverlay('blue5')")
-
-            li: div.overlay-option.overlay-green1(ng-click="setBGOverlay('green1')")
-            li: div.overlay-option.overlay-green2(ng-click="setBGOverlay('green2')")
-            li: div.overlay-option.overlay-green3(ng-click="setBGOverlay('green3')")
-            li: div.overlay-option.overlay-green4(ng-click="setBGOverlay('green4')")
-            li: div.overlay-option.overlay-green5(ng-click="setBGOverlay('green5')")
-
-            li: div.overlay-option.overlay-yellow1(ng-click="setBGOverlay('yellow1')")
-            li: div.overlay-option.overlay-yellow2(ng-click="setBGOverlay('yellow2')")
-            li: div.overlay-option.overlay-yellow3(ng-click="setBGOverlay('yellow3')")
-            li: div.overlay-option.overlay-yellow4(ng-click="setBGOverlay('yellow4')")
-            li: div.overlay-option.overlay-yellow5(ng-click="setBGOverlay('yellow5')")
-
-            li: div.overlay-option.overlay-orange1(ng-click="setBGOverlay('orange1')")
-            li: div.overlay-option.overlay-orange2(ng-click="setBGOverlay('orange2')")
-            li: div.overlay-option.overlay-orange3(ng-click="setBGOverlay('orange3')")
-            li: div.overlay-option.overlay-orange4(ng-click="setBGOverlay('orange4')")
-            li: div.overlay-option.overlay-orange5(ng-click="setBGOverlay('orange5')")
-
         div
           button
             i.fa.fa-plus
             | Upload Image
+
+        .header.inner Background Overlay
+        div
+          ul.inset-list
+            li: div.color-option.overlay-dark1(ng-click="setBGOverlay('dark1')")
+            li: div.color-option.overlay-dark2(ng-click="setBGOverlay('dark2')")
+            li: div.color-option.overlay-dark3(ng-click="setBGOverlay('dark3')")
+            li: div.color-option.overlay-dark4(ng-click="setBGOverlay('dark4')")
+            li: div.color-option.overlay-dark5(ng-click="setBGOverlay('dark5')")
+
+            li: div.color-option.overlay-bright1(ng-click="setBGOverlay('bright1')")
+            li: div.color-option.overlay-bright2(ng-click="setBGOverlay('bright2')")
+            li: div.color-option.overlay-bright3(ng-click="setBGOverlay('bright3')")
+            li: div.color-option.overlay-bright4(ng-click="setBGOverlay('bright4')")
+            li: div.color-option.overlay-bright5(ng-click="setBGOverlay('bright5')")
+
+            li: div.color-option.overlay-red1(ng-click="setBGOverlay('red1')")
+            li: div.color-option.overlay-red2(ng-click="setBGOverlay('red2')")
+            li: div.color-option.overlay-red3(ng-click="setBGOverlay('red3')")
+            li: div.color-option.overlay-red4(ng-click="setBGOverlay('red4')")
+            li: div.color-option.overlay-red5(ng-click="setBGOverlay('red5')")
+
+            li: div.color-option.overlay-blue1(ng-click="setBGOverlay('blue1')")
+            li: div.color-option.overlay-blue2(ng-click="setBGOverlay('blue2')")
+            li: div.color-option.overlay-blue3(ng-click="setBGOverlay('blue3')")
+            li: div.color-option.overlay-blue4(ng-click="setBGOverlay('blue4')")
+            li: div.color-option.overlay-blue5(ng-click="setBGOverlay('blue5')")
+
+            li: div.color-option.overlay-green1(ng-click="setBGOverlay('green1')")
+            li: div.color-option.overlay-green2(ng-click="setBGOverlay('green2')")
+            li: div.color-option.overlay-green3(ng-click="setBGOverlay('green3')")
+            li: div.color-option.overlay-green4(ng-click="setBGOverlay('green4')")
+            li: div.color-option.overlay-green5(ng-click="setBGOverlay('green5')")
+
+            li: div.color-option.overlay-yellow1(ng-click="setBGOverlay('yellow1')")
+            li: div.color-option.overlay-yellow2(ng-click="setBGOverlay('yellow2')")
+            li: div.color-option.overlay-yellow3(ng-click="setBGOverlay('yellow3')")
+            li: div.color-option.overlay-yellow4(ng-click="setBGOverlay('yellow4')")
+            li: div.color-option.overlay-yellow5(ng-click="setBGOverlay('yellow5')")
+
+            li: div.color-option.overlay-orange1(ng-click="setBGOverlay('orange1')")
+            li: div.color-option.overlay-orange2(ng-click="setBGOverlay('orange2')")
+            li: div.color-option.overlay-orange3(ng-click="setBGOverlay('orange3')")
+            li: div.color-option.overlay-orange4(ng-click="setBGOverlay('orange4')")
+            li: div.color-option.overlay-orange5(ng-click="setBGOverlay('orange5')")
 
     .col
       .panel
@@ -119,6 +119,32 @@
             li(class="fullw {{ styleClass }}")
               button.button-square.example(ng-click="setButtonStyle('square')") Remind me later!
 
+      .panel
+        .header Loading
+
+        .header.inner Loading Bar Color
+        div
+          ul.inset-list
+            li: div.color-option.loading-white(ng-click="setLoadingColor('white')")
+            li: div.color-option.loading-red(ng-click="setLoadingColor('red')")
+            li: div.color-option.loading-blue(ng-click="setLoadingColor('blue')")
+            li: div.color-option.loading-green(ng-click="setLoadingColor('green')")
+            li: div.color-option.loading-yellow(ng-click="setLoadingColor('yellow')")
+            li: div.color-option.loading-orange(ng-click="setLoadingColor('orange')")
+
+        .header.inner Loading Bar Style
+        div
+          ul.inset-list.loading-style-options
+            li
+              div.loading-style-option.loading-style-flat(class="{{ loadingColorClass }}" ng-click="setLoadingStyle('flat')")
+                .loading-container
+                  .loading-element
+
+            li
+              div.loading-style-option.loading-style-round(class="{{ loadingColorClass }}" ng-click="setLoadingStyle('round')")
+                .loading-container
+                  .loading-element
+
     #device-container(onmousedown="return false" class="{{ styleClass }}")
       #device-bg(style="background: url({{ currentBG }}); {{ generateBlurCSS(blur) }}")
       #device(class="{{ bgOverlayClass }}")
@@ -155,13 +181,14 @@
             |  {{ data.title }}
 
           .right
-            i.fa.fa-eye 
-              | {{ data.screenshots.length }}
+            i.fa.fa-eye
+            span {{ data.screenshots.length }}
 
         #ad-screenshots
           ul
             li(ng-repeat="screenshot in data.screenshots")
               img(ng-src="{{ screenshot }}" alt="" height="160")
 
-        #loader-bg
-          #loader
+        div(class="{{ loadingColorClass }} {{ loadingStyleClass }}")
+          .loading-container#loader-bg
+            .loading-element#loader

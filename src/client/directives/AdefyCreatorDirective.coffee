@@ -13,6 +13,8 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
     scope.styleClass = "palette-red"
     scope.buttonStyleClass = "button-round"
     scope.bgOverlayClass = "overlay-bright1"
+    scope.loadingColorClass = "loading-white"
+    scope.loadingStyleClass = "loading-style-round"
     scope.suggestions = null
 
     scope.generateBlurCSS = (blur) -> """
@@ -26,6 +28,8 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
     scope.setPalette = (suffix) -> scope.styleClass = "palette-#{suffix}"
     scope.setButtonStyle = (suffix) -> scope.buttonStyleClass = "button-#{suffix}"
     scope.setBGOverlay = (suffix) -> scope.bgOverlayClass = "overlay-#{suffix}"
+    scope.setLoadingColor = (suffix) -> scope.loadingColorClass = "loading-#{suffix}"
+    scope.setLoadingStyle = (suffix) -> scope.loadingStyleClass = "loading-style-#{suffix}"
 
     pendingTimeouts = null
     pendingIntervals = null
