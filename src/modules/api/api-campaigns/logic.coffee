@@ -138,7 +138,7 @@ setup = (options, imports, register) ->
       if not campaign then return res.send 404
 
       # Check if authorized
-      if not req.user.admin and not campaign.owner.equals req.user.id
+      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
       campaign.fetchOverviewStats (stats) ->
@@ -163,7 +163,7 @@ setup = (options, imports, register) ->
       if not campaign then return res.send 404
 
       # Permission check
-      if not req.user.admin and not campaign.owner.equals req.user.id
+      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.json 403
 
       # Store modification information
@@ -342,7 +342,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
 
-      if not req.user.admin and not campaign.owner.equals req.user.id
+      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         res.json 403, { error: "Unauthorized!" }
         return
 
@@ -371,7 +371,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
 
-      if not req.user.admin and req.user.id != campaign.owner
+      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
       campaign.activate()
@@ -384,7 +384,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
 
-      if not req.user.admin and req.user.id != campaign.owner
+      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
       campaign.deactivate()
