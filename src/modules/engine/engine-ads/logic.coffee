@@ -302,8 +302,8 @@ setup = (options, imports, register) ->
     for key, ad of structuredAds
 
       # Add key to fetch list
-      if campaignPaceData[ad.campaignId] != null
-        campaignPaceData[ad.campaignId] = null
+      if campaignPaceData[ad.campaignId] == undefined
+        campaignPaceData[ad.campaignId] = {}
 
         keysToFetch.push "campaign:#{ad.campaignId}:pacing:spent"
         keysToFetch.push "campaign:#{ad.campaignId}:pacing:target"
@@ -320,10 +320,6 @@ setup = (options, imports, register) ->
       # Pack data appropriately
       for key, i in keysToFetch
         splitKey = key.split ":"
-
-        if campaignPaceData[splitKey[1]] == undefined
-          campaignPaceData[splitKey[1]] = {}
-
         campaignPaceData[splitKey[1]][splitKey[3]] = Number data[i]
 
       ##
