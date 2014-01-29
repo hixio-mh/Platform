@@ -161,7 +161,7 @@ window.AdefyApp.controller "AdefyReportsAppsController", ($scope, App, $http) ->
 
       $scope.comparisonData = tableData
 
-    buildTableDataForApp app for app, i in apps
+    buildTableDataForApp app for app in apps
 
   update = ->
     initNullGraphs()
