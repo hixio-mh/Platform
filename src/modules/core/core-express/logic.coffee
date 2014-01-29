@@ -5,7 +5,6 @@ http = require "http"
 crypto = require "crypto"
 fs = require "fs"
 spew = require "spew"
-gzippo = require "gzippo"
 expressValidator = require "express-validator"
 
 setup = (options, imports, register) ->
@@ -120,8 +119,6 @@ setup = (options, imports, register) ->
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
           app.use express.session sessionSecret
-          # app.use connect.static static_root
-          # app.use gzippo.staticGzip static_root
 
           # Register custom middleware
           for rule in rules
