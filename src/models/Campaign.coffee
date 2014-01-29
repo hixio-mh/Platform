@@ -355,8 +355,9 @@ schema.methods.updatePaceData = (cb) ->
   redis.get key, (err, pacing) ->
     if err then spew.error err
 
+    # Start with a pace of 0, to begin with optimal calculated pace
     if pacing == null
-      pacing = "0.5:0:#{targetSpend}:#{new Date().getTime()}"
+      pacing = "0:0:#{targetSpend}:#{new Date().getTime()}"
     else
 
       # Update only target spend
