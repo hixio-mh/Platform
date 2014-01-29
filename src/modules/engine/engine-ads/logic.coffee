@@ -350,10 +350,6 @@ setup = (options, imports, register) ->
           # Zero-out the bid if pacing requires us to do so (not joining in RTB)
           if Math.random() > paceData.pace then ad.bid = 0
 
-          if ad.bid == 0 then spew.warning "Skipping bid, pace #{paceData.pace}"
-          else if ad.pricing == "CPC"
-            spew.info "Generated CPC bid: #{ad.bid}"
-
           # Update pacing expenditure
           paceData.spent += ad.bid
 
