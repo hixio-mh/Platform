@@ -24,7 +24,10 @@ redis = redisInterface.main
 handleError = (err) -> if err then spew.error err
 
 setup = (options, imports, register) ->
-  if rebuild != true or cluster.worker.id != 1 then return register null, {}
+
+  # If we are a worker in a cluster, only execute for worker 1
+  if (cluster.worker != null and cluster.worker.id != 1) or rebuild != true
+    return register null, {}
 
   spew.info "Re-generating redis structures (this may take awhile)..."
 

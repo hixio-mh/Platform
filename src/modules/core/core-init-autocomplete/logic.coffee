@@ -29,10 +29,12 @@ pref = "autocomplete:#{AUTOCOMPLETE_VERSION}"
 
 ##
 ## Initializes our autocomplete database if needed
-## This only happens on worker 1
 ##
 setup = (options, imports, register) ->
-  if cluster.worker.id != 1 then return register null, {}
+
+  # If we are a worker in a cluster, only execute for worker 1
+  if cluster.worker != null and cluster.worker.id != 1
+    return register null, {}
 
   redis = imports["core-redis"].autocomplete
 
