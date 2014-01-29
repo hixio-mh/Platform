@@ -36,6 +36,7 @@ module.exports = (grunt) ->
   stagingDir = config.buildDirs.staging
   productionDir = config.buildDirs.production
   testingDir = config.buildDirs.testing
+  codeshipDir = config.buildDirs["testing-codeship"]
 
   # Initial build directory (by default, development)
   _buildDir = devDir
@@ -127,6 +128,8 @@ module.exports = (grunt) ->
     _buildDir = stagingDir
   else if process.argv[2] == "deployTest"
     _buildDir = testingDir
+  else if process.argv[2] == "codeshipTest"
+    _buildDir = codeshipDir
 
   # Execute here, with default build path
   buildPaths()
@@ -364,6 +367,15 @@ module.exports = (grunt) ->
     _buildDir = stagingDir
     buildPaths()
     grunt.task.run "persistentFull"
+
+  # Builds a codeship-testable build, and tests it
+  grunt.registerTask "codeshipTest", "Build for codeship testing, and test", ->
+
+    genConfig "testing-codeship"
+    _buildDir = testingDir
+    buildPaths()
+    grunt.task.run "full"
+    grunt.task.run "mochaTest:selfTest"
 
   # Generates a test config file, builds to testing, and runs our unit tests
   # This is used server-side to verify deployment
