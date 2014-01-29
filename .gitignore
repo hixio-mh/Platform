@@ -13,3 +13,7 @@ src/config.json
 *.pyc
 .idea/
 .DS_Store
+
+naught.log
+stderr.log
+stdout.log
