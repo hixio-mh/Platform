@@ -28,10 +28,10 @@ url = "http://#{modeConfig.domain}/api/v1/serve"
 ##
 publisherUpdateDelay = 60 * 1000
 
-maxDelay = 10000
-minDelay = 100
+maxDelay = 500
+minDelay = 10
 
-keyChance = 0.5
+keyChance = 0.9
 impressionChance = 0.8
 maxCTR = 0.7
 minCTR = 0.3
