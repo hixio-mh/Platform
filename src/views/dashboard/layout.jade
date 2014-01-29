@@ -76,7 +76,7 @@ html(lang="en" ng-app="AdefyApp")
         a(href="/home/publisher" alias="/home/advertiser" tab)
           i.fa.fa-fw.fa-home
           | Dashboard
-        a(href="/reports" tab)
+        a(href="/reports/campaigns" tab)
           i.fa.fa-fw.fa-signal
           | Reports
         a(href="/campaigns" tab)
@@ -199,7 +199,6 @@ html(lang="en" ng-app="AdefyApp")
       script(src="/client/pages/reports/controllers/AdefyReportsAdsController.js")
       script(src="/client/pages/reports/controllers/AdefyReportsAppsController.js")
       script(src="/client/pages/reports/controllers/AdefyReportsCampaignsController.js")
-      script(src="/client/pages/reports/controllers/AdefyReportsIndexController.js")
 
       if locals.user.admin
         script(src="/client/pages/admin/controllers/AdefyAdminIndexController.js")

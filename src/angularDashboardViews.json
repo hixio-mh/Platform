@@ -4,7 +4,9 @@
     "/home/advertiser",
     "/home/publisher",
 
-    "/reports",
+    "/reports/campaigns",
+    "/reports/ads",
+    "/reports/apps",
 
     "/apps",
     "/apps/new",

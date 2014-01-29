@@ -68,6 +68,8 @@ window.AdefyApp.directive "analytics", ["$http", "$timeout", ($http, $timeout) -
       statics = []
       dynamics = []
 
+      tempColorPalette = new Rickshaw.Color.Palette scheme: "munin"
+
       for graph in scope.data.graphs
         if fetchedData[graph.stat].length > 0
           atLeastOneNonZeroPoint = false
@@ -78,9 +80,15 @@ window.AdefyApp.directive "analytics", ["$http", "$timeout", ($http, $timeout) -
               break
 
           if atLeastOneNonZeroPoint
+
+            if colors[graph.stat] != undefined and graph.newcol != true
+              color = colors[graph.stat]
+            else
+              color = tempColorPalette.color()
+
             statics.push
               name: graph.name
-              color: colors[graph.stat]
+              color: color
               y: graph.y
 
             dynamics.push fetchedData[graph.stat]
@@ -93,21 +101,35 @@ window.AdefyApp.directive "analytics", ["$http", "$timeout", ($http, $timeout) -
 
       if scope.done then scope.done()
 
-    requestIndividualDataSet = (graph) ->
-      url = "#{prefix}/#{graph.stat}?"
+    requestIndividualDataSet = (graph, i) ->
+      if graph.prefix != undefined then _prefix = graph.prefix
+      else _prefix = prefix
+
+      if graph.url != undefined then url = "#{graph.url}?"
+      else url = "#{_prefix}/#{graph.stat}?"
 
       if graph.from then url += "&from=#{graph.from}"
       if graph.until then url += "&until=#{graph.until}"
       if graph.interval then url += "&interval=#{graph.interval}"
-      if graph.sum then url += "&sum=#{graph.sum}"
+
+      if graph.total then url += "&total=true"
+      else if graph.sum then url += "&sum=#{graph.sum}"
 
       $http.get(url).success (data) ->
-        fetchedData[graph.stat] = data
+
+        if graph.total
+          if fetchedData[graph.stat] == undefined
+            fetchedData[graph.stat] = []
+
+          fetchedData[graph.stat].push { x: i, y: Number data }
+        else
+          fetchedData[graph.stat] = data
+
         doneFetching()
 
     fetchData = ->
       fetchedData = {}
-      requestIndividualDataSet graph for graph in scope.data.graphs
+      requestIndividualDataSet(graph, i) for graph, i in scope.data.graphs
 
     fetchData()
     scope.refresh = ->
