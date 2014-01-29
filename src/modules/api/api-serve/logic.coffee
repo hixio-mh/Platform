@@ -133,8 +133,8 @@ setup = (options, imports, register) ->
           if data[2] == "CPM"
             redis.incrbyfloat "#{campaignRef}:spent", data[3]
             redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-            redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
-            redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
+            redis.incrbyfloat "user:#{campaignUserRef}:adFunds", data[3] * -1
+            redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
 
             statsd.increment "#{campaignGraphiteId}.spent", data[3]
             statsd.increment "#{publisherGraphiteId}.earnings", data[3]
@@ -187,8 +187,8 @@ setup = (options, imports, register) ->
             if data[2] == "CPC"
               redis.incrbyfloat "#{campaignRef}:spent", data[3]
               redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-              redis.incrbyfloat "user:#{campaignUserRef}:funds", data[3] * -1
-              redis.incrbyfloat "user:#{pubUserRef}:funds", data[3]
+              redis.incrbyfloat "user:#{campaignUserRef}:adFunds", data[3] * -1
+              redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
 
               statsd.increment "#{publisherGraphiteId}.earnings", data[3]
               statsd.increment "#{campaignGraphiteId}.spent", data[3]

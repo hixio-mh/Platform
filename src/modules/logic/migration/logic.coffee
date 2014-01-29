@@ -70,17 +70,18 @@ setup = (options, imports, register) ->
         db.model("User").find {}, (err, users) ->
           if utility.dbError err, res then return
 
+          ###
           for u in users
 
             # Version 0 (pre-version field)
             if u.version == undefined
 
-              # Add version and funds fields
+              # Add version field
               u.version = 1
-              u.funds = 0
               u.save()
 
               logMigration "User", 1
+          ###
 
           registerDone()
 
