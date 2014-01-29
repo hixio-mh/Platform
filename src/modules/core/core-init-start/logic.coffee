@@ -167,4 +167,14 @@ setup = (options, imports, register) ->
 
     register null, {}
 
+  ##
+  ## Take care of graceful shutdown
+  ##
+  process.on "message", (message) ->
+    if message == "shutdown"
+
+      # Set a timeout just in case connections take more than a minute to close
+      setTimeout (-> process.exit 1), 60000
+      server.httpServer().close -> process.exit 0
+
 module.exports = setup

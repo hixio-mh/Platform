@@ -24,7 +24,6 @@
     "hiredis": "~0.1.16",
     "statsd-client": "0.0.15",
     "accounting": "~0.3.2",
-    "recluster": "~0.3.4",
     "coffee-script": "~1.6.3"
   },
   "devDependencies": {
