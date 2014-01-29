@@ -58,7 +58,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      if not req.user.admin and not pub.owner.equals req.user.id
+      if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         res.json 403
         return
 
@@ -180,7 +180,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      if not req.user.admin and req.user.id != pub.owner
+      if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403
 
       # If we are admin, approve directly
@@ -213,7 +213,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      if not req.user.admin and req.user.id != pub.owner
+      if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403
 
       pub.activate()
@@ -226,7 +226,7 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      if not req.user.admin and req.user.id != pub.owner
+      if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403
 
       pub.deactivate()
