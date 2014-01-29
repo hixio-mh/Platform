@@ -18,4 +18,4 @@ form
     .field.w50
       label Enter Deposit Amount $
     .field.w50
-      input.wide(type="number" placeholder="Amount" ng-model="formObject.amount")
+      input.wide(type="number" placeholder="Amount" ng-model="formObject.amount" ng-keypress="submit($event)")

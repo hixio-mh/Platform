@@ -37,7 +37,10 @@ window.AdefyApp.directive "formModal", ["$compile", "$http", ($compile, $http) -
 
         else scope.close() unless result is false
 
-      scope.submit = ->
+      scope.submit = (e) ->
+        if e != undefined
+          if e.which != 10 and e.which != 13 then return
+
         if scope.formSubmitFunc
           handleSubmission scope.$parent[scope.formSubmitFunc] scope.formObject
         else
