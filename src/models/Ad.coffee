@@ -99,6 +99,7 @@ schema.methods.toAPI = ->
       # Todo: Figure this out
       delete ret.campaigns[i]._id
 
+  delete ret.data
   delete ret._id
   delete ret.__v
   delete ret.version

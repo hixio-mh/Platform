@@ -43,7 +43,8 @@ schema = new mongoose.Schema
   # 7 - normal user
   permissions: { type: Number, default: 7 }
 
-  funds: { type: Number, default: 0 }
+  adFunds: { type: Number, default: 0 }
+  pubFunds: { type: Number, default: 0 }
 
   transactions: [{ action: String, amount: Number, time: Number }]
 
@@ -68,16 +69,22 @@ schema.methods.toAPI = ->
 
 # NOTE: This overwrites the fund count stored in redis!
 schema.methods.createRedisStruture = (cb) ->
-  redis.set "#{@getRedisId()}:funds", @funds, (err) ->
+  redis.set "#{@getRedisId()}:adFunds", @adFunds, (err) ->
     if err then spew.error err
-    cb()
+    redis.set "#{@getRedisId()}:pubFunds", @pubFunds, (err) ->
+      if err then spew.error err
+      cb()
 
 schema.methods.updateFunds = (cb) ->
-  redis.get "#{@getRedisId()}:funds", (err, res) =>
+  redis.get "#{@getRedisId()}:adFunds", (err, adFunds) =>
     if err then spew.error err
-    if res != null then @funds = Number res
+    redis.get "#{@getRedisId()}:pubFunds", (err, pubFunds) =>
+      if err then spew.error err
 
-    cb()
+      if adFunds != null then @adFunds = Number adFunds
+      if pubFunds != null then @pubFunds = Number pubFunds
+
+      cb()
 
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
@@ -104,13 +111,33 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
     cb null, isMatch
 
 schema.methods.addFunds = (amount) ->
-  @funds += Number amount
-  redis.incrbyfloat "#{@getRedisId()}:funds", amount
+  @adFunds += Number amount
+  redis.incrbyfloat "#{@getRedisId()}:adFunds", amount
 
   @transactions.push
     action: "deposit"
     amount: amount
     time: new Date().getTime()
+
+  true
+
+schema.methods.withdrawFunds = (type, amount) ->
+  if type == "pub"
+    @pubFunds -= Number amount
+    redis.incrbyfloat "#{@getRedisId()}:pubFunds", -amount
+
+    @transactions.push
+      action: "withdraw"
+      amount: amount
+      time: new Date().getTime()
+  else if type == "ad"
+    @adFunds -= Number amount
+    redis.incrbyfloat "#{@getRedisId()}:adFunds", -amount
+
+    @transactions.push
+      action: "withdraw"
+      amount: amount
+      time: new Date().getTime()
 
   true
 
