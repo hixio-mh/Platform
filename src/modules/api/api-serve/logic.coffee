@@ -124,22 +124,40 @@ setup = (options, imports, register) ->
           campaignUserRef = data[8]
           pubUserRef = data[9]
 
-          redis.incr "#{campaignRef}:impressions"
-          redis.incr "#{publisherRef}:impressions"
-          statsd.increment "#{campaignGraphiteId}.impressions"
-          statsd.increment "#{publisherGraphiteId}.impressions"
+          # Ensure we can actually charge the advertiser
+          redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
+            if err then spew.error err
+            if funds == null then return res.send 500
 
-          # Log impression if model is CPM :D MONEY!
-          if data[2] == "CPM"
-            redis.incrbyfloat "#{campaignRef}:spent", data[3]
-            redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-            redis.incrbyfloat "user:#{campaignUserRef}:adFunds", data[3] * -1
-            redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+            funds = Number funds
 
+            # Bail early if the advertiser doesn't have enough money
+            # Sux to be broke
+            if funds < data[3] then return res.send 200
+
+            # Track action
+            redis.incr "#{campaignRef}:impressions"
+            redis.incr "#{publisherRef}:impressions"
+            statsd.increment "#{campaignGraphiteId}.impressions"
+            statsd.increment "#{publisherGraphiteId}.impressions"
+
+            # Return after logging request if it isn't a CPC bid
+            if data[2] != "CPM"
+              guardCache.del cacheKey
+              return res.send 200
+
+            # Charge advertiser and credit publisher. Continue after
+            # advertiser charge goes through
             statsd.increment "#{campaignGraphiteId}.spent", data[3]
             statsd.increment "#{publisherGraphiteId}.earnings", data[3]
 
-          guardCache.del cacheKey
+            redis.incrbyfloat "#{campaignRef}:spent", data[3]
+            redis.incrbyfloat "#{publisherRef}:earnings", data[3]
+            redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+
+            redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
+              guardCache.del cacheKey
+              res.send 200
 
   # Register clicks, in charge of deleting the redis key, since clicks assume
   # impressions (we check otherwise)
@@ -178,23 +196,40 @@ setup = (options, imports, register) ->
             campaignUserRef = data[8]
             pubUserRef = data[9]
 
-            redis.incr "#{campaignRef}:clicks"
-            redis.incr "#{publisherRef}:clicks"
+            # Ensure we can actually charge the advertiser
+            redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
+              if err then spew.error err
+              if funds == null then return res.send 500
 
-            statsd.increment "#{campaignGraphiteId}.clicks"
-            statsd.increment "#{publisherGraphiteId}.clicks"
+              funds = Number funds
 
-            if data[2] == "CPC"
-              redis.incrbyfloat "#{campaignRef}:spent", data[3]
-              redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-              redis.incrbyfloat "user:#{campaignUserRef}:adFunds", data[3] * -1
-              redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+              # Bail early if the advertiser doesn't have enough money
+              # Sux to be broke
+              if funds < data[3] then return res.send 200
 
+              # Track action
+              redis.incr "#{campaignRef}:clicks"
+              redis.incr "#{publisherRef}:clicks"
+              statsd.increment "#{campaignGraphiteId}.clicks"
+              statsd.increment "#{publisherGraphiteId}.clicks"
+
+              # Return after logging request if it isn't a CPC bid
+              if data[2] != "CPC"
+                guardCache.del cacheKey
+                return res.send 200
+
+              # Charge advertiser and credit publisher. Continue after
+              # advertiser charge goes through
               statsd.increment "#{publisherGraphiteId}.earnings", data[3]
               statsd.increment "#{campaignGraphiteId}.spent", data[3]
 
-            guardCache.del cacheKey
-            res.send 200
+              redis.incrbyfloat "#{campaignRef}:spent", data[3]
+              redis.incrbyfloat "#{publisherRef}:earnings", data[3]
+              redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+
+              redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
+                guardCache.del cacheKey
+                res.send 200
 
   spew.info "Ad server listening"
   register null, {}

@@ -228,6 +228,8 @@ setup = (options, imports, register) ->
       done = -> doneCount--; if doneCount == 0 then cb structuredAds
 
       fetchAdKeys = (key) ->
+        campaignUserRef = key.split(":")[3]
+
         redis.mget [
           "#{key}:pricing"
           "#{key}:requests"
@@ -236,6 +238,7 @@ setup = (options, imports, register) ->
           "#{key}:spent"
           "#{key}:clicks"
           "#{key}:bid"
+          "user:#{campaignUserRef}:adFunds"
         ], (err, data) ->
           if err then spew.error err; return fetchEmpty req, res
 
@@ -250,6 +253,7 @@ setup = (options, imports, register) ->
             campaignId: getCampaignFromAdKey key
             adId: getAdFromAdKey key
             ownerRedisId: getUserFromAdKey key
+            userFunds: Number data[7]
 
           done()
 
@@ -326,37 +330,46 @@ setup = (options, imports, register) ->
         # Bid! Magic!
         ad.bid = generateBid ad, publisher
 
+        ##
+        ## If we can't afford the bid, zero it out
+        ##
+        if ad.bid > ad.userFunds then ad.bid = 0
+
         # Pace! Decide if we bid
-        #
-        # Pacing data is stored in the form "pace:spent:targetSpend:timestamp"
-        # We update the pace every two minutes (timestamp is of last update)
-        paceData = campaignPaceData[ad.campaignId].split ":"
-        paceData =
-          pace: Number paceData[0]
-          spent: Number paceData[1]
-          targetSpend: Number paceData[2]
-          timestamp: Number paceData[3]
+        if ad.bid > 0
 
-        # Zero-out the bid if pacing requires us to do so (not joining in RTB)
-        if Math.random() > paceData.pace
-          ad.bid = 0
+          # Pacing data is kept in the form "pace:spent:targetSpend:timestamp"
+          # We update the pace every two minutes (timestamp is of last update)
+          paceData = campaignPaceData[ad.campaignId].split ":"
+          paceData =
+            pace: Number paceData[0]
+            spent: Number paceData[1]
+            targetSpend: Number paceData[2]
+            timestamp: Number paceData[3]
 
-        # Update pacing expenditure
-        paceData.spent += ad.bid
+          # Zero-out the bid if pacing requires us to do so (not joining in RTB)
+          if Math.random() > paceData.pace then ad.bid = 0
 
-        # If it's been two minutes or longer, then calculate a new pace
-        if nowTimestamp - paceData.timestamp >= 120000
-          paceData.pace = paceData.targetSpend / paceData.spent
-          paceData.timestamp = nowTimestamp
-          paceData.spent = 0
+          if ad.bid == 0 then spew.warning "Skipping bid, pace #{paceData.pace}"
+          else if ad.pricing == "CPC"
+            spew.info "Generated CPC bid: #{ad.bid}"
 
-        # Save pace data
-        redis.set "campaign:#{ad.campaignId}:pacing", [
-          paceData.pace
-          paceData.spent
-          paceData.targetSpend
-          paceData.timestamp
-        ].join ":"
+          # Update pacing expenditure
+          paceData.spent += ad.bid
+
+          # If it's been two minutes or longer, then calculate a new pace
+          if nowTimestamp - paceData.timestamp >= 120000
+            paceData.pace = paceData.targetSpend / paceData.spent
+            paceData.timestamp = nowTimestamp
+            paceData.spent = 0
+
+          # Save pace data if needed
+          redis.set "campaign:#{ad.campaignId}:pacing", [
+            paceData.pace
+            paceData.spent
+            paceData.targetSpend
+            paceData.timestamp
+          ].join ":"
 
         # Save bid for statistics
         bids.push

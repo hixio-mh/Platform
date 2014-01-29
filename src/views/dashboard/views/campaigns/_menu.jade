@@ -21,7 +21,7 @@
     a(ng-href="/campaigns/{{campaign.id}}/edit" tab)
       i.fa.fa-fw.fa-wrench
       | Settings
-  .toggle-wrap(style="float:right" ng-if="me.funds > 0")
+  .toggle-wrap(style="float:right" ng-if="me.adFunds > 0")
     toggle-switch(method="activeToggled()" model="campaign.active")
-  span(style="float:right" ng-if="me.funds == 0")
+  span(style="float:right" ng-if="me.adFunds == 0")
     .label.gray Upload Funds To Enable

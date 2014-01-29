@@ -14,14 +14,12 @@
 
 .inner
   .funds.center(style="text-align: center")
-    .amount.large ${{ me.funds | number:2 }}
-    .desc Balance
     .field.w50
-      .amount ${{ me.funds | number:2 }}
-      .desc Spent
+      .amount ${{ me.adFunds | number:2 }}
+      .desc Advertising Credit
     .field.w50
-      .amount ${{ me.funds | number:2 }}
-      .desc Earned
+      .amount ${{ me.pubFunds | number:2 }}
+      .desc Publisher Balance
     .actions
       button(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
       ok-button-text="Withdraw" form-submit="withdraw()" form-object="paymentInfo") Withdraw funds
