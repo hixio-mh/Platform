@@ -128,9 +128,9 @@ window.AdefyApp.config ($routeProvider, $locationProvider, ngQuickDateDefaultsPr
     prevLinkHtml: "<i class='fa fa-chevron-left'></i>"
 
     parseDateFunction: (str) ->
-      d = Date.create str
+      d = new Date Date.parse str
 
-      if d.isValid()
+      if not isNaN d
         d
       else
         null
