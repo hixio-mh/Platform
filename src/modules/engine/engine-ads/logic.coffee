@@ -359,13 +359,13 @@ setup = (options, imports, register) ->
             paceData.timestamp = nowTimestamp
             paceData.spent = 0
 
-            # Save pace data
-            redis.set "campaign:#{ad.campaignId}:pacing", [
-              paceData.pace
-              paceData.spent
-              paceData.targetSpend
-              paceData.timestamp
-            ].join ":"
+          # Save pace data
+          redis.set "campaign:#{ad.campaignId}:pacing", [
+            paceData.pace
+            paceData.spent
+            paceData.targetSpend
+            paceData.timestamp
+          ].join ":"
 
         # Save bid for statistics
         bids.push
