@@ -24,8 +24,20 @@
     dt: label VAT
     dd: input(type="text" ng-model="me.vat")
     dt: label Phone
-    dd: input(type="tel" ng-model="me.phone")
+    dd: input.fullw(type="tel" ng-model="me.phone")
     dt
+
+  fieldset: dl.form.thin.center
+    legend Change Password
+
+    dt: label Current Password
+    dd: input.fullw(type="password" placeholder="Enter current password" ng-model="me.currentPass")
+    dt: label New Password
+    dd: input.fullw(type="password" placeholder="Enter new password" ng-model="me.newPass")
+    dt: label Repeat New Password
+    dd: input.fullw(type="password" placeholder="Re-enter new password" ng-model="me.newPassRepeat")
+    dt
+    div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
 
   fieldset: dl.form.thin.center
     legend Address

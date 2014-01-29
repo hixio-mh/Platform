@@ -418,7 +418,7 @@ fieldset
 .w75
   width 75%
 
-.w100
+.w100, .fullw
   width 100%
 
 .block
@@ -652,7 +652,7 @@ fieldset
       word-wrap break-word
       text-align left
     .error
-      color #e74c3c
+      color #e03535
     .info
       color #919191
   input
@@ -721,10 +721,13 @@ fieldset
   background-color #bdc3c7
   &.info
     background-color #3498db
+    color white
   &.success
     background-color #2ecc71
+    color white
   &.error
     background-color #e74c3c
+    color white
   i
     cursor pointer
     position absolute
@@ -942,6 +945,9 @@ graph
   width 1140px
   margin 0 auto
 
+.error
+  color #e03535
+
 .account-page
   background-color #fafafa
   padding 96px 0 192px 0
@@ -1087,7 +1093,6 @@ graph
     margin-top 16px
     font-size 24px
     float left
-    color #e03535
 
   #bottom-action
    position absolute

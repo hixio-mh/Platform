@@ -209,8 +209,23 @@ setup = (options, imports, register) ->
       user.phone = req.param("phone") || user.phone
       user.vat = req.param("vat") || user.vat
 
-      user.save()
-      res.send 200
+      changingPassword = false
+
+      if req.param("newPass") and req.param("newPass").length > 0
+        if req.param("newPass") == req.param("newPassRepeat")
+          changingPassword = true
+
+          user.comparePassword req.param("currentPass"), (err, isMatch) ->
+            if err then spew.error err; return res.send 500
+            if not isMatch then return res.send 403
+
+            user.password = req.param "newPass"
+            user.save()
+            res.send 200
+
+      if not changingPassword
+        user.save()
+        res.send 200
 
   # Returns a list of transactions: deposits, withdrawals, reserves
   app.get "/api/v1/user/transactions", (req, res) ->
