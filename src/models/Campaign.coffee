@@ -346,34 +346,29 @@ schema.methods.refreshAdRefs = (cb) ->
   for ad in @ads
     refreshRefsForAd ad, @, -> doneCb()
 
+# Pacing data is stored in two places:
+#   - "redisID:pacing:spent" (Number)
+#   - "redisID:pacing:target" (Number)
+#   - "redisID:pacing:pace" (Number)
+#   - "redisID:pacing:timestamp" (Number)
 schema.methods.updatePaceData = (cb) ->
+  ref = "#{@getRedisId()}:pacing"
 
   # Calc target spend for a two minute period
   targetSpend = @dailyBudget / 720
 
-  key = "#{@getRedisId()}:pacing"
-  redis.get key, (err, pacing) ->
+  # Set target spend immediately
+  redis.set "#{ref}:target", targetSpend
+  redis.get "#{ref}:spent", (err, spent) ->
     if err then spew.error err
+    if spent == null then spent = 0
 
-    # Start with a pace of 0, to begin with optimal calculated pace
-    if pacing == null
-      pacing = "0:0:#{targetSpend}:#{new Date().getTime()}"
-    else
+    # Force pacing down to 0, to re-calculate optimal pace
+    redis.set "#{ref}:spent", Number spent
+    redis.set "#{ref}:pace", 0
+    redis.set "#{ref}:timestamp", new Date().getTime()
 
-      # Update only target spend
-      pacing = pacing.split ":"
-      pacing[2] = targetSpend
-      pacing = pacing.join ":"
-
-    redis.set key, pacing, (err) ->
-      if err then spew.error err
-      cb()
-
-# Return our lifetime aggregated data
-#
-# @param [Method] callback
-# @return [String] data csv data from graphite
-schema.methods.lifetimeData = (cb) ->
+    cb()
 
 schema.methods.createRedisStruture = (cb) ->
   @updatePaceData =>
