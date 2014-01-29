@@ -100,7 +100,7 @@
 		},
 		"testing": {
 			"domain": "localhost",
-			"port": 10000,
+			"port": 11000,
 			"loglevel": 0,
 			"newrelic": false,
 			"trafficgen": false,
@@ -132,7 +132,7 @@
 		},
 		"testing-codeship": {
 			"domain": "localhost",
-			"port": 10000,
+			"port": 11000,
 			"loglevel": 0,
 			"newrelic": false,
 			"trafficgen": false,

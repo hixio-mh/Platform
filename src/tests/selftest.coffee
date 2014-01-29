@@ -3,18 +3,16 @@
 childProcess = require("child_process")
 config = require "#{__dirname}/../config.json"
 serverDir = config.buildDirs[config.mode]
-
-# The platform spawns a node process for each core. We need to wait for each
-# process to initialize, so count init messages
-numCPUs = require("os").cpus().length
-initMessages = 0
+modeConfig = config.modes[config.mode]
 
 adefy = null
+
+dbHost = "#{modeConfig.mongo.host}:#{modeConfig.mongo.port}"
 
 before (done) ->
   @timeout 0
 
-  dbSetup = childProcess.exec "mongo < #{__dirname}../../setup_db.js"
+  dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}../../setup_db.js"
   dbSetup.on "close", ->
 
     adefy = childProcess.fork "#{__dirname}/../../#{serverDir}/adefy.js", [],
@@ -24,13 +22,8 @@ before (done) ->
     adefy.on "message", (msg) ->
       if msg == "init_complete"
 
-        initMessages++
-
-        # Last init
-        if initMessages == numCPUs
-
-          # Give models time to load
-          setTimeout (-> done()), 700
+        # Give models time to load
+        setTimeout (-> done()), 700
 
 after -> if adefy != null then adefy.kill()
 
