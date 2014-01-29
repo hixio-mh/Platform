@@ -305,10 +305,12 @@ setup = (options, imports, register) ->
       if campaignPaceData[ad.campaignId] == undefined
         campaignPaceData[ad.campaignId] = {}
 
-        keysToFetch.push "campaign:#{ad.campaignId}:pacing:spent"
-        keysToFetch.push "campaign:#{ad.campaignId}:pacing:target"
-        keysToFetch.push "campaign:#{ad.campaignId}:pacing:pace"
-        keysToFetch.push "campaign:#{ad.campaignId}:pacing:timestamp"
+        paceRef = "campaign:#{ad.campaignId}:pacing"
+
+        keysToFetch.push "#{paceRef}:spent"
+        keysToFetch.push "#{paceRef}:target"
+        keysToFetch.push "#{paceRef}:pace"
+        keysToFetch.push "#{paceRef}:timestamp"
 
     ##
     ## Fetch campaign pacing data
@@ -329,47 +331,43 @@ setup = (options, imports, register) ->
       # Go through and generate bids
       for key, ad of structuredAds
         paceData = campaignPaceData[ad.campaignId]
-        paceRef = "campaign:#{ad.campaignId}"
+        paceRef = "campaign:#{ad.campaignId}:pacing"
 
-        # Bid! Magic!
-        ad.bid = generateBid ad, publisher
+        # If timestamp is zero, entry is invalid
+        if paceData.timestamp > 0
 
-        ##
-        ## If we can't afford the bid, zero it out
-        ##
-        if ad.bid > ad.userFunds then ad.bid = 0
+          # Bid! Magic!
+          ad.bid = generateBid ad, publisher
 
-        # Pace! Decide if we bid
-        if ad.bid > 0
+          ##
+          ## If we can't afford the bid, zero it out
+          ##
+          if ad.bid > ad.userFunds then ad.bid = 0
 
-          # If we've overshot our daily spend, then set bid to zero
-          if paceData.spent >= paceData.target
-            ad.bid = 0
-          else
-            # Zero-out the bid if pacing requires us to do so (no RTB)
-            if Math.random() > paceData.pace then ad.bid = 0
+          # Pace! Decide if we bid
+          if ad.bid > 0
 
             # If it's been two minutes or longer, then calculate a new pace
             # NOTE: We apply a damping down-scale of 20%
             if nowTimestamp - paceData.timestamp >= 120000
-              paceData.pace = (paceData.target / paceData.spent) * 0.8
-              paceData.timestamp = nowTimestamp
-              paceData.spent = 0
-
-              redis.set "#{paceRef}:pace", paceData.spent
-              redis.set "#{paceRef}:timestamp", paceData.timestamp
+              redis.set "#{paceRef}:pace", (paceData.target / paceData.spent) * 0.8
+              redis.set "#{paceRef}:timestamp", nowTimestamp
               redis.set "#{paceRef}:spent", 0
 
+            # Update pacing expenditure
             else if ad.bid > 0
-
-              # Update pacing expenditure
               redis.incrbyfloat "#{paceRef}:spent", ad.bid
 
-        # Update second-highest bid if necessary
-        if ad.bid > maxBid
-          secondHighestBid = maxBid + 0.01
-          maxBid = ad.bid
-          maxBidAd = ad
+            # If we've overshot our 2-minute spend, or pacing says we can't
+            # bid, set our bid to 0
+            if paceData.spent >= paceData.target or Math.random() > paceData.pace
+              ad.bid = 0
+
+          # Update second-highest bid if necessary
+          if ad.bid > maxBid
+            secondHighestBid = maxBid + 0.01
+            maxBid = ad.bid
+            maxBidAd = ad
 
       # Attach action URLs
       if maxBidAd != null
