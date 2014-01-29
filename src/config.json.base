@@ -7,7 +7,7 @@
 			"port": 10000,
 			"loglevel": 10,
 			"newrelic": false,
-			"trafficgen": false,
+			"trafficgen": true,
 
 			"mongo": {
 				"user": "adefy",
@@ -129,6 +129,38 @@
 				"host": "stats1.adefy.com",
 				"port": 8125
 			}
+		},
+		"testing-codeship": {
+			"domain": "localhost",
+			"port": 10000,
+			"loglevel": 0,
+			"newrelic": false,
+			"trafficgen": false,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
+				"host": "localhost",
+				"port": 27017,
+				"db": "adefy_testing"
+			},
+
+			"redis-main": {
+				"db": 1,
+				"host": "localhost",
+				"port": 6379
+			},
+
+			"redis-autocomplete": {
+				"db": 1,
+				"host": "localhost",
+				"port": 6379
+			},
+
+			"stats": {
+				"host": "stats1.adefy.com",
+				"port": 8125
+			}
 		}
 	},
 
@@ -136,6 +168,7 @@
 		"development": "buildDevelopment/",
 		"staging": "buildStaging/",
 		"production": "buildProduction/",
-		"testing": "buildTesting/"
+		"testing": "buildTesting/",
+		"testing-codeship": "buildCodeship/"
 	}
 }
