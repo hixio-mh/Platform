@@ -1,0 +1,56 @@
+include _menu
+
+.contents.w920.center#campaign-reports-controls
+  .graphs
+    .graph.w100.reports-header
+      .w33
+        .block
+          .w25.contents-right
+            label(for="startDate") From:
+          .w75.contents-left
+            datepicker(ng-model="range.startDate")
+      .w33
+        .block
+          .w25.contents-right
+            label(for="endDate") Untill:
+          .w75.contents-left
+            datepicker(ng-model="range.endDate")
+      .w33
+        .block
+          .w50.contents-right
+            label(for="sum") Sum Graphs:
+          .w50.contents-left
+            input(type="checkbox" name="sum" ng-model="graphSum")
+
+.contents.w920.center(ng-if="comparisonData != null")
+  h1 Comparison
+
+  table.info
+    thead: tr
+      th Name
+      th Impressions
+      th Clicks
+      th CTR
+      th Spent
+    tbody
+      tr(ng-repeat="campaign in comparisonData | orderBy:'ctr':true")
+        td {{ campaign.name }}
+        td {{ campaign.impressions | number }}
+        td {{ campaign.clicks | number }}
+        td {{ campaign.ctr | number:2 }}%
+        td ${{ campaign.spent | number:2 }}
+
+.contents.w920.center
+  h1 Metric Performance
+
+  .w50(ng-if="impressionsData != null")
+    h6.block.tcenter Impressions
+    div(analytics data="impressionsData" width="350" height="150" type="line" hover="hoverFormatNumber" legend="true")
+
+  .w50(ng-if="clicksData != null")
+    h6.block.tcenter Clicks
+    div(analytics data="clicksData" width="350" height="150" type="line" hover="hoverFormatNumber" legend="true")
+
+  .block(ng-if="spentData != null")
+    h6.block.tcenter Expenses
+    div(analytics data="spentData" width="800" height="300" type="line" hover="hoverFormatSpent" legend="true")

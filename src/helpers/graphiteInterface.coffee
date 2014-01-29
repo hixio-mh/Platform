@@ -62,22 +62,41 @@ module.exports =
     if options.start != null then query.from = options.start
     if options.end != null then query.until = options.end
 
+    if options.total == "true" or options.total == true
+      prefix = @getPrefixStatCounts()
+    else
+      prefix = @getPrefix()
+
     if options.multipleSeries != undefined
       for series, i in options.multipleSeries
-        options.multipleSeries[i] = "#{@getPrefix()}#{series}"
+        options.multipleSeries[i] = "#{prefix}#{series}"
 
       ref = "sumSeries(#{options.multipleSeries.join ","})"
     else
-      ref = "#{@getPrefix()}#{options.stat}"
+      ref = "#{prefix}#{options.stat}"
 
-    if options.sum == "true" or options.sum == true
+    if options.total == "true" or options.total == true
+      query.addRawTarget "summarize(#{ref}, '#{options.interval}')"
+    else if options.sum == "true" or options.sum == true
       query.addRawTarget "integral(hitcount(#{ref}, '#{options.interval}'))"
     else
       query.addRawTarget "hitcount(#{ref}, '#{options.interval}')"
 
+    query.debug = true
+
     query.exec (data) ->
       if data.length == 0 then return cb []
-      cb data[0].datapoints
+
+      if options.total == "true" or options.total == true
+        total = 0
+
+        for point in data[0].datapoints
+          if point.y != null then total += point.y
+
+        cb total
+
+      else
+        cb data[0].datapoints
 
   getPrefix: -> "stats.#{config.mode}."
 
@@ -151,8 +170,8 @@ module.exports =
             spew.error "Graphite response parsing error: #{err}"
             if cb then cb []
 
-    @getPrefixStat = -> "stats.#{config.mode}"
-    @getPrefixStatCounts = -> "stats_counts.#{config.mode}"
+    @getPrefixStat = -> "stats.#{config.mode}."
+    @getPrefixStatCounts = -> "stats_counts.#{config.mode}."
 
     @_buildQuery = ->
       query = "http://#{modeConfig.stats.host}/render?"
@@ -190,6 +209,7 @@ module.exports =
       if @until.length > 0 then query += "&until=#{@until}"
 
       query += "&format=json"
+      if @debug == true then spew.info query
       query
 
     @_filterResponse = (data) ->

@@ -11,24 +11,167 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign, $http) ->
 
-window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, $location, Campaign, $http) ->
-  # get total app statistics
-  # get barchart app statistics
+  ##
+  ## Initial render settings and options
+  ##
+  $scope.range =
+    startDate: new Date(new Date().getTime() - 86400000)
+    endDate: new Date()
+  $scope.graphInterval = "30minutes"
+  $scope.graphSum = true
+  $scope.intervalOptions = [
+    { val: "5minutes", name: "5 Minutes" }
+    { val: "15minutes", name: "15 Minutes" }
+    { val: "30minutes", name: "30 Minutes" }
+    { val: "1hour", name: "1 Hour" }
+    { val: "2hours", name: "2 Hours" }
+  ]
 
-  # get table data
+  ##
+  ## Define graphs
+  ##
+  initNullGraphs = ->
+    $scope.impressionsData = null
+    $scope.clicksData = null
+    $scope.spentData = null
+    $scope.comparisonData = null
+  initNullGraphs()
+
+  ##
+  ## Hover formatter and re-useable axis definitino
+  ##
+  $scope.hoverFormatNumber = (series, x, y) ->
+    "#{series.name}: #{accounting.formatNumber y, 2}"
+  $scope.hoverFormatSpent = (series, x, y) ->
+    "#{series.name}: #{accounting.formatMoney y, "$", 2}"
+
+  graphAxesNumber =
+    x:
+      type: "x"
+      formatter: (x) -> moment(x).fromNow()
+    counts:
+      type: "y"
+      orientation: "left"
+      formatter: (y) -> accounting.formatNumber y
+
+  graphAxesCurrency =
+    x:
+      type: "x"
+      formatter: (x) -> moment(x).fromNow()
+    currency:
+      type: "y"
+      orientation: "left"
+      formatter: (y) -> accounting.formatMoney y, "$", 2
+
+  ##
+  ## Fetch campaigns and build graph data
+  ##
   Campaign.query (campaigns) ->
-    # Calculate CTR, status, and active text
-    for campaign, i in campaigns
-      campaign.ctr = (campaign.clicks / campaign.impressions) * 100
-      if isNaN campaign.ctr then campaign.ctr = 0
+    for c in campaigns
+      c.stats.ctr *= 100
+      c.stats.ctr24h *= 100
 
     $scope.campaigns = campaigns
+    buildPerformanceGraphs campaigns
+    buildComparisonTable campaigns
 
-    for campaign in $scope.campaigns
-      $http.get("/api/v1/campaigns/stats/#{campaign.id}/#{$scope.opts.metric}/#{$scope.opts.range}").success (resp) ->
-        if resp.length
-          $scope.totals.push
-            name: campaign.name
-            color: "#faa"
-            data: resp
+  # Graph data generation
+  buildPerformanceGraphs = (campaigns) ->
+    $scope.impressionsData = { graphs: [], axes: graphAxesNumber }
+    $scope.clicksData = { graphs: [], axes: graphAxesNumber }
+    $scope.spentData = { graphs: [], axes: graphAxesCurrency }
+
+    start = $scope.range.startDate.getTime()
+    end = $scope.range.endDate.getTime()
+
+    start = moment(start).format "HH:MM_YYYYMMDD"
+    end = moment(end).format "HH:MM_YYYYMMDD"
+
+    for c in campaigns
+      $scope.impressionsData.graphs.push
+        name: "#{c.name}"
+        stat: "impressions-#{c.name}"
+        url: "/api/v1/analytics/campaigns/#{c.id}/impressions"
+        y: "counts"
+        from: "#{start}"
+        until: "#{end}"
+        interval: "5minutes"
+        sum: $scope.graphSum
+        newcol: true
+
+      $scope.clicksData.graphs.push
+        name: "#{c.name}"
+        stat: "clicks-#{c.name}"
+        url: "/api/v1/analytics/campaigns/#{c.id}/clicks"
+        y: "counts"
+        from: "#{start}"
+        until: "#{end}"
+        interval: "5minutes"
+        sum: $scope.graphSum
+        newcol: true
+
+      $scope.spentData.graphs.push
+        name: "#{c.name}"
+        stat: "spent-#{c.name}"
+        url: "/api/v1/analytics/campaigns/#{c.id}/spent"
+        y: "currency"
+        from: "#{start}"
+        until: "#{end}"
+        interval: "5minutes"
+        sum: $scope.graphSum
+        newcol: true
+
+  buildComparisonTable = (campaigns) ->
+    doneCount = campaigns.length * 3
+    done = (cb) -> doneCount--; if doneCount == 0 then cb()
+
+    start = $scope.range.startDate.getTime()
+    end = $scope.range.endDate.getTime()
+
+    start = moment(start).format "HH:MM_YYYYMMDD"
+    end = moment(end).format "HH:MM_YYYYMMDD"
+
+    suffix = "?from=#{start}&until=#{end}&interval=24h&total=true"
+    prefix = "/api/v1/analytics/campaigns"
+
+    tableData = []
+
+    buildTableDataForCampaign = (campaign) ->
+      index = tableData.length
+      tableData.push name: campaign.name
+
+      $http.get("#{prefix}/#{c.id}/impressions#{suffix}").success (data) ->
+        tableData[index].impressions = data
+        done -> finished()
+
+      $http.get("#{prefix}/#{c.id}/clicks#{suffix}").success (data) ->
+        tableData[index].clicks = data
+        done -> finished()
+
+      $http.get("#{prefix}/#{c.id}/spent#{suffix}").success (data) ->
+        tableData[index].spent = data
+        done -> finished()
+
+    finished = ->
+      for i in [0...tableData.length]
+        if tableData[i].impressions != 0
+          tableData[i].ctr = tableData[i].clicks / tableData[i].impressions
+
+      $scope.comparisonData = tableData
+
+    buildTableDataForCampaign c for c, i in campaigns
+
+  update = ->
+    initNullGraphs()
+
+    setTimeout ->
+      $scope.$apply ->
+        buildPerformanceGraphs $scope.campaigns
+        buildComparisonTable $scope.campaigns
+    , 1
+
+  $("body").off "change", "#campaign-reports-controls input[name=sum]"
+
+  $("body").on "change", "#campaign-reports-controls input[name=sum]", -> update()

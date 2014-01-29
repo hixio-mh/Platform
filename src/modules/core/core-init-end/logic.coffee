@@ -33,7 +33,7 @@ setup = (options, imports, register) ->
   spew.init "Init complete!"
 
   # Notify our parent (if we have one)
-  if process.send != undefined then process.send "init_complete"
+  if process.send then process.send "init_complete"
 
   register null, {}
 

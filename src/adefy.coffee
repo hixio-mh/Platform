@@ -28,4 +28,4 @@ app = architect.createApp architect.loadConfig(__dirname + "/architecture.js") ,
     throw err
 
    spew.init "Adefy Running"
-   process.send "online"
+   if process.send then process.send "online"

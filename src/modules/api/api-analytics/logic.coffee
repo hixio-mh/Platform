@@ -46,6 +46,7 @@ setup = (options, imports, register) ->
       end: req.param("until") or null
       interval: req.param("interval") or "5min"
       sum: req.param("sum") or false
+      total: req.param("total") or false
 
   # Admin-only
   app.get "/api/v1/analytics/users", (req, res) ->
@@ -140,6 +141,10 @@ setup = (options, imports, register) ->
   app.get "/api/v1/analytics/totals/:stat", (req, res) ->
     stat = req.param "stat"
     options = buildOptionsFromQuery req
+
+    ##
+    ## Todo: Why pass stat instead of "earnings" or "spent"?
+    ##
 
     # Publishers
     if stat == "earnings"

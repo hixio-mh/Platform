@@ -25,9 +25,17 @@ window.AdefyApp.config ($routeProvider, $locationProvider, ngQuickDateDefaultsPr
     controller: "AdefyDashboardAdvertiserController"
     templateUrl: "/views/dashboard/home:advertiser"
 
-  $routeProvider.when "/reports",
-    controller: "AdefyReportsIndexController"
-    templateUrl: "/views/dashboard/reports"
+  $routeProvider.when "/reports/campaigns",
+    controller: "AdefyReportsCampaignsController"
+    templateUrl: "/views/dashboard/reports:campaigns"
+
+  $routeProvider.when "/reports/ads",
+    controller: "AdefyReportsAdsController"
+    templateUrl: "/views/dashboard/reports:ads"
+
+  $routeProvider.when "/reports/apps",
+    controller: "AdefyReportsAppsController"
+    templateUrl: "/views/dashboard/reports:apps"
 
   $routeProvider.when "/apps",
     controller: "AdefyAppsIndexController"
