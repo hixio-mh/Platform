@@ -320,6 +320,10 @@ setup = (options, imports, register) ->
       # Pack data appropriately
       for key, i in keysToFetch
         splitKey = key.split ":"
+
+        if campaignPaceData[splitKey[1]] == undefined
+          campaignPaceData[splitKey[1]] = {}
+
         campaignPaceData[splitKey[1]][splitKey[3]] = Number data[i]
 
       ##
