@@ -73,9 +73,9 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
       c.stats.ctr *= 100
       c.stats.ctr24h *= 100
 
-    $scope.campaigns = campaigns
     buildPerformanceGraphs campaigns
     buildComparisonTable campaigns
+    $scope.campaigns = campaigns
 
   # Graph data generation
   buildPerformanceGraphs = (campaigns) ->
@@ -97,7 +97,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
         y: "counts"
         from: "#{start}"
         until: "#{end}"
-        interval: "5minutes"
+        interval: $scope.graphInterval
         sum: $scope.graphSum
         newcol: true
 
@@ -108,7 +108,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
         y: "counts"
         from: "#{start}"
         until: "#{end}"
-        interval: "5minutes"
+        interval: $scope.graphInterval
         sum: $scope.graphSum
         newcol: true
 
@@ -119,7 +119,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
         y: "currency"
         from: "#{start}"
         until: "#{end}"
-        interval: "5minutes"
+        interval: $scope.graphInterval
         sum: $scope.graphSum
         newcol: true
 
@@ -165,6 +165,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
 
   update = ->
     initNullGraphs()
+    if $scope.campaigns == undefined then return
 
     setTimeout ->
       $scope.$apply ->
@@ -172,6 +173,10 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
         buildComparisonTable $scope.campaigns
     , 1
 
-  $("body").off "change", "#campaign-reports-controls input[name=sum]"
+  $("body").off "change", ".campaign-reports-controls select[name=interval]"
+  $("body").off "change", ".campaign-reports-controls input[name=sum]"
+  $("body").on "change", ".campaign-reports-controls input[name=sum]", -> update()
+  $("body").on "change", ".campaign-reports-controls select[name=interval]", -> update()
 
-  $("body").on "change", "#campaign-reports-controls input[name=sum]", -> update()
+  $scope.$watch "range.startDate", -> update()
+  $scope.$watch "range.endDate", -> update()

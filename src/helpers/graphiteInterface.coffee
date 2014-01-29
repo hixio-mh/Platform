@@ -82,8 +82,6 @@ module.exports =
     else
       query.addRawTarget "hitcount(#{ref}, '#{options.interval}')"
 
-    query.debug = true
-
     query.exec (data) ->
       if data.length == 0 then return cb []
 
