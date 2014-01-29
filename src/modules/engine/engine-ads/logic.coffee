@@ -298,13 +298,17 @@ setup = (options, imports, register) ->
     ## Build the list of campaign pacing keys we need to fetch
     ##
 
-    # First go through and fetch pacing data for campaigns
+    # First go through and fetch pacing spend data for campaigns
     for key, ad of structuredAds
 
       # Add key to fetch list
       if campaignPaceData[ad.campaignId] != null
         campaignPaceData[ad.campaignId] = null
-        keysToFetch.push "campaign:#{ad.campaignId}:pacing"
+
+        keysToFetch.push "campaign:#{ad.campaignId}:pacing:spent"
+        keysToFetch.push "campaign:#{ad.campaignId}:pacing:target"
+        keysToFetch.push "campaign:#{ad.campaignId}:pacing:pace"
+        keysToFetch.push "campaign:#{ad.campaignId}:pacing:timestamp"
 
     ##
     ## Fetch campaign pacing data
@@ -315,17 +319,17 @@ setup = (options, imports, register) ->
 
       # Pack data appropriately
       for key, i in keysToFetch
-        campaignPaceData[key.split(":")[1]] = data[i]
+        splitKey = key.split ":"
+        campaignPaceData[splitKey[1]][splitKey[3]] = Number data[i]
 
       ##
       ## Generate bids
       ##
 
-      # Keep track for statistical reasons
-      bids = []
-
       # Go through and generate bids
       for key, ad of structuredAds
+        paceData = campaignPaceData[ad.campaignId]
+        paceRef = "campaign:#{ad.campaignId}"
 
         # Bid! Magic!
         ad.bid = generateBid ad, publisher
@@ -338,40 +342,28 @@ setup = (options, imports, register) ->
         # Pace! Decide if we bid
         if ad.bid > 0
 
-          # Pacing data is kept in the form "pace:spent:targetSpend:timestamp"
-          # We update the pace every two minutes (timestamp is of last update)
-          paceData = campaignPaceData[ad.campaignId].split ":"
-          paceData =
-            pace: Number paceData[0]
-            spent: Number paceData[1]
-            targetSpend: Number paceData[2]
-            timestamp: Number paceData[3]
+          # If we've overshot our daily spend, then set bid to zero
+          if paceData.spent >= paceData.target
+            ad.bid = 0
+          else
+            # Zero-out the bid if pacing requires us to do so (no RTB)
+            if Math.random() > paceData.pace then ad.bid = 0
 
-          # Zero-out the bid if pacing requires us to do so (not joining in RTB)
-          if Math.random() > paceData.pace then ad.bid = 0
+            # If it's been two minutes or longer, then calculate a new pace
+            # NOTE: We apply a damping down-scale of 20%
+            if nowTimestamp - paceData.timestamp >= 120000
+              paceData.pace = (paceData.target / paceData.spent) * 0.8
+              paceData.timestamp = nowTimestamp
+              paceData.spent = 0
 
-          # Update pacing expenditure
-          paceData.spent += ad.bid
+              redis.set "#{paceRef}:pace", paceData.spent
+              redis.set "#{paceRef}:timestamp", paceData.timestamp
+              redis.set "#{paceRef}:spent", 0
 
-          # If it's been two minutes or longer, then calculate a new pace
-          if nowTimestamp - paceData.timestamp >= 120000
-            paceData.pace = paceData.targetSpend / paceData.spent
-            paceData.timestamp = nowTimestamp
-            paceData.spent = 0
+            else if ad.bid > 0
 
-          # Save pace data
-          redis.set "campaign:#{ad.campaignId}:pacing", [
-            paceData.pace
-            paceData.spent
-            paceData.targetSpend
-            paceData.timestamp
-          ].join ":"
-
-        # Save bid for statistics
-        bids.push
-          bid: ad.bid
-          target: ad.targetBid
-          pricing: ad.pricing
+              # Update pacing expenditure
+              redis.incrbyfloat "#{paceRef}:spent", ad.bid
 
         # Update second-highest bid if necessary
         if ad.bid > maxBid
