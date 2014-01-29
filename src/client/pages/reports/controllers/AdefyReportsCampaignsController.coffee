@@ -161,7 +161,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
 
       $scope.comparisonData = tableData
 
-    buildTableDataForCampaign c for c, i in campaigns
+    buildTableDataForCampaign c for c in campaigns
 
   update = ->
     initNullGraphs()

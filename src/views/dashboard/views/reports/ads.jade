@@ -1,3 +1,68 @@
 include _menu
 
-h1 Ads
+.contents.w920.center.ad-reports-controls
+  .graphs
+    .graph.w100.reports-header
+      .w33
+        .block
+          .w25.contents-right
+            label(for="startDate") From:
+          .w75.contents-left
+            datepicker(ng-model="range.startDate")
+      .w33
+        .block
+          .w25.contents-right
+            label(for="endDate") Untill:
+          .w75.contents-left
+            datepicker(ng-model="range.endDate")
+      .w33
+        .block
+          .w50.contents-right
+            label(for="sum") Sum Graphs:
+          .w50.contents-left
+            input(type="checkbox" name="sum" ng-model="graphSum")
+
+.contents.w920.center(ng-if="comparisonData == null")
+  h2.loading Loading comparison data...
+
+.contents.w920.center(ng-if="comparisonData != null")
+  h1 Comparison
+
+  table.info
+    thead: tr
+      th Name
+      th Impressions
+      th Clicks
+      th CTR
+      th Spent
+    tbody
+      tr(ng-repeat="ad in comparisonData | orderBy:'ctr':true")
+        td {{ ad.name }}
+        td {{ ad.impressions | number }}
+        td {{ ad.clicks | number }}
+        td {{ ad.ctr | number:2 }}%
+        td ${{ ad.spent | number:2 }}
+
+.contents.w920.center(ng-if="impressionsData == null || clicksData == null || spentData == null")
+  h2.loading Loading performance data...
+
+.contents.w920.center(ng-show="impressionsData != null && clicksData != null && spentData != null")
+  h1 Metric Performance
+    .w50.right.header-controls.ad-reports-controls
+      .w50.contents-right
+        label(for="interval") Graph Interval:
+      .w50.contents-left
+        select(chosen name="interval" ng-model="graphInterval" ng-options="i.val as i.name for i in intervalOptions")
+
+  div(ng-if="impressionsData != null && clicksData != null && spentData != null")
+    .w50
+      h6.block.tcenter Impressions
+      div(analytics data="impressionsData" width="350" height="150" type="line" hover="hoverFormatNumber" legend="true")
+
+    .w50
+      h6.block.tcenter Clicks
+      div(analytics data="clicksData" width="350" height="150" type="line" hover="hoverFormatNumber" legend="true")
+
+    .block
+      h6.block.tcenter Expenses
+      div(analytics data="spentData" width="800" height="300" type="line" hover="hoverFormatSpent" legend="true")
