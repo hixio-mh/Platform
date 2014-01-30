@@ -24,6 +24,11 @@ adefyDomain = "http://#{modeConfig.domain}"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 
+paypalCredentials = modeConfig.paypal
+
+if paypalCredentials.client_id == undefined or paypalCredentials.client_secret == undefined
+  throw new Error "Paypal credentials missing on config!"
+
 paypalSDK.configure
   host: "api.sandbox.paypal.com"
   port: ""
