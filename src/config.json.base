@@ -32,6 +32,12 @@
 			"stats": {
 				"host": "stats1.adefy.com",
 				"port": 8125
+			},
+
+			"paypal": {
+				"host": "api.sandbox.paypal.com",
+				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 			}
 		},
 		"staging": {
@@ -64,6 +70,12 @@
 			"stats": {
 				"host": "192.168.152.31",
 				"port": 8125
+			},
+
+			"paypal": {
+				"host": "api.sandbox.paypal.com",
+				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 			}
 		},
 		"production": {
@@ -96,7 +108,9 @@
 			"stats": {
 				"host": "192.168.152.31",
 				"port": 8125
-			}
+			},
+
+			"paypal": {}
 		},
 		"testing": {
 			"domain": "localhost",
@@ -128,6 +142,12 @@
 			"stats": {
 				"host": "stats1.adefy.com",
 				"port": 8125
+			},
+
+			"paypal": {
+				"host": "api.sandbox.paypal.com",
+				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 			}
 		},
 		"testing-codeship": {
@@ -160,6 +180,12 @@
 			"stats": {
 				"host": "stats1.adefy.com",
 				"port": 8125
+			},
+
+			"paypal": {
+				"host": "api.sandbox.paypal.com",
+				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 			}
 		}
 	},
