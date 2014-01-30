@@ -41,7 +41,7 @@ setup = (options, imports, register) ->
   app = imports["core-express"].server
   utility = imports["logic-utility"]
 
-  app.get "/creator", (req, res) -> res.render "creator/standalone.jade"
+  app.get "/creator", (req, res) -> res.render "creator/public.jade"
 
   ### Remove this when it's certain it won't be needed
   app.get "/api/v1/creator/image/:image", (req, res) ->

@@ -40,6 +40,33 @@ setup = (options, imports, register) ->
       else
         res.json 200, newAd.toAnonAPI()
 
+  # Save ad edits
+  app.post "/api/v1/ads/:id", (req, res) ->
+
+    db.model("Ad").findById req.param("id"), (err, ad) ->
+      if utility.dbError err, res then return
+      if not ad then return res.send 404
+
+      if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
+        res.send 403
+        return
+
+      # For now, only support saving of single creative
+      data = ad.data
+
+      if req.param "data"
+        try
+          data = JSON.stringify req.param "data"
+
+      ad.data = data
+
+      ad.save (err) ->
+        if err
+          spew.error err
+          res.send 500
+        else
+          res.json 200, ad.toAnonAPI()
+
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   app.delete "/api/v1/ads/:id", (req, res) ->
     db.model("Ad")
@@ -59,7 +86,6 @@ setup = (options, imports, register) ->
 
         # Now remove ourselves. So sad ;(
         ad.remove()
-
         res.send 200
 
   # Fetches owned ads

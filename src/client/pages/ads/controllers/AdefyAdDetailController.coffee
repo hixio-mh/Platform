@@ -12,19 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdDetailController", ($scope, $location, $routeParams, Ad, $http) ->
-
-  # Modal
-  $scope.form = {}
-  $scope.delete = ->
-    if $scope.ad.name == $scope.form.name
-      $scope.ad.$delete().then(
-        -> # success
-          $location.path("/ads")
-        -> #error
-          $scope.setNotification("There was an error with your form submission", "error")
-      )
-    return true
+window.AdefyApp.controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http) ->
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
@@ -91,17 +79,7 @@ window.AdefyApp.controller "AdefyAdDetailController", ($scope, $location, $route
         $scope.graphRefresh()
     , 1
 
-  $scope.graphDone = ->
-    Ad.get id: $routeParams.id, (ad) ->
-      if ad.stats.ctr then ad.stats.ctr *= 100
-      if ad.stats.ctr24h then ad.stats.ctr24h *= 100
-
-      for c in ad.campaigns
-        if c.stats
-          if c.stats.ctr then c.stats.ctr *= 100
-          if c.stats.ctr24h then c.stats.ctr24h *= 100
-
-      $scope.ad = ad
+  $scope.graphDone = -> AdService.getAd $routeParams.id, (ad) -> $scope.ad = ad
 
   $("body").off "change", "#ad-show select[name=interval]"
   $("body").off "change", "#ad-show input[name=sum]"

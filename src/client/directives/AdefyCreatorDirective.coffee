@@ -4,18 +4,35 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
   restrict: "AE"
   scope:
     url: "@"
+    showsuggestions: "@"
+    controls: "@"
+    messages: "@"
+    update: "=?"
+    loaded: "=?"
+    error: "=?"
+    getdata: "=?"
 
   link: (scope, element, attrs) ->
 
-    scope.data = null
     scope.loading = false
-    scope.blur = 30
-    scope.styleClass = "palette-red"
-    scope.buttonStyleClass = "button-round"
-    scope.bgOverlayClass = "overlay-bright1"
-    scope.loadingColorClass = "loading-white"
-    scope.loadingStyleClass = "loading-style-round"
     scope.suggestions = null
+    scope.showControls = true
+    scope.messages = true
+
+    scope.data =
+      blur: 30
+      styleClass: "palette-red"
+      buttonStyleClass: "button-round"
+      bgOverlayClass: "overlay-bright1"
+      loadingColorClass: "loading-white"
+      loadingStyleClass: "loading-style-round"
+      loaded: false
+
+    if scope.controls == false or scope.controls == "false"
+      scope.showControls = false
+
+    if scope.messages == false or scope.messages == "false"
+      scope.messages = false
 
     scope.generateBlurCSS = (blur) -> """
       -webkit-filter: blur(#{blur}px);
@@ -25,11 +42,16 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
       filter: blur(#{blur}px);
     """
 
-    scope.setPalette = (suffix) -> scope.styleClass = "palette-#{suffix}"
-    scope.setButtonStyle = (suffix) -> scope.buttonStyleClass = "button-#{suffix}"
-    scope.setBGOverlay = (suffix) -> scope.bgOverlayClass = "overlay-#{suffix}"
-    scope.setLoadingColor = (suffix) -> scope.loadingColorClass = "loading-#{suffix}"
-    scope.setLoadingStyle = (suffix) -> scope.loadingStyleClass = "loading-style-#{suffix}"
+    scope.setPalette = (suffix) ->
+      scope.data.styleClass = "palette-#{suffix}"
+    scope.setButtonStyle = (suffix) ->
+      scope.data.buttonStyleClass = "button-#{suffix}"
+    scope.setBGOverlay = (suffix) ->
+      scope.data.bgOverlayClass = "overlay-#{suffix}"
+    scope.setLoadingColor = (suffix) ->
+      scope.data.loadingColorClass = "loading-#{suffix}"
+    scope.setLoadingStyle = (suffix) ->
+      scope.data.loadingStyleClass = "loading-style-#{suffix}"
 
     pendingTimeouts = null
     pendingIntervals = null
@@ -72,23 +94,29 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
       pendingIntervals = null
 
     scope.updateTemplateURL = ->
-      scope.data = null
+      scope.data.loaded = false
       scope.loading = true
       clearAnimations()
 
       $http.get("/api/v1/creator/#{encodeURIComponent scope.url}").success (data) ->
 
+        if scope.getdata and scope.getdata scope.url
+          scope.data = scope.getdata scope.url
+        else
+          scope.data.subtitle = "Enter a subtitle"
+          scope.data.description = data.description[0...200]
+
+        scope.data.image = data.image
+        scope.data.title = data.title
+        scope.data.developer = data.author
+        scope.data.screenshots = data.screenshots
+        scope.data.rating = data.rating
+        scope.data.price = data.price
+        scope.data.currentBG = data.screenshots[0]
         scope.loading = false
-        scope.currentBG = data.screenshots[0]
-        scope.data =
-          image: data.image
-          subtitle: "Enter a subtitle"
-          description: data.description[0...200]
-          title: data.title
-          developer: data.author
-          screenshots: data.screenshots
-          rating: data.rating
-          price: data.price
+        scope.data.loaded = true
+
+        if scope.loaded then scope.loaded scope.data
 
         # Start animation
         $timeout ->
@@ -97,8 +125,15 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
           if pendingIntervals == null then pendingIntervals = []
           pendingIntervals.push setInterval (-> animateLoadBar()), 12300
 
-    scope.setScreenshotBG = (screenie) -> scope.currentBG = screenie
+      .error -> if scope.error then scope.error()
 
-    $http.get("/api/v1/creator/suggestions").success (data) ->
-      scope.suggestions = data
+    if scope.url and scope.url.length > 0
+      scope.updateTemplateURL()
+
+    scope.update = -> scope.updateTemplateURL()
+    scope.setScreenshotBG = (screenie) -> scope.data.currentBG = screenie
+
+    if scope.showsuggestions == true or scope.showsuggestions == "true"
+      $http.get("/api/v1/creator/suggestions").success (data) ->
+        scope.suggestions = data
 ]

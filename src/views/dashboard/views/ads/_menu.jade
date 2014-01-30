@@ -21,9 +21,12 @@
     .label.green(ng-switch-when="2") Approved
 
   .menu.full
-    a(ng-href="/ads/{{ad.id}}" tab)
+    a(ng-href="/ads/{{ad.id}}" tab partial="false")
       i.fa.fa-fw.fa-signal
       | Metrics
+    a(ng-href="/ads/{{ad.id}}/creative" tab)
+      i.fa.fa-fw.fa-pencil
+      | Google Play Creative
     //- a(ng-ref="/editor/{{ad.id}}" target="_self")
     //-   i.fa.fa-fw.fa-pencil
     //-   | Editor
