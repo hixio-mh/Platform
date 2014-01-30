@@ -21,7 +21,7 @@
       .amount ${{ me.pubFunds | number:2 }}
       .desc Publisher Balance
     .actions
-      button(form-modal template="/views/dashboard/account:billing" title="Withdraw funds"
+      button(form-modal template="/views/dashboard/account:withdraw" title="Withdraw funds"
       ok-button-text="Withdraw" form-submit="withdraw()" form-object="paymentInfo") Withdraw funds
       button.blue(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
       ok-button-text="Deposit via Paypal" form-submit="deposit()" form-object="paymentInfo") Deposit funds
