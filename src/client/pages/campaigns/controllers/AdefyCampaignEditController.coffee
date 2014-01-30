@@ -41,14 +41,10 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
         results: (data, page) -> results: data
       formatResult: (data) -> "<div>#{data.value}</div>"
       formatSelection: (data) -> data.value
-      id: (data) -> data.key
+      id: (data) -> data.value
       initSelection: (e, cb) ->
         data = []
-        $(e.val().split ",").each (i) ->
-          item = @split ":"
-          data.push
-            key: item[0]
-            value: item[1]
+        data.push { key: i, value: i } for i in e.val().split ","
         cb data
 
     $(".countryInclude").select2
@@ -62,27 +58,11 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
         results: (data, page) -> results: data
       formatResult: (data) -> "<div>#{data.value}</div>"
       formatSelection: (data) -> data.value
-      id: (data) -> data.key
+      id: (data) -> data.value
       initSelection: (e, cb) ->
         data = []
-        $(e.val().split ",").each (i) ->
-          item = @split ":"
-          data.push
-            key: item[0]
-            value: item[1]
+        data.push { key: i, value: i } for i in e.val().split ","
         cb data
-
-  arrayToSelect2Data = (array) ->
-    data = []
-    data.push { key: item, value: item } for item in array
-    data
-
-  validSelect2DataToPreloadString = (array) ->
-    str = ""
-    for item, i in array
-      str += "#{item.key}:#{item.value}"
-      if i != array.length - 1 then str += ","
-    str
 
   getRawDate = (smartDate) -> new Date(smartDate).getTime()
   getSmartDate = (rawDate) ->
@@ -98,15 +78,10 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
       $scope.campaign.networks = "all"
 
     # Prepare select fields
-    devicesExclude = arrayToSelect2Data campaign.devicesExclude
-    devicesInclude = arrayToSelect2Data campaign.devicesInclude
-    countriesExclude = arrayToSelect2Data campaign.countriesExclude
-    countriesInclude = arrayToSelect2Data campaign.countriesInclude
-
-    $scope.devicesExclude = validSelect2DataToPreloadString devicesExclude
-    $scope.devicesInclude = validSelect2DataToPreloadString devicesInclude
-    $scope.countriesInclude = validSelect2DataToPreloadString countriesInclude
-    $scope.countriesExclude = validSelect2DataToPreloadString countriesExclude
+    $scope.devicesExclude = campaign.devicesExclude.join ","
+    $scope.devicesInclude = campaign.devicesInclude.join ","
+    $scope.countriesInclude = campaign.countriesInclude.join ","
+    $scope.countriesExclude = campaign.countriesExclude.join ","
 
     $scope.campaign.startDate = getSmartDate $scope.campaign.startDate
     $scope.campaign.endDate = getSmartDate $scope.campaign.endDate
@@ -135,20 +110,28 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
 
   $scope.submit = ->
 
+    devicesInclude = $scope.devicesInclude.split ","
+    devicesExclude = $scope.devicesExclude.split ","
+    countriesInclude = $scope.countriesInclude.split ","
+    countriesExclude = $scope.countriesExclude.split ","
+
     $scope.campaign.devices = []
-    if $scope.devicesInclude and $scope.devicesInclude.length > 0
-      for device in $scope.devicesInclude
+    $scope.campaign.countries = []
+
+    for device in devicesInclude
+      if device.length > 0
         $scope.campaign.devices.push { name: device, type: "include" }
-    if $scope.devicesExclude and $scope.devicesExclude.length > 0
-      for device in $scope.devicesExclude
+
+    for device in devicesExclude
+      if device.length > 0
         $scope.campaign.devices.push { name: device, type: "exclude" }
 
-    $scope.campaign.countries = []
-    if $scope.countriesInclude and $scope.countriesInclude.length > 0
-      for country in $scope.countriesInclude
+    for country in countriesInclude
+      if country.length > 0
         $scope.campaign.countries.push { name: country, type: "include" }
-    if $scope.countriesExclude and $scope.countriesExclude.length > 0
-      for country in $scope.countriesExclude
+
+    for country in countriesExclude
+      if country.length > 0
         $scope.campaign.countries.push { name: country, type: "exclude" }
 
     $scope.submitted = true

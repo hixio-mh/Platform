@@ -92,9 +92,7 @@ setup = (options, imports, register) ->
       bidSystem: req.param "bidSystem"
       bid: Number req.param "bid"
 
-      countries: countries
       networks: networks
-      devices: devices
 
       devicesInclude: devicesInclude
       devicesExclude: devicesExclude
@@ -284,7 +282,13 @@ setup = (options, imports, register) ->
 
             # Only make changes if key is modified
             currentVal = campaign[key]
-            if currentVal != undefined and not equalityCheck currentVal, val
+
+            if key == "devices" or key == "countries"
+              validKey = true
+            else
+              validKey = currentVal != undefined
+
+            if validKey and not equalityCheck currentVal, val
 
               # Convert include/exclude array sets
               if key == "devices" or key == "countries"
@@ -304,11 +308,9 @@ setup = (options, imports, register) ->
                     spew.warning "Unrecognized entry in filter array: #{entry.type}"
 
                 if key == "devices"
-                  val = engineFilters.devices.translateInput include, exclude
                   campaign.devicesInclude = include
                   campaign.devicesExclude = exclude
                 else if key == "countries"
-                  val = engineFilters.countries.translateInput include, exclude
                   campaign.countriesInclude = include
                   campaign.countriesExclude = exclude
 
@@ -321,7 +323,8 @@ setup = (options, imports, register) ->
                 else if key == "pricing" then needsAdRefRefresh = true
 
               # Save final value on campaign
-              campaign[key] = val
+              if key != "countries" and key != "devices"
+                campaign[key] = val
 
         # Refresh ad refs on unchanged ads
         optionallyRefreshAdRefs ->

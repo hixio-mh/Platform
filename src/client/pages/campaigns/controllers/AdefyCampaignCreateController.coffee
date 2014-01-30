@@ -38,7 +38,7 @@ window.AdefyApp.controller "AdefyCampaignCreateController", ($scope, $location, 
         results: (data, page) -> results: data
       formatResult: (data) -> "<div>#{data.value}</div>"
       formatSelection: (data) -> data.value
-      id: (data) -> data.key
+      id: (data) -> data.value
       initSelection: (e, cb) ->
         data = []
         $(e.val().split ",").each (i) ->
@@ -60,7 +60,7 @@ window.AdefyApp.controller "AdefyCampaignCreateController", ($scope, $location, 
         results: (data, page) -> results: data
       formatResult: (data) -> "<div>#{data.value}</div>"
       formatSelection: (data) -> data.value
-      id: (data) -> data.key
+      id: (data) -> data.value
       initSelection: (e, cb) ->
         data = []
         $(e.val().split ",").each (i) ->
