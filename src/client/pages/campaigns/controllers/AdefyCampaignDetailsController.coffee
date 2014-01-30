@@ -11,7 +11,10 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyCampaignDetailsController", ($scope, $routeParams, Campaign) ->
+window.AdefyApp.controller "AdefyCampaignDetailsController", ($scope, $routeParams, CampaignService) ->
+
+  CampaignService.getCampaign $routeParams.id, (campaign) ->
+    $scope.campaign = campaign
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
@@ -77,12 +80,6 @@ window.AdefyApp.controller "AdefyCampaignDetailsController", ($scope, $routePara
         buildGraphData()
         $scope.graphRefresh()
     , 1
-
-  $scope.graphDone = ->
-    Campaign.get id: $routeParams.id, (campaign) ->
-      campaign.stats.ctr *= 100
-      campaign.stats.ctr24h *= 100
-      $scope.campaign = campaign
 
   $("body").off "change", "#campaign-show select[name=interval]"
   $("body").off "change", "#campaign-show input[name=sum]"

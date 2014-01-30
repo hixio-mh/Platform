@@ -2,6 +2,19 @@ include _menu
 
 .inner: form(novalidate ng-class="{ submitted: submitted }")
   fieldset: dl.form.center
+    legend Basic Information
+
+    dt: label Name
+    dd: input(required ng-model="campaign.name" type="text")
+
+    dt: label Description
+    dd: textarea(ng-model="campaign.description")
+
+    dt: label Category
+    dd#categorySelect
+      select(required ng-model="campaign.category" ng-options="c for c in categories")
+
+  fieldset: dl.form.center
     legend Ads
     p Add existing creatives
     dt

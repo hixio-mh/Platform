@@ -1,11 +1,11 @@
 .inner: form(novalidate ng-class="{ submitted: submitted }")
   fieldset: dl.form.center
-    legend Information
+    legend Basic Information
 
     dt: label Name
     dd: input(required ng-model="campaign.name" type="text")
 
-    dt: label Description (optional)
+    dt: label Description
     dd: textarea(ng-model="campaign.description")
 
     dt: label Category
@@ -57,5 +57,5 @@
 
   fieldset: dl.form.center
     dl.form.center
-    dt: span You'll be able to specify targeting details after saving
+    dt: span You'll be able to specify targeting details and add creatives after saving.
     dd: button.blue.save(ng-click="submit()") Save

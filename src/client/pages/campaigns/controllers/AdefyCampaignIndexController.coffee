@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyCampaignIndexController", ($scope, Campaign, $http) ->
+window.AdefyApp.controller "AdefyCampaignIndexController", ($scope, CampaignService, $http) ->
 
   buildGraphData = (campaign) ->
     campaign.graphData =
@@ -29,11 +29,6 @@ window.AdefyApp.controller "AdefyCampaignIndexController", ($scope, Campaign, $h
         interval: "30minutes"
       ]
 
-  Campaign.query (campaigns) ->
-
-    for c in campaigns
-      c.stats.ctr *= 100
-      c.stats.ctr24h *= 100
-
+  CampaignService.getAllCampaigns (campaigns) ->
     $scope.campaigns = campaigns
     buildGraphData c for c in $scope.campaigns
