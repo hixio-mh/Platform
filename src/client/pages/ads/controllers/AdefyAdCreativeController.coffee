@@ -16,14 +16,6 @@ window.AdefyApp.controller "AdefyAdCreativeController", ($scope, AdService, $rou
   $scope.creativeLoaded = false
   $scope.creativeData = null
 
-  AdService.getAd $routeParams.id, (ad) ->
-    $scope.ad = ad
-
-    console.log ad
-
-    if ad.data != undefined and ad.data.url != undefined
-      $scope.commitURL ad.data.url
-
   $scope.commitURL = ->
     $scope.creativeLoaded = false
     if $scope.ad.data == undefined then $scope.ad.data = {}
@@ -33,6 +25,12 @@ window.AdefyApp.controller "AdefyAdCreativeController", ($scope, AdService, $rou
 
       $scope.cycle = false
       $timeout -> $scope.$apply -> $scope.cycle = true
+
+  AdService.getAd $routeParams.id, (ad) ->
+    $scope.ad = ad
+
+    if ad.data != undefined and ad.data.url != undefined
+      $scope.commitURL ad.data.url
 
   $scope.invalidURL = ->
     $scope.isInvalidURL = true
@@ -47,7 +45,6 @@ window.AdefyApp.controller "AdefyAdCreativeController", ($scope, AdService, $rou
     $scope.ad.data.creative = $scope.creativeData
     AdService.save $scope.ad, (ad) ->
       $scope.setNotification "Saved!", "success"
-      console.log ad
       $scope.ad = ad
     , ->
       $scope.setNotification "There was an error with your submission", "error"

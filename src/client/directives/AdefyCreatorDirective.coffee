@@ -19,8 +19,6 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
     scope.showControls = true
     scope.messages = true
 
-    console.log scope.showsuggestions
-
     scope.data =
       blur: 30
       styleClass: "palette-red"
@@ -60,6 +58,10 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
 
     scope.pickSuggestion = (suggestionURL) ->
       scope.url = "https://play.google.com#{suggestionURL}"
+      scope.updateTemplateURL()
+
+    scope.updateTemplateFromInput = (input) ->
+      scope.url = input
       scope.updateTemplateURL()
 
     # Funky load sequence

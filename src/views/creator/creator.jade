@@ -1,8 +1,8 @@
 .container#ad-creator
 
   .mainURL(ng-if="showControls")
-    input(type="url" placeholder="Enter Google Play URL" ng-model="url")
-    button(ng-click="updateTemplateURL()") Generate Creative
+    input(type="url" placeholder="Enter Google Play URL" ng-model="inputURL")
+    button(ng-click="updateTemplateFromInput(inputURL)") Generate Creative
 
   div(ng-if="!data.loaded && loading == false && messages").tcenter
     .waiting-message Waiting for URL
