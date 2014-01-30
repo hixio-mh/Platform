@@ -73,6 +73,13 @@ setup = (options, imports, register) ->
     else
       res.render "account/register.jade"
 
+  # Alias for /register
+  app.get "/signup", (req, res) ->
+    if req.user != null and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/register.jade"
+
   # Logout, clear redis session
   app.get "/logout", (req, res) ->
     redis.del "sessions:#{req.user.id}:#{req.user.session}", (err) ->

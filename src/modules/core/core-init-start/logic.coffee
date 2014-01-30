@@ -37,6 +37,7 @@ setup = (options, imports, register) ->
   publicPages = [
     "/login"
     "/register"
+    "/signup"
     "/recover"
 
     "/creator"
