@@ -30,10 +30,10 @@ if paypalCredentials.client_id == undefined or paypalCredentials.client_secret =
   throw new Error "Paypal credentials missing on config!"
 
 paypalSDK.configure
-  host: "api.sandbox.paypal.com"
+  host: paypalCredentials.host
   port: ""
-  client_id: "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r"
-  client_secret: "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
+  client_id: paypalCredentials.client_id
+  client_secret: paypalCredentials.client_secret
 
 setup = (options, imports, register) ->
 
