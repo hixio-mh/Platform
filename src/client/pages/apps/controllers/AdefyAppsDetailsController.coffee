@@ -12,9 +12,9 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, App) ->
+window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, AppService) ->
 
-  App.get id: $routeParams.id, (app) -> $scope.app = app
+  AppService.getApp $routeParams.id, (app) -> $scope.app = app
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true

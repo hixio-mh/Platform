@@ -46,7 +46,8 @@ setup = (options, imports, register) ->
 
     newPublisher.save (err) ->
       if err
-        res.json 400, err
+        spew.error err
+        res.json 400
       else
         res.json 200, newPublisher.toAnonAPI()
 
@@ -59,7 +60,7 @@ setup = (options, imports, register) ->
       if not pub then return res.send 404
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
-        res.json 403
+        res.send 403
         return
 
       req.onValidationError (msg) -> res.json 400, error: msg.path
@@ -69,25 +70,25 @@ setup = (options, imports, register) ->
       pub.description = req.param("description") || pub.description
 
       if req.param "minimumCPM"
-        req.check("minimumCPM", "Invalid minimum CPM").isInt().min 0
+        req.check("minimumCPM", "Invalid minimum CPM").min 0
         pub.minimumCPM = req.param "minimumCPM"
 
       if req.param "minimumCPC"
-        req.check("minimumCPC", "Invalid minimum CPC").isInt().min 0
+        req.check("minimumCPC", "Invalid minimum CPC").min 0
         pub.minimumCPC = req.param "minimumCPC"
 
       if req.param "url"
         req.check("url", "Invalid url").isUrl()
         pub.url = req.param "url"
 
-      if req.param("preferredPricing")
+      if req.param "preferredPricing"
         pub.preferredPricing = req.param "preferredPricing"
 
       pub.save (err) ->
         if err
-          res.json 400
+          spew.error err
         else
-          res.json 200, pub.toAnonAPI()
+          res.send 200, pub.toAnonAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
   app.delete "/api/v1/publishers/:id", (req, res) ->
