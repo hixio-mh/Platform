@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsIndexController", ($scope, $location, App, $http) ->
+window.AdefyApp.controller "AdefyAppsIndexController", ($scope, $location, AppService, $http) ->
 
   buildGraphData = (publisher) ->
     publisher.graphData =
@@ -30,9 +30,6 @@ window.AdefyApp.controller "AdefyAppsIndexController", ($scope, $location, App, 
         interval: "30minutes"
       ]
 
-  App.query (apps) ->
-    for a in apps
-      a.stats.ctr *= 100
-      a.stats.ctr24h *= 100
+  AppService.getAllApps (apps) ->
     $scope.apps = apps
     buildGraphData a for a in $scope.apps

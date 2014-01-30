@@ -12,21 +12,21 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsEditController", ($scope, $location, $routeParams, App, $http, $timeout) ->
+window.AdefyApp.controller "AdefyAppsEditController", ($scope, $location, $routeParams, AppService, $http, $timeout) ->
 
   $scope.categories = []
+  $scope.pricingModels = ["Any", "CPM", "CPC"]
 
   $http.get("/api/v1/filters/categories").success (list) ->
     $scope.categories = list
     $timeout -> $("#categorySelect select").chosen()
 
-  $scope.pricingModels = ["Any", "CPM", "CPC"]
-
-  App.get id: $routeParams.id, (app) -> $scope.app = app
+  AppService.getApp $routeParams.id, (app) -> $scope.app = app
 
   $scope.submit = ->
     $scope.submitted = true
 
+    AppService.updateCachedApp $scope.app.id, $scope.app
     $scope.app.$save().then(
       -> # success
         $location.path "/apps/#{$scope.app.id}"
@@ -34,8 +34,7 @@ window.AdefyApp.controller "AdefyAppsEditController", ($scope, $location, $route
         $scope.setNotification "There was an error with your form submission", "error"
     )
 
-  # modal
-  $scope.form = {} # define the object, or it will not get set inside the modal
+  $scope.form = {}
   $scope.delete = ->
     if $scope.app.name == $scope.form.name
       $scope.app.$delete().then(
