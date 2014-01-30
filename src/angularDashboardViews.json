@@ -16,6 +16,7 @@
 
     "/ads",
     "/ads/:id",
+    "/ads/:id/creative",
 
     "/campaigns",
     "/campaigns/new",

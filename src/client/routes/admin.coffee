@@ -91,6 +91,10 @@ window.AdefyApp.config ($routeProvider, $locationProvider, ngQuickDateDefaultsPr
     controller: "AdefyAdDetailController"
     templateUrl: "/views/dashboard/ads:show"
 
+  $routeProvider.when "/ads/:id/creative",
+    controller: "AdefyAdCreativeController"
+    templateUrl: "/views/dashboard/ads:creative"
+
   $routeProvider.when "/campaigns/new",
     controller: "AdefyCampaignCreateController"
     templateUrl: "/views/dashboard/campaigns:new"

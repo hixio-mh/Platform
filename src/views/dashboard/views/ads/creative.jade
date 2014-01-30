@@ -1,0 +1,20 @@
+include _menu
+
+.contents.w1170.center
+  br
+  h1 Creative
+    .w50.right.header-controls.creative-controls
+      .w75.contents-right
+        input.w100(type="text" placeholder="Enter URL" ng-model="ad.data.url")
+      .w25.contents-left
+        button(ng-click="commitURL()" ng-class="{ blue: !renderURL }") Generate
+        button.blue(ng-disabled="!renderURL || !creativeLoaded" ng-click="save()") Save
+  h3 More authoring tools coming soon, february 2014
+  br
+
+h3.tcenter(ng-if="!creativeLoaded && renderURL") Loading...
+h3.tcenter(ng-if="!renderURL") Enter your play store URL
+h3.tcenter(ng-if="!renderURL && isInvalidURL") Invalid URL
+
+#ad-creative(ng-if="cycle == true")
+  ad-creator(controls="false" messages="false" url="{{ renderURL }}" loaded="doneLoading" error="invalidURL" getdata="getSavedData")

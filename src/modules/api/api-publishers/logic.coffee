@@ -92,8 +92,9 @@ setup = (options, imports, register) ->
       pub.save (err) ->
         if err
           spew.error err
+          res.send 500
         else
-          res.send 200, pub.toAnonAPI()
+          res.json 200, pub.toAnonAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
   app.delete "/api/v1/publishers/:id", (req, res) ->

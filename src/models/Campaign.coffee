@@ -303,29 +303,21 @@ schema.methods.clearAdReferences = (cb) ->
       ad.save()
       doneCb -> cb()
 
-# Remove specific ad by id, passing either the id or an ad model.
-# Expects the ads field to be populated!
+# Remove specific ad
 #
-# @param [String, Ad] adId
+# @param [Ad] ad
 # @param [Method] cb
-schema.methods.removeAd = (adId, cb) ->
+schema.methods.removeAd = (ad, cb) ->
 
-  if (adId = getIdFromArgument adId) == null
-    spew.error "Couldn't remove ad, no id: #{JSON.stringify adId}"
-    if cb then return cb()
-
+  adId = ad._id or ad.id or ad
   foundAd = false
 
   # Remove ad from our own array if possible
-  for ad, i in @ads
-
-    # Sanity check
-    if ad._id == undefined
-      throw new Error "Ads field has to be populated for ad removal!"
-      if cb then return cb()
+  for ownAd, i in @ads
+    ownAdId = ownAd._id or ownAd.id or ownAd
 
     # Perform actual id check
-    if ad._id.equals adId
+    if "#{adId}" == "ownAdId"
       foundAd = true
 
       # Clear campaign:ad references from redis
@@ -406,7 +398,7 @@ schema.pre "remove", (next) ->
       done = -> count--; if count == 0 then next()
 
       for ad in @ads
-        @removeAd ad.id, -> done()
+        @removeAd ad, -> done()
 
 # Ensure our pacing data is up to date (target spend)
 schema.pre "save", (next) ->

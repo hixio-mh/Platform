@@ -1,16 +1,16 @@
 .container#ad-creator
 
-  .mainURL
+  .mainURL(ng-if="showControls")
     input(type="url" placeholder="Enter Google Play URL" ng-model="url")
     button(ng-click="updateTemplateURL()") Generate Creative
 
-  div(ng-if="data == null && loading == false").tcenter
+  div(ng-if="!data.loaded && loading == false && messages").tcenter
     .waiting-message Waiting for URL
 
-  div(ng-if="data == null && loading == true").tcenter
+  div(ng-if="!data.loaded && loading == true && messages").tcenter
     .waiting-message Generating creative...
 
-  div(ng-if="data == null")#suggestions
+  div(ng-if="!data.loaded && showsuggestions == true")#suggestions
     div(ng-if="suggestions == null")
       .header Loading suggestions...
     div(ng-if="suggestions != null")
@@ -19,13 +19,13 @@
         li(ng-repeat="suggestion in suggestions | limitTo:10" ng-click="pickSuggestion(suggestion.url)")
           img(ng-src="{{ suggestion.cover }}")
 
-  div(ng-if="data")
+  div(ng-if="data.loaded")
     .col
       .panel
         .header Background
         .header.inner Blur
         div
-          input(type="number" placeholder="Enter blur amount" min="16" ng-model="blur")
+          input(type="number" placeholder="Enter blur amount" min="16" ng-model="data.blur")
 
         .header.inner Background Image
         div
@@ -114,9 +114,9 @@
         .header.inner Button Style
         div
           ul.inset-list
-            li(class="fullw {{ styleClass }}")
+            li(class="fullw {{ data.styleClass }}")
               button.button-round.example(ng-click="setButtonStyle('round')") Remind me later!
-            li(class="fullw {{ styleClass }}")
+            li(class="fullw {{ data.styleClass }}")
               button.button-square.example(ng-click="setButtonStyle('square')") Remind me later!
 
       .panel
@@ -136,18 +136,18 @@
         div
           ul.inset-list.loading-style-options
             li
-              div.loading-style-option.loading-style-flat(class="{{ loadingColorClass }}" ng-click="setLoadingStyle('flat')")
+              div.loading-style-option.loading-style-flat(class="{{ data.loadingColorClass }}" ng-click="setLoadingStyle('flat')")
                 .loading-container
                   .loading-element
 
             li
-              div.loading-style-option.loading-style-round(class="{{ loadingColorClass }}" ng-click="setLoadingStyle('round')")
+              div.loading-style-option.loading-style-round(class="{{ data.loadingColorClass }}" ng-click="setLoadingStyle('round')")
                 .loading-container
                   .loading-element
 
-    #device-container(onmousedown="return false" class="{{ styleClass }}")
-      #device-bg(style="background: url({{ currentBG }}); {{ generateBlurCSS(blur) }}")
-      #device(class="{{ bgOverlayClass }}")
+    #device-container(onmousedown="return false" class="{{ data.styleClass }}")
+      #device-bg(style="background: url({{ data.currentBG }}); {{ generateBlurCSS(data.blur) }}")
+      #device(class="{{ data.bgOverlayClass }}")
         #ad-left-col
           #ad-label.gray Advertisment
           img#appImage(ng-src="{{ data.image }}" alt="")
@@ -171,7 +171,7 @@
               | Description
             span(ng-bind="data.description")
 
-          button#remind-me-later(class="{{ buttonStyleClass }}") Remind me later!
+          button#remind-me-later(class="{{ data.buttonStyleClass }}") Remind me later!
 
         #ad-screenshots-bg
         #ad-screenshots-header
@@ -189,6 +189,6 @@
             li(ng-repeat="screenshot in data.screenshots")
               img(ng-src="{{ screenshot }}" alt="" height="160")
 
-        div(class="{{ loadingColorClass }} {{ loadingStyleClass }}")
+        div(class="{{ data.loadingColorClass }} {{ data.loadingStyleClass }}")
           .loading-container#loader-bg
             .loading-element#loader

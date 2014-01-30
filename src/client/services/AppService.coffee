@@ -32,7 +32,6 @@ window.AdefyApp.service "AppService", [
         else
           App.get id: id, (app) ->
             cache[id] = processReceivedApp app
-            console.log cache[id]
             cb cache[id]
 
       updateCachedApp: (id, app) ->
