@@ -20,6 +20,7 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
 
   $scope.pricingOptions = ["CPM", "CPC"]
   $scope.bidSysOptions = ["Automatic", "Manual"]
+  $scope.saveInProgress = false
 
   $scope.campaign =
     pricing: "CPM"
@@ -121,12 +122,16 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
     saveCampaign = angular.copy $scope.campaign
     saveCampaign.startDate = getRawDate saveCampaign.startDate
     saveCampaign.endDate = getRawDate saveCampaign.endDate
+
+    $scope.saveInProgress = true
     saveCampaign.$save().then(
       ->
         CampaignService.updateCachedCampaign $routeParams.id, saveCampaign
         $location.path "/campaigns/#{$scope.campaign.id}"
+        $scope.saveInProgress = false
       ->
         $scope.setNotification "There was an error with your form submission", "error"
+        $scope.saveInProgress = false
     )
 
   $scope.projectSpend = ->

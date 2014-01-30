@@ -235,7 +235,7 @@ schema.methods.fetchStatGraphData = (options, cb) ->
 schema.methods.removeFromCampaigns = (cb) ->
 
   count = @campaigns.length
-  if count == 0 then cb()
+  if count == 0 and cb then return cb()
 
   doneCb = =>
     if count == 1
@@ -244,7 +244,7 @@ schema.methods.removeFromCampaigns = (cb) ->
       @campaigns = []
       @save()
 
-      cb()
+      if cb then cb()
     else count--
 
   for c in @campaigns
@@ -314,7 +314,7 @@ schema.methods.clearCampaignReferences = (campaign, cb) ->
   ref = @getRedisRefForCampaign campaign
 
   @clearRedisFilters @getCompiledFetchData(campaign), ref, ->
-    redis.del ref, -> cb()
+    redis.del ref, -> if cb then cb()
 
 # The opposite of clearCampaignReferences, this creates references for the
 # supplied campaign. It must already be in our campaign list!
@@ -339,7 +339,7 @@ schema.methods.createCampaignReferences = (campaign, cb) ->
     redis.set "#{ref}:spent", 0
     redis.set "#{ref}:pricing", pricing
 
-    cb()
+    if cb then cb()
 
 ## Redis helpers
 
@@ -433,7 +433,7 @@ schema.methods.clearRedisFilters = (data, ref, cb) ->
   redis.srem device, 0, ref for device in sets.deviceSets
   redis.srem network, 0, ref for network in sets.networkSets
 
-  cb()
+  if cb then cb()
 
 # Create redis targeting/ad fetch keys
 #
@@ -447,12 +447,12 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
   redis.sadd device, ref for device in sets.deviceSets
   redis.sadd network, ref for network in sets.networkSets
 
-  cb()
+  if cb then cb()
 
 schema.methods.createRedisStruture = (cb) ->
   redis.set @getRedisRef(), @data, (err) ->
     if err then spew.error err
-    cb()
+    if cb then cb()
 
 # Rebuild our redis structures
 schema.pre "save", (next) -> @createRedisStruture -> next()

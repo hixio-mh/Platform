@@ -296,7 +296,7 @@ schema.methods.removeAd = (adId, cb) ->
 
   if (adId = getIdFromArgument adId) == null
     spew.error "Couldn't remove ad, no id: #{JSON.stringify adId}"
-    return cb()
+    if cb then return cb()
 
   foundAd = false
 
@@ -306,7 +306,7 @@ schema.methods.removeAd = (adId, cb) ->
     # Sanity check
     if ad._id == undefined
       throw new Error "Ads field has to be populated for ad removal!"
-      return cb()
+      if cb then return cb()
 
     # Perform actual id check
     if ad._id.equals adId
@@ -322,31 +322,32 @@ schema.methods.removeAd = (adId, cb) ->
         @save()
         ad.save()
 
-        cb()
+        if cb then cb()
 
       break
 
-  if not foundAd then cb()
+  if not foundAd and cb then cb()
 
 # Refresh all ad refs. This must be done whenever our targeting information
 # is modified.
 #
 # This requires that our ad field be populated!
 schema.methods.refreshAdRefs = (cb) ->
-  if @ads.length == 0 then cb()
+  if @ads.length == 0 and cb then cb()
 
   # Clear and re-create campaign references for a single ad
   refreshRefsForAd = (ad, campaign, cb) ->
     ad.populate "campaigns.campaign", (err, populatedAd) ->
       if err
         spew.error "Error populating ad campaigns field"
-        return cb()
+        if cb then return cb()
 
       populatedAd.clearCampaignReferences campaign, ->
-        populatedAd.createCampaignReferences campaign, -> cb()
+        populatedAd.createCampaignReferences campaign, ->
+          if cb then cb()
 
   count = @ads.length
-  doneCb = -> if count == 1 then cb() else count--
+  doneCb = -> count--; if count == 0 and cb then cb()
 
   for ad in @ads
     refreshRefsForAd ad, @, -> doneCb()
@@ -373,12 +374,12 @@ schema.methods.updatePaceData = (cb) ->
     redis.set "#{ref}:pace", 0
     redis.set "#{ref}:timestamp", new Date().getTime()
 
-    cb()
+    if cb then cb()
 
 schema.methods.createRedisStruture = (cb) ->
   @updatePaceData =>
     @populate "ads", =>
-      @refreshAdRefs -> cb()
+      @refreshAdRefs -> if cb then cb()
 
 # Cleans up campaign references within ads
 schema.pre "remove", (next) ->
