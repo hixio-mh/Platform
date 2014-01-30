@@ -56,38 +56,6 @@
     dd: input(type="number" disabled="disabled" value="{{ projectSpend() }}")
 
   fieldset: dl.form.center
-    legend Targetting
-    dl.form.center.single
-      dt: label Network
-      dd
-        .radio
-          input(type="radio" ng-model="campaign.networks" value="all" name="all_traffic")
-          label(for="all_traffic") All Traffic
-        .radio
-          input(type="radio" ng-model="campaign.networks" value="mobile" name="mobile_data_traffic")
-          label(for="mobile_data_traffic") Mobile Data Traffic
-        .radio
-          input(type="radio" ng-model="campaign.networks" value="wifi" name="wifi_traffic")
-          label(for="wifi_traffic") Wifi Traffic
-
-    dl.form.center.single
-      dt
-        label Geographical
-        span By default, all countries are included and none are excluded
-      dd
-        input.countryInclude(ng-model="countriesInclude" placeholder="Include countries")
-        br
-        input.countryInclude(ng-model="countriesExclude" placeholder="Exclude countries")
-
-    dl.form.center.single
-      dt
-        label Device
-        span By default, all devices are included and none are excluded
-      dd
-        input.deviceInclude(ng-model="devicesInclude" placeholder="Include devices")
-        br
-        input.deviceInclude(ng-model="devicesExclude" placeholder="Exclude devices")
-
     dl.form.center
-    dt
+    dt: span You'll be able to specify targeting details after saving
     dd: button.blue.save(ng-click="submit()") Save

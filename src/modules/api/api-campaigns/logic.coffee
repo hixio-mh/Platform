@@ -34,50 +34,6 @@ setup = (options, imports, register) ->
     if not utility.param req.param("bidSystem"), res, "Bid system" then return
     if not utility.param req.param("bid"), res, "Bid" then return
 
-    countries = []
-    networks = []
-    devices = []
-
-    devicesInclude = []
-    devicesExclude = []
-    countriesInclude = []
-    countriesExclude = []
-
-    # Generate valid filter arrays from data
-    if req.param "countries"
-      raw = req.param "countries"
-
-      includes = []
-      excludes = []
-
-      for item in raw
-        includes.push item.name if item.type == "include"
-        excludes.push item.name if item.type == "exclude"
-
-      # countries = engineFilters.countries.translateInput includes, excludes
-      countriesExclude = excludes
-      countriesInclude = includes
-
-    if req.param "networks"
-      if req.param("networks"[0]) == "all"
-        networks = ["mobile", "wifi"]
-      else
-        networks = req.param "networks"
-
-    if req.param "devices"
-      raw = req.param "devices"
-
-      includes = []
-      excludes = []
-
-      for item in raw
-        includes.push item.name if item.type == "include"
-        excludes.push item.name if item.type == "exclude"
-
-      # devices = engineFilters.devices.translateInput includes, excludes
-      devicesExclude = excludes
-      devicesInclude = includes
-
     # Create new campaign
     newCampaign = db.model("Campaign")
       owner: req.user.id
@@ -92,12 +48,12 @@ setup = (options, imports, register) ->
       bidSystem: req.param "bidSystem"
       bid: Number req.param "bid"
 
-      networks: networks
+      networks: ["mobile", "wifi"]
 
-      devicesInclude: devicesInclude
-      devicesExclude: devicesExclude
-      countriesInclude: countriesInclude
-      countriesExclude: countriesExclude
+      devicesInclude: []
+      devicesExclude: []
+      countriesInclude: []
+      countriesExclude: []
 
       startDate: Number req.param("startDate") || 0
       endDate: Number req.param("endDate") || 0
