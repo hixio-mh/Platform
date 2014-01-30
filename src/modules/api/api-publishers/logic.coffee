@@ -44,11 +44,16 @@ setup = (options, imports, register) ->
       minimumCPM: Number req.param("minimumCPM") || 0
       minimumCPC: Number req.param("minimumCPC") || 0
 
+    newPublisher.createAPIKey()
     newPublisher.save (err) ->
       if err
         spew.error err
-        res.json 400
+        res.json 500
       else
+
+        # Note that we don't wait for the generated thumbnail. This speeds
+        # things up greatly
+        newPublisher.generateThumbnailUrl -> newPublisher.save()
         res.json 200, newPublisher.toAnonAPI()
 
   # Save edits to existing publisher, user must either own the publisher or be

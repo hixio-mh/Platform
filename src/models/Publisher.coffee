@@ -139,7 +139,7 @@ schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
 
         if src and src.length > 0
           @thumbURL = src
-          cb src
+          if cb then cb src
         else @_generateDefaultThumbnailUrl cb
 
 ##
@@ -379,18 +379,12 @@ schema.methods.fetchPricingInfo = (cb) ->
 ##
 
 schema.pre "save", (next) ->
-  thumbnailGeneration = =>
-    if @needsNewThumbnail()
-      @generateThumbnailUrl -> next()
-    else
-      next()
-
   if not @hasAPIKey()
     @createAPIKey()
 
     # No API Key means no redis structure
-    @createRedisStruture => thumbnailGeneration()
+    @createRedisStruture => next()
 
-  @updateColdRedisData => thumbnailGeneration()
+  @updateColdRedisData => next()
 
 mongoose.model "Publisher", schema
