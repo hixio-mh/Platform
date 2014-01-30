@@ -104,14 +104,13 @@ describe "Publisher Model", ->
         pub.remove()
         done()
 
-    it "Should generate api key and thumbnail url on save", (done) ->
+    it "Should generate api key on save", (done) ->
       pub = model({ name: "Test" })
 
       pub.save (err) ->
         expect(err).to.not.exist
 
         expect(pub.apikey.length).to.equal 24
-        expect(pub.thumbURL.length).to.be.at.least 3
 
         pub.remove()
         done()
