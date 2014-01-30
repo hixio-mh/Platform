@@ -99,4 +99,4 @@ include _menu
           ok-button-text="Delete" form-submit="delete()" form-object="form")
       | I want to delete the campaign
 
-    button.blue.save.center(ng-click="submit()") Save
+    button.blue.save.center(ng-click="submit()" ng-disabled="saveInProgress") Save

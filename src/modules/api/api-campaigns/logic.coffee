@@ -114,6 +114,27 @@ setup = (options, imports, register) ->
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.json 403
 
+      # Perform basic validation
+      if req.body.totalBudget != undefined and isNaN req.body.totalBudget
+        return res.send 400, error: "Invalid total budget"
+
+      if req.body.dailyBudget != undefined and isNaN req.body.dailyBudget
+        return res.send 400, error: "Invalid daily budget"
+
+      if req.body.bid != undefined and isNaN req.body.bid
+        return res.send 400, error: "Invalid bid amount"
+
+      if req.body.bidSystem != undefined
+        if req.body.bidSystem != "Manual" and req.body.bidSystem != "Automatic"
+          return res.send 400, error: "Invalid bid system"
+
+      if req.body.pricing != undefined
+        if req.body.pricing != "CPM" and req.body.pricing != "CPC"
+          return res.send 400, error: "Invalid pricing"
+
+      # Don't allow active state change through edit path
+      if req.body.active != undefined then delete req.body.active
+
       # Store modification information
       needsAdRefRefresh = false
       adsToAdd = []
@@ -151,11 +172,9 @@ setup = (options, imports, register) ->
                 spew.error "Ad id: #{adId}"
                 return res.send 500
 
-              campaign.removeAd ad, -> doneCb()
-
-      optionallyRefreshAdRefs = (cb) ->
-        if not needsAdRefRefresh then cb()
-        else campaign.refreshAdRefs -> cb()
+              # NOTE: We don't wait for ad references to clear!
+              campaign.removeAd ad
+              doneCb()
 
       optionallyAddAds = (cb) ->
         if adsToAdd.length == 0 then cb()
@@ -177,9 +196,10 @@ setup = (options, imports, register) ->
 
               # Register campaign and create targeting references
               ad.registerCampaignParticipation campaign
-              ad.createCampaignReferences campaign, ->
-                ad.save()
-                doneCb()
+              ad.createCampaignReferences campaign, -> ad.save()
+
+              # NOTE: We don't wait for campaign reference creation
+              doneCb()
 
       # Process ad list first, so we know what we need to delete before
       # modifying refs
@@ -277,15 +297,16 @@ setup = (options, imports, register) ->
               if key != "countries" and key != "devices"
                 campaign[key] = val
 
-        # Refresh ad refs on unchanged ads
-        optionallyRefreshAdRefs ->
+        # Refresh ad refs on unchanged ads.
+        if needsAdRefRefresh then campaign.refreshAdRefs ->
+          spew.info "Refreshed refs for campaign #{campaign.id}"
 
-          # Generate refs and commit new list
-          optionallyAddAds ->
-            campaign.ads = newAdList
-            campaign.save()
+        # Generate refs and commit new list
+        optionallyAddAds ->
+          campaign.ads = newAdList
+          campaign.save()
 
-            res.json campaign.toAnonAPI()
+          res.json campaign.toAnonAPI()
 
   # Delete the campaign identified by req.param("id")
   # If we are not the administrator, we must own the campaign!
