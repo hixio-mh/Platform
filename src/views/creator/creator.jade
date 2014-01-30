@@ -10,7 +10,7 @@
   div(ng-if="!data.loaded && loading == true && messages").tcenter
     .waiting-message Generating creative...
 
-  div(ng-if="!data.loaded && showsuggestions == true")#suggestions
+  div(ng-if="!data.loaded && showsuggestions")#suggestions
     div(ng-if="suggestions == null")
       .header Loading suggestions...
     div(ng-if="suggestions != null")
