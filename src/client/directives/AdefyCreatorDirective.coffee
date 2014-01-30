@@ -19,6 +19,8 @@ window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) -
     scope.showControls = true
     scope.messages = true
 
+    console.log scope.showsuggestions
+
     scope.data =
       blur: 30
       styleClass: "palette-red"
