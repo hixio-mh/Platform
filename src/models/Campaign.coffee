@@ -84,6 +84,11 @@ schema.methods.toAPI = ->
   ret
 
 schema.methods.toAnonAPI = ->
+
+  for ad, i in @ads
+    if ad.toAnonAPI != undefined
+      @ads[i] = ad.toAnonAPI()
+
   ret = @toAPI()
   delete ret.owner
   ret

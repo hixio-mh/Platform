@@ -95,13 +95,7 @@ setup = (options, imports, register) ->
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
-      campaign.fetchOverviewStats (stats) ->
-
-        # Clean up ads
-        for ad, i in campaign.ads
-          campaign.ads[i] = ad.toAnonAPI()
-
-        res.json _.extend campaign.toAnonAPI(), stats: stats
+      campaign.populateSelfAllStats (self) -> res.json self
 
   # Saves the campaign, and creates campaign references where needed. User must
   # either be admin or own the campaign in question!
@@ -277,6 +271,7 @@ setup = (options, imports, register) ->
                 else if key == "devices" then needsAdRefRefresh = true
                 else if key == "countries" then needsAdRefRefresh = true
                 else if key == "pricing" then needsAdRefRefresh = true
+                else if key == "category" then needsAdRefRefresh = true
 
               # Save final value on campaign
               if key != "countries" and key != "devices"

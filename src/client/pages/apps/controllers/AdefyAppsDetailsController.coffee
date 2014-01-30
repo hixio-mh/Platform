@@ -14,6 +14,8 @@
 
 window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, App) ->
 
+  App.get id: $routeParams.id, (app) -> $scope.app = app
+
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
   $scope.intervalOptions = [
@@ -85,8 +87,6 @@ window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, 
         buildGraphData()
         $scope.graphRefresh()
     , 1
-
-  App.get id: $routeParams.id, (app) -> $scope.app = app
 
   $("body").off "change", "#app-show select[name=interval]"
   $("body").off "change", "#app-show input[name=sum]"

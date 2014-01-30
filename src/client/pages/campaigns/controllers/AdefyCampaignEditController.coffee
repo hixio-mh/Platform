@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout) ->
+window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout, CampaignService) ->
 
   $scope.min =
     budget: 10
@@ -28,6 +28,9 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
     scheduling: "no"
     devices: []
     countries: []
+
+  $http.get("/api/v1/filters/categories").success (list) ->
+    $scope.categories = list
 
   initializeSelect2Fields = ->
     $(".deviceInclude").select2
@@ -64,18 +67,15 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
         data.push { key: i, value: i } for i in e.val().split ","
         cb data
 
+    $("#categorySelect select").chosen()
+
   getRawDate = (smartDate) -> new Date(smartDate).getTime()
   getSmartDate = (rawDate) ->
     if rawDate == 0 then return null
     else return new Date rawDate
 
-  Campaign.get id: $routeParams.id, (campaign) ->
+  CampaignService.getCampaign $routeParams.id, (campaign) ->
     $scope.campaign = campaign
-    $scope.campaign.rules = []
-
-    # Translate network field
-    if $scope.campaign.networks.length == 2
-      $scope.campaign.networks = "all"
 
     # Prepare select fields
     $scope.devicesExclude = campaign.devicesExclude.join ","
@@ -83,30 +83,13 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
     $scope.countriesInclude = campaign.countriesInclude.join ","
     $scope.countriesExclude = campaign.countriesExclude.join ","
 
-    $scope.campaign.startDate = getSmartDate $scope.campaign.startDate
-    $scope.campaign.endDate = getSmartDate $scope.campaign.endDate
+    Ad.query (ads) ->
+      $scope.ads = []
 
-    $timeout -> initializeSelect2Fields()
+      for ad in ads
+        if ad.status == 2 then $scope.ads.push ad
 
-  Ad.query (ads) ->
-    $scope.ads = []
-
-    for ad in ads
-      if ad.status == 2 then $scope.ads.push ad
-
-  $scope.removeRule = (index) ->
-    $scope.campaign.rules.splice index, 1
-
-  $scope.addRule = ->
-    $scope.campaign.rules.push
-      networks: "all"
-      scheduling: "no"
-      devicesExclude: []
-      devicesInclude: []
-      countriesInclude: []
-      countriesExclude: []
-
-    $timeout -> initializeSelect2Fields()
+      $timeout -> initializeSelect2Fields()
 
   $scope.submit = ->
 
@@ -139,9 +122,10 @@ window.AdefyApp.controller "AdefyCampaignEditController", ($scope, $location, $r
     saveCampaign.startDate = getRawDate saveCampaign.startDate
     saveCampaign.endDate = getRawDate saveCampaign.endDate
     saveCampaign.$save().then(
-      -> # success
+      ->
+        CampaignService.updateCachedCampaign $routeParams.id, saveCampaign
         $location.path "/campaigns/#{$scope.campaign.id}"
-      -> #error
+      ->
         $scope.setNotification "There was an error with your form submission", "error"
     )
 
