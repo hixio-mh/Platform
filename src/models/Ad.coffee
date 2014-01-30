@@ -151,13 +151,19 @@ schema.methods.fetchTotalStats = (cb) ->
   # Go through and generate a key list
   keys = []
   for campaign in @campaigns
-    ref = @getRedisRefForCampaign campaign.campaign
+    if campaign.campaign != null
+      ref = @getRedisRefForCampaign campaign.campaign
 
-    # Note: The order is important, since we parse by it
-    keys.push "#{ref}:requests"
-    keys.push "#{ref}:clicks"
-    keys.push "#{ref}:impressions"
-    keys.push "#{ref}:spent"
+      # Note: The order is important, since we parse by it
+      keys.push "#{ref}:requests"
+      keys.push "#{ref}:clicks"
+      keys.push "#{ref}:impressions"
+      keys.push "#{ref}:spent"
+
+  # All campaigns null, known bug
+  if keys.length == 0
+    spew.warning "Ad campaigns are null ;( Ad id: #{@_id}"
+    return cb()
 
   redis.mget keys, (err, results) ->
     if err
@@ -271,7 +277,9 @@ schema.methods.voidCampaignParticipation = (campaign) ->
   else id = campaign.id
 
   for c, i in @campaigns
-    if c.campaign.equals id
+    cId = c.campaign._id or c.campaign.id or c.campaign
+
+    if "#{cId}" == "#{id}"
       @campaigns.splice i, 1
       break
 
@@ -317,12 +325,15 @@ schema.methods.clearCampaignReferences = (campaign, cb) ->
     redis.del ref, -> if cb then cb()
 
 # The opposite of clearCampaignReferences, this creates references for the
-# supplied campaign. It must already be in our campaign list!
+# supplied campaign. It must already be in our campaign list, and it must
+# be active!
 #
 # @param [Campaign] campaign
 schema.methods.createCampaignReferences = (campaign, cb) ->
+  if not campaign.active then return cb()
+
   ref = @getRedisRefForCampaign campaign
-  fetchData = @getCompiledFetchData(campaign)
+  fetchData = @getCompiledFetchData campaign
 
   @createRedisFilters fetchData, ref, ->
 

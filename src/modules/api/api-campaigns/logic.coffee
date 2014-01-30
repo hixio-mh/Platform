@@ -180,7 +180,7 @@ setup = (options, imports, register) ->
         if adsToAdd.length == 0 then cb()
         else
           count = adsToAdd.length
-          doneCb = -> if count == 1 then cb() else count--
+          doneCb = -> count--; if count == 0 then cb()
 
           for adId in adsToAdd
             db.model("Ad").findById adId, (err, ad) ->
@@ -194,9 +194,12 @@ setup = (options, imports, register) ->
                 spew.error "Client and server-side checks were bypassed!"
                 return res.send 500
 
-              # Register campaign and create targeting references
               ad.registerCampaignParticipation campaign
-              ad.createCampaignReferences campaign, -> ad.save()
+
+              if campaign.active
+                ad.createCampaignReferences campaign, -> ad.save()
+              else
+                ad.save()
 
               # NOTE: We don't wait for campaign reference creation
               doneCb()
@@ -297,8 +300,8 @@ setup = (options, imports, register) ->
               if key != "countries" and key != "devices"
                 campaign[key] = val
 
-        # Refresh ad refs on unchanged ads.
-        if needsAdRefRefresh then campaign.refreshAdRefs ->
+        # Refresh ad refs on unchanged ads (if we are active)
+        if needsAdRefRefresh and campaign.active then campaign.refreshAdRefs ->
           spew.info "Refreshed refs for campaign #{campaign.id}"
 
         # Generate refs and commit new list
@@ -313,6 +316,7 @@ setup = (options, imports, register) ->
   app.delete "/api/v1/campaigns/:id", (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
+    # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
@@ -342,28 +346,32 @@ setup = (options, imports, register) ->
 
   # Activates the campaign
   app.post "/api/v1/campaigns/:id/activate", (req, res) ->
-    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+    db.model("Campaign")
+    .findById(req.param("id"))
+    .populate("ads")
+    .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
-      campaign.activate()
-      campaign.save()
+      if not campaign.active then campaign.activate -> campaign.save()
       res.send 200
 
   # De-activates the campaign
   app.post "/api/v1/campaigns/:id/deactivate", (req, res) ->
-    db.model("Campaign").findById req.param("id"), (err, campaign) ->
+    db.model("Campaign")
+    .findById(req.param("id"))
+    .populate("ads")
+    .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
 
-      campaign.deactivate()
-      campaign.save()
+      if campaign.active then campaign.deactivate -> campaign.save()
       res.send 200
 
   register null, {}

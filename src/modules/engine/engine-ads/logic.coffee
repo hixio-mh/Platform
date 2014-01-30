@@ -336,32 +336,41 @@ setup = (options, imports, register) ->
         # If timestamp is zero, entry is invalid
         if paceData.timestamp > 0
 
+          # If it's been two minutes or longer, then calculate a new pace
+          # NOTE: We apply a damping down-scale of 20%
+          if nowTimestamp - paceData.timestamp >= 120000
+            paceData.pace = (paceData.target / paceData.spent) * 0.975
+
+            redis.set "#{paceRef}:pace", paceData.pace
+            redis.set "#{paceRef}:timestamp", nowTimestamp
+            redis.set "#{paceRef}:spent", 0
+
           # Bid! Magic!
           ad.bid = generateBid ad, publisher
 
-          ##
+          # Scale our bid if pacing is higher than 100%
+          if paceData.pace > 1 then ad.bid *= paceData.pace
+
           ## If we can't afford the bid, zero it out
-          ##
           if ad.bid > ad.userFunds then ad.bid = 0
 
-          # Pace! Decide if we bid
+          ##
+          ## If bid is below the publishers' floor limit, or of the wrong
+          ## pricing, then zero out the bid
+          ##
           if ad.bid > 0
+            if publisher.pricing == "Any" or publisher.pricing == "CPC"
+              if publisher.minCPC != 0 and ad.bid < publisher.minCPC
+                ad.bid = 0
 
-            # If it's been two minutes or longer, then calculate a new pace
-            # NOTE: We apply a damping down-scale of 20%
-            if nowTimestamp - paceData.timestamp >= 120000
-              redis.set "#{paceRef}:pace", (paceData.target / paceData.spent) * 0.8
-              redis.set "#{paceRef}:timestamp", nowTimestamp
-              redis.set "#{paceRef}:spent", 0
+            else if publisher.pricing == "Any" or publisher.pricing == "CPM"
+              if publisher.minCPM != 0 and ad.bid < publisher.minCPM
+                ad.bid = 0
 
-            # Update pacing expenditure
-            else if ad.bid > 0
-              redis.incrbyfloat "#{paceRef}:spent", ad.bid
-
-            # If we've overshot our 2-minute spend, or pacing says we can't
-            # bid, set our bid to 0
-            if paceData.spent >= paceData.target or Math.random() > paceData.pace
-              ad.bid = 0
+          # If we've overshot our 2-minute spend, or pacing says we can't
+          # bid, set our bid to 0
+          if paceData.spent >= paceData.target or Math.random() > paceData.pace
+            ad.bid = 0
 
           # Update second-highest bid if necessary
           if ad.bid > maxBid
@@ -369,11 +378,15 @@ setup = (options, imports, register) ->
             maxBid = ad.bid
             maxBidAd = ad
 
-      # Attach action URLs
+      # Attach action URLs and update pacing expenditure
       if maxBidAd != null
         actionId = "#{nowTimestamp}#{Math.ceil(Math.random() * 9000000)}"
         maxBidAd.impressionURL = "#{adefyDomain}/api/v1/impression/#{actionId}"
         maxBidAd.clickURL = "#{adefyDomain}/api/v1/click/#{actionId}"
+
+        # Update pacing expenditure
+        if maxBid > 0
+          redis.incrbyfloat "campaign:#{maxBidAd.campaignId}:pacing:spent", maxBid
 
       # Send ad
       cb maxBidAd
@@ -419,8 +432,12 @@ setup = (options, imports, register) ->
     redis.incr "#{publisher.ref}:requests"
     statsd.increment "#{publisher.graphiteId}.requests"
 
+    # Scale publisher CPM
+    publisher.minCPM /= 1000
+
     getIPCountry publisher, (country) ->
       performBaseTargeting publisher, req, (targetingKey, err, adCount) ->
+
         if err or adCount == 0
           if err then spew.error err
           redis.del targetingKey

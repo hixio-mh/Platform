@@ -284,8 +284,24 @@ getIdFromArgument = (arg) ->
     else arg = null
   arg
 
-schema.methods.activate = -> @active = true
-schema.methods.deactivate = -> @active = false
+schema.methods.activate = (cb) ->
+  @active = true
+  @refreshAdRefs => cb()
+
+schema.methods.deactivate = (cb) ->
+  @active = false
+  @clearAdReferences => cb()
+
+schema.methods.clearAdReferences = (cb) ->
+  count = @ads.length
+  if count == 0 then cb()
+
+  doneCb = (cb) -> count--; if count == 0 then cb()
+
+  for ad in @ads
+    ad.clearCampaignReferences @, ->
+      ad.save()
+      doneCb -> cb()
 
 # Remove specific ad by id, passing either the id or an ad model.
 # Expects the ads field to be populated!
