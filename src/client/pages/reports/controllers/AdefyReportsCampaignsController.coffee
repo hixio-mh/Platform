@@ -140,7 +140,7 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
 
     buildTableDataForCampaign = (campaign) ->
       index = tableData.length
-      tableData.push name: campaign.name
+      tableData.push { name: campaign.name, ctr: 0 }
 
       $http.get("#{prefix}/#{c.id}/impressions#{suffix}").success (data) ->
         tableData[index].impressions = data
@@ -156,8 +156,9 @@ window.AdefyApp.controller "AdefyReportsCampaignsController", ($scope, Campaign,
 
     finished = ->
       for i in [0...tableData.length]
-        if tableData[i].impressions != 0
+        if Number(tableData[i].impressions) != 0 and not isNaN tableData[i].impressions
           tableData[i].ctr = tableData[i].clicks / tableData[i].impressions
+          tableData[i].ctr *= 100
 
       $scope.comparisonData = tableData
 
