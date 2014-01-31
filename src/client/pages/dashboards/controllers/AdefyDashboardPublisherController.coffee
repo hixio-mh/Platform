@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyDashboardPublisherController", ($scope, $http, $route, App) ->
+angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $route, App) ->
 
   ##
   ## Fetch app table data

@@ -71,6 +71,101 @@ module.exports = (grunt) ->
     "views/**/*.jade"
   ]
 
+  concatNormalSrc = ["#{_buildDir}static/client/routes/normal.js"]
+  concatAdminSrc = ["#{_buildDir}static/client/routes/admin.js"]
+  commonClientSrc = [
+    "#{_buildDir}static/client/controllers/AdefyRootController.js"
+
+    "#{_buildDir}static/client/directives/AdefyDropdownDirective.js"
+    "#{_buildDir}static/client/directives/AdefyTabDirective.js"
+    "#{_buildDir}static/client/directives/AdefyModalFormDirective.js"
+    "#{_buildDir}static/client/directives/AdefyGraphDirective.js"
+    "#{_buildDir}static/client/directives/AdefyAnalyticsDirective.js"
+    "#{_buildDir}static/client/directives/AdefyToggleSwitchDirective.js"
+    "#{_buildDir}static/client/directives/AdefyCreatorDirective.js"
+
+    "#{_buildDir}static/client/services/CampaignService.js"
+    "#{_buildDir}static/client/services/AppService.js"
+    "#{_buildDir}static/client/services/AdService.js"
+
+    "#{_buildDir}static/client/pages/account/controllers/AdefyAccountFundsController.js"
+    "#{_buildDir}static/client/pages/account/controllers/AdefyAccountSettingsController.js"
+
+    "#{_buildDir}static/client/pages/ads/controllers/AdefyAdCreativeController.js"
+    "#{_buildDir}static/client/pages/ads/controllers/AdefyAdDetailController.js"
+    "#{_buildDir}static/client/pages/ads/controllers/AdefyAdIndexController.js"
+    "#{_buildDir}static/client/pages/ads/controllers/AdefyAdMenuController.js"
+    "#{_buildDir}static/client/pages/ads/factories/AdefyAdFactory.js"
+
+    "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsCreateController.js"
+    "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsDetailsController.js"
+    "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsEditController.js"
+    "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsIndexController.js"
+    "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsMenuController.js"
+    "#{_buildDir}static/client/pages/apps/factories/AdefyAppFactory.js"
+
+    "#{_buildDir}static/client/pages/campaigns/controllers/AdefyCampaignCreateController.js"
+    "#{_buildDir}static/client/pages/campaigns/controllers/AdefyCampaignDetailsController.js"
+    "#{_buildDir}static/client/pages/campaigns/controllers/AdefyCampaignEditController.js"
+    "#{_buildDir}static/client/pages/campaigns/controllers/AdefyCampaignIndexController.js"
+    "#{_buildDir}static/client/pages/campaigns/controllers/AdefyCampaignMenuController.js"
+    "#{_buildDir}static/client/pages/campaigns/factories/AdefyCampaignFactory.js"
+
+    "#{_buildDir}static/client/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js"
+    "#{_buildDir}static/client/pages/dashboards/controllers/AdefyDashboardPublisherController.js"
+
+    "#{_buildDir}static/client/pages/reports/controllers/AdefyReportsAdsController.js"
+    "#{_buildDir}static/client/pages/reports/controllers/AdefyReportsAppsController.js"
+    "#{_buildDir}static/client/pages/reports/controllers/AdefyReportsCampaignsController.js"
+  ]
+
+  for src in commonClientSrc
+    concatNormalSrc.push src
+    concatAdminSrc.push src
+
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminIndexController.js"
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminPublishersController.js"
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminUsersController.js"
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminMenuController.js"
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminAdsController.js"
+  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminRTBSimController.js"
+
+  concatFinalSrc = [
+    "#{_buildDir}static/js/vendor/jquery-2.0.3.min.js"
+    "#{_buildDir}static/js/vendor/accounting.min.js"
+    "#{_buildDir}static/js/vendor/chosen.jquery.min.js"
+    "#{_buildDir}static/js/vendor/select2.min.js"
+    "#{_buildDir}static/js/vendor/angular-1.2.10.min.js"
+    "#{_buildDir}static/js/vendor/angular-resource.min.js"
+    "#{_buildDir}static/js/vendor/angular-route.min.js"
+    "#{_buildDir}static/js/vendor/angular-country-select.min.js"
+    "#{_buildDir}static/js/vendor/angles.js"
+    "#{_buildDir}static/js/vendor/angular.chosen.js"
+    "#{_buildDir}static/js/vendor/ng-quick-date.min.js"
+    "#{_buildDir}static/js/vendor/moment.min.js"
+    "#{_buildDir}static/js/vendor/d3.min.js"
+    "#{_buildDir}static/js/vendor/rickshaw.min.js"
+    "#{_buildDir}static/js/script.min.js"
+  ]
+
+  concatFinalAdminSrc = [
+    "#{_buildDir}static/js/vendor/jquery-2.0.3.min.js"
+    "#{_buildDir}static/js/vendor/accounting.min.js"
+    "#{_buildDir}static/js/vendor/chosen.jquery.min.js"
+    "#{_buildDir}static/js/vendor/select2.min.js"
+    "#{_buildDir}static/js/vendor/angular-1.2.10.min.js"
+    "#{_buildDir}static/js/vendor/angular-resource.min.js"
+    "#{_buildDir}static/js/vendor/angular-route.min.js"
+    "#{_buildDir}static/js/vendor/angular-country-select.min.js"
+    "#{_buildDir}static/js/vendor/angles.js"
+    "#{_buildDir}static/js/vendor/angular.chosen.js"
+    "#{_buildDir}static/js/vendor/ng-quick-date.min.js"
+    "#{_buildDir}static/js/vendor/moment.min.js"
+    "#{_buildDir}static/js/vendor/d3.min.js"
+    "#{_buildDir}static/js/vendor/rickshaw.min.js"
+    "#{_buildDir}static/js/script-admin.min.js"
+  ]
+
   stylusMin = {}
   clientProdSrc = {}
   staticJadeFiles = {}
@@ -103,9 +198,6 @@ module.exports = (grunt) ->
 
     stylusMin = {}
     stylusMin["#{_buildDir}static/css/styles.css"] = "#{srcDir}stylus/styles.styl"
-
-    clientProdSrc = {}
-    clientProdSrc["#{_buildDir}static/client/app.min.js"] = _prodSrc
 
     staticJadeFiles = {}
     buildPref = "#{_buildDir}static"
@@ -170,12 +262,41 @@ module.exports = (grunt) ->
         dest: "#{_buildDir}static"
         src: clientSrc
 
-      # Production client settings, concat all files
-      client_prod:
-        expand: true
-        options:
-          bare: true
-        files: clientProdSrc
+    # Concat client-side JS
+    concat:
+      options:
+        separator: ";"
+        stripBanners: true
+      client:
+        src: concatNormalSrc
+        dest: "#{_buildDir}static/js/script.min.js"
+      client_admin:
+        src: concatAdminSrc
+        dest: "#{_buildDir}static/js/script-admin.min.js"
+      client_final:
+        src: concatFinalSrc
+        dest: "#{_buildDir}static/js/script.min.js"
+      client_final_admin:
+        src: concatFinalAdminSrc
+        dest: "#{_buildDir}static/js/script-admin.min.js"
+
+    # Prepare AJS for minification
+    ngmin:
+      client:
+        src: ["#{_buildDir}static/js/script.min.js"]
+        dest: "#{_buildDir}static/js/script.min.js"
+      client_admin:
+        src: ["#{_buildDir}static/js/script-admin.min.js"]
+        dest: "#{_buildDir}static/js/script-admin.min.js"
+
+    # Uglify! :D
+    uglify:
+      client:
+        src: ["#{_buildDir}static/js/script.min.js"]
+        dest: "#{_buildDir}static/js/script.min.js"
+      client_admin:
+        src: ["#{_buildDir}static/js/script-admin.min.js"]
+        dest: "#{_buildDir}static/js/script-admin.min.js"
 
     # Stylesheets
     stylus:
@@ -324,6 +445,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-nodemon"
   grunt.loadNpmTasks "grunt-mocha-test"
+  grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-ngmin"
+  grunt.loadNpmTasks "grunt-contrib-uglify"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
@@ -338,9 +462,18 @@ module.exports = (grunt) ->
     "coffee:modules"
     "coffee:models"
     "coffee:client_dev"
-    "coffee:client_prod"
     "stylus:full"
     "cssmin:minify"
+
+    "concat:client"
+    "ngmin:client"
+    "uglify:client"
+    "concat:client_final"
+
+    "concat:client_admin"
+    "ngmin:client_admin"
+    "uglify:client_admin"
+    "concat:client_final_admin"
   ]
   grunt.registerTask "full", [
     "clean"

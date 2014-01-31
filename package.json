@@ -43,7 +43,11 @@
     "chai": "1.8.1",
     "grunt-mocha-test": "~0.7.0",
     "coffee-script": "~1.6.3",
-    "grunt-contrib-jade": "~0.9.1"
+    "grunt-contrib-jade": "~0.9.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-cache-breaker": "~0.5.6",
+    "grunt-contrib-uglify": "~0.3.2",
+    "grunt-ngmin": "0.0.3"
   },
   "private": true,
   "engine": "node >= 0.10.12"

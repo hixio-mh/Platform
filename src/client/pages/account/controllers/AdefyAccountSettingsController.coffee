@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAccountSettingsController", ($scope, $http, $route, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAccountSettingsController", ($scope, $http, $route, $timeout) ->
 
   $http.get("/api/v1/user").success (me) ->
     $scope.me = me

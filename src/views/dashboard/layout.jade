@@ -119,104 +119,106 @@ html(lang="en" ng-app="AdefyApp")
     .content(ng-view="")
 
     footer
-      script(src="/js/vendor/jquery-2.0.3.min.js")
-      script(src="/js/vendor/accounting.min.js")
-      script(src="/js/vendor/chosen.jquery.min.js")
-      script(src="/js/vendor/select2.min.js")
-      //- script(src="/js/vendor/angular-1.2.2.min.js")
-      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js")
-      script(src="/js/vendor/angular-resource.min.js")
-      script(src="/js/vendor/angular-route.min.js")
-      script(src="/js/vendor/angular-country-select.min.js")
-      script(src="/js/vendor/angles.js")
-      script(src="/js/vendor/angular.chosen.js")
-      script(src="/js/vendor/ng-quick-date.min.js")
-      script(src="/js/vendor/moment.min.js")
-
-      script(src="/js/vendor/d3.min.js")
-      script(src="/js/vendor/rickshaw.min.js")
-
-      script.
-        window.AdefyApp = angular.module("AdefyApp", ["ngRoute", "ngResource", "countrySelect", "angles", "toggle-switch", "localytics.directives", "ngQuickDate"]);
-
-      //--
-      //-- Route configs, and root controller
-      //--
-
-      if admin
-        script(src="/client/routes/admin.js")
+      if mode == "production"
+        if user.admin
+          script(src="/js/script-admin.min.js")
+        else
+          script(src="/js/script.min.js")
       else
-        script(src="/client/routes/normal.js")
+        script(src="/js/vendor/jquery-2.0.3.min.js")
+        script(src="/js/vendor/accounting.min.js")
+        script(src="/js/vendor/chosen.jquery.min.js")
+        script(src="/js/vendor/select2.min.js")
+        script(src="/js/vendor/angular-1.2.10.min.js")
+        script(src="/js/vendor/angular-resource.min.js")
+        script(src="/js/vendor/angular-route.min.js")
+        script(src="/js/vendor/angular-country-select.min.js")
+        script(src="/js/vendor/angles.js")
+        script(src="/js/vendor/angular.chosen.js")
+        script(src="/js/vendor/ng-quick-date.min.js")
+        script(src="/js/vendor/moment.min.js")
 
-      script(src="/client/controllers/AdefyRootController.js")
+        script(src="/js/vendor/d3.min.js")
+        script(src="/js/vendor/rickshaw.min.js")
 
-      //--
-      //-- Root directives
-      //--
+        //--
+        //-- Module, route configs, and root controller
+        //--
 
-      script(src="/client/directives/AdefyDropdownDirective.js")
-      script(src="/client/directives/AdefyTabDirective.js")
-      script(src="/client/directives/AdefyModalFormDirective.js")
-      script(src="/client/directives/AdefyGraphDirective.js")
-      script(src="/client/directives/AdefyAnalyticsDirective.js")
-      script(src="/client/directives/AdefyToggleSwitchDirective.js")
-      script(src="/client/directives/AdefyCreatorDirective.js")
+        if user.admin
+          script(src="/client/routes/admin.js")
+        else
+          script(src="/client/routes/normal.js")
 
-      //--
-      //-- Services
-      //--
+        script(src="/client/controllers/AdefyRootController.js")
 
-      script(src="/client/services/CampaignService.js")
-      script(src="/client/services/AppService.js")
-      script(src="/client/services/AdService.js")
+        //--
+        //-- Root directives
+        //--
 
-      //--
-      //-- Pages (controllers, factories, directives, and services)
-      //--
+        script(src="/client/directives/AdefyDropdownDirective.js")
+        script(src="/client/directives/AdefyTabDirective.js")
+        script(src="/client/directives/AdefyModalFormDirective.js")
+        script(src="/client/directives/AdefyGraphDirective.js")
+        script(src="/client/directives/AdefyAnalyticsDirective.js")
+        script(src="/client/directives/AdefyToggleSwitchDirective.js")
+        script(src="/client/directives/AdefyCreatorDirective.js")
 
-      //- Accounts
-      script(src="/client/pages/account/controllers/AdefyAccountFundsController.js")
-      script(src="/client/pages/account/controllers/AdefyAccountSettingsController.js")
+        //--
+        //-- Services
+        //--
 
-      //- Ads
-      script(src="/client/pages/ads/controllers/AdefyAdCreativeController.js")
-      script(src="/client/pages/ads/controllers/AdefyAdDetailController.js")
-      script(src="/client/pages/ads/controllers/AdefyAdIndexController.js")
-      script(src="/client/pages/ads/controllers/AdefyAdMenuController.js")
-      script(src="/client/pages/ads/factories/AdefyAdFactory.js")
+        script(src="/client/services/CampaignService.js")
+        script(src="/client/services/AppService.js")
+        script(src="/client/services/AdService.js")
 
-      //- Apps
-      script(src="/client/pages/apps/controllers/AdefyAppsCreateController.js")
-      script(src="/client/pages/apps/controllers/AdefyAppsDetailsController.js")
-      script(src="/client/pages/apps/controllers/AdefyAppsEditController.js")
-      script(src="/client/pages/apps/controllers/AdefyAppsIndexController.js")
-      script(src="/client/pages/apps/controllers/AdefyAppsMenuController.js")
-      script(src="/client/pages/apps/factories/AdefyAppFactory.js")
+        //--
+        //-- Pages (controllers, factories, directives, and services)
+        //--
 
-      //- Campaigns
-      script(src="/client/pages/campaigns/controllers/AdefyCampaignCreateController.js")
-      script(src="/client/pages/campaigns/controllers/AdefyCampaignDetailsController.js")
-      script(src="/client/pages/campaigns/controllers/AdefyCampaignEditController.js")
-      script(src="/client/pages/campaigns/controllers/AdefyCampaignIndexController.js")
-      script(src="/client/pages/campaigns/controllers/AdefyCampaignMenuController.js")
-      script(src="/client/pages/campaigns/factories/AdefyCampaignFactory.js")
+        //- Accounts
+        script(src="/client/pages/account/controllers/AdefyAccountFundsController.js")
+        script(src="/client/pages/account/controllers/AdefyAccountSettingsController.js")
 
-      //- Dashboards
-      script(src="/client/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js")
-      script(src="/client/pages/dashboards/controllers/AdefyDashboardPublisherController.js")
+        //- Ads
+        script(src="/client/pages/ads/controllers/AdefyAdCreativeController.js")
+        script(src="/client/pages/ads/controllers/AdefyAdDetailController.js")
+        script(src="/client/pages/ads/controllers/AdefyAdIndexController.js")
+        script(src="/client/pages/ads/controllers/AdefyAdMenuController.js")
+        script(src="/client/pages/ads/factories/AdefyAdFactory.js")
 
-      //- Reports
-      script(src="/client/pages/reports/controllers/AdefyReportsAdsController.js")
-      script(src="/client/pages/reports/controllers/AdefyReportsAppsController.js")
-      script(src="/client/pages/reports/controllers/AdefyReportsCampaignsController.js")
+        //- Apps
+        script(src="/client/pages/apps/controllers/AdefyAppsCreateController.js")
+        script(src="/client/pages/apps/controllers/AdefyAppsDetailsController.js")
+        script(src="/client/pages/apps/controllers/AdefyAppsEditController.js")
+        script(src="/client/pages/apps/controllers/AdefyAppsIndexController.js")
+        script(src="/client/pages/apps/controllers/AdefyAppsMenuController.js")
+        script(src="/client/pages/apps/factories/AdefyAppFactory.js")
 
-      if locals.user.admin
-        script(src="/client/pages/admin/controllers/AdefyAdminIndexController.js")
-        script(src="/client/pages/admin/controllers/AdefyAdminPublishersController.js")
-        script(src="/client/pages/admin/controllers/AdefyAdminUsersController.js")
-        script(src="/client/pages/admin/controllers/AdefyAdminMenuController.js")
-        script(src="/client/pages/admin/controllers/AdefyAdminAdsController.js")
-        script(src="/client/pages/admin/controllers/AdefyAdminRTBSimController.js")
+        //- Campaigns
+        script(src="/client/pages/campaigns/controllers/AdefyCampaignCreateController.js")
+        script(src="/client/pages/campaigns/controllers/AdefyCampaignDetailsController.js")
+        script(src="/client/pages/campaigns/controllers/AdefyCampaignEditController.js")
+        script(src="/client/pages/campaigns/controllers/AdefyCampaignIndexController.js")
+        script(src="/client/pages/campaigns/controllers/AdefyCampaignMenuController.js")
+        script(src="/client/pages/campaigns/factories/AdefyCampaignFactory.js")
+
+        //- Dashboards
+        script(src="/client/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js")
+        script(src="/client/pages/dashboards/controllers/AdefyDashboardPublisherController.js")
+
+        //- Reports
+        script(src="/client/pages/reports/controllers/AdefyReportsAdsController.js")
+        script(src="/client/pages/reports/controllers/AdefyReportsAppsController.js")
+        script(src="/client/pages/reports/controllers/AdefyReportsCampaignsController.js")
+
+        if user.admin
+          script(src="/client/pages/admin/controllers/AdefyAdminIndexController.js")
+          script(src="/client/pages/admin/controllers/AdefyAdminPublishersController.js")
+          script(src="/client/pages/admin/controllers/AdefyAdminUsersController.js")
+          script(src="/client/pages/admin/controllers/AdefyAdminMenuController.js")
+          script(src="/client/pages/admin/controllers/AdefyAdminAdsController.js")
+          script(src="/client/pages/admin/controllers/AdefyAdminRTBSimController.js")
 
       script(src="//use.typekit.net/udl8vci.js")
       script.

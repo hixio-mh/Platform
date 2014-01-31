@@ -12,5 +12,5 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.factory "Campaign", ($resource) ->
+angular.module("AdefyApp").factory "Campaign", ($resource) ->
   return $resource "/api/v1/campaigns/:id", id: "@id"

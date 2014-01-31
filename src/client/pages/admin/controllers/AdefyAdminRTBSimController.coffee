@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdminRTBSimController", ($scope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyAdminRTBSimController", ($scope, $http, $route) ->
 
   $scope.budget = 50000
   $scope.impressions = 0

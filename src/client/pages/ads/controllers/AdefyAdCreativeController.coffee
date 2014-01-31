@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyAdCreativeController", ($scope, AdService, $routeParams, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAdCreativeController", ($scope, AdService, $routeParams, $timeout) ->
   $scope.cycle = false
   $scope.creativeLoaded = false
   $scope.creativeData = null

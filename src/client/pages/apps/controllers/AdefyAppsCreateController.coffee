@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsCreateController", ($scope, $location, App) ->
+angular.module("AdefyApp").controller "AdefyAppsCreateController", ($scope, $location, App) ->
 
   # Application categories
   $scope.categories = [

@@ -3,7 +3,7 @@
 ##
 
 ###
-window.AdefyApp.directive "adCreator", ["$http", ($http) ->
+angular.module("AdefyApp").directive "adCreator", ["$http", ($http) ->
 
   templateUrl: "/views/creator/creator"
   restrict: "AE"

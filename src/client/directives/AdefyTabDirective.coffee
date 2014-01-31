@@ -7,7 +7,7 @@ unless String::startsWith
       position = position or 0
       @indexOf(searchString, position) is position
 
-window.AdefyApp.directive "tab", ($location) ->
+angular.module("AdefyApp").directive "tab", ($location) ->
   return {
     link: (scope, element, attrs) ->
 

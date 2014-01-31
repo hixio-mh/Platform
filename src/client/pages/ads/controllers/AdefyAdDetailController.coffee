@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http) ->
+angular.module("AdefyApp").controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http) ->
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true

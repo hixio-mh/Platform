@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyAdIndexController", ($scope, $location, Ad, AdService) ->
+angular.module("AdefyApp").controller "AdefyAdIndexController", ($scope, $location, Ad, AdService) ->
 
   refreshAds = -> AdService.getAllAds (ads) -> $scope.ads = ads
   refreshAds()

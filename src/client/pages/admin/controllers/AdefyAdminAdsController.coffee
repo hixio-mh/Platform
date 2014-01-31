@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdminAdsController", ($scope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http, $route) ->
 
   $scope.ads = []               # Application data for table
   $scope.adView = {}            # Model for current publisher
