@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyDashboardAdvertiserController", ($scope, $http, $route, Campaign) ->
+angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($scope, $http, $route, Campaign) ->
 
   $scope.impressions24h = 0
   $scope.clicks24h = 0

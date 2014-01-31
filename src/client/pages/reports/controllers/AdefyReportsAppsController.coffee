@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyReportsAppsController", ($scope, App, $http) ->
+angular.module("AdefyApp").controller "AdefyReportsAppsController", ($scope, App, $http) ->
 
   ##
   ## Initial render settings and options

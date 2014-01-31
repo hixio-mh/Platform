@@ -1,4 +1,4 @@
-window.AdefyApp.service "CampaignService", [
+angular.module("AdefyApp").service "CampaignService", [
   "$http"
   "$routeParams"
   "Campaign"

@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdminIndexController", ($scope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyAdminIndexController", ($scope, $http, $route) ->
 
   # Dashboard text metrics
   $scope.userCount = 0

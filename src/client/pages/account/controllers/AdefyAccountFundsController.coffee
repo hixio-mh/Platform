@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAccountFundsController", ($scope, $http, $routeParams) ->
+angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $http, $routeParams) ->
 
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data

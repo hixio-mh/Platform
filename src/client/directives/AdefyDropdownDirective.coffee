@@ -1,4 +1,4 @@
-window.AdefyApp.directive "dropdown", ["$document", ($document) ->
+angular.module("AdefyApp").directive "dropdown", ["$document", ($document) ->
   return {
     restrict: "A"
     scope: true

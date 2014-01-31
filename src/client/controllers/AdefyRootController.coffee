@@ -11,8 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
-window.AdefyApp.controller "AdefyRootController", ($scope, $rootScope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope, $http, $route) ->
   $scope.clearNotification = ->
     $rootScope.notification = null
   $scope.setNotification = (text, type) ->

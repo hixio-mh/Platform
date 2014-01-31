@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsEditController", ($scope, $location, $routeParams, AppService, $http, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAppsEditController", ($scope, $location, $routeParams, AppService, $http, $timeout) ->
 
   $scope.categories = []
   $scope.pricingModels = ["Any", "CPM", "CPC"]

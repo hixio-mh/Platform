@@ -1,4 +1,4 @@
-window.AdefyApp.service "AppService", [
+angular.module("AdefyApp").service "AppService", [
   "$http"
   "$routeParams"
   "App"

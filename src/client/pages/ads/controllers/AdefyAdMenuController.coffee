@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyAdMenuController", ($scope, $location, $http) ->
+angular.module("AdefyApp").controller "AdefyAdMenuController", ($scope, $location, $http) ->
   $scope.requestApproval = ->
     $http.post "/ads/#{$scope.ad.id}/approval"
     .success ->

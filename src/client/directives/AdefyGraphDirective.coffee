@@ -1,4 +1,4 @@
-window.AdefyApp.directive "graph", [->
+angular.module("AdefyApp").directive "graph", [->
 
   template: """
   <div class="rickshaw_container">

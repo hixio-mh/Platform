@@ -1,4 +1,4 @@
-window.AdefyApp.directive "analytics", ["$http", "$timeout", ($http, $timeout) ->
+angular.module("AdefyApp").directive "analytics", ["$http", "$timeout", ($http, $timeout) ->
 
   template: """
   <div ng-if="graphData != null">

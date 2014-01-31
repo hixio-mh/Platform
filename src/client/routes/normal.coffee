@@ -11,8 +11,17 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+window.AdefyApp = angular.module "AdefyApp", [
+  "ngRoute"
+  "ngResource"
+  "countrySelect"
+  "angles"
+  "toggle-switch"
+  "localytics.directives"
+  "ngQuickDate"
+]
 
-window.AdefyApp.config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
+angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
 
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"

@@ -1,4 +1,4 @@
-window.AdefyApp.service "AdService", [
+angular.module("AdefyApp").service "AdService", [
   "$http"
   "$routeParams"
   "Ad"

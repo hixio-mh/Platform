@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyAppsMenuController", ($scope, $location, $http) ->
+angular.module("AdefyApp").controller "AdefyAppsMenuController", ($scope, $location, $http) ->
   $scope.activeToggled = ->
     if $scope.app.active
       $http.post "/api/v1/publishers/#{$scope.app.id}/deactivate"

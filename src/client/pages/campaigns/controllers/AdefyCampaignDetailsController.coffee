@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-window.AdefyApp.controller "AdefyCampaignDetailsController", ($scope, $routeParams, CampaignService) ->
+angular.module("AdefyApp").controller "AdefyCampaignDetailsController", ($scope, $routeParams, CampaignService) ->
 
   CampaignService.getCampaign $routeParams.id, (campaign) ->
     $scope.campaign = campaign

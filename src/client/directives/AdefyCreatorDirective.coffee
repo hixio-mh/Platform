@@ -1,4 +1,4 @@
-window.AdefyApp.directive "adCreator", ["$http", "$timeout", ($http, $timeout) ->
+angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, $timeout) ->
 
   templateUrl: "/views/creator/creator"
   restrict: "AE"

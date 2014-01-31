@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAdminUsersController", ($scope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyAdminUsersController", ($scope, $http, $route) ->
 
   # Fetch user list
   $http.get("/api/v1/user/get?filter=all").success (data) -> $scope.userlist = data

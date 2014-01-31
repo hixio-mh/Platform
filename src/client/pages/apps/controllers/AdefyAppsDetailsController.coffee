@@ -12,7 +12,7 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-window.AdefyApp.controller "AdefyAppsDetailsController", ($scope, $routeParams, AppService) ->
+angular.module("AdefyApp").controller "AdefyAppsDetailsController", ($scope, $routeParams, AppService) ->
 
   AppService.getApp $routeParams.id, (app) -> $scope.app = app
 
