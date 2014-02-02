@@ -131,6 +131,7 @@ module.exports = (grunt) ->
   concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminRTBSimController.js"
 
   concatFinalSrc = [
+    "#{_buildDir}static/js/vendor/stackBlur.min.js"
     "#{_buildDir}static/js/vendor/jquery-2.0.3.min.js"
     "#{_buildDir}static/js/vendor/accounting.min.js"
     "#{_buildDir}static/js/vendor/chosen.jquery.min.js"
@@ -149,6 +150,7 @@ module.exports = (grunt) ->
   ]
 
   concatFinalAdminSrc = [
+    "#{_buildDir}static/js/vendor/stackBlur.min.js"
     "#{_buildDir}static/js/vendor/jquery-2.0.3.min.js"
     "#{_buildDir}static/js/vendor/accounting.min.js"
     "#{_buildDir}static/js/vendor/chosen.jquery.min.js"

@@ -146,7 +146,7 @@
                   .loading-element
 
     #device-container(onmousedown="return false" class="{{ data.styleClass }}")
-      #device-bg(style="background: url({{ data.currentBG }}); {{ generateBlurCSS(data.blur) }}")
+      canvas#device-bg
       #device(class="{{ data.bgOverlayClass }}")
         #ad-left-col
           #ad-label.gray Advertisment

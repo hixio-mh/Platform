@@ -97,6 +97,8 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
       pendingTimeouts = null
       pendingIntervals = null
 
+    bgImage = null
+
     scope.updateTemplateURL = ->
       scope.data.loaded = false
       scope.loading = true
@@ -122,6 +124,11 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
 
         if scope.loaded then scope.loaded scope.data
 
+        bgImage = new Image()
+        bgImage.onload = ->
+          stackBlurImageElement bgImage, "device-bg", scope.data.blur, 344, 613
+        bgImage.src = "/api/v1/creator/image/#{encodeURIComponent scope.data.currentBG}"
+
         # Start animation
         $timeout ->
           animateLoadBar()
@@ -133,6 +140,16 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
 
     if scope.url and scope.url.length > 0
       scope.updateTemplateURL()
+
+    scope.$watch "data.blur", (blur) ->
+      if bgImage != null
+        stackBlurImageElement bgImage, "device-bg", blur, 344, 613
+
+    scope.$watch "data.currentBG", (bg) ->
+      bgImage = new Image()
+      bgImage.onload = ->
+        stackBlurImageElement bgImage, "device-bg", scope.data.blur, 344, 613
+      bgImage.src = "/api/v1/creator/image/#{encodeURIComponent bg}"
 
     scope.update = -> scope.updateTemplateURL()
     scope.setScreenshotBG = (screenie) -> scope.data.currentBG = screenie
