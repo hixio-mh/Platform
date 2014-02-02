@@ -7,10 +7,10 @@
     dt
       label Application URL
       span The Android package name or App Store ID
-    dd: input(ng-model="app.url" type="text" placeholder="com.android.game")
+    dd: input(required ng-model="app.url" type="text" placeholder="com.android.game")
     dt: label Application category
     dd
-      select(required chosen ng-model="app.category", ng-options="c for c in categories")
+      select(required chosen ng-model="app.category" ng-options="c for c in categories")
     dt: label Description
     dd: textarea(ng-model="app.description")
     dt: label Preferred Pricing Model
