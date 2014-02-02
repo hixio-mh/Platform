@@ -36,7 +36,7 @@ a
   color hsl(196, 77%, 55%)
   text-decoration none
   cursor pointer
-  &hover
+  &:hover
     color #5897fb
 
 .center
@@ -54,7 +54,7 @@ button
   padding 7px
   border-radius 5px
 
-  &hover, &active
+  &:hover, &:active
     background-image linear-gradient(#eee 20%,#fff 80%)
     box-shadow 0 1px 0 #fff inset
 
@@ -107,7 +107,7 @@ button.save
   &.center
     margin 8px auto
 
-input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], textarea
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea
   font-family Source Sans Pro
   display block
   padding 7px
@@ -189,7 +189,7 @@ header
   .menu > a, .menu > .da
     border-left 1px solid transparent
     border-right 1px solid transparent
-    &hover, &.active
+    &:hover, &.active
       color #33b5e5
       border-color rgba(255,255,255,.12)
       background-color rgba(0,0,0,.3)
@@ -227,7 +227,7 @@ header
   display inline-block
   padding 0 20px
   cursor pointer
-  &.active, &hover
+  &.active, &:hover
     background-color rgba(0,0,0,.1)
 
 .titlebar
@@ -500,7 +500,7 @@ fieldset
     &last-of-type
       border-radius 0 0 5px 5px
       border none
-    &hover
+    &:hover
       background-color #333
       color #fff
 
@@ -585,7 +585,7 @@ fieldset
   //border-radius 7px
   padding 5px
   border-bottom 1px dashed transparent
-  &hover
+  &:hover
     color #999
     border-bottom 1px dotted
   i
@@ -620,7 +620,7 @@ fieldset
       color #999
       display none
 
-    &hover
+    &:hover
       color #333
   lihover .edit
     display block
