@@ -60,7 +60,7 @@ def deploy():
     run("grunt deploy")
 
     # Restart
-    run("pm2 start buildProduction/adefy.js -i 8")
+    run("pm2 reload buildProduction/adefy.js -i 8")
 
 # Staging
 @roles("staging")
@@ -85,7 +85,7 @@ def stage():
     run("grunt stage")
 
     # Restart
-    run("pm2 start buildStaging/adefy.js -i 8")
+    run("pm2 reload buildStaging/adefy.js -i 8")
 
 # Forever controls
 @roles("staging")
