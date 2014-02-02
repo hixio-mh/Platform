@@ -25,8 +25,19 @@
 
 include _menu
 
+br
+br
+
 .index.dashboard
-  br
-  h1 Users &amp; Invites
-  br
-  h3 Cris is too lazy to implement this...
+  .w50
+    h6.block.tcenter Users
+    div(analytics data="userGraph" width="350" height="150" type="line" hover="hoverFormatter")
+  .w50
+    h6.block.tcenter Publishers
+    div(analytics data="pubGraph" width="350" height="150" type="line" hover="hoverFormatter")
+  .w50
+    h6.block.tcenter Campaigns
+    div(analytics data="campaignGraph" width="350" height="150" type="line" hover="hoverFormatter")
+  .w50
+    h6.block.tcenter Ads
+    div(analytics data="adGraph" width="350" height="150" type="line" hover="hoverFormatter")

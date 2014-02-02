@@ -14,31 +14,34 @@
 
 angular.module("AdefyApp").controller "AdefyAdminIndexController", ($scope, $http, $route) ->
 
-  # Dashboard text metrics
-  $scope.userCount = 0
+  $scope.hoverFormatter = (series, x, y) ->
+    "#{series.name}: #{accounting.formatNumber y, 2}"
 
-  ##
-  ## Charts
-  ##
+  graphAxes =
+    x:
+      type: "x"
+      formatter: (x) -> moment(x).fromNow()
+    counts:
+      type: "y"
+      orientation: "left"
+      formatter: (y) -> accounting.formatNumber y
 
-  $scope.adminChartData =
-    static: [
-      name: "Users"
-      color: "#33b5e5"
-    ]
+  $scope.userGraph =
+    prefix: "/api/v1/analytics/counts"
+    axes: graphAxes
+    graphs: [{ name: "Users", stat: "User", y: "counts" }]
 
-    dynamic: [
-      [{ x: 0, y: 0 }]
-      [{ x: 0, y: 0 }]
-    ]
+  $scope.pubGraph =
+    prefix: "/api/v1/analytics/counts"
+    axes: graphAxes
+    graphs: [{ name: "Publishers", stat: "Publisher", y: "counts" }]
 
-  ##
-  ## Data fetches
-  ##
+  $scope.campaignGraph =
+    prefix: "/api/v1/analytics/counts"
+    axes: graphAxes
+    graphs: [{ name: "Campaigns", stat: "Campaign", y: "counts" }]
 
-  # Fetch data for user graph
-  $http.get("/api/v1/analytics/users").success (result) ->
-    if result.error != undefined then alert result.error; return
-
-    $scope.adminChartData.dynamic[0] = result.data
-    $scope.userCount = result.count
+  $scope.adGraph =
+    prefix: "/api/v1/analytics/counts"
+    axes: graphAxes
+    graphs: [{ name: "Ads", stat: "Ad", y: "counts" }]

@@ -125,6 +125,46 @@ setup = (options, imports, register) ->
     else
       res.json 400, error: "Unknown stat"
 
+  ##
+  ## Admin-only
+  ##
+
+  app.get "/api/v1/analytics/counts/:model", (req, res) ->
+    if not req.user.admin then return res.send 403
+
+    model = req.param "model"
+    validModels = [
+      "User"
+      "Ad"
+      "Campaign"
+      "Publisher"
+    ]
+
+    validModel = false
+    for m in validModels
+      if m == model
+        validModel = true
+        break
+
+    if not validModel then return res.send 400
+
+    db.model(model).find {}, (err, objects) ->
+      if err then spew.error err
+
+      ret = []
+
+      for object in objects
+        ret.push
+          x: new Date(Date.parse(object._id.getTimestamp())).getTime()
+          y: object
+
+      ret.sort (a, b) -> a.x - b.x
+
+      for object, i in ret
+        ret[i].y = i + 1
+
+      res.json ret
+
   register null, {}
 
 module.exports = setup
