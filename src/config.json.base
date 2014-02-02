@@ -20,13 +20,13 @@
 			"redis-main": {
 				"db": 0,
 				"host": "localhost",
-				"port": 23521
+				"port": 6379
 			},
 
 			"redis-autocomplete": {
 				"db": 0,
 				"host": "localhost",
-				"port": 23521
+				"port": 6379
 			},
 
 			"stats": {
