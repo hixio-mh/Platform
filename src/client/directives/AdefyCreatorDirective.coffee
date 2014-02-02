@@ -61,6 +61,8 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
       scope.updateTemplateURL()
 
     scope.updateTemplateFromInput = (input) ->
+      if input.length == 0 then return
+
       scope.url = input
       scope.updateTemplateURL()
 
