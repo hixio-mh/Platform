@@ -6,8 +6,8 @@ from __future__ import with_statement
 from fabric.api import *
 
 env.roledefs = {
-  "staging": ["staging.adefy.com:58124"],
-  "production": ["app.adefy.com:48723"]
+  "staging": ["staging.adefy.com:7374"],
+  "production": ["app1.adefy.com:7374"]
 }
 
 env.user = "cris"
@@ -30,7 +30,7 @@ def _setup(branch):
     run("git pull origin " + branch)
 
     # Install global dependencies
-    sudo("npm install -g codo grunt-cli forever")
+    sudo("npm install -g grunt-cli pm2")
 
 # Updates server packages
 @roles("production", "staging")
@@ -60,8 +60,7 @@ def deploy():
     run("grunt deploy")
 
     # Restart
-    run('bash -c "(forever stop buildProduction/adefy.js) || true"')
-    run("forever start buildProduction/adefy.js")
+    run("pm2 start buildProduction/adefy.js -i 8")
 
 # Staging
 @roles("staging")
@@ -86,41 +85,40 @@ def stage():
     run("grunt stage")
 
     # Restart
-    run('bash -c "(forever stop buildStaging/adefy.js) || true"')
-    run("forever start buildStaging/adefy.js")
+    run("pm2 start buildStaging/adefy.js -i 8")
 
 # Forever controls
 @roles("staging")
 def stage_up():
   with cd(adefy_path):
-    run("forever start buildStaging/adefy.js")
+    run("pm2 start buildStaging/adefy.js -i 8")
 
 @roles("staging")
 def stage_restart():
   with cd(adefy_path):
-    run("forever restart staging/adefy.js")
+    run("pm2 reload staging/adefy.js")
 
 @roles("staging")
 def stage_down():
   with cd(adefy_path):
-    run("forever stop buildStaging/adefy.js")
+    run("pm2 stop buildStaging/adefy.js")
 
 @roles("production")
 def production_up():
   with cd(adefy_path):
-    run("forever start buildProduction/adefy.js")
+    run("pm2 start buildProduction/adefy.js -i 8")
 
 @roles("production")
 def production_restart():
   with cd(adefy_path):
-    run("forever restart buildProduction/adefy.js")
+    run("pm2 reload buildProduction/adefy.js")
 
 @roles("production")
 def production_down():
   with cd(adefy_path):
-    run("forever stop buildProduction/adefy.js")
+    run("pm2 stop buildProduction/adefy.js")
 
 @roles("production", "staging")
 def status():
   with cd(adefy_path):
-    run("forever list")
+    run("pm2 list")
