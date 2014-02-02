@@ -136,7 +136,7 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
 
   $scope.projectSpend = ->
     if $scope.$parent.me
-      funds = $scope.$parent.me.funds
+      funds = $scope.$parent.me.adFunds
     else
       funds = $scope.campaign.dailyBudget
 

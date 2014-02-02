@@ -45,7 +45,7 @@ angular.module("AdefyApp").controller "AdefyCampaignCreateController", ($scope, 
 
   $scope.projectSpend = ->
     if $scope.$parent.me
-      funds = $scope.$parent.me.funds
+      funds = $scope.$parent.me.adFunds
     else
       funds = $scope.campaign.dailyBudget
 

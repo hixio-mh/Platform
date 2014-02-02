@@ -57,11 +57,12 @@ include _menu
     dt: label End Date (Optional)
     dd: datepicker(ng-model="campaign.endDate")
 
-    br
-    br
+    div(ng-if="projectSpend()")
+      br
+      br
 
-    dt: label Projected Spend $
-    dd: input(type="number" disabled="disabled" value="{{ projectSpend() }}")
+      dt: label Projected Spend
+      dd: label ${{ projectSpend() | number:2 }}
 
   fieldset: dl.form.center
     legend Targetting
