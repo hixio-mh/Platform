@@ -19,6 +19,8 @@
 
 .tcenter
   text-align center
+.tright
+  text-align right
 
 body
   font-family Source Sans Pro
@@ -83,6 +85,20 @@ button.blue
     background #5897fb
   &:focus
     border-color #385FDA
+
+button.red
+  color #fff
+  background  -webkit-linear-gradient(top,#E43434,#F97B57)
+  border 1px solid #C71515
+  border-bottom 1px solid rgba(0,0,0,.2)
+  text-shadow 0 1px 1px rgba(0,0,0,0.3)
+  box-shadow inset 0 -1px rgba(255,255,255,0.15)
+
+  &:hover, &:active
+    box-shadow 0 1px 0 rgba(255,255,255,.2) inset
+    background #F97B57
+  &:focus
+    border-color #DA8937
 
 button.save
   margin 8px 0
@@ -424,14 +440,26 @@ fieldset
 
 .w25
   width 25%
+
+  &.padded
+    width 20%
+    margin auto 2.5%
 .w33
   width 33%
 .w50
   width 50%
   select
     width 100%
+
+  &.padded
+    width 45%
+    margin auto 2.5%
 .w75
   width 75%
+
+  &.padded
+    width 70%
+    margin auto 2.5%
 
 .w100, .fullw
   width 100%

@@ -14,30 +14,39 @@
 
 .stats.dashboard
   .stat: .wrap
-    .amount.large ▲ 0
+    .amount.large ▲ {{ totalImpressions }}
     .desc Impressions today
   .stat: .wrap
-    .amount.large ▲ 0
+    .amount.large ▲ {{ totalClicks }}
     .desc Clicks today
-  .stat: .wrap
-    .amount.large {{ userCount }}
-    .desc Users
 
 include _menu
 
-br
-br
+.contents.w920.center
+  .stats.campaign
+    .stat: .wrap
+      .amount.large.inner {{ userCount }}
+      .desc Users
+    .stat: .wrap
+      .amount.large.inner {{ pubCount }}
+      .desc Publishers
+    .stat: .wrap
+      .amount.large.inner {{ adCount }}
+      .desc Ads
+    .stat: .wrap
+      .amount.large.inner {{ campaignCount }}
+      .desc Campaigns
 
 .index.dashboard
   .w50
     h6.block.tcenter Users
-    div(analytics data="userGraph" width="350" height="150" type="line" hover="hoverFormatter")
+    div(analytics data="userGraph" width="350" height="150" type="line" hover="hoverFormatter" done="setUserCount")
   .w50
     h6.block.tcenter Publishers
-    div(analytics data="pubGraph" width="350" height="150" type="line" hover="hoverFormatter")
+    div(analytics data="pubGraph" width="350" height="150" type="line" hover="hoverFormatter" done="setPublisherCount")
   .w50
     h6.block.tcenter Campaigns
-    div(analytics data="campaignGraph" width="350" height="150" type="line" hover="hoverFormatter")
+    div(analytics data="campaignGraph" width="350" height="150" type="line" hover="hoverFormatter" done="setCampaignCount")
   .w50
     h6.block.tcenter Ads
-    div(analytics data="adGraph" width="350" height="150" type="line" hover="hoverFormatter")
+    div(analytics data="adGraph" width="350" height="150" type="line" hover="hoverFormatter" done="setAdCount")

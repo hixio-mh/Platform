@@ -14,8 +14,8 @@
 
 angular.module("AdefyApp").controller "AdefyAdminPublishersController", ($scope, $http, $route) ->
 
-  $scope.pubs = []               # Application data for table
-  $scope.pubView = {}            # Model for current publisher
+  $scope.pubs = []
+  $scope.pubView = null
 
   ##
   ## Publisher listing
@@ -47,7 +47,6 @@ angular.module("AdefyApp").controller "AdefyAdminPublishersController", ($scope,
           list[i].activeClass = "red"
 
       $scope.pubs = list
-      $scope.pubView = $scope.pubs[0]
 
   refreshPublisherListing()
 
@@ -70,8 +69,6 @@ angular.module("AdefyApp").controller "AdefyAdminPublishersController", ($scope,
 
   # Sends the message to the publisher (requires a message!)
   $scope.disapprovePub = ->
-    if $scope.pubView.newApprovalMessage.length == 0 then return
-
     if confirm "Are you sure?"
 
       msg = $scope.pubView.newApprovalMessage
