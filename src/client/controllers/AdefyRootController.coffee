@@ -15,7 +15,7 @@ angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope
   $scope.clearNotification = ->
     $rootScope.notification = null
   $scope.setNotification = (text, type) ->
-    $rootScope.notification = {type: type, text: text}
+    $rootScope.notification = { type: type, text: text }
 
   $scope.showIntercom = -> Intercom "show"
   $http.get("/api/v1/user").success (me) -> $scope.me = me

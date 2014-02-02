@@ -128,7 +128,6 @@ module.exports = (grunt) ->
   concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminUsersController.js"
   concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminMenuController.js"
   concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminAdsController.js"
-  concatAdminSrc.push "#{_buildDir}static/client/pages/admin/controllers/AdefyAdminRTBSimController.js"
 
   concatFinalSrc = [
     "#{_buildDir}static/js/vendor/stackBlur.min.js"

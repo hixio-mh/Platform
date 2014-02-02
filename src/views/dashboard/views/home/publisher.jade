@@ -29,15 +29,15 @@
 .index.dashboard#home-publisher
   a.switch-view(href="/home/advertiser") Switch to advertiser view
 
-  div.w50(ng-if="graph24hStats")
+  .w50(ng-if="graph24hStats")
     h6.block.tcenter 24h Clicks &amp; Impressions
     div(analytics data="graph24hStats" width="350" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
 
-  div.w50(ng-if="graph24hRevenue")
+  .w50(ng-if="graph24hRevenue")
     h6.block.tcenter 24h Revenue
     div(analytics data="graph24hRevenue" width="350" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
 
-  div.block(ng-if="graphLifetimeMetrics")
+  .block(ng-if="graphLifetimeMetrics")
     h6.block.tcenter Lifetime Metrics
     div(analytics data="graphLifetimeMetrics" width="800" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
 
