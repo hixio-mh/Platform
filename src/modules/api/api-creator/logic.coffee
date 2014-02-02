@@ -43,7 +43,6 @@ setup = (options, imports, register) ->
 
   app.get "/creator", (req, res) -> res.render "creator/public.jade"
 
-  ### Remove this when it's certain it won't be needed
   app.get "/api/v1/creator/image/:image", (req, res) ->
     image = req.param "image"
     if not validImage image then return res.send 400
@@ -53,7 +52,6 @@ setup = (options, imports, register) ->
     request { url: image, encoding: null }, (error, response, body) ->
       res.setHeader "Content-Type", response.headers["content-type"]
       res.end body, "binary"
-  ###
 
   # Fetch top paid games list from google
   app.get "/api/v1/creator/suggestions", (req, res) ->

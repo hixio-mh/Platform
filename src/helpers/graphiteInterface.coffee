@@ -166,6 +166,7 @@ module.exports =
             if cb then cb body
           catch err
             spew.error "Graphite response parsing error: #{err}"
+            spew.error body
             if cb then cb []
 
     @getPrefixStat = -> "stats.#{config.mode}."
