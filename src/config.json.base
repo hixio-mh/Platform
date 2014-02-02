@@ -41,7 +41,7 @@
 			}
 		},
 		"staging": {
-			"domain": "app1.adefy.com",
+			"domain": "staging.adefy.com",
 			"port": 10000,
 			"loglevel": 10,
 			"newrelic": true,
@@ -212,7 +212,7 @@
 			"redis-autocomplete": {
 				"db": 1,
 				"host": "192.168.128.68",
-				"port": 23521
+				"port": 23522
 			},
 
 			"stats": {
