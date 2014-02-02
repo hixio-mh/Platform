@@ -19,8 +19,7 @@ angular.module("AdefyApp").controller "AdefyAdminIndexController", ($scope, $htt
   $scope.campaignCount = 0
   $scope.adCount = 0
 
-  $scope.hoverFormatter = (series, x, y) ->
-    "#{series.name}: #{accounting.formatNumber y, 2}"
+  $scope.hoverFormatter = (series, x, y) -> "#{series.name}: #{y}"
 
   graphAxes =
     x:
