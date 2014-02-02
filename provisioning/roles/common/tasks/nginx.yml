@@ -1,0 +1,2 @@
+- name: setup /etc/ngix/nginx.conf
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf
