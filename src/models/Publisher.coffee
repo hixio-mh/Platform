@@ -94,13 +94,17 @@ schema.methods.disaprove = (msg) ->
       msg: msg
       timestamp: new Date().getTime()
 
-schema.methods.activate = ->
+schema.methods.activate = (cb) ->
   @active = true
+  @createRedisStruture()
   redis.set "#{@getRedisId()}:active", @active
+  if cb then cb()
 
-schema.methods.deactivate = ->
+schema.methods.deactivate = (cb) ->
   @active = false
+  @clearRedisStructure()
   redis.set "#{@getRedisId()}:active", @active
+  if cb then cb()
 
 schema.methods.isActive = -> @active
 
@@ -291,6 +295,8 @@ schema.methods.logStatIncrement = (stat) ->
 
 # Initialization
 schema.methods.updateColdRedisData = (cb) ->
+  if not @active then return cb()
+
   ref = @getRedisId()
   redis.set "#{ref}:active", @active, =>
     redis.set "#{ref}:pricing", @preferredPricing, =>
@@ -299,7 +305,7 @@ schema.methods.updateColdRedisData = (cb) ->
           redis.set "#{ref}:category", @category, =>
             cb()
 
-schema.methods.createRedisStruture = (cb) ->
+schema.methods.createRedisStruture = ->
 
   # We don't specify an owner id in some tests
   if @owner != undefined
@@ -312,17 +318,30 @@ schema.methods.createRedisStruture = (cb) ->
 
   ref = @getRedisId()
   redis.set "#{ref}:impressions", 0, =>
-    redis.set "#{ref}:clicks", 0, =>
-      redis.set "#{ref}:earnings", 0, =>
-        redis.set "#{ref}:requests", 0, =>
-          redis.set "#{ref}:owner", ownerId, =>
-            redis.set "#{ref}:active", @active, =>
-              redis.set "#{ref}:graphiteId", @getGraphiteId(), =>
-                redis.set "#{ref}:pricing", @preferredPricing, =>
-                  redis.set "#{ref}:minCPC", @minimumCPC, =>
-                    redis.set "#{ref}:minCPM", @minimumCPM, =>
-                      redis.set "#{ref}:category", @category, =>
-                        cb()
+  redis.set "#{ref}:clicks", 0, =>
+  redis.set "#{ref}:earnings", 0, =>
+  redis.set "#{ref}:requests", 0, =>
+  redis.set "#{ref}:owner", ownerId, =>
+  redis.set "#{ref}:active", @active, =>
+  redis.set "#{ref}:graphiteId", @getGraphiteId(), =>
+  redis.set "#{ref}:pricing", @preferredPricing, =>
+  redis.set "#{ref}:minCPC", @minimumCPC, =>
+  redis.set "#{ref}:minCPM", @minimumCPM, =>
+  redis.set "#{ref}:category", @category, =>
+
+schema.methods.clearRedisStructure = ->
+  ref = @getRedisId()
+  redis.del "#{ref}:impressions"
+  redis.del "#{ref}:clicks"
+  redis.del "#{ref}:earnings"
+  redis.del "#{ref}:requests"
+  redis.del "#{ref}:owner"
+  redis.del "#{ref}:active"
+  redis.del "#{ref}:graphiteId"
+  redis.del "#{ref}:pricing"
+  redis.del "#{ref}:minCPC"
+  redis.del "#{ref}:minCPM"
+  redis.del "#{ref}:category"
 
 # Basic stat fetching
 schema.methods.fetchImpressions = (cb) ->
@@ -383,7 +402,7 @@ schema.pre "save", (next) ->
     @createAPIKey()
 
     # No API Key means no redis structure
-    @createRedisStruture => next()
+    next()
 
   @updateColdRedisData => next()
 

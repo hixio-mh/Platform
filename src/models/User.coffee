@@ -69,22 +69,27 @@ schema.methods.toAPI = ->
 
 # NOTE: This overwrites the fund count stored in redis!
 schema.methods.createRedisStruture = (cb) ->
-  redis.set "#{@getRedisId()}:adFunds", @adFunds, (err) ->
+  redis.set "#{@getRedisId()}:adFunds", @adFunds, (err) =>
     if err then spew.error err
-    redis.set "#{@getRedisId()}:pubFunds", @pubFunds, (err) ->
+    redis.set "#{@getRedisId()}:pubFunds", @pubFunds, (err) =>
       if err then spew.error err
-      cb()
+      if cb then cb()
 
 schema.methods.updateFunds = (cb) ->
   redis.get "#{@getRedisId()}:adFunds", (err, adFunds) =>
     if err then spew.error err
     redis.get "#{@getRedisId()}:pubFunds", (err, pubFunds) =>
       if err then spew.error err
+      needsFundsRecreation = false
 
       if adFunds != null then @adFunds = Number adFunds
-      if pubFunds != null then @pubFunds = Number pubFunds
+      else needsFundsRecreation = true
 
-      cb()
+      if pubFunds != null then @pubFunds = Number pubFunds
+      else needsFundsRecreation = true
+
+      if needsFundsRecreation then @createRedisStruture()
+      if cb then cb()
 
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
