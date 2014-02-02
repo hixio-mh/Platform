@@ -60,7 +60,7 @@ setup = (options, imports, register) ->
     genCTR = -> Math.round((Math.random() * (maxCTR - minCTR)) + minCTR)
 
     impressionsAndClicks = (ad) ->
-      if Math.random() < impressionChance
+      if Math.random() < impressionChance and ad.impressionURL
         request ad.impressionURL, (err, res, body) ->
           if Math.random() < genCTR()
             request ad.clickURL, (err, res, body) ->

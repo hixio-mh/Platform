@@ -269,7 +269,7 @@ setup = (options, imports, register) ->
       # This is where it gets kinky. Use publisher lifetime ctr. If it is 0
       # (publisher has no clicks), then use a CTR of 2.5%
       if publisher.ctr == 0
-        ctr = 0.025
+        ctr = 0.1
       else
         ctr = publisher.ctr
 
@@ -339,7 +339,12 @@ setup = (options, imports, register) ->
           # If it's been two minutes or longer, then calculate a new pace
           # NOTE: We apply a damping down-scale of 20%
           if nowTimestamp - paceData.timestamp >= 120000
-            paceData.pace = (paceData.target / paceData.spent) * 0.975
+            if paceData.spent > 0
+              paceData.pace = (paceData.target / paceData.spent) * 0.9
+            else if paceData.pace == 0
+              paceData.pace = 1.25
+            else
+              paceData.pace *= 1.5
 
             redis.set "#{paceRef}:pace", paceData.pace
             redis.set "#{paceRef}:timestamp", nowTimestamp

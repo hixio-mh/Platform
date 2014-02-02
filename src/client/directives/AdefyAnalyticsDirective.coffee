@@ -49,6 +49,8 @@ class AdefyAnalyticsDirective
   constructor: (@scope, @element, @attrs, @$http, @$timeout) ->
     scope.graphData = null
     scope.noGraphData = @generateEmptyGraphData()
+
+    @initColors()
     @fetchData()
 
     scope.refresh = =>
@@ -131,8 +133,8 @@ class AdefyAnalyticsDirective
 
         if atLeastOneNonZeroPoint
 
-          if colors[graph.stat] != undefined and graph.newcol != true
-            color = colors[graph.stat]
+          if @colors[graph.stat] != undefined and graph.newcol != true
+            color = @colors[graph.stat]
           else
             color = tempColorPalette.color()
 
