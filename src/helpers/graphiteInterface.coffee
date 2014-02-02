@@ -173,7 +173,8 @@ module.exports =
     @getPrefixStatCounts = -> "stats_counts.#{config.mode}."
 
     @_buildQuery = ->
-      query = "http://#{modeConfig.stats.host}/render?"
+      auth = "ferno:q94vY92GxMCK4nXHZJuKAHly"
+      query = "http://#{auth}@#{modeConfig.stats.host}/render?"
 
       for target, i in @_targets
 
