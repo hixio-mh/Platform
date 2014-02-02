@@ -79,7 +79,7 @@ def stage():
     run("npm install")
 
     # Test (abort on fail)
-    run("grunt deployTest")
+    run("grunt stageTest")
 
     # Stage
     run("grunt stage")

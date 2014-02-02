@@ -2,6 +2,7 @@ buildDevelopment/
 buildStaging/
 buildTesting/
 buildProduction/
+buildTestStaging/
 
 node_modules/
 

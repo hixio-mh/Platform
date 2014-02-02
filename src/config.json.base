@@ -187,6 +187,44 @@
 				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
 				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
 			}
+		},
+		"testing-staging": {
+			"domain": "localhost",
+			"port": 11000,
+			"loglevel": 0,
+			"newrelic": false,
+			"trafficgen": false,
+
+			"mongo": {
+				"user": "adefy",
+				"pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
+				"host": "192.168.195.236",
+				"port": 45452,
+				"db": "adefy_testing"
+			},
+
+			"redis-main": {
+				"db": 1,
+				"host": "192.168.128.68",
+				"port": 23521
+			},
+
+			"redis-autocomplete": {
+				"db": 1,
+				"host": "192.168.128.68",
+				"port": 23521
+			},
+
+			"stats": {
+				"host": "stats1.adefy.com",
+				"port": 8125
+			},
+
+			"paypal": {
+				"host": "api.sandbox.paypal.com",
+				"client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+				"client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
+			}
 		}
 	},
 
@@ -195,6 +233,7 @@
 		"staging": "buildStaging/",
 		"production": "buildProduction/",
 		"testing": "buildTesting/",
-		"testing-codeship": "buildCodeship/"
+		"testing-codeship": "buildCodeship/",
+		"testing-staging": "buildTestStaging/"
 	}
 }
