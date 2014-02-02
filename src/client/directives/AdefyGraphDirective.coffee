@@ -73,8 +73,8 @@ angular.module("AdefyApp").directive "graph", [->
       processedData
 
     # Cap width
-    if scope.width > 800
-      width = 800
+    if scope.width > 820
+      width = 820
     else
       width = scope.width
 

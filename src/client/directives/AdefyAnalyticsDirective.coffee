@@ -8,12 +8,17 @@ angular.module("AdefyApp").directive "analytics", ["$http", "$timeout", ($http, 
       height="{{ height }}"
       type="{{ type }}"
       hover="hover"
-      legend="{{ legend }}"
-    ></div>
+      legend="{{ legend }}"></div>
   </div>
-  <div ng-if="graphData == null" style="padding: 7px 0 0 0">
-    <div class="noGraph" style="width: {{ width }}px; height: {{ height }}px">
-      <span>No Data</span>
+  <div ng-if="graphData == null" class="graph-nodata">
+    <span style="width: {{ width }}px; height: {{ height }}px">
+      <h6>No Data</h6>
+    </span>
+    <div graph
+      data="noGraphData"
+      width="{{ width }}"
+      height="{{ height }}"
+      type="line">
     </div>
   </div>
   """
@@ -33,108 +38,148 @@ angular.module("AdefyApp").directive "analytics", ["$http", "$timeout", ($http, 
     done: "=?"
 
   link: (scope, element, attrs) ->
+    new AdefyAnalyticsDirective scope, element, attrs, $http, $timeout
+]
+
+class AdefyAnalyticsDirective
+
+  colors: null
+  _fetchedData: null
+
+  constructor: (@scope, @element, @attrs, @$http, @$timeout) ->
     scope.graphData = null
-    fetchedData = {}
+    scope.noGraphData = @generateEmptyGraphData()
+    @fetchData()
 
-    # Expect prefix on data
-    prefix = scope.data.prefix
+    scope.refresh = =>
+      @$timeout =>
+        scope.$apply =>
+          @fetchData()
 
-    graphColorPalette = new Rickshaw.Color.Palette scheme: "munin"
+  getPalette: -> new Rickshaw.Color.Palette scheme: "munin"
 
-    colors =
-      earnings: graphColorPalette.color()
-      clicks: graphColorPalette.color()
-      impressions: graphColorPalette.color()
+  initColors: ->
+    palette = @getPalette()
+    @colors =
+      earnings: palette.color()
+      clicks: palette.color()
+      impressions: palette.color()
 
       # This is an un-used color, simple to force the color palette to cycle
       # once more. We don't like this color :(
-      _: graphColorPalette.color()
+      _: palette.color()
 
-      requests: graphColorPalette.color()
-      spent: graphColorPalette.color()
+      requests: palette.color()
+      spent: palette.color()
 
     # Advertiser-specific
-    colors.clicksa = colors.clicksc = colors.clicks
-    colors.impressionsa = colors.impressionsc = colors.impressions
+    @colors.clicksa = @colors.clicksc = @colors.clicks
+    @colors.impressionsa = @colors.impressionsc = @colors.impressions
 
     # Publisher-specific
-    colors.clicksp = colors.clicks
-    colors.impressionsp = colors.impressions
+    @colors.clicksp = @colors.clicks
+    @colors.impressionsp = @colors.impressions
 
-    doneFetching = ->
-      for graph in scope.data.graphs
-        if fetchedData[graph.stat] == undefined then return
+  fetchData: ->
+    @_fetchedData = null
+    @requestIndividualDataSet(graph, i) for graph, i in @scope.data.graphs
 
-      statics = []
-      dynamics = []
+  requestIndividualDataSet: (graph, i) ->
+    if graph.prefix != undefined then prefix = graph.prefix
+    else prefix = @scope.data.prefix
 
-      tempColorPalette = new Rickshaw.Color.Palette scheme: "munin"
+    if graph.url != undefined then url = "#{graph.url}?"
+    else url = "#{prefix}/#{graph.stat}?"
 
-      for graph in scope.data.graphs
-        if fetchedData[graph.stat].length > 0
-          atLeastOneNonZeroPoint = false
+    if graph.from then url += "&from=#{graph.from}"
+    if graph.until then url += "&until=#{graph.until}"
+    if graph.interval then url += "&interval=#{graph.interval}"
 
-          for point in fetchedData[graph.stat]
-            if point.y != 0
-              atLeastOneNonZeroPoint = true
-              break
+    if graph.total then url += "&total=true"
+    else if graph.sum then url += "&sum=#{graph.sum}"
 
-          if atLeastOneNonZeroPoint
+    @$http.get(url).success (data) =>
+      if @_fetchedData == null then @_fetchedData = {}
 
-            if colors[graph.stat] != undefined and graph.newcol != true
-              color = colors[graph.stat]
-            else
-              color = tempColorPalette.color()
+      if graph.total
+        if @_fetchedData[graph.stat] == undefined
+          @_fetchedData[graph.stat] = []
 
-            statics.push
-              name: graph.name
-              color: color
-              y: graph.y
+        @_fetchedData[graph.stat].push { x: i, y: Number data }
+      else
+        @_fetchedData[graph.stat] = data
 
-            dynamics.push fetchedData[graph.stat]
+      @doneFetching()
 
-      if statics.length > 0
-        scope.graphData =
-          static: statics
-          dynamic: dynamics
-          axes: scope.data.axes
+  doneFetching: ->
+    for graph in @scope.data.graphs
+      if @_fetchedData[graph.stat] == undefined then return
 
-      if scope.done then scope.done scope.graphData
+    statics = []
+    dynamics = []
 
-    requestIndividualDataSet = (graph, i) ->
-      if graph.prefix != undefined then _prefix = graph.prefix
-      else _prefix = prefix
+    tempColorPalette = @getPalette()
 
-      if graph.url != undefined then url = "#{graph.url}?"
-      else url = "#{_prefix}/#{graph.stat}?"
+    for graph in @scope.data.graphs
+      if @_fetchedData[graph.stat].length > 0
+        atLeastOneNonZeroPoint = false
 
-      if graph.from then url += "&from=#{graph.from}"
-      if graph.until then url += "&until=#{graph.until}"
-      if graph.interval then url += "&interval=#{graph.interval}"
+        for point in @_fetchedData[graph.stat]
+          if point.y != 0
+            atLeastOneNonZeroPoint = true
+            break
 
-      if graph.total then url += "&total=true"
-      else if graph.sum then url += "&sum=#{graph.sum}"
+        if atLeastOneNonZeroPoint
 
-      $http.get(url).success (data) ->
+          if colors[graph.stat] != undefined and graph.newcol != true
+            color = colors[graph.stat]
+          else
+            color = tempColorPalette.color()
 
-        if graph.total
-          if fetchedData[graph.stat] == undefined
-            fetchedData[graph.stat] = []
+          statics.push
+            name: graph.name
+            color: color
+            y: graph.y
 
-          fetchedData[graph.stat].push { x: i, y: Number data }
-        else
-          fetchedData[graph.stat] = data
+          dynamics.push @_fetchedData[graph.stat]
 
-        doneFetching()
+    if statics.length > 0
+      @scope.graphData =
+        static: statics
+        dynamic: dynamics
+        axes: @scope.data.axes
 
-    fetchData = ->
-      fetchedData = {}
-      requestIndividualDataSet(graph, i) for graph, i in scope.data.graphs
+    if @scope.done then @scope.done @scope.graphData
 
-    fetchData()
-    scope.refresh = ->
-      $timeout ->
-        scope.$apply ->
-          fetchData()
+  generateEmptyGraphData: ->
+    palette = @getPalette()
+    if @scope.data and @scope.data.axes then axes = @scope.data.axes
+    else axes = {}
 
-]
+    data = static: [], dynamic: [], axes: axes
+
+    # Generate X coords
+    startX = new Date().getTime()
+    xcoords = []
+
+    for i in [0...Math.ceil(Math.random() * 100) + 30]
+      xcoords.push startX -= (Math.round(Math.random() * 10) * 60000)
+
+    xcoords.sort (a, b) -> a - b
+
+    for i in [0...Math.ceil(Math.random() * 4) + 2]
+      data.static.push
+        name: i
+        color: palette.color()
+
+      startY = Math.round (Math.random() * 100)
+      points = []
+
+      for x in xcoords
+        points.push
+          x: x
+          y: startY += Math.round(Math.random() * 10) * (1 - Math.round(Math.random() * 2))
+
+      data.dynamic.push points
+
+    data
