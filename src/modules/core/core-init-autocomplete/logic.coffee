@@ -62,7 +62,7 @@ setup = (options, imports, register) ->
     if res isnt null then res = Number res
 
     # Return if we don't need to upgrade
-    if res isnt null and res >= AUTOCOMPLETE_VERSION and rebuild != true
+    if (res isnt null and res >= AUTOCOMPLETE_VERSION) and rebuild != true
       return register null, {}
 
     spew.init "Initializing the autocomplete database..."
