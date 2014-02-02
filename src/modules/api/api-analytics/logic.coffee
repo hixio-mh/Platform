@@ -24,21 +24,6 @@ setup = (options, imports, register) ->
   app = imports["core-express"].server
   utility = imports["logic-utility"]
 
-  computeTotals = (results) ->
-    results.sort (a, b) -> a.x - b.x
-
-    for span in [0...results.length]
-      results[span].y = 1
-
-      date = new Date(results[span].x).getTime()
-
-      for update in [0...results.length]
-        if update != span
-          if new Date(results[update].x).getTime() < date
-            results[span].y += 1
-
-    results
-
   buildOptionsFromQuery = (req) ->
     options =
       stat: req.param "stat"
@@ -47,32 +32,6 @@ setup = (options, imports, register) ->
       interval: req.param("interval") or "5min"
       sum: req.param("sum") or false
       total: req.param("total") or false
-
-  # Admin-only
-  app.get "/api/v1/analytics/users", (req, res) ->
-    if not req.user.admin then return
-
-    db.model("User").find {}, (err, results) ->
-      if utility.dbError err, res then return
-
-      data = []
-      for user in results
-        data.push x: new Date(Date.parse(user._id.getTimestamp())).getTime()
-
-      res.json { data: computeTotals(data), count: results.length }
-
-  # Admin-only
-  app.get "/api/v1/analytics/invites", (req, res) ->
-    if not req.user.admin then return
-
-    db.model("Invite").find {}, (err, results) ->
-      if utility.dbError err, res then return
-
-      data = []
-      for invite in results
-        data.push x: new Date(Date.parse(invite._id.getTimestamp())).getTime()
-
-      res.json { data: computeTotals(data), count: results.length }
 
   app.get "/api/v1/analytics/campaigns/:id/:stat", (req, res) ->
     db.model("Campaign")
