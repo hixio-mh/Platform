@@ -13,7 +13,7 @@
 				"user": "adefy",
 				"pass": "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ",
 				"host": "localhost",
-				"port": 45452,
+				"port": 27017,
 				"db": "adefy_development"
 			},
 
