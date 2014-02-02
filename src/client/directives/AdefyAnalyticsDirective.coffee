@@ -99,7 +99,7 @@ angular.module("AdefyApp").directive "analytics", ["$http", "$timeout", ($http, 
           dynamic: dynamics
           axes: scope.data.axes
 
-      if scope.done then scope.done()
+      if scope.done then scope.done scope.graphData
 
     requestIndividualDataSet = (graph, i) ->
       if graph.prefix != undefined then _prefix = graph.prefix

@@ -14,64 +14,114 @@
 
 include _menu
 
-.index.dashboard
+.contents.w1170.center
   br
   br
-  h1 Publishers
+  .w50.padded
+    h1 Publishers Awaiting Approval
 
-  table.info
-    thead: tr
-      th User
-      th App Name
-      th Status
-      th Impressions
-      th Clicks
-      th CTR
-      th Earnings
-      th Actions
-    tbody
-      tr(ng-repeat="pub in pubs")
-        td {{ pub.owner.username }}
-        td {{ pub.name }}
+    table.info
+      thead: tr
+        th User
+        th App Name
+        th
+      tbody
+        tr(ng-repeat="pub in pubs" ng-if="pub.status == 0")
+          td {{ pub.owner.username }}
+          td {{ pub.name }}
 
-        td
-          span.label(ng-class="pub.statusClass") {{ pub.statusText }}
-          .spacer
-          span.label(ng-class="pub.activeClass") {{ pub.activeText }}
+          td
+            button.blue(ng-click="viewPub(pub)") View
 
-        td {{ pub.stats.impressions }}
-        td {{ pub.stats.clicks }}
-
-        td {{ pub.stats.ctr | number:2 }}%
-        td $ {{ pub.stats.earnings | number:2 }}
-
-        td
-          a.btn.btn-flat.success.small(href="#" ng-click="viewPub(pub)") View
-
-.index.dashboard(ng-if="pubView.name")
-  br
-  br
-  h1
-    span {{ pubView.name }} - Details
-    span.label(ng-class="pubView.statusClass") {{ pubView.statusText }}
-    span.label(ng-class="pubView.activeClass") {{ pubView.activeText }}
-
-  form(ng-if="pubView.status == 0")
-    dl.form.center
-      dt
-        label Message
-        textarea(row="16" col="4" ng-model="pubView.newApprovalMessage" placeholder="Required for disapproval")
-      dt
-      dd
-        button.btn-flat.success(ng-click="approvePub()") Approve
-      dt
-      dd
-        button.btn-flat.danger(ng-click="disapprovePub()") Disapprove
-
-  div(ng-if="pubView.status != 2" ng-repeat="msg in pubView.approvalMessage")
-    h4 Sent {{ msg.timestamp | date }}
-    br
-    h5(ng-bind="msg.msg")
     br
     br
-    hr
+
+    h1 Approved Publishers
+
+    table.info
+      thead: tr
+        th User
+        th App Name
+        th
+      tbody
+        tr(ng-repeat="pub in pubs" ng-if="pub.status == 2")
+          td {{ pub.owner.username }}
+          td {{ pub.name }}
+
+          td
+            span.label(ng-class="pub.activeClass" style="margin-right: 8px;") {{ pub.activeText }}
+            button.blue(ng-click="viewPub(pub)") View
+
+  .w50.padded(ng-if="!pubView")
+    h3 No publisher selected
+
+  .w50.padded(ng-if="pubView")
+    form
+      fieldset: dl.form.center
+        legend Basic Info
+
+        dt: h3.tright Name:
+        dd: h6 {{ pubView.name }}
+
+        dt: h3.tright URL:
+        dd: a(ng-href="{{ pubView.url }}" target="_blank") {{ pubView.url }}
+
+        dt: h3.tright Category:
+        dd: h6 {{ pubView.category }}
+
+        dt: h3.tright Pricing:
+        dd: h6 {{ pubView.preferredPricing }}
+
+        dt: h3.tright Minimum CPM:
+        dd: h6 ${{ pubView.minimumCPM | number:2 }}
+
+        dt: h3.tright Minimum CPC:
+        dd: h6 ${{ pubView.minimumCPC | number:2 }}
+
+        div(ng-if="pubView.description.length > 0")
+          dt: h3.tright Description:
+          dd: h6 {{ pubView.description }}
+
+      fieldset(ng-if="pubView.status == 2"): dl.form.center
+        legend Statistics
+
+        dt: h3.tright Impressions:
+        dd: h6 {{ pubView.stats.impressions }}
+
+        dt: h3.tright Clicks:
+        dd: h6 {{ pubView.stats.clicks }}
+
+        dt: h3.tright Earnings:
+        dd: h6 ${{ pubView.stats.earnings | number:2 }}
+
+      fieldset: dl.form.center
+        legend User Information
+
+        dt: h3.tright Username:
+        dd: h6 {{ pubView.owner.username }}
+
+        div(ng-if="pubView.owner.fname.length > 0")
+          dt: h3.tright First Name:
+          dd: h6 {{ pubView.owner.fname }}
+
+        div(ng-if="pubView.owner.lname.length > 0")
+          dt: h3.tright Last Name:
+          dd: h6 {{ pubView.owner.lname }}
+
+        div(ng-if="pubView.owner.company.length > 0")
+          dt: h3.tright Company:
+          dd: h6 {{ pubView.owner.company }}
+
+        dt: h3.tright Email:
+        dd: h6 {{ pubView.owner.email }}
+
+        dt: h3.tright Publisher Revenue:
+        dd: h6 ${{ pubView.owner.pubFunds | number:2 }}
+
+        dt: h3.tright Advertiser Credit:
+        dd: h6 ${{ pubView.owner.adFunds | number:2 }}
+
+        dt
+        dd
+          button.blue(ng-click="approvePub()" ng-if="pubView.status != 2") Approve
+          button.red(ng-click="disapprovePub()" ng-if="pubView.status != 1") Disapprove
