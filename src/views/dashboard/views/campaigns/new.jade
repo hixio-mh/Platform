@@ -52,8 +52,8 @@
     br
     br
 
-    dt: label Projected Spend $
-    dd: input(type="number" disabled="disabled" value="{{ projectSpend() }}")
+    dt: label Projected Spend
+    dd: label ${{ projectSpend() | number:2 }}
 
   fieldset: dl.form.center
     dl.form.center
