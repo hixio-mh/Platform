@@ -68,7 +68,7 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
         data.push { key: i, value: i } for i in e.val().split ","
         cb data
 
-    $("#categorySelect select").chosen()
+    $("#categorySelect select").select2()
 
   getRawDate = (smartDate) -> new Date(smartDate).getTime()
   getSmartDate = (rawDate) ->

@@ -25,7 +25,9 @@ include _menu
         .w50.contents-right
           label(for="interval") Graph Interval:
         .w50.contents-left
-          select(chosen name="interval" ng-model="graphInterval" ng-options="i.val as i.name for i in intervalOptions")
+          select(ui-select2 name="interval" ng-model="graphInterval")
+            option(value="")
+            option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}
 
       .block
         .w50.contents-right

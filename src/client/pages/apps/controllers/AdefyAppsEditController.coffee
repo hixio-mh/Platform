@@ -19,7 +19,7 @@ angular.module("AdefyApp").controller "AdefyAppsEditController", ($scope, $locat
 
   $http.get("/api/v1/filters/categories").success (list) ->
     $scope.categories = list
-    $timeout -> $("#categorySelect select").chosen()
+    $timeout -> $("#categorySelect select").select2()
 
   AppService.getApp $routeParams.id, (app) -> $scope.app = app
 

@@ -13,7 +13,8 @@
 //-
 
 form.feedback
-  select(chosen ng-model="formCategory" data-placeholder="Select Category" style="width: 50%")
+  select.w50(ui-select-2 ng-model="formCategory" data-placeholder="Select Category")
+    option(value="")
     option(value="account") Account
     option(value="apps") Apps
     option(value="billing") Billing
