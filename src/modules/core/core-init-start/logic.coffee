@@ -124,6 +124,7 @@ setup = (options, imports, register) ->
             req.user = null
             res.clearCookie "user"
             validUser = false
+            return res.redirect "/login"
 
         # If page is public, then we don't require auth
         if pageIsPublic then return next()
