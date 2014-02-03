@@ -14,6 +14,7 @@
 spew = require "spew"
 routes = require "../../../angularDashboardViews.json"
 config = require "../../../config.json"
+crypto = require "crypto"
 
 setup = (options, imports, register) ->
 
@@ -27,6 +28,10 @@ setup = (options, imports, register) ->
       viewData = {}
       viewData.user = req.user
       viewData.mode = config.mode
+      viewData.intercomSecureHash = (email) ->
+        API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
+        crypto.createHmac("sha256", API_SECRET)
+        .update(req.user.email).digest "hex"
 
       res.render "dashboard/layout.jade", viewData, (err, html) ->
         if err then spew.error err
@@ -51,6 +56,10 @@ setup = (options, imports, register) ->
     viewData = {}
     viewData.user = req.user
     viewData.mode = config.mode
+    viewData.intercomSecureHash = (email) ->
+      API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
+      crypto.createHmac("sha256", API_SECRET)
+      .update(req.user.email).digest "hex"
 
     res.render "dashboard/views/#{req.params.view}.jade", viewData
 
@@ -69,6 +78,10 @@ setup = (options, imports, register) ->
     viewData = {}
     viewData.user = req.user
     viewData.mode = config.mode
+    viewData.intercomSecureHash = (email) ->
+      API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
+      crypto.createHmac("sha256", API_SECRET)
+      .update(req.user.email).digest "hex"
 
     res.render "creator/#{req.params.view}.jade", viewData
 
