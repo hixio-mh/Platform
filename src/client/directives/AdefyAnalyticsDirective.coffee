@@ -169,29 +169,30 @@ class AdefyAnalyticsDirective
     if @scope.data and @scope.data.axes then axes = @scope.data.axes
     else axes = {}
 
-    data = static: [], dynamic: [], axes: axes
+    data = static: [], dynamic: []
 
     # Generate X coords
     startX = new Date().getTime()
     xcoords = []
 
-    for i in [0...Math.ceil(Math.random() * 100) + 30]
+    for i in [0...Math.ceil(Math.random() * 20) + 30]
       xcoords.push startX -= (Math.round(Math.random() * 10) * 60000)
 
     xcoords.sort (a, b) -> a - b
+    mainStartY = Math.round(Math.random() * 100) + 300
 
-    for i in [0...Math.ceil(Math.random() * 4) + 2]
+    for i in [0...Math.ceil(Math.random() * 2) + 1]
       data.static.push
         name: i
         color: palette.color()
 
-      startY = Math.round (Math.random() * 100)
+      startY = mainStartY + ((Math.ceil(Math.random() * 50)) - 10)
       points = []
 
       for x in xcoords
         points.push
           x: x
-          y: startY += Math.round(Math.random() * 10) * (1 - Math.round(Math.random() * 2))
+          y: startY += Math.round(Math.random() * 50) * (1 - Math.round(Math.random() * 2))
 
       data.dynamic.push points
 
