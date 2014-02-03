@@ -17,4 +17,4 @@ h3.tcenter(ng-if="!renderURL") Enter your play store URL
 h3.tcenter(ng-if="!renderURL && isInvalidURL") Invalid URL
 
 #ad-creative(ng-if="cycle == true")
-  ad-creator(controls="false" messages="false" url="{{ renderURL }}" loaded="doneLoading" error="invalidURL" getdata="getSavedData")
+  ad-creator(controls="false" messages="false" url="{{ renderURL }}" loaded="doneLoading" error="invalidURL" getdata="getSavedData" panels="true")
