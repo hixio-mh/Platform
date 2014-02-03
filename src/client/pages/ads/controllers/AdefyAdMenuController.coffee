@@ -13,7 +13,7 @@
 ##
 angular.module("AdefyApp").controller "AdefyAdMenuController", ($scope, $location, $http) ->
   $scope.requestApproval = ->
-    $http.post "/ads/#{$scope.ad.id}/approval"
+    $http.post("/api/v1/ads/#{$scope.ad.id}/approve")
     .success ->
       $scope.setNotification "Successfully applied for approval!", "success"
       $scope.ad.status = 2

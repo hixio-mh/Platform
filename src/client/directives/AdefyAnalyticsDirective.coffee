@@ -74,6 +74,11 @@ class AdefyAnalyticsDirective
       requests: palette.color()
       spent: palette.color()
 
+      User: palette.color()
+      Campaign: palette.color()
+      Ad: palette.color()
+      Publisher: palette.color()
+
     # Advertiser-specific
     @colors.clicksa = @colors.clicksc = @colors.clicks
     @colors.impressionsa = @colors.impressionsc = @colors.impressions
@@ -81,6 +86,12 @@ class AdefyAnalyticsDirective
     # Publisher-specific
     @colors.clicksp = @colors.clicks
     @colors.impressionsp = @colors.impressions
+
+    # Admin-specific
+    @colors.users = @colors.user = @colors.User
+    @colors.campaigns = @colors.campaign = @colors.Campaign
+    @colors.ads = @colors.ad = @colors.Ad
+    @colors.publishers = @colors.publisher = @colors.Publisher
 
   fetchData: ->
     @_fetchedData = null

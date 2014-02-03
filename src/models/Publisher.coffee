@@ -48,7 +48,6 @@ schema = new mongoose.Schema
   # 1 - Rejected
   # 2 - Approved
   status: { type: Number, default: 0 }
-  approvalMessage: [{ msg: String, timestamp: Date }]
   active: { type: Boolean, default: false }
 
   # 0 - Android
@@ -86,21 +85,19 @@ schema.methods.toAnonAPI = ->
 schema.methods.isApproved = -> @status == 2
 schema.methods.approve = -> @status = 2
 schema.methods.clearApproval = -> @status = 0
-schema.methods.disaprove = (msg) ->
-  @status = 1
-
-  if msg
-    @approvalMessage.push
-      msg: msg
-      timestamp: new Date().getTime()
+schema.methods.disaprove = -> @status = 1
 
 schema.methods.activate = (cb) ->
+  if @active then return cb()
+
   @active = true
   @createRedisStruture()
   redis.set "#{@getRedisId()}:active", @active
   if cb then cb()
 
 schema.methods.deactivate = (cb) ->
+  if not @active then return cb()
+
   @active = false
   @clearRedisStructure()
   redis.set "#{@getRedisId()}:active", @active

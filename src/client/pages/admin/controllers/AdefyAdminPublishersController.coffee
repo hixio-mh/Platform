@@ -24,7 +24,6 @@ angular.module("AdefyApp").controller "AdefyAdminPublishersController", ($scope,
     $http.get("/api/v1/publishers/all").success (list) ->
       if list.error != undefined then return alert list.error
 
-      # Calculate CTR, status, and active text
       for p, i in list
 
         # Status
@@ -70,11 +69,9 @@ angular.module("AdefyApp").controller "AdefyAdminPublishersController", ($scope,
   # Sends the message to the publisher (requires a message!)
   $scope.disapprovePub = ->
     if confirm "Are you sure?"
-
-      msg = $scope.pubView.newApprovalMessage
       id = $scope.pubView.id
 
-      $http.post("/api/v1/publishers/#{id}/disaprove/#{msg}").success (reply) ->
+      $http.post("/api/v1/publishers/#{id}/disaprove").success (reply) ->
         if reply.error != undefined then alert reply.error
 
         refreshPublisherListing()

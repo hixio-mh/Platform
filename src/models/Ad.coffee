@@ -38,7 +38,6 @@ schema = new mongoose.Schema
   # 1 - Rejected
   # 2 - Approved
   status: { type: Number, default: 0 }
-  approvalMessage: [{ msg: String, timestamp: Date }]
 
   campaigns: [
 
@@ -116,13 +115,9 @@ schema.methods.toAnonAPI = ->
 schema.methods.isApproved = -> @status == 2
 schema.methods.approve = -> @status = 2
 schema.methods.clearApproval = -> @status = 0
-schema.methods.disaprove = (msg) ->
+schema.methods.disaprove = (cb) ->
   @status = 1
-
-  if msg
-    @approvalMessage.push
-      msg: msg
-      timestamp: new Date().getTime()
+  @removeFromCampaigns -> if cb then cb()
 
 ##
 ## Stat fetching

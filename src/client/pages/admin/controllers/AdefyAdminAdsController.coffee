@@ -14,8 +14,8 @@
 
 angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http, $route) ->
 
-  $scope.ads = []               # Application data for table
-  $scope.adView = {}            # Model for current publisher
+  $scope.ads = []
+  $scope.adView = null
 
   ##
   ## Ad listing
@@ -24,8 +24,9 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
     $http.get("/api/v1/ads/all").success (list) ->
       if list.error != undefined then return alert list.error
 
-      # Calculate CTR, status, and active text
       for p, i in list
+
+        if list[i].data then list[i].data = JSON.parse list[i].data
 
         # Status
         if list[i].status == 0
@@ -38,8 +39,15 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
           list[i].statusText = "Approved"
           list[i].statusClass = "green"
 
+        # Active
+        if list[i].active == true
+          list[i].activeText = "Active"
+          list[i].activeClass = "blue"
+        else if list[i].active == false
+          list[i].activeText = "Disabled"
+          list[i].activeClass = "red"
+
       $scope.ads = list
-      $scope.adView = $scope.ads[0]
 
   refreshAdListing()
 
@@ -47,6 +55,8 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
   ## Ad view
   ##
   $scope.viewAd = (ad) -> $scope.adView = ad
+  $scope.getSavedData = -> $scope.adView.data.creative
+
 
   ##
   ## Approve/Disapprove ads
@@ -62,14 +72,11 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
 
   # Sends the message to the ad (requires a message!)
   $scope.disapproveAd = ->
-    if $scope.adView.newApprovalMessage.length == 0 then return
-
     if confirm "Are you sure?"
 
-      msg = $scope.adView.newApprovalMessage
       id = $scope.adView.id
 
-      $http.post("/api/v1/ads/#{id}/disaprove/#{msg}").success (reply) ->
+      $http.post("/api/v1/ads/#{id}/disaprove").success (reply) ->
         if reply.error != undefined then alert reply.error
 
         refreshAdListing()
