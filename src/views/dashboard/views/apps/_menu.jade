@@ -14,10 +14,7 @@
 
 .titlebar.cf.full(ng-controller="AdefyAppsMenuController")
   .name(ng-bind="app.name")
-  span(ng-switch="app.status")
-    .label.gray(ng-switch-when="0") Pending Approval
-    .label.red(ng-switch-when="1") Rejected
-    .label.green(ng-switch-when="2") Approved
+
   .menu.full
     a(ng-href="/apps/{{app.id}}" tab partial='false')
       i.fa.fa-fw.fa-signal
@@ -31,7 +28,13 @@
     a(ng-click="requestApproval()" ng-if="app.status == '1'")
       i.fa.fa-fw.fa-question
       | Request Approval
-  .toggle-wrap(style="float:right" ng-if="app.status == 2")
+
+  .right
+    span(ng-switch="app.status")
+      .label.gray(ng-switch-when="0") Pending Approval
+      .label.red(ng-switch-when="1") Rejected
+
+    .label.gray(ng-if="app.status != 2") Approval Required To Enable
+
+  .toggle-wrap.right(ng-if="app.status == 2")
     toggle-switch(method="activeToggled()" model="app.active")
-  span(style="float:right" ng-if="app.status != 2")
-    .label.gray Approval Required To Enable

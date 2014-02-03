@@ -15,11 +15,6 @@
 .titlebar.cf.full(ng-controller="AdefyAdMenuController")
   .name(ng-bind="ad.name")
 
-  span(ng-switch="ad.status")
-    .label.gray(ng-switch-when="0") Pending Approval
-    .label.red(ng-switch-when="1") Rejected
-    .label.green(ng-switch-when="2") Approved
-
   .menu.full
     a(ng-href="/ads/{{ad.id}}" tab partial="false")
       i.fa.fa-fw.fa-signal
@@ -37,3 +32,10 @@
     a(ng-click="requestApproval()" ng-if="ad.status == '1'")
       i.fa.fa-fw.fa-question
       | Request Approval
+
+  .right
+    span(ng-switch="ad.status" ng-if="ad.data.creative")
+      .label.gray(ng-switch-when="0") Pending Approval
+      .label.red(ng-switch-when="1") Rejected
+
+    .label.orange(ng-if="ad.status != 2 && (!ad.data || !ad.data.creative)") No Creative
