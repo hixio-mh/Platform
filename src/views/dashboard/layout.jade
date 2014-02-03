@@ -63,6 +63,13 @@ html(lang="en" ng-app="AdefyApp")
       window.intercomSettings = {
         name: "#{user.username}",
         email: "#{user.email}",
+        ad_funds: #{user.adFunds},
+        pub_funds: #{user.pubFunds},
+        first_name: "#{user.fname}",
+        last_name: "#{user.lname}",
+        company: "#{user.company}",
+        city: "#{user.city}",
+        country: "#{user.country}",
         created_at: #{user.signedup},
         app_id: "d21334dd55144ac5e033fbfde2dd7227d06023aa",
         user_hash: "#{intercomSecureHash(user.email)}"
