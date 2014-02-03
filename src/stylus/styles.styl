@@ -426,7 +426,7 @@ dl.form
 
 
 fieldset
-  dl.form.singlelast-of-type
+  dl.form.single:last-of-type
     border-bottom none
 
 /* billing form */
@@ -502,16 +502,16 @@ fieldset
     display block
     i
       margin-right 10px
-    &first-of-type
+    &:first-of-type
       border-radius 5px 5px 0 0
-    &last-of-type
+    &:last-of-type
       border-radius 0 0 5px 5px
       border none
     &:hover
       background-color #333
       color #fff
 
-  &after
+  &::after
     bottom 100%
     border solid transparent
     content ""
@@ -629,7 +629,7 @@ fieldset
 
     &:hover
       color #333
-  lihover .edit
+  li:hover .edit
     display block
 
   .campaigns
@@ -716,7 +716,7 @@ fieldset
   li
     border-bottom 1px solid #ccc
     padding 15px
-  lifirst-of-type
+  li:first-of-type
     border-top 1px solid #ccc
 
 .index
@@ -880,9 +880,9 @@ table.info
     text-align center
     border-right 1px solid rgba(0,0,0,.1)
     color #fff
-  .tabfirst-of-type
+  .tab:first-of-type
     border-left 1px solid rgba(0,0,0,.1)
-  .tabhover, .tab.active
+  .tab:hover, .tab.active
     color #33b5e5
     background-color #fff
     border-bottom 1px solid rgba(0,0,0,.1)
