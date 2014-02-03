@@ -1,21 +1,27 @@
 @import "./fonts"
 
+user-select()
+  -webkit-user-select arguments
+  -moz-user-select arguments
+  -ms-user-select arguments
+  -o-user-select arguments
+  user-select arguments
+
 *
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
   box-sizing border-box
 
-.cfafter
-  clear both
-  content "."
-  display block
-  font-size 0
-  height 0
-  line-height 0
-  visibility hidden
-
 .cf
   zoom 1
+  &::after
+    clear both
+    content "."
+    display block
+    font-size 0
+    height 0
+    line-height 0
+    visibility hidden
 
 .tcenter
   text-align center
@@ -56,7 +62,6 @@ button
   &:hover, &:active
     background-image linear-gradient(#eee 20%,#fff 80%)
     box-shadow 0 1px 0 #fff inset
-
 
 button[disabled="disabled"]
   color #ccc !important
@@ -181,6 +186,7 @@ header
   text-shadow 0 1px 1px rgba(0,0,0,.3)
   box-shadow 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
   z-index 100
+  user-select none
 
   &.absolute
     position absolute
@@ -199,6 +205,8 @@ header
   float left
   line-height 50px // font's x-height is fucked up, manually push up
   margin-right 25px
+  user-select: none
+  cursor: default
 
   &.centered, &.tcenter
     text-align center
