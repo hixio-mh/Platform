@@ -134,7 +134,7 @@ include _menu
           button.blue(ng-click="approveAd()" ng-if="adView.status != 2") Approve
           button.red(ng-click="disapproveAd()" ng-if="adView.status != 1") Disapprove
 
-      div.small
+      div.small(ng-if="cycle")
         br
         br
         ad-creator(controls="false" messages="false" url="{{ adView.data.url }}" getdata="getSavedData")

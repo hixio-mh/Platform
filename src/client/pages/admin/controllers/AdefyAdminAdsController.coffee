@@ -12,10 +12,11 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http, $route) ->
+angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http, $route, $timeout) ->
 
   $scope.ads = []
   $scope.adView = null
+  $scope.cycle = false
 
   ##
   ## Ad listing
@@ -54,7 +55,14 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
   ##
   ## Ad view
   ##
-  $scope.viewAd = (ad) -> $scope.adView = ad
+  $scope.viewAd = (ad) ->
+    $scope.adView = ad
+    $scope.cycle = false
+
+    if ad.data
+      $timeout ->
+        $scope.$apply ->
+          $scope.cycle = true
   $scope.getSavedData = -> $scope.adView.data.creative
 
 
