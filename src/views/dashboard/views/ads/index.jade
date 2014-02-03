@@ -12,10 +12,11 @@ ul.list(ng-if="ads")
 
       .name(ng-bind="ad.name")
 
-      span(ng-switch="ad.status")
+      span(ng-switch="ad.status" ng-if="ad.data.creative")
         .label.gray(ng-switch-when="0") Pending Approval
         .label.red(ng-switch-when="1") Rejected
-        .label.green(ng-switch-when="2") Approved
+
+      .label.orange(ng-if="ad.status != 2 && (!ad.data || !ad.data.creative)") No Creative
 
       .edit: i.fa.fa-wrench
 
