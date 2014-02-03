@@ -197,19 +197,6 @@ setup = (options, imports, register) ->
         advertisement.stats = stats
         res.json 200, advertisement
 
-  # Sets ad status as "awaiting approval"
-  app.post "/api/v1/ads/:id/approval", (req, res) ->
-    db.model("Ad").findOne
-      _id: req.param "id"
-      owner: req.user.id
-    , (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then res.send(404); return
-
-      ad.status = 0
-      ad.save()
-      res.send 200
-
   # Updates ad status if applicable
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
@@ -232,19 +219,19 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Disapproves the ad
-  app.post "/api/v1/ads/:id/disaprove/:msg", (req, res) ->
+  app.post "/api/v1/ads/:id/disaprove", (req, res) ->
+    if not req.user.admin then return res.json 403
 
-    if not req.user.admin
-      res.json 403, { error: "Unauthorized" }
-      return
-
-    db.model("Ad").findById req.param("id"), (err, ad) ->
+    db.model("Ad")
+    .findById(req.param("id"))
+    .populate("campaigns.campaign")
+    .exec (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
 
-      ad.disaprove req.param "msg"
-      ad.save()
-      res.send 200
+      ad.disaprove ->
+        ad.save()
+        res.send 200
 
   register null, {}
 

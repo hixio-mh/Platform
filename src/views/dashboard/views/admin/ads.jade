@@ -14,60 +14,127 @@
 
 include _menu
 
-.index.dashboard
+.contents.w1170.center
   br
   br
-  h1 Ads
+  .w50.padded
+    h1 Ads Awaiting Approval
 
-  table.info
-    thead: tr
-      th User
-      th Ad Name
-      th Status
-      th Impressions
-      th Clicks
-      th CTR
-      th Spent
-      th Actions
-    tbody
-      tr(ng-repeat="ad in ads")
-        td {{ ad.owner.username }}
-        td {{ ad.name }}
+    table.info
+      thead: tr
+        th User
+        th Ad Name
+        th Creative
+        th
+      tbody
+        tr(ng-repeat="ad in ads" ng-if="ad.status == 0")
+          td {{ ad.owner.username }}
+          td {{ ad.name }}
 
-        td: span.label(ng-class="ad.statusClass") {{ ad.statusText }}
+          td(ng-if="ad.data.url.length > 0") Yes
+          td(ng-if="!(ad.data.url.length > 0)") No
 
-        td {{ ad.stats.impressions }}
-        td {{ ad.stats.clicks }}
+          td
+            button.blue(ng-click="viewAd(ad)") View
 
-        td {{ ad.stats.ctr | number:2 }} %
-        td $ {{ ad.stats.spent | number:2 }}
-
-        td: a.btn.btn-flat.success.small(href="#" ng-click="viewAd(ad)") View
-
-.index.dashboard(ng-if="adView.name")
-  br
-  br
-  h1
-    span {{ adView.name }} - Details
-    span.label(ng-class="adView.statusClass") {{ adView.statusText }}
-    span.label(ng-class="adView.activeClass") {{ adView.activeText }}
-
-  form(ng-if="adView.status == 0")
-    dl.form.center
-      dt
-        label Message
-        textarea(row="16" col="4" ng-model="adView.newApprovalMessage" placeholder="Required for disapproval")
-      dt
-      dd
-        button.btn-flat.success(ng-click="approveAd()") Approve
-      dt
-      dd
-        button.btn-flat.danger(ng-click="disapproveAd()") Disapprove
-
-  div(ng-if="adView.status != 2" ng-repeat="msg in adView.approvalMessage")
-    h4 Sent {{ msg.timestamp | date }}
-    br
-    h5(ng-bind="msg.msg")
     br
     br
-    hr
+
+    h1 Approved Ads
+
+    table.info
+      thead: tr
+        th User
+        th Ad Name
+        th
+      tbody
+        tr(ng-repeat="ad in ads" ng-if="ad.status == 2")
+          td {{ ad.owner.username }}
+          td {{ ad.name }}
+
+          td
+            span.label(ng-class="ad.activeClass" style="margin-right: 8px;") {{ ad.activeText }}
+            button.blue(ng-click="viewAd(ad)") View
+
+    br
+    br
+
+    h1 Rejected Ads
+
+    table.info
+      thead: tr
+        th User
+        th Ad Name
+        th
+      tbody
+        tr(ng-repeat="ad in ads" ng-if="ad.status == 1")
+          td {{ ad.owner.username }}
+          td {{ ad.name }}
+
+          td
+            span.label(ng-class="ad.activeClass" style="margin-right: 8px;") {{ ad.activeText }}
+            button.blue(ng-click="viewAd(ad)") View
+
+  .w50.padded(ng-if="!adView")
+    h3 No ad selected
+
+  .w50.padded(ng-if="adView")
+    form
+      fieldset: dl.form.center
+        legend Basic Info
+
+        dt: h3.tright Name:
+        dd: h6 {{ adView.name }}
+
+        div(ng-if="adView.data")
+          dt: h3.tright URL:
+          dd: a(ng-href="{{ adView.data.url }}" target="_blank") {{ adView.data.url }}
+
+      fieldset(ng-if="adView.status == 2"): dl.form.center
+        legend Statistics
+
+        dt: h3.tright Impressions:
+        dd: h6 {{ adView.stats.impressions }}
+
+        dt: h3.tright Clicks:
+        dd: h6 {{ adView.stats.clicks }}
+
+        dt: h3.tright Spent:
+        dd: h6 ${{ adView.stats.spent | number:2 }}
+
+      fieldset: dl.form.center
+        legend User Information
+
+        dt: h3.tright Username:
+        dd: h6 {{ adView.owner.username }}
+
+        div(ng-if="adView.owner.fname.length > 0")
+          dt: h3.tright First Name:
+          dd: h6 {{ adView.owner.fname }}
+
+        div(ng-if="adView.owner.lname.length > 0")
+          dt: h3.tright Last Name:
+          dd: h6 {{ adView.owner.lname }}
+
+        div(ng-if="adView.owner.company.length > 0")
+          dt: h3.tright Company:
+          dd: h6 {{ adView.owner.company }}
+
+        dt: h3.tright Email:
+        dd: h6 {{ adView.owner.email }}
+
+        dt: h3.tright Publisher Revenue:
+        dd: h6 ${{ adView.owner.pubFunds | number:2 }}
+
+        dt: h3.tright Advertiser Credit:
+        dd: h6 ${{ adView.owner.adFunds | number:2 }}
+
+        dt
+        dd
+          button.blue(ng-click="approveAd()" ng-if="adView.status != 2") Approve
+          button.red(ng-click="disapproveAd()" ng-if="adView.status != 1") Disapprove
+
+      div.small
+        br
+        br
+        ad-creator(controls="false" messages="false" url="{{ adView.data.url }}" getdata="getSavedData")

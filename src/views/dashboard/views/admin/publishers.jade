@@ -52,6 +52,25 @@ include _menu
             span.label(ng-class="pub.activeClass" style="margin-right: 8px;") {{ pub.activeText }}
             button.blue(ng-click="viewPub(pub)") View
 
+    br
+    br
+
+    h1 Rejected Publishers
+
+    table.info
+      thead: tr
+        th User
+        th App Name
+        th
+      tbody
+        tr(ng-repeat="pub in pubs" ng-if="pub.status == 1")
+          td {{ pub.owner.username }}
+          td {{ pub.name }}
+
+          td
+            span.label(ng-class="pub.activeClass" style="margin-right: 8px;") {{ pub.activeText }}
+            button.blue(ng-click="viewPub(pub)") View
+
   .w50.padded(ng-if="!pubView")
     h3 No publisher selected
 

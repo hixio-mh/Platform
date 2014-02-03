@@ -200,17 +200,15 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Disapproves the publisher
-  app.post "/api/v1/publishers/:id/disaprove/:msg", (req, res) ->
-
-    if not req.user.admin
-      res.json 403, { error: "Unauthorized" }
-      return
+  app.post "/api/v1/publishers/:id/disaprove", (req, res) ->
+    if not req.user.admin then return res.json 403
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
-      pub.disaprove req.param "msg"
+      pub.disaprove()
+      pub.deactivate()
       pub.save()
       res.send 200
 

@@ -11,6 +11,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
     loaded: "=?"
     error: "=?"
     getdata: "=?"
+    panels: "@"
 
   link: (scope, element, attrs) ->
 
@@ -18,6 +19,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
     scope.suggestions = null
     scope.showControls = true
     scope.messages = true
+    if scope.panels == undefined then scope.panels = true
 
     scope.data =
       blur: 30
