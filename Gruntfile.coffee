@@ -439,6 +439,20 @@ module.exports = (grunt) ->
         files: WjadeSrc
         tasks: [ "copy:jade", "jade:static" ]
 
+    cachebreaker:
+      js:
+        asset_url: "/js/script.min.js"
+        files:
+          src: "#{_buildDir}/views/dashboard/layout.jade"
+      jsAdmin:
+        asset_url: "/js/script-admin.min.js"
+        files:
+          src: "#{_buildDir}/views/dashboard/layout.jade"
+      css:
+        asset_url: "/css/styles.min.css"
+        files:
+          src: "#{_buildDir}/views/dashboard/layout.jade"
+
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-watch"
@@ -452,6 +466,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-concat"
   grunt.loadNpmTasks "grunt-ngmin"
   grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks "grunt-cache-breaker"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
@@ -478,6 +493,10 @@ module.exports = (grunt) ->
     "ngmin:client_admin"
     "uglify:client_admin"
     "concat:client_final_admin"
+
+    "cachebreaker:js"
+    "cachebreaker:jsAdmin"
+    "cachebreaker:css"
   ]
   grunt.registerTask "full", [
     "clean"
