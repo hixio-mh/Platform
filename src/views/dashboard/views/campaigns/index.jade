@@ -3,7 +3,13 @@ a.new-item(href="/campaigns/new")
   | New campaign
 .grid
   a.item(ng-repeat="campaign in campaigns" ng-href="/campaigns/{{campaign.id}}")
-    img.icon(src="http://delfinamassun.files.wordpress.com/2011/09/light-grey-square.jpg")
+
+    div.icon.noimage(ng-if="campaign.ads.length == 0")
+    img.icon(ng-if="campaign.ads.length == 1" ng-src="{{ campaign.ads[0].data.creative.image }}")
+    ul.icon.list(ng-if="campaign.ads.length > 1")
+      li(ng-repeat="ad in campaign.ads")
+        img(ng-src="{{ ad.data.creative.image }}")
+
     .name(ng-bind="campaign.name")
     .metrics(ng-if="campaign.graphData")
       div.noAxes(analytics data="campaign.graphData" width="335" height="200")

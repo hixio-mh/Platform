@@ -20,12 +20,6 @@ angular.module("AdefyApp").service "AdService", [
           if c.stats.ctr then c.stats.ctr *= 100
           if c.stats.ctr24h then c.stats.ctr24h *= 100
 
-      if ad.data != undefined and ad.data.length > 0
-        try
-          ad.data = JSON.parse ad.data
-        catch
-          ad.data = {}
-
       ad
 
     service =
@@ -61,9 +55,6 @@ angular.module("AdefyApp").service "AdService", [
 
         ad.$save().then(
           ->
-            if typeof ad.data == "string"
-              ad.data = JSON.parse ad.data
-
             cache[ad.id] = ad
             if cb then cb ad
           ->

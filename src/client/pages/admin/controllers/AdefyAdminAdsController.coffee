@@ -27,8 +27,6 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
 
       for p, i in list
 
-        if list[i].data then list[i].data = JSON.parse list[i].data
-
         # Status
         if list[i].status == 0
           list[i].statusText = "Awaiting Approval"
