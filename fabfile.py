@@ -47,14 +47,16 @@ def deploy():
   with cd(adefy_path):
 
     # Update
-    run("git checkout production")
+    # run("git checkout production")
+    run("git stash")
     run("git pull origin production")
+    run("git stash pop")
 
     # Install any new modules
     run("npm install")
 
     # Test (abort on fail)
-    run("grunt deployTest")
+    run("grunt stageTest")
 
     # Deploy
     run("grunt deploy")
