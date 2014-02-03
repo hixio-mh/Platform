@@ -5,7 +5,11 @@
     | New ad
 ul.list(ng-if="ads")
   li(ng-repeat="ad in ads")
-    a.ad(ng-href="/ads/{{ad.id}}")
+    a.ad(ng-href="/ads/{{ ad.id }}")
+
+      div.icon.noimage(ng-if="!ad.data.creative")
+      img.icon(ng-if="ad.data.creative" ng-src="{{ ad.data.creative.image }}")
+
       .name(ng-bind="ad.name")
 
       span(ng-switch="ad.status")

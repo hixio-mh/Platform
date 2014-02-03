@@ -79,6 +79,10 @@ schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
 
+  if ret.data != undefined and ret.data.length > 0
+    try
+      ret.data = JSON.parse ret.data
+
   for i in [0...ret.campaigns.length]
     if ret.campaigns[i].campaign != null
       if ret.campaigns[i].campaign._id != undefined

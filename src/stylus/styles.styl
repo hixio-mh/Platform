@@ -540,7 +540,6 @@ fieldset
       max-width 48px
       vertical-align middle
       margin 0 15px
-      border-radius 4px
     .name
       display inline-block
     .metrics
@@ -575,6 +574,7 @@ fieldset
         display inline-block
 
 
+
 .new-item
   line-height 1
   display inline-block
@@ -596,6 +596,36 @@ fieldset
   margin 0 auto
   max-width 720px
   margin-bottom 20px // needs margin
+
+.icon
+  border-radius 4px
+
+  &.noimage, &.list
+    width 48px
+    height 48px
+    background #aaa
+    float left
+    position relative
+    z-index 999
+
+  &.list
+    img
+      width 23px
+      height 23px
+      float left
+
+    li
+      &:first-child
+        border-radius-top-left 4px
+
+      &:nth-child(2)
+        border-radius-top-right 4px
+
+      &:nth-child(3)
+        border-radius-bottom-left 4px
+
+      &:last-child
+        border-radius-bottom-right 4px
 
 /* item lists ad list */
 .list
@@ -619,6 +649,15 @@ fieldset
       text-shadow 0 1px white
       color #999
       display none
+
+    .icon
+      width 32px
+      float left
+      margin-right 16px
+
+      &.noimage
+        width 32px
+        height 32px
 
     &:hover
       color #333
