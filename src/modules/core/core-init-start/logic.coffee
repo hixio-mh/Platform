@@ -114,18 +114,16 @@ setup = (options, imports, register) ->
 
         # Valid session, save user data on request
         else
-          user = user.split ":"
-          req.user =
-            id: user[0]
-            session: user[1]
-            admin: Number(user[2]) == 0
-            permissions: Number user[2]
-            username: user[3]
-            email: user[4]
-            signedup: Number user[5]
+          try
+            req.user = JSON.parse user
+            req.user.admin = req.user.permissions == 0
 
-          res.locals.admin = req.user.admin
-          validUser = true
+            res.locals.admin = req.user.admin
+            validUser = true
+          catch
+            req.user = null
+            res.clearCookie "user"
+            validUser = false
 
         # If page is public, then we don't require auth
         if pageIsPublic then return next()

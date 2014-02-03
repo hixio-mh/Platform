@@ -51,14 +51,10 @@ setup = (options, imports, register) ->
   authorizeUser = (user, res, cb) ->
 
     session = guid()
-    redisSessionData = [
-      user._id
-      session
-      user.permissions
-      user.username
-      user.email
-      new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
-    ].join ":"
+    redisSessionData = user.toAPI()
+    redisSessionData.session = session
+    redisSessionData.signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
+    redisSessionData = JSON.stringify redisSessionData
 
     redis.set "sessions:#{user._id}:#{session}", redisSessionData, (err) ->
       if err then spew.error err
