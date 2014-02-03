@@ -1,6 +1,6 @@
 include _menu
 
-.inner: form(novalidate ng-class="{submitted: submitted}")
+.inner: form(novalidate ng-class="{ submitted: submitted }")
   dl.form.center
     dt
       label Application name
@@ -21,7 +21,9 @@ include _menu
 
     dt: label Preferred Pricing Model
     dd
-      select(chosen, ng-model="app.preferredPricing" ng-options="o for o in pricingModels")
+      select(ui-select2 ng-model="app.preferredPricing")
+        option(value="")
+        option(ng-repeat="model in pricingModels" value="{{ model }}") {{ model }}
     dt(ng-if="app.preferredPricing != 'CPC'"): label Minimum CPM $
     dd(ng-if="app.preferredPricing != 'CPC'"): input(type="number" ng-model="app.minimumCPM" min="0")
     dt(ng-if="app.preferredPricing != 'CPM'"): label Minimum CPC $

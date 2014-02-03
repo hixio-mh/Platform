@@ -25,10 +25,11 @@ angular.module("AdefyApp").controller "AdefyCampaignCreateController", ($scope, 
     scheduling: "no"
     devices: []
     countries: []
+    category: "Games"
 
   $http.get("/api/v1/filters/categories").success (list) ->
     $scope.categories = list
-    $timeout -> $("#categorySelect select").chosen()
+    $timeout -> $("#categorySelect select").select2()
 
   $scope.submit = ->
     $scope.submitted = true
