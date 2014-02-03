@@ -50,7 +50,7 @@
       th CTR
       th Spent
     tbody
-      tr(ng-repeat="campaign in campaigns | orderBy:'ctr':true | limitTo:10")
+      tr(ng-repeat="campaign in campaigns | orderBy:'stats.ctr':true | limitTo:10")
         td {{ campaign.name }}
         td {{ campaign.stats.impressions | number }}
         td {{ campaign.stats.clicks | number }}

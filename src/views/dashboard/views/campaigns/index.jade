@@ -2,7 +2,7 @@ a.new-item(href="/campaigns/new")
   i.fa.fa-plus
   | New campaign
 .grid
-  a.item(ng-repeat="campaign in campaigns" ng-href="/campaigns/{{campaign.id}}")
+  a.item(ng-repeat="campaign in campaigns | orderBy:'ctr':true" ng-href="/campaigns/{{campaign.id}}")
 
     div.icon.noimage(ng-if="campaign.ads.length == 0")
     img.icon(ng-if="campaign.ads.length == 1" ng-src="{{ campaign.ads[0].data.creative.image }}")
