@@ -66,6 +66,9 @@ schema = new mongoose.Schema
   startDate: Number
   endDate: Number
 
+  # example items should not be allowed to get used
+  tutorial: { type: Boolean, default: false }
+
 ##
 ## ID and handle generation
 ##
@@ -285,10 +288,12 @@ getIdFromArgument = (arg) ->
   arg
 
 schema.methods.activate = (cb) ->
+  if @tutorial then return cb() else return
   @active = true
   @refreshAdRefs => cb()
 
 schema.methods.deactivate = (cb) ->
+  if @tutorial then return cb() else return
   @active = false
   @clearAdReferences => cb()
 
