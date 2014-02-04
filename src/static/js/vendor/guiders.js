@@ -59,9 +59,9 @@ var guiders = (function($) {
   guiders._buttonAttributes = {
     "href": "javascript:void(0);"
   };
-  guiders._buttonClassName = "guiders_button"; // Override this if you use a different class name for your buttons.
+  guiders._buttonClassName = "btn"; // Override this if you use a different class name for your buttons.
   guiders._buttonClickEvent = "click touch"; // Using click touch allows this to trigger with iPad/iPhone taps, as well as browser clicks
-  guiders._buttonElement = "<a></a>"; // Override this if you want to use a different element for your buttons, like spans.
+  guiders._buttonElement = "<button></button>"; // Override this if you want to use a different element for your buttons, like spans.
   guiders._closeButtonTitle = "Close";
   guiders._currentGuiderID = null;
   guiders._fixedOrAbsolute = "fixed";
