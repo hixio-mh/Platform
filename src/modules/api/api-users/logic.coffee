@@ -52,6 +52,8 @@ setup = (options, imports, register) ->
 
     session = guid()
     redisSessionData = user.toAPI()
+    redisSessionData.permissions = user.permissions
+    redisSessionData.admin = user.permissions == 0
     redisSessionData.session = session
     redisSessionData.signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
     redisSessionData = JSON.stringify redisSessionData
