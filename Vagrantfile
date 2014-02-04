@@ -9,10 +9,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "2"]
   end
 
-  # Adefy doesn't use SSL in dev mode!
-  config.vm.network :forwarded_port, guest: 8080, host: 10080
-
   config.ssh.forward_agent = true
 
-  config.vm.provision :shell, :path => "bootstrap_vagrant.sh"
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network :private_network, ip: "192.168.113.10"
+
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "provisioning/development.yml"
+    ansible.inventory_path = "provisioning/hosts"
+  end
 end

@@ -1,0 +1,10 @@
+---
+- include: packages.yml
+- include: nodejs.yml
+  sudo: yes
+- include: mongodb.yml
+  sudo: yes
+- include: redis.yml
+  sudo: yes
+- include: nginx.yml
+  sudo: yes
