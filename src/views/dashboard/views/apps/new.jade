@@ -10,12 +10,16 @@
     dd: input(required ng-model="app.url" type="text" placeholder="com.android.game")
     dt: label Application category
     dd
-      select(required chosen ng-model="app.category" ng-options="c for c in categories")
+      select(required ui-select2 ng-model="app.category")
+        option(value="")
+        option(ng-repeat="c in categories" value="{{ c }}") {{ c }}
     dt: label Description
     dd: textarea(ng-model="app.description")
     dt: label Preferred Pricing Model
     dd
-      select(chosen ng-model="app.preferredPricing" ng-options="o for o in pricingModels")
+      select(ui-select2 ng-model="app.preferredPricing")
+        option(value="")
+        option(ng-repeat="model in pricingModels" value="{{ model }}") {{ model }}
     dt(ng-if="app.preferredPricing != 'CPC'"): label Minimum payout (CPM)
     dd(ng-if="app.preferredPricing != 'CPC'"): input(type="number" ng-model="app.minimumCPM" min="0")
     dt(ng-if="app.preferredPricing != 'CPM'"): label Minimum payout (CPC)

@@ -110,7 +110,7 @@ setup = (options, imports, register) ->
           campaign.fetchTotalStatsForAd ad, (stats) -> cb stats, campaignIndex
 
         fetchStatsforAd = (ad) ->
-          ad.fetchTotalStats (adStats) ->
+          ad.fetchCompiledStats (adStats) ->
 
             if ad.campaigns.length == 0
               adObject = ad.toAnonAPI()
@@ -163,7 +163,7 @@ setup = (options, imports, register) ->
       if adCount == 0 then return res.json ret
 
       fetchAd = (ad, res) ->
-        ad.fetchTotalStats (stats) ->
+        ad.fetchCompiledStats (stats) ->
 
           ad.owner = ad.owner.toAPI()
           adData = ad.toAPI()

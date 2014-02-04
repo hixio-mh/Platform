@@ -19,13 +19,17 @@ include _menu
     p Add existing creatives
     dt
     dd
-      select(chosen multiple ng-options="ad as ad.name for ad in ads track by ad.id" ng-model="campaign.ads" data-placeholder="Select Ads")
+      select(ui-select2 multiple ng-model="campaign.ads" data-placeholder="Select Ads")
+        option(value="")
+        option(ng-repeat="ad in ads track by ad.id" value="{{ ad }}") {{ ad.name }}
 
   fieldset: dl.form.center
     legend Bidding
     dt: label Pricing Model
     dd
-      select(chosen required ng-model="campaign.pricing" ng-options="o for o in pricingOptions")
+      select(ui-select2 required ng-model="campaign.pricing")
+        option(value="")
+        option(ng-repeat="o in pricingOptions" value="{{ o }}") {{ o }}
 
     dt
       label Daily Budget $
@@ -46,7 +50,9 @@ include _menu
       label Bid System
       span Automatic bidding utilizes our smart bid client and values each impression uniquely, whereas manual bidding treats each impression identically.
     dd
-      select(chosen required ng-model="campaign.bidSystem" ng-options="o for o in bidSysOptions")
+      select(ui-select2 required ng-model="campaign.bidSystem")
+        option(value="")
+        option(ng-repeat="o in bidSysOptions" value="{{ o }}") {{ o }}
 
     br
     br

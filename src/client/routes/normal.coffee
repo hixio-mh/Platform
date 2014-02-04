@@ -19,6 +19,7 @@ window.AdefyApp = angular.module "AdefyApp", [
   "toggle-switch"
   "localytics.directives"
   "ngQuickDate"
+  "ui.select2"
 ]
 
 angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
