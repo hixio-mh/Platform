@@ -234,3 +234,14 @@ html(lang="en" ng-app="AdefyApp")
       script.
         try{Typekit.load();}catch(e){}
         // ferno │ .tk-proxima-nova
+
+      script.
+        guiders.createGuider({
+          attachTo: "#logo",
+          buttons: [{name: "Next"}],
+          description: "Guiders are a user interface design pattern for introducing features of software. This dialog box, for example, is the first in a series of guiders that together make up a guide.",
+          id: "guider1",
+          next: "guider2",
+          position: "bottomLeft",
+          title: "Welcome to Adefy!"
+        }).show();
