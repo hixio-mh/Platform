@@ -31,6 +31,7 @@ html(lang="en" ng-app="AdefyApp")
     link(rel="icon" href="/img/favicon.png" type="image/png")
 
     script(src="/js/vendor/pace.min.js")
+    link(rel="stylesheet" href="/css/vendor/pace-flash.css")
 
     //- Errorception
     script.
@@ -40,18 +41,7 @@ html(lang="en" ng-app="AdefyApp")
       _.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
       (window,document,"script","52e15d7e31ab7cc110000007");
 
-    link(rel="stylesheet" href="/css/vendor/pace-flash.css")
-
-    link(rel="stylesheet" href="/css/reset.css")
-    link(rel="stylesheet" href="/css/vendor/chosen.min.css")
-    link(rel="stylesheet" href="/css/vendor/select2.css")
-    link(rel="stylesheet" href="/css/vendor/angular-toggle-switch.css")
-    link(rel="stylesheet" href="/css/vendor/rickshaw.css")
-    link(rel="stylesheet" href="/css/vendor/ng-quick-date.css")
-    link(rel="stylesheet" href="/css/vendor/ng-quick-date-default-theme.css")
-    link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:200,300,400,600,700,900")
     link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
-    link(rel="stylesheet" href="//cdn.oesmith.co.uk/morris-0.4.3.min.css")
     link(rel="stylesheet" href="/css/styles.min.css")
 
     | <!--[if lt IE 9]>
@@ -127,7 +117,7 @@ html(lang="en" ng-app="AdefyApp")
     .content(ng-view="")
 
     footer
-      if mode == "production"
+      if mode == "production" || mode == "staging"
         if user.admin
           script(src="/js/script-admin.min.js")
         else
@@ -136,13 +126,14 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/vendor/stackBlur.min.js")
         script(src="/js/vendor/jquery-2.0.3.min.js")
         script(src="/js/vendor/accounting.min.js")
-        script(src="/js/vendor/chosen.jquery.min.js")
         script(src="/js/vendor/select2.min.js")
-        script(src="/js/vendor/angular-1.2.10.min.js")
+        script(src="/js/vendor/angular-1.2.11.min.js")
         script(src="/js/vendor/angular-resource.min.js")
         script(src="/js/vendor/angular-route.min.js")
         script(src="/js/vendor/angular-country-select.min.js")
+        script(src="/js/vendor/angular-ui-select2.js")
         script(src="/js/vendor/angles.js")
+        script(src="/js/vendor/guiders.js")
         script(src="/js/vendor/angular.chosen.js")
         script(src="/js/vendor/ng-quick-date.min.js")
         script(src="/js/vendor/moment.min.js")
@@ -232,3 +223,14 @@ html(lang="en" ng-app="AdefyApp")
       script.
         try{Typekit.load();}catch(e){}
         // ferno │ .tk-proxima-nova
+
+      script.
+        guiders.createGuider({
+          attachTo: "#logo",
+          buttons: [{name: "Next"}],
+          description: "Guiders are a user interface design pattern for introducing features of software. This dialog box, for example, is the first in a series of guiders that together make up a guide.",
+          id: "guider1",
+          next: "guider2",
+          position: "bottomLeft",
+          title: "Welcome to Adefy!"
+        }).show();

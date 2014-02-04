@@ -58,7 +58,7 @@ angular.module("AdefyApp").controller "AdefyAppsCreateController", ($scope, $loc
   $scope.pricingModels = ["Any", "CPM", "CPC"]
 
   # Defaults
-  $scope.app = preferredPricing: "Any"
+  $scope.app = preferredPricing: "Any", category: "Games"
 
   $scope.submit = ->
     $scope.submitted = true

@@ -116,14 +116,12 @@ setup = (options, imports, register) ->
         else
           try
             req.user = JSON.parse user
-            req.user.admin = req.user.permissions == 0
-
-            res.locals.admin = req.user.admin
             validUser = true
           catch
             req.user = null
             res.clearCookie "user"
             validUser = false
+            return res.redirect "/login"
 
         # If page is public, then we don't require auth
         if pageIsPublic then return next()

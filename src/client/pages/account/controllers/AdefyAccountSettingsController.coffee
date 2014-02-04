@@ -22,7 +22,7 @@ angular.module("AdefyApp").controller "AdefyAccountSettingsController", ($scope,
 
   $http.get("/api/v1/filters/countries").success (list) ->
     $scope.countries = list
-    $timeout -> $("#countrySelect select").chosen()
+    $timeout -> $("#countrySelect select").select2()
 
   $scope.save = ->
     if $scope.me.newPass != ""

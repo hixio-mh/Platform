@@ -1,21 +1,37 @@
+// Vendor CSS
+@import "../static/css/reset.css"
+@import "../static/css/vendor/select2.css"
+@import "../static/css/vendor/select2.css"
+@import "../static/css/vendor/angular-toggle-switch.css"
+@import "../static/css/vendor/rickshaw.css"
+@import "../static/css/vendor/ng-quick-date.css"
+@import "../static/css/vendor/ng-quick-date-default-theme.css"
+@import "../static/css/vendor/guiders.css"
+
 @import "./fonts"
+
+user-select()
+  -webkit-user-select arguments
+  -moz-user-select arguments
+  -ms-user-select arguments
+  -o-user-select arguments
+  user-select arguments
 
 *
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
   box-sizing border-box
 
-.cfafter
-  clear both
-  content "."
-  display block
-  font-size 0
-  height 0
-  line-height 0
-  visibility hidden
-
 .cf
   zoom 1
+  &::after
+    clear both
+    content "."
+    display block
+    font-size 0
+    height 0
+    line-height 0
+    visibility hidden
 
 .tcenter
   text-align center
@@ -23,9 +39,8 @@
   text-align right
 
 body
-  font-family Source Sans Pro
+  font-family Proxima Nova, sans-serif
   color #333
-  background #f7f7f7
   line-height 1.6
   padding-top 52px // navbar
   padding-bottom 50px
@@ -45,8 +60,16 @@ a
 .select2-container
   display block !important
 
+.header-controls .select2-container, .graph .select2-container
+  margin 0
+
+.select2-chosen
+  font-size 14px
+  font-weight 400
+
 button
   background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
+  background linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
   border 1px solid #bbb
   box-shadow inset 0 1px rgba(255,255,255,.2)
   color #555
@@ -55,26 +78,29 @@ button
   border-radius 5px
 
   &:hover, &:active
+    background-image -webkit-linear-gradient(#eee 20%,#fff 80%)
     background-image linear-gradient(#eee 20%,#fff 80%)
     box-shadow 0 1px 0 #fff inset
-
 
 button[disabled="disabled"]
   color #ccc !important
   background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
+  background linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
   border 1px solid #bbb !important
   box-shadow inset 0 1px rgba(255,255,255,.2) !important
   text-shadow 0 1px white !important
 
   &:hover, &:active
     background -webkit-linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
+    background linear-gradient(top,#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%) !important
     box-shadow inset 0 1px rgba(255,255,255,.2) !important
 
     cursor default
 
 button.blue
   color #fff
-  background  -webkit-linear-gradient(top,#34b5e5,#5897fb)
+  background -webkit-linear-gradient(top,#34b5e5,#5897fb)
+  background linear-gradient(top,#34b5e5,#5897fb)
   border 1px solid #1597c7
   border-bottom 1px solid rgba(0,0,0,.2)
   text-shadow 0 1px 1px rgba(0,0,0,0.3)
@@ -88,7 +114,8 @@ button.blue
 
 button.red
   color #fff
-  background  -webkit-linear-gradient(top,#E43434,#F97B57)
+  background -webkit-linear-gradient(top,#E43434,#F97B57)
+  background linear-gradient(top,#E43434,#F97B57)
   border 1px solid #C71515
   border-bottom 1px solid rgba(0,0,0,.2)
   text-shadow 0 1px 1px rgba(0,0,0,0.3)
@@ -108,19 +135,19 @@ button.save
     margin 8px auto
 
 input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea
-  font-family Source Sans Pro
+  font-family Proxima Nova, sans-serif
   display block
   padding 7px
-  border-radius 4px
 
-  border 1px solid #aaa
-  box-shadow inset 0 15px 15px -15px rgba(0,0,0,.1)
+  border 1px solid #ccc
   &.ng-invalid.ng-dirty, .submitted &.ng-invalid
     border 1px solid #e74c3c !important //#c0392b
     //box-shadow 0 0 3px #e74c3c
 input:focus, textarea:focus, button:focus
   outline none
   border 1px solid #5897fb
+.chosen-container-single .chosen-single
+  background: #fafafa
 label
   font-weight 600
 
@@ -182,6 +209,7 @@ header
   text-shadow 0 1px 1px rgba(0,0,0,.3)
   box-shadow 0 2px 1px rgba(0,0,0,.1), inset 0 -1px rgba(255,255,255,.15)
   z-index 100
+  user-select none
 
   &.absolute
     position absolute
@@ -200,6 +228,8 @@ header
   float left
   line-height 50px // font's x-height is fucked up, manually push up
   margin-right 25px
+  user-select: none
+  cursor: default
 
   &.centered, &.tcenter
     text-align center
@@ -423,7 +453,7 @@ dl.form
 
 
 fieldset
-  dl.form.singlelast-of-type
+  dl.form.single:last-of-type
     border-bottom none
 
 /* billing form */
@@ -499,16 +529,16 @@ fieldset
     display block
     i
       margin-right 10px
-    &first-of-type
+    &:first-of-type
       border-radius 5px 5px 0 0
-    &last-of-type
+    &:last-of-type
       border-radius 0 0 5px 5px
       border none
     &:hover
       background-color #333
       color #fff
 
-  &after
+  &::after
     bottom 100%
     border solid transparent
     content ""
@@ -665,7 +695,7 @@ fieldset
 
     &:hover
       color #333
-  lihover .edit
+  li:hover .edit
     display block
 
   .campaigns
@@ -752,7 +782,7 @@ fieldset
   li
     border-bottom 1px solid #ccc
     padding 15px
-  lifirst-of-type
+  li:first-of-type
     border-top 1px solid #ccc
 
 .index
@@ -916,9 +946,9 @@ table.info
     text-align center
     border-right 1px solid rgba(0,0,0,.1)
     color #fff
-  .tabfirst-of-type
+  .tab:first-of-type
     border-left 1px solid rgba(0,0,0,.1)
-  .tabhover, .tab.active
+  .tab:hover, .tab.active
     color #33b5e5
     background-color #fff
     border-bottom 1px solid rgba(0,0,0,.1)
@@ -1006,7 +1036,7 @@ graph
   border-left 1px solid #f7f7f7
 
 .rickshaw_graph .x_tick .title, .rickshaw_graph .y_ticks text, .rickshaw_graph .x_ticks_d3 text, .rickshaw_legend .label
-  font-family "proxima-nova", sans-serif
+  font-family Proxima Nova, sans-serif
   font-weight 100
   opacity 1
 
