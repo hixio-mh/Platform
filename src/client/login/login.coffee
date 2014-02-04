@@ -16,13 +16,15 @@ window.AdefyLogin = angular.module "AdefyLogin", []
 window.AdefyLogin.controller "AdefyLoginController", ($scope, $http) ->
   $scope.error = null
 
-  $scope.teaser = ["Your Metrics Are Waiting",
-                   "Graphs Await Your Analysis",
-                   "It's That Time Of The Day",
-                   "What Took You So Long?",
-                   "Simpler, Faster, Smarter, Richer",
-                   "Get With The Flow",
-                   "Time To Engage Users"]
+  teasers = ["Your Metrics Are Waiting",
+             "Graphs Await Your Analysis",
+             "It's That Time Of The Day",
+             "What Took You So Long?",
+             "Simpler, Faster, Smarter, Richer",
+             "Get With The Flow",
+             "Time To Engage Users"]
+
+  $scope.teaser = teasers[Math.floor(Math.random() * teasers.length)]
 
   $scope.login = ->
     username = "username=#{$scope.username}"
