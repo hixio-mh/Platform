@@ -128,7 +128,7 @@ html(lang="en" ng-app="AdefyApp")
     .content(ng-view="")
 
     footer
-      if mode == "production"
+      if mode == "production" || mode == "staging"
         if user.admin
           script(src="/js/script-admin.min.js")
         else
