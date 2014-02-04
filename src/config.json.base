@@ -3,7 +3,7 @@
 
 	"modes": {
 		"development": {
-			"domain": "www.adefy.local",
+			"domain": "www.adefy.dev",
 			"port": 5000,
 			"loglevel": 10,
 			"newrelic": false,
