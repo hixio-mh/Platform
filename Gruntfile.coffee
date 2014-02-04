@@ -313,6 +313,8 @@ module.exports = (grunt) ->
     stylus:
       full:
         files: stylusMin
+        options:
+          "include css": true
 
     copy:
 
