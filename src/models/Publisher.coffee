@@ -59,6 +59,9 @@ schema = new mongoose.Schema
   minimumCPC: { type: Number, default: 0 }
   preferredPricing: { type: String, default: "Any" }
 
+  # example items should not be allowed to get used
+  tutorial: { type: Boolean, default: false }
+
 ##
 ## ID and handle generation
 ##
@@ -88,7 +91,8 @@ schema.methods.clearApproval = -> @status = 0
 schema.methods.disaprove = -> @status = 1
 
 schema.methods.activate = (cb) ->
-  if @active then return cb()
+  if @active or @tutorial
+    if cb then return cb() else return
 
   @active = true
   @createRedisStruture()
@@ -96,7 +100,8 @@ schema.methods.activate = (cb) ->
   if cb then cb()
 
 schema.methods.deactivate = (cb) ->
-  if not @active then return cb()
+  if not @active or @tutorial
+    if cb then return cb() else return
 
   @active = false
   @clearRedisStructure()

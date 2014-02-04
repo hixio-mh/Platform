@@ -65,6 +65,9 @@ schema = new mongoose.Schema
 
     # either bid or max bid, inferred from bidSystem
     bid: { type: Number, default: -1 }
+
+    # example items should not be allowed to get used
+    tutorial: { type: Boolean, default: false }
   ]
 
 ##
@@ -328,6 +331,7 @@ schema.methods.clearCampaignReferences = (campaign, cb) ->
 #
 # @param [Campaign] campaign
 schema.methods.createCampaignReferences = (campaign, cb) ->
+  if @tutorial then return cb() else return
   if not campaign.active then return cb()
 
   ref = @getRedisRefForCampaign campaign
