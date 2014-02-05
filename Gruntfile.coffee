@@ -69,7 +69,9 @@ module.exports = (grunt) ->
   ]
   jadeSrc = [
     "views/*.jade"
-    "views/**/*.jade"
+    "views/account/*.jade"
+    "views/creator/*.jade"
+    "views/dashboard/*.jade"
   ]
 
   stylusMin = {}
@@ -462,9 +464,12 @@ module.exports = (grunt) ->
       static:
         files: [ "#{srcDir}static/**" ]
         tasks: [ "copy:static" ]
+      jadeStatic:
+        files: [ "#{srcDir}views/static/*.jade" ]
+        tasks: [ "jade:static" ]
       jade:
         files: WjadeSrc
-        tasks: [ "copy:jade", "jade:static" ]
+        tasks: [ "copy:jade" ]
 
     cachebreaker:
       js:
