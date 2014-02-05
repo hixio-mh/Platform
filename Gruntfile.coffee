@@ -69,9 +69,14 @@ module.exports = (grunt) ->
   ]
   jadeSrc = [
     "views/*.jade"
+
     "views/account/*.jade"
     "views/creator/*.jade"
     "views/dashboard/*.jade"
+
+    "views/account/**/*.jade"
+    "views/creator/**/*.jade"
+    "views/dashboard/**/*.jade"
   ]
 
   stylusMin = {}
