@@ -470,4 +470,16 @@ schema.methods.createRedisStruture = (cb) ->
 # Rebuild our redis structures
 schema.pre "save", (next) -> @createRedisStruture -> next()
 
+schema.path("data").validate (value) ->
+  try
+    hash = JSON.parse(value)
+    if hash.min < 16
+      false
+    ## add other validations here
+    else
+      true
+  catch e
+    spew.error e
+    false
+
 mongoose.model "Ad", schema
