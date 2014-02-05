@@ -47,7 +47,8 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-cache-breaker": "~0.5.6",
     "grunt-contrib-uglify": "~0.3.2",
-    "grunt-ngmin": "0.0.3"
+    "grunt-ngmin": "0.0.3",
+    "jit-grunt": "~0.2.1"
   },
   "private": true,
   "engine": "node >= 0.10.12"

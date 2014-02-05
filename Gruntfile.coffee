@@ -462,6 +462,7 @@ module.exports = (grunt) ->
         files:
           src: "#{_buildDir}/views/dashboard/layout.jade"
 
+  ###
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-watch"
@@ -476,6 +477,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-ngmin"
   grunt.loadNpmTasks "grunt-contrib-uglify"
   grunt.loadNpmTasks "grunt-cache-breaker"
+  ###
+  require('jit-grunt')(grunt)
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
