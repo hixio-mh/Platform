@@ -459,9 +459,6 @@ module.exports = (grunt) ->
       stylus:
         files: WstylusSrc
         tasks: [ "stylus:full", "cssmin:minify" ]
-      packageJSON:
-        files: WmodulePackageJSON
-        tasks: [ "copy:packageJSON" ]
       static:
         files: [ "#{srcDir}static/**" ]
         tasks: [ "copy:static" ]
