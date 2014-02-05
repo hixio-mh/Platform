@@ -237,6 +237,26 @@ module.exports = (grunt) ->
   # Execute here, with default build path
   buildPaths()
 
+  ###
+  grunt.loadNpmTasks "grunt-contrib-coffee"
+  grunt.loadNpmTasks "grunt-contrib-stylus"
+  grunt.loadNpmTasks "grunt-contrib-watch"
+  grunt.loadNpmTasks "grunt-contrib-copy"
+  grunt.loadNpmTasks "grunt-contrib-clean"
+  grunt.loadNpmTasks "grunt-contrib-cssmin"
+  grunt.loadNpmTasks "grunt-contrib-jade"
+  grunt.loadNpmTasks "grunt-concurrent"
+  grunt.loadNpmTasks "grunt-nodemon"
+  grunt.loadNpmTasks "grunt-mocha-test"
+  grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-ngmin"
+  grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks "grunt-cache-breaker"
+  ###
+  require('jit-grunt')(grunt, {
+    cachebreaker: 'grunt-cache-breaker'
+  })
+
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
 
@@ -461,26 +481,6 @@ module.exports = (grunt) ->
         asset_url: "/css/styles.min.css"
         files:
           src: "#{_buildDir}/views/dashboard/layout.jade"
-
-  ###
-  grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-contrib-stylus"
-  grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-copy"
-  grunt.loadNpmTasks "grunt-contrib-clean"
-  grunt.loadNpmTasks "grunt-contrib-cssmin"
-  grunt.loadNpmTasks "grunt-contrib-jade"
-  grunt.loadNpmTasks "grunt-concurrent"
-  grunt.loadNpmTasks "grunt-nodemon"
-  grunt.loadNpmTasks "grunt-mocha-test"
-  grunt.loadNpmTasks "grunt-contrib-concat"
-  grunt.loadNpmTasks "grunt-ngmin"
-  grunt.loadNpmTasks "grunt-contrib-uglify"
-  grunt.loadNpmTasks "grunt-cache-breaker"
-  ###
-  require('jit-grunt')(grunt, {
-    cachebreaker: 'grunt-cache-breaker'
-  })
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
