@@ -253,6 +253,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-uglify"
   grunt.loadNpmTasks "grunt-cache-breaker"
   ###
+  require('time-grunt')(grunt);
   require('jit-grunt')(grunt, {
     cachebreaker: 'grunt-cache-breaker'
   })
