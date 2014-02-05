@@ -478,7 +478,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-uglify"
   grunt.loadNpmTasks "grunt-cache-breaker"
   ###
-  require('jit-grunt')(grunt)
+  require('jit-grunt')(grunt, {
+    cachebreaker: 'grunt-cache-breaker'
+  })
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
