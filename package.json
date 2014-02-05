@@ -24,7 +24,8 @@
     "hiredis": "~0.1.16",
     "statsd-client": "0.0.15",
     "accounting": "~0.3.2",
-    "coffee-script": "~1.6.3"
+    "coffee-script": "~1.6.3",
+    "time-grunt": "~0.2.9"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
