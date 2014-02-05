@@ -257,7 +257,8 @@ module.exports = (grunt) ->
   ###
   require('time-grunt')(grunt);
   require('jit-grunt')(grunt, {
-    cachebreaker: 'grunt-cache-breaker'
+    cachebreaker: 'grunt-cache-breaker',
+    mochaTest: 'grunt-mocha-test'
   })
 
   grunt.initConfig
