@@ -111,9 +111,12 @@ setup = (options, imports, register) ->
         return
 
       ad.data = req.query.data
-      ad.save()
-
-      res.json { msg: "Saved" }
+      ad.save (err) ->
+        if err
+          res.send 400
+        else
+          res.json 200, ad.toAnonAPI()
+          #res.json { msg: "Saved" }
 
   exportAd = (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
