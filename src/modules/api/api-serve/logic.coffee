@@ -32,7 +32,8 @@ setup = (options, imports, register) ->
   adEngine = imports["engine-ads"]
 
   # Fetch a test ad (unidentified request)
-  app.get "/api/v1/serve", (req, res) -> adEngine.fetchTest req, res
+  app.get "/api/v1/serve", (req, res) ->
+    adEngine.fetchTest req, res
 
   # Try to fetch a real ad
   app.get "/api/v1/serve/:apikey", (req, res) ->
