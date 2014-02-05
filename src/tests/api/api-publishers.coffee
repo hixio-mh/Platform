@@ -6,8 +6,6 @@ config = require "../../config.json"
 config = config.modes[config.mode]
 api = supertest "http://#{config.domain}:#{config.port}"
 
-actuallyDone = (done, i) -> i--; if i > 0 then return i; else done()
-
 testPublisherName = String Math.floor(Math.random() * 10000)
 
 # Set random value so it fails on the first GET attempt
@@ -61,7 +59,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
 
         testPublisherId1 = res.body.id
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
       req.expect(200).end (err, res) ->
@@ -69,7 +67,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
 
         testPublisherId2 = res.body.id
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
       req.expect(200).end (err, res) ->
@@ -77,7 +75,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
 
         testPublisherId3 = res.body.id
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # GET /api/v1/publishers/:id
     it "Should retrieve existing publishers individually", (done) ->
@@ -93,7 +91,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
         expectPublisherStats res.body
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
       req.expect(200).end (err, res) ->
@@ -102,7 +100,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
         expectPublisherStats res.body
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
       req.expect(200).end (err, res) ->
@@ -111,7 +109,7 @@ module.exports = (user, admin) ->
         validatePublisherFormat res.body
         expectPublisherStats res.body
 
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # GET /api/v1/publishers
     it "Should retrieve all three created publishers", (done) ->
@@ -141,15 +139,15 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}", "del"
       req.expect(200).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}", "del"
       req.expect(200).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}", "del"
       req.expect(200).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
     # GET /api/v1/publishers/:id
     it "Should fail to retrieve deleted publishers", (done) ->
@@ -158,12 +156,12 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
       req.expect(404).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
       req.expect(404).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
       req.expect(404).end (err, res) ->
-        requests = actuallyDone done, requests
+        requests = util.actuallyDoneCheck done, requests
