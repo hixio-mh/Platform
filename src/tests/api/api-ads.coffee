@@ -35,6 +35,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
 
@@ -43,6 +44,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
 
@@ -51,6 +53,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
 
@@ -64,6 +67,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}"
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
@@ -71,6 +75,7 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/ads/#{testAdId2}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
@@ -78,6 +83,7 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/ads/#{testAdId3}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
@@ -87,6 +93,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads"
       req.expect(200).end (err, res) ->
+        if err then throw err
         res.body.should.not.have.property "error"
         res.body.length.should.equal 3
         validateAdFormat ad for ad in res.body
@@ -106,14 +113,17 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}", "del"
       req.expect(200).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId2}", "del"
       req.expect(200).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId3}", "del"
       req.expect(200).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
 
     # GET /api/v1/ads/:id
@@ -123,12 +133,16 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}"
       req.expect(404).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId2}"
       req.expect(404).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId3}"
       req.expect(404).end (err, res) ->
+        if err then throw err
         requests = util.actuallyDoneCheck done, requests
+
