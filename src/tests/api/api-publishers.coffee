@@ -18,29 +18,29 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validatePublisherFormat = (publisher) ->
-    expect(publisher.name).to.exist
-    expect(publisher.url).to.exist
-    expect(publisher.description).to.exist
-    expect(publisher.category).to.exist
-
-    expect(publisher.active).to.exist
-    expect(publisher.apikey).to.exist
-
-    expect(publisher.status).to.exist
-    expect(publisher.type).to.exist
+    should.exist publisher
+    should.exist publisher.name
+    should.exist publisher.url
+    should.exist publisher.description
+    should.exist publisher.category
+    should.exist publisher.active
+    should.exist publisher.apikey
+    should.exist publisher.status
+    should.exist publisher.type
 
     util.apiObjectIdSanitizationCheck publisher
 
   expectPublisherStats = (publisher) ->
-    expect(publisher.stats.earnings24h).to.exist
-    expect(publisher.stats.impressions24h).to.exist
-    expect(publisher.stats.clicks24h).to.exist
-    expect(publisher.stats.ctr24h).to.exist
-
-    expect(publisher.stats.earnings).to.exist
-    expect(publisher.stats.impressions).to.exist
-    expect(publisher.stats.clicks).to.exist
-    expect(publisher.stats.ctr).to.exist
+    should.exist publisher
+    should.exist publisher.stats
+    should.exist publisher.stats.earnings24h
+    should.exist publisher.stats.impressions24h
+    should.exist publisher.stats.clicks24h
+    should.exist publisher.stats.ctr24h
+    should.exist publisher.stats.earnings
+    should.exist publisher.stats.impressions
+    should.exist publisher.stats.clicks
+    should.exist publisher.stats.ctr
 
   describe "Publishers API", ->
 
@@ -55,7 +55,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
         validatePublisherFormat res.body
 
         testPublisherId1 = res.body.id
@@ -63,7 +63,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
         validatePublisherFormat res.body
 
         testPublisherId2 = res.body.id
@@ -71,7 +71,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
         validatePublisherFormat res.body
 
         testPublisherId3 = res.body.id
@@ -86,7 +86,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -95,7 +95,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -104,7 +104,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -118,7 +118,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers"
       req.expect(200).end (err, res) ->
-        res.body.should.not.have.property "error"
+        if err then return done(err)
         res.body.length.should.equal 3
 
         validatePublisherFormat publisher for publisher in res.body

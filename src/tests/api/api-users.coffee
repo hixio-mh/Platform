@@ -13,67 +13,67 @@ module.exports = (user, admin) ->
   describe "Users API", ->
 
     # GET /login
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    # done()
 
     # GET /register
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # GET /signup
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # GET /logout
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # POST /api/v1/login
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # POST /api/v1/register
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # DELETE /api/v1/user/delete
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # GET /api/v1/user/get
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # GET /api/v1/user
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # PUT /api/v1/user
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # GET /api/v1/user/transactions
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # POST /api/v1/user/deposit/:amount
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
     # PUT /api/v1/user/deposit/:token/:action
-    it "---", (done) ->
-
-      done()
+    #it "---", (done) ->
+    #
+    #  done()
 
