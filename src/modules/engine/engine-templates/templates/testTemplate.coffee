@@ -114,7 +114,7 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
 
       spawner = setInterval ->
         count++
-        if count == 200 then clearInterval spawner
+        if count == 150 then clearInterval spawner
 
         px = Math.floor Math.random() * 1920 * wR
         py = Math.floor (Math.random() * 100) + (1100 * hR)
