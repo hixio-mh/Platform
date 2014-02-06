@@ -437,9 +437,8 @@ module.exports = (grunt) ->
     mochaTest:
       test:
         options:
-          reporter: "xunit"
+          reporter: "spec"
           require: "coffee-script"
-          captureFile: "./testResults.xml"
         src: [
           "#{srcDir}/tests/*.coffee"
         ]
