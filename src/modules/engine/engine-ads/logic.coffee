@@ -229,6 +229,7 @@ setup = (options, imports, register) ->
 
       fetchAdKeys = (key) ->
         campaignUserRef = key.split(":")[3]
+        adId = campaignUserRef = key.split(":")[2]
 
         redis.mget [
           "#{key}:pricing"
@@ -239,6 +240,7 @@ setup = (options, imports, register) ->
           "#{key}:clicks"
           "#{key}:bid"
           "user:#{campaignUserRef}:adFunds"
+          "ads:#{adId}"
         ], (err, data) ->
           if err then spew.error err; return fetchEmpty req, res
 
@@ -254,6 +256,17 @@ setup = (options, imports, register) ->
             adId: getAdFromAdKey key
             ownerRedisId: getUserFromAdKey key
             userFunds: Number data[7]
+
+          try
+            structuredAds[key].data = JSON.parse data[8]
+
+            # If no type is specified, default to flat_template
+            if structuredAds[key].data.type == undefined
+              structuredAds[key].data.type = "flat_template"
+
+          catch
+            spew.error "Couldn't parse ad data #{data[8]}"
+            return fetchEmpty req, res
 
           done()
 
@@ -454,7 +467,22 @@ setup = (options, imports, register) ->
         performCountryTargeting targetingKey, country, res, (finalKey) ->
           fetchTargetedAdEntries finalKey, res, (ads) ->
             performRTB ads, publisher, req, res, (ad) ->
-              res.json ad
+
+              # If ad is null, that means we couldn't find a suitable one
+              # Either the floor limit is too high, nothing was targeted, or
+              # everyone is out of money (sad).
+              if ad == null then return res.json 404, error: "No ad available"
+
+              # If we get here, then prepare an options object and pass it to
+              # our template generator with the proper type
+              options = parseRequestOptions req
+              options.click = ad.clickURL
+              options.impression = ad.impressionURL
+              options.data = ad.data
+
+              templates.generate ad.data.type, options, res
+
+              # Todo: Log the serve time
               # spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
 
   # Fetches a test ad tuned for the publisher in question.
@@ -465,7 +493,11 @@ setup = (options, imports, register) ->
     error = validateRequest req
     if error != null then return res.json error: error, 400
 
-    templates.generate "test", parseRequestOptions(req), res
+    options = parseRequestOptions req
+    options.click = ""
+    options.impression = ""
+
+    templates.generate "test", options, res
 
   # Directly returns an empty response. (Used when a suitable ad is not
   # available)

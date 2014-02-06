@@ -83,9 +83,9 @@ class AdefyBaseAdTemplate
       else
 
         if options.html == true
-          @sendHTML creative, options.width, options.height, res
+          @sendHTML creative, options, res
         else
-          @sendArchive creative, options.width, options.height, res
+          @sendArchive creative, options, res
 
   updateHTMLManifest: ->
     if @manifestHMTL != undefined then return
@@ -105,11 +105,23 @@ class AdefyBaseAdTemplate
   # Sends an HTML ad, pulling in AWGL
   #
   # @param [Object] creative
-  # @param [Number] width
-  # @param [Number] height
-  # @param [Object] response
-  sendHTML: (creative, width, height, res) ->
+  # @param [Object] options
+  # @option options [Number] width
+  # @option options [Number] height
+  # @option options [Number] click
+  # @option options [Number] impression
+  # @param [Object] res
+  sendHTML: (creative, options, res) ->
+    width = options.width
+    height = options.height
+    clickURL = options.click
+    impressionURL = options.impression
+
     @updateHTMLManifest()
+
+    manifestHTML = _.clone @manifestHMTL
+    manifestHTML.click = clickURL
+    manifestHTML.impression = impressionURL
 
     fullAd = """
     <!DOCTYPE html>
@@ -132,7 +144,7 @@ class AdefyBaseAdTemplate
 
       #{creative.header}
 
-      var manifest = #{JSON.stringify @manifestHMTL};
+      var manifest = #{JSON.stringify manifestHTML};
 
       AJS.init(function() {
         AJS.loadManifest(JSON.stringify(manifest), function() {
@@ -149,10 +161,18 @@ class AdefyBaseAdTemplate
   # Sends a packaged ad for mobile execution
   #
   # @param [Object] creative
-  # @param [Number] width
-  # @param [Number] height
+  # @param [Object] options
+  # @option options [Number] width
+  # @option options [Number] height
+  # @option options [Number] click
+  # @option options [Number] impression
   # @param [Object] res
-  sendArchive: (creative, width, height, res) ->
+  sendArchive: (creative, options, res) ->
+    width = options.width
+    height = options.height
+    clickURL = options.click
+    impressionURL = options.impression
+
     archive = archiver "zip"
     archive.on "error", (err) ->
       spew.error err
@@ -172,7 +192,11 @@ class AdefyBaseAdTemplate
       #{creative.body}
     """
 
-    archive.append JSON.stringify(@manifest), name: "package.json"
+    manifest = _.clone @manifest
+    manifest.click = clickURL
+    manifest.impression = impressionURL
+
+    archive.append JSON.stringify(manifest), name: "package.json"
     archive.append source, name: "scene.js"
     archive.append @getCachedAJS(), name: "adefy.js"
 
