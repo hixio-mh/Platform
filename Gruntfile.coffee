@@ -261,10 +261,10 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-cache-breaker"
   ###
   #require('time-grunt')(grunt);
-  require('jit-grunt')(grunt, {
-    cachebreaker: 'grunt-cache-breaker',
-    mochaTest: 'grunt-mocha-test'
-  })
+
+  require("jit-grunt") grunt,
+    cachebreaker: "grunt-cache-breaker"
+    mochaTest: "grunt-mocha-test"
 
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
@@ -437,14 +437,14 @@ module.exports = (grunt) ->
     mochaTest:
       test:
         options:
-          reporter: "spec"
+          reporter: "xunit"
           require: "coffee-script"
         src: [
           "#{srcDir}/tests/*.coffee"
         ]
       selfTest:
         options:
-          reporter: "spec"
+          reporter: "xunit"
         src: [
           "#{_buildDir}/tests/selftest.js"
         ]
