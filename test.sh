@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-sleep 1
+sleep 2
 cd /vagrant
 mongo --port 45452 < setup_db.js
 npm install
