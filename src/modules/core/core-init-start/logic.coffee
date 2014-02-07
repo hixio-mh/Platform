@@ -88,7 +88,7 @@ setup = (options, imports, register) ->
     ## user info to the request if it is valid
     ##
     if req.cookies.user == undefined and not pageIsPublic
-      res.redirect "/login"
+      res.redirect 403, "/login"
 
     # Validate cookie by looking up user in redis
     else
@@ -121,7 +121,7 @@ setup = (options, imports, register) ->
             req.user = null
             res.clearCookie "user"
             validUser = false
-            return res.redirect "/login"
+            return res.redirect 403, "/login"
 
         # If page is public, then we don't require auth
         if pageIsPublic then return next()
