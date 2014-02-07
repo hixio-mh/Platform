@@ -88,48 +88,47 @@ setup = (options, imports, register) ->
     ## user info to the request if it is valid
     ##
     if req.cookies.user == undefined and not pageIsPublic
-      spew.info "Redirecting user to login page (403) #{req.url}"
-      res.redirect "/login"
+      if req.url.indexOf("/api/") == 0 then return res.send 403
+      else return res.redirect "/login"
 
     # Validate cookie by looking up user in redis
+
+    # If we have no cookie object, that means the user is invalid and the
+    # page is public. So, specify a random key to get redis to return null.
+    #
+    # We have to do this since some public pages (register + login) need to
+    # know about the user if they can.
+    if req.cookies.user == undefined
+      query = "sessions:#{Math.random()}"
     else
+      query = "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}"
 
-      # If we have no cookie object, that means the user is invalid and the
-      # page is public. So, specify a random key to get redis to return null.
-      #
-      # We have to do this since some public pages (register + login) need to
-      # know about the user if they can.
-      if req.cookies.user == undefined
-        query = "sessions:#{Math.random()}"
+    redis.get query , (err, user) ->
+      if err then spew.error err
+
+      # Session is invalid
+      if user == null
+        req.user = null
+        res.clearCookie "user"
+        validUser = false
+
+      # Valid session, save user data on request
       else
-        query = "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}"
-
-      redis.get query , (err, user) ->
-        if err then spew.error err
-
-        # Session is invalid
-        if user == null
+        try
+          req.user = JSON.parse user
+          validUser = true
+        catch
           req.user = null
           res.clearCookie "user"
           validUser = false
+          return res.redirect 403, "/login"
 
-        # Valid session, save user data on request
-        else
-          try
-            req.user = JSON.parse user
-            validUser = true
-          catch
-            req.user = null
-            res.clearCookie "user"
-            validUser = false
-            return res.redirect "/login"
+      # If page is public, then we don't require auth
+      if pageIsPublic then return next()
 
-        # If page is public, then we don't require auth
-        if pageIsPublic then return next()
-
-        # If we've reached this point, the page requires authorization
-        if validUser then next()
-        else res.send 403
+      # If we've reached this point, the page requires authorization
+      if validUser then next()
+      else res.send 403
 
   ##
   ## Initialize express
