@@ -73,6 +73,8 @@ module.exports = (user, admin) ->
 
       it "Should retrieve suggestions", (done) ->
 
+        @timeout 15000
+
         req = util.userRequest "/api/v1/creator/suggestions", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
