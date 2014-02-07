@@ -18,8 +18,7 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validateAdFormat = (ad) ->
-    expect(ad.name).to.exist
-
+    ad.should.have.property "name"
     util.apiObjectIdSanitizationCheck ad
 
   describe "Ads API", ->
