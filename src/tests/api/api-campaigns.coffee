@@ -21,25 +21,25 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validateCampaignFormat = (campaign) ->
-    should.exist campaign
-    should.exist campaign.owner
-    should.exist campaign.name
-    should.exist campaign.description
-    should.exist campaign.category
-    should.exist campaign.totalBudget
-    should.exist campaign.dailyBudget
-    should.exist campaign.pricing
-    should.exist campaign.bidSystem
-    should.exist campaign.bid
-    should.exist campaign.ads
-    should.exist campaign.networks
-    should.exist campaign.devicesInclude
-    should.exist campaign.devicesExclude
-    should.exist campaign.countriesInclude
-    should.exist campaign.countriesExclude
-    should.exist campaign.startDate
-    should.exist campaign.endDate
-    should.exist campaign.tutorial
+    expect(campaign).to.exist
+    campaign.should.have.property "owner"
+    campaign.should.have.property "name"
+    campaign.should.have.property "description"
+    campaign.should.have.property "category"
+    campaign.should.have.property "totalBudget"
+    campaign.should.have.property "dailyBudget"
+    campaign.should.have.property "pricing"
+    campaign.should.have.property "bidSystem"
+    campaign.should.have.property "bid"
+    campaign.should.have.property "ads"
+    campaign.should.have.property "networks"
+    campaign.should.have.property "devicesInclude"
+    campaign.should.have.property "devicesExclude"
+    campaign.should.have.property "countriesInclude"
+    campaign.should.have.property "countriesExclude"
+    campaign.should.have.property "startDate"
+    campaign.should.have.property "endDate"
+    campaign.should.have.property "tutorial"
 
     util.apiObjectIdSanitizationCheck campaign
 

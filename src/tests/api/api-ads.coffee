@@ -1,5 +1,5 @@
 should = require("chai").should()
-#expect = require("chai").expect
+expect = require("chai").expect
 supertest = require "supertest"
 
 config = require "../../config.json"
@@ -18,8 +18,8 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validateAdFormat = (ad) ->
-    should.exist ad
-    should.exist ad.name
+    expect(ad).to.exist
+    ad.should.have.property "name"
 
     util.apiObjectIdSanitizationCheck ad
 

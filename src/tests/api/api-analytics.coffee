@@ -24,7 +24,8 @@ module.exports = (user, admin) ->
   testValidPublisherId = testValidId
 
   validateStatFormat = (stat) ->
-    expect(stat.name).to.exist
+    expect(stat).to.exist
+    stat.should.have.property "name"
 
     util.apiObjectIdSanitizationCheck stat
 

@@ -16,26 +16,26 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validateSuggestionFormat = (sug) ->
-    should.exist sug
-    should.exist sug.url
-    should.exist sug.cover
+    expect(sug).to.exist
+    sug.should.have.property "url"
+    sug.should.have.property "cover"
 
   validateAppFormat = (app) ->
-    should.exist app
-    should.exist app.image
-    should.exist app.title
-    should.exist app.author
-    should.exist app.category
-    should.exist app.date
-    should.exist app.rating
-    should.exist app.ratingCount
-    should.exist app.description
-    should.exist app.updated
-    should.exist app.size
-    should.exist app.installs
-    should.exist app.version
-    should.exist app.contentRating
-    should.exist app.screenshots
+    expect(app).to.exist
+    app.should.have.property "image"
+    app.should.have.property "title"
+    app.should.have.property "author"
+    app.should.have.property "category"
+    app.should.have.property "date"
+    app.should.have.property "rating"
+    app.should.have.property "ratingCount"
+    app.should.have.property "description"
+    app.should.have.property "updated"
+    app.should.have.property "size"
+    app.should.have.property "installs"
+    app.should.have.property "version"
+    app.should.have.property "contentRating"
+    app.should.have.property "screenshots"
 
   ##
   # Note sure, why we are even testing this...
