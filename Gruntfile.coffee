@@ -69,7 +69,14 @@ module.exports = (grunt) ->
   ]
   jadeSrc = [
     "views/*.jade"
-    "views/**/*.jade"
+
+    "views/account/*.jade"
+    "views/creator/*.jade"
+    "views/dashboard/*.jade"
+
+    "views/account/**/*.jade"
+    "views/creator/**/*.jade"
+    "views/dashboard/**/*.jade"
   ]
 
   stylusMin = {}
@@ -236,6 +243,28 @@ module.exports = (grunt) ->
 
   # Execute here, with default build path
   buildPaths()
+
+  ###
+  grunt.loadNpmTasks "grunt-contrib-coffee"
+  grunt.loadNpmTasks "grunt-contrib-stylus"
+  grunt.loadNpmTasks "grunt-contrib-watch"
+  grunt.loadNpmTasks "grunt-contrib-copy"
+  grunt.loadNpmTasks "grunt-contrib-clean"
+  grunt.loadNpmTasks "grunt-contrib-cssmin"
+  grunt.loadNpmTasks "grunt-contrib-jade"
+  grunt.loadNpmTasks "grunt-concurrent"
+  grunt.loadNpmTasks "grunt-nodemon"
+  grunt.loadNpmTasks "grunt-mocha-test"
+  grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-ngmin"
+  grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks "grunt-cache-breaker"
+  ###
+  #require('time-grunt')(grunt);
+
+  require("jit-grunt") grunt,
+    cachebreaker: "grunt-cache-breaker"
+    mochaTest: "grunt-mocha-test"
 
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
@@ -415,7 +444,8 @@ module.exports = (grunt) ->
         ]
       selfTest:
         options:
-          reporter: "spec"
+          reporter: "xunit"
+          captureFile: "./testResults.xml"
         src: [
           "#{_buildDir}/tests/selftest.js"
         ]
@@ -438,15 +468,15 @@ module.exports = (grunt) ->
       stylus:
         files: WstylusSrc
         tasks: [ "stylus:full", "cssmin:minify" ]
-      packageJSON:
-        files: WmodulePackageJSON
-        tasks: [ "copy:packageJSON" ]
       static:
         files: [ "#{srcDir}static/**" ]
         tasks: [ "copy:static" ]
+      jadeStatic:
+        files: [ "#{srcDir}views/static/*.jade" ]
+        tasks: [ "jade:static" ]
       jade:
         files: WjadeSrc
-        tasks: [ "copy:jade", "jade:static" ]
+        tasks: [ "copy:jade" ]
 
     cachebreaker:
       js:
@@ -461,21 +491,6 @@ module.exports = (grunt) ->
         asset_url: "/css/styles.min.css"
         files:
           src: "#{_buildDir}/views/dashboard/layout.jade"
-
-  grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-contrib-stylus"
-  grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-copy"
-  grunt.loadNpmTasks "grunt-contrib-clean"
-  grunt.loadNpmTasks "grunt-contrib-cssmin"
-  grunt.loadNpmTasks "grunt-contrib-jade"
-  grunt.loadNpmTasks "grunt-concurrent"
-  grunt.loadNpmTasks "grunt-nodemon"
-  grunt.loadNpmTasks "grunt-mocha-test"
-  grunt.loadNpmTasks "grunt-contrib-concat"
-  grunt.loadNpmTasks "grunt-ngmin"
-  grunt.loadNpmTasks "grunt-contrib-uglify"
-  grunt.loadNpmTasks "grunt-cache-breaker"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [

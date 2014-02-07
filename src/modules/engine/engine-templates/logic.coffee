@@ -22,10 +22,13 @@ setup = (options, imports, register) ->
   # Requiring the templates instantiates them, which in turn loads all needed
   # assets into memory
   testTemplate = require "./templates/testTemplate"
+  flatTemplate = require "./templates/flatTemplate"
 
   generate = (type, options, res) ->
     if type == "test"
-      testTemplate.generate options, res
+      flatTemplate.generate options, res
+    else if type == "flat_template"
+      flatTemplate.generate options, res
     else
       spew.info "Unknown template type: #{type}"
       res.json 400, error: "Bad template: #{type }"
