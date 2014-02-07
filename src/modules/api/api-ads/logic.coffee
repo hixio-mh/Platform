@@ -58,6 +58,9 @@ setup = (options, imports, register) ->
         try
           data = JSON.stringify req.param "data"
 
+          # If no type is specified, default to flat_template
+          if data.type == undefined then data.type = "flat_template"
+
       ad.data = data
 
       ad.save (err) ->

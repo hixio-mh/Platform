@@ -18,3 +18,5 @@ src/config.json
 naught.log
 stderr.log
 stdout.log
+
+testResults.xml

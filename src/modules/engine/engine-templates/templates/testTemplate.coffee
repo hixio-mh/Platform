@@ -70,6 +70,7 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
+    AJS.setLogLevel 4
     AJS.setClearColor 0, 153, 204
 
     edgeLeft = AJS.createRectangleActor -10, height / 2, 10, height
@@ -78,33 +79,28 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
     edgeRight = AJS.createRectangleActor width + 10, height * 1.25, 10, height
     edgeRight.enablePsyx 0, 0.5, 0.5
 
-    testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 256 * scaleSmall, 1024 * scaleSmall
+    testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 1024 * scaleSmall, 256 * scaleSmall
     testAd.setTexture "testad"
-    testAd.setRotation -90
-
-    circle = AJS.createCircleActor width / 2, 100 * hR, 128
-    circle.setRotation -90
-    circle.attachTexture "adefy", 120 * scaleBig, 120 * scaleBig
 
     spinner = AJS.createRectangleActor width / 2, 100 * hR, 240 * scaleBig, 240 * scaleBig
     spinner.setTexture "spinner"
-    spinner.setRotation -90
 
-    topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 12 * scaleSmall, 1620 * wR
+    circle = AJS.createCircleActor width / 2, 100 * hR, 128
+    circle.attachTexture "adefy", 120 * scaleBig, 120 * scaleBig
+
+    topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 1620 * wR, 12 * scaleSmall
     topline.setTexture "line"
-    topline.setRotation 90
 
-    bottomline = AJS.createRectangleActor 0, 360 * hR, 12 * scaleSmall, 1620 * wR
+    bottomline = AJS.createRectangleActor 0, 360 * hR, 1620 * wR, 12 * scaleSmall
     bottomline.setTexture "line"
-    bottomline.setRotation -90
 
     swooshIt = ->
       topline.move 1410 * wR, null, 1000, 0
       bottomline.move 410 * wR, null, 1000, 0
 
     tiltIt = ->
-      topline.rotate 100, 200, 1000
-      bottomline.rotate -100, 200, 1000
+      topline.rotate 10, 200, 1000
+      bottomline.rotate -10, 200, 1000
 
     spinIt = ->
       spinner.rotate -18000, 100000, 0
@@ -118,7 +114,7 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
 
       spawner = setInterval ->
         count++
-        if count == 200 then clearInterval spawner
+        if count == 150 then clearInterval spawner
 
         px = Math.floor Math.random() * 1920 * wR
         py = Math.floor (Math.random() * 100) + (1100 * hR)

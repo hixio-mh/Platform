@@ -88,6 +88,7 @@ setup = (options, imports, register) ->
     ## user info to the request if it is valid
     ##
     if req.cookies.user == undefined and not pageIsPublic
+      spew.info "Redirecting user to login page (403) #{req.url}"
       res.redirect "/login"
 
     # Validate cookie by looking up user in redis
