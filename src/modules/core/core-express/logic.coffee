@@ -33,9 +33,6 @@ setup = (options, imports, register) ->
     secure_files: null
     port: 0
 
-  err500path = "500.jade"
-  err404path = "404.jade"
-
   lowRuleRegister = (rule) -> app.use (req, res, next) -> rule req, res, next
 
   register null,
@@ -47,47 +44,8 @@ setup = (options, imports, register) ->
       #  rule - Function handling req, res, next
       #
       registerRule: (rule) ->
-        if not hasSetup
-          rules.push rule
+        if not hasSetup then rules.push rule
         else spew.warning "Can't register rule after setup has been called"
-
-      # Set 500 and 404 error view paths
-      # Args:
-      #  500 - path to view for 500 error
-      #  404 - path to view for 404 error
-      setErrorViews: (err500, err404) ->
-        if err500 != undefined then err500path = err500
-        if err404 != undefined then err404path = err404
-
-      # Register page
-      #
-      # Args:
-      #  route  - Path to page, relative to host
-      #  view - Path to view
-      #  args - Args passed down to the view
-      #  logic  - When supplied, a callback that takes a render function
-      #            that takes args as an argument. Allows for dynamic arg
-      #            generation at pageload
-      #
-      registerPage: (route, view, args, logic) ->
-        spew.info "Registered route " + route
-
-        app.get route, (req, res) ->
-
-          if not logic
-            res.render view, args, (err, html) ->
-              if err
-                spew.error err
-                res.status(500).render err500path, { error: err.message }
-              else res.send html
-          else
-            logic (dynamicArgs) ->
-              res.render view, dynamicArgs, (err, html) ->
-                if err
-                  spew.error err
-                  res.status(500).render err500path, { error: err.message }
-                else res.send html
-            , req, res
 
       # Setup
       #
@@ -127,25 +85,14 @@ setup = (options, imports, register) ->
           app.use app.router
           app.use (err, req, res, next) ->
             if err instanceof NotFound
-              spew.warning "Rendering 404 page for #{req.url}"
-              res.status(404).render err404path, { path: req.url }
+              res.status(404).render "404.jade", path: req.url
             else if err instanceof eInternalError
-              spew.warning "Rendering 500 page for #{req.url}"
-              res.status(500).render err500path, { error: err.message }
+              res.status(500).render "500.jade", error: err.message
 
         hasSetup = true
-
         spew.init "Registered middleware, express needs initialization"
 
-      # Throw 500
-      #
-      # Args
-      #  msg  - Server error
-      #
-      throw500: (msg) -> throw eInternalError msg
-      throw404: (msg) -> throw NotFound msg
-      getSecret: -> return sessionSecret;
-      server: app,
+      server: app
       httpServer: -> return hServ
 
       # Initialize last routes
@@ -159,21 +106,7 @@ setup = (options, imports, register) ->
           app.get "/*", (req, res) -> res.send 404
 
           # Actually start the server
-          if config.secure
-
-            if config.secure_files.cert instanceof Array
-              cert = []
-              for path in config.secure_files.cert
-                cert.push fs.readFileSync path
-            else cert = fs.readFileSync config.secure_files.cert
-
-            hServ = https.createServer
-              key: fs.readFileSync config.secure_files.key
-              cert: cert
-              ca: fs.readFileSync config.secure_files.ca
-            , app
-            spew.init "Starting server with SSL support"
-          else hServ = http.createServer app
+          hServ = http.createServer app
         else spew.error "Can't perform server initialization without setup!"
 
       # Start server
