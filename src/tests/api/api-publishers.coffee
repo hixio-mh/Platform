@@ -18,29 +18,29 @@ module.exports = (user, admin) ->
   util = require("../utility") api, user, admin
 
   validatePublisherFormat = (publisher) ->
-    should.exist publisher
-    should.exist publisher.name
-    should.exist publisher.url
-    should.exist publisher.description
-    should.exist publisher.category
-    should.exist publisher.active
-    should.exist publisher.apikey
-    should.exist publisher.status
-    should.exist publisher.type
+    expect(publisher).to.exist
+    publisher.should.have.property "name"
+    publisher.should.have.property "url"
+    publisher.should.have.property "description"
+    publisher.should.have.property "category"
+    publisher.should.have.property "active"
+    publisher.should.have.property "apikey"
+    publisher.should.have.property "status"
+    publisher.should.have.property "type"
 
     util.apiObjectIdSanitizationCheck publisher
 
   expectPublisherStats = (publisher) ->
-    should.exist publisher
-    should.exist publisher.stats
-    should.exist publisher.stats.earnings24h
-    should.exist publisher.stats.impressions24h
-    should.exist publisher.stats.clicks24h
-    should.exist publisher.stats.ctr24h
-    should.exist publisher.stats.earnings
-    should.exist publisher.stats.impressions
-    should.exist publisher.stats.clicks
-    should.exist publisher.stats.ctr
+    expect(publisher).to.exist
+    publisher.should.have.property "stats"
+    publisher.stats.should.have.property "earnings24h"
+    publisher.stats.should.have.property "impressions24h"
+    publisher.stats.should.have.property "clicks24h"
+    publisher.stats.should.have.property "ctr24h"
+    publisher.stats.should.have.property "earnings"
+    publisher.stats.should.have.property "impressions"
+    publisher.stats.should.have.property "clicks"
+    publisher.stats.should.have.property "ctr"
 
   describe "Publishers API", ->
 

@@ -14,14 +14,14 @@ module.exports = (user, admin) ->
   ##
   # validateFilterEntry(String)
   validateFilterEntry = (fil) ->
-    should.exist fil
+    expect(fil).to.exist
 
   ##
   # validateFilterFormat(Hash(key: Integer, value: String))
   validateFilterFormat = (fil) ->
-    should.exist fil
-    should.exist fil.value
-    should.exist fil.key
+    expect(fil).to.exist
+    fil.should.have.property "value"
+    fil.should.have.property "key"
 
   describe "Filters API", ->
 
