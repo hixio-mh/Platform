@@ -17,6 +17,19 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 setup = (options, imports, register) ->
 
@@ -24,7 +37,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   # Create an ad, expects "name" in url and req.cookies.user to be valid
-  app.post "/api/v1/ads", (req, res) ->
+  app.post "/api/v1/ads", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Ad name" then return
 
     # Create new ad entry
@@ -41,15 +54,14 @@ setup = (options, imports, register) ->
         res.json 200, newAd.toAnonAPI()
 
   # Save ad edits
-  app.post "/api/v1/ads/:id", (req, res) ->
+  app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
 
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
-        res.send 403
-        return
+        return res.send 403
 
       # For now, only support saving of single creative
       data = ad.data
@@ -71,7 +83,7 @@ setup = (options, imports, register) ->
           res.json 200, ad.toAnonAPI()
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
-  app.delete "/api/v1/ads/:id", (req, res) ->
+  app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById(req.param("id"))
     .populate("campaigns.campaign")
@@ -81,8 +93,7 @@ setup = (options, imports, register) ->
       if not ad then return res.send 404
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        res.send 403
-        return
+        return res.send 403
 
       # Remove ourselves from all campaigns we are currently part of
       ad.removeFromCampaigns ->
@@ -92,7 +103,7 @@ setup = (options, imports, register) ->
         res.send 200
 
   # Fetches owned ads
-  app.get "/api/v1/ads", (req, res) ->
+  app.get "/api/v1/ads", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .find({ owner: req.user.id })
     .populate("campaigns.campaign")
@@ -152,7 +163,7 @@ setup = (options, imports, register) ->
         fetchStatsforAd ad for ad in ads
 
   # Fetches all ads. Admin privileges required
-  app.get "/api/v1/ads/all", (req, res) ->
+  app.get "/api/v1/ads/all", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return res.send 401
 
     db.model("Ad")
@@ -181,7 +192,7 @@ setup = (options, imports, register) ->
         fetchAd ad, res
 
   # Finds a single ad by ID
-  app.get "/api/v1/ads/:id", (req, res) ->
+  app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .find({ _id: req.param "id" })
     .populate("campaigns.campaign")
@@ -204,7 +215,7 @@ setup = (options, imports, register) ->
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
   # the ad is approved directly.
-  app.post "/api/v1/ads/:id/approve", (req, res) ->
+  app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
@@ -222,7 +233,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Disapproves the ad
-  app.post "/api/v1/ads/:id/disaprove", (req, res) ->
+  app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return res.json 403
 
     db.model("Ad")
