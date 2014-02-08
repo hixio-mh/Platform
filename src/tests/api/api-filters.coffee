@@ -7,7 +7,8 @@ config = require "../../config.json"
 config = config.modes[config.mode]
 api = supertest "http://#{config.domain}:#{config.port}"
 
-apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 
 module.exports = (user, admin) ->
 
@@ -32,7 +33,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of countries", (done) ->
 
-        req = util.userRequest "/api/v1/filters/countries?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/countries?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -41,7 +42,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of countries with query", (done) ->
 
-        req = util.userRequest "/api/v1/filters/countries?q=Can?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/countries?q=Can?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -53,7 +54,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of categories", (done) ->
 
-        req = util.userRequest "/api/v1/filters/categories?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/categories?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -62,7 +63,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of categories with query", (done) ->
 
-        req = util.userRequest "/api/v1/filters/categories?q=Al?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/categories?q=Al?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -74,7 +75,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of devices", (done) ->
 
-        req = util.userRequest "/api/v1/filters/devices?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/devices?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -83,7 +84,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of devices with query", (done) ->
 
-        req = util.userRequest "/api/v1/filters/devices?q=Appl?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/devices?q=Appl?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -95,7 +96,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of manufacturers", (done) ->
 
-        req = util.userRequest "/api/v1/filters/manufacturers?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/manufacturers?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body
@@ -104,7 +105,7 @@ module.exports = (user, admin) ->
 
       it "Should retrieve a list of manufacturers with query", (done) ->
 
-        req = util.userRequest "/api/v1/filters/manufacturers?q=No?#{apiKey}", "get"
+        req = util.userRequest "/api/v1/filters/manufacturers?q=No?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           if err then return done(err)
           for fil in res.body

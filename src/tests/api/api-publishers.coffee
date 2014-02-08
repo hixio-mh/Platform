@@ -13,7 +13,8 @@ testPublisherId1 = testPublisherName
 testPublisherId2 = testPublisherName
 testPublisherId3 = testPublisherName
 
-apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 
 module.exports = (user, admin) ->
 
@@ -50,14 +51,14 @@ module.exports = (user, admin) ->
 
     # GET /api/v1/publishers/:id
     it "Should fail to retrieve non-existant publisher", (done) ->
-      util.expect404User "/api/v1/publishers/#{testPublisherId1}?#{apiKey}", done
+      util.expect404User "/api/v1/publishers/#{testPublisherId1}?#{userApiKey}", done
 
     # POST /api/v1/publishers
     it "Should allow registered user to create 3 publishers", (done) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validatePublisherFormat res.body
@@ -65,7 +66,7 @@ module.exports = (user, admin) ->
         testPublisherId1 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validatePublisherFormat res.body
@@ -73,7 +74,7 @@ module.exports = (user, admin) ->
         testPublisherId2 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validatePublisherFormat res.body
@@ -88,7 +89,7 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{userApiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
 
@@ -97,7 +98,7 @@ module.exports = (user, admin) ->
 
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{userApiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
 
@@ -106,7 +107,7 @@ module.exports = (user, admin) ->
 
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{userApiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
 
@@ -120,7 +121,7 @@ module.exports = (user, admin) ->
 
       @timeout 3333
 
-      req = util.userRequest "/api/v1/publishers?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers?#{userApiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         res.body.length.should.equal 3
@@ -141,15 +142,15 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
@@ -158,15 +159,15 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{userApiKey}"
       req.expect(404).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{userApiKey}"
       req.expect(404).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{userApiKey}"
       req.expect(404).end (err, res) ->
         requests = util.actuallyDoneCheck done, requests
 
