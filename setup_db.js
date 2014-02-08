@@ -43,7 +43,8 @@ testUser = {
   "password": "$2a$10$llkTZagDuZkhY478zjuLWea4pUkPBygitzrNcNy11nbwHYLQqhS8q",
   "permissions": 7,
   "username": "testy-trista",
-  "version": 1
+  "version": 1,
+  "apikey": "DyF5l5tMS2n3zgJDEn1OwRga"
 };
 
 testAdminUser = {
@@ -52,7 +53,8 @@ testAdminUser = {
   "password": "$2a$10$51z8xVel4HABCIZNo/Rk1uS.IbbFrlzem5vpw76ddo2qsw0jYEfG6",
   "permissions": 0,
   "username": "testy-trista-admin",
-  "version": 1
+  "version": 1,
+  "apikey": "DyF5l5tMS2n3zgJDEn1OwRga"
 };
 
 db.users.insert(testUser);

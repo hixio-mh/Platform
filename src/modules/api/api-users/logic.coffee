@@ -21,13 +21,23 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config.json"
 modeConfig = config.modes[config.mode]
 adefyDomain = "http://#{modeConfig.domain}"
-redisInterface = require "../../../helpers/redisInterface"
-redis = redisInterface.main
-
+passport = require "passport"
 paypalCredentials = modeConfig.paypal
 
 if paypalCredentials.client_id == undefined or paypalCredentials.client_secret == undefined
   throw new Error "Paypal credentials missing on config!"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 paypalSDK.configure
   host: paypalCredentials.host
@@ -40,73 +50,35 @@ setup = (options, imports, register) ->
   app = imports["core-express"].server
   utility = imports["logic-utility"]
 
-  s4 = -> Math.floor(1 + Math.random() * 10000).toString(16)
-  guid = -> s4() + s4() + '-' + s4() + '-' + s4()
-
-  # Authorize user by creating redis session key, and setting a cookie
-  #
-  # @param [Object] user user model
-  # @param [Object] res
-  # @param [Method] cb
-  authorizeUser = (user, res, cb) ->
-
-    session = guid()
-    redisSessionData = user.toAPI()
-    redisSessionData.permissions = user.permissions
-    redisSessionData.admin = user.permissions == 0
-    redisSessionData.session = session
-    redisSessionData.signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
-    redisSessionData = JSON.stringify redisSessionData
-
-    redis.set "sessions:#{user._id}:#{session}", redisSessionData, (err) ->
-      if err then spew.error err
-      res.cookie "user", { id: user._id, sess: session }
-      cb()
-
   # Login and Register views, redirect if user is already logged in
   app.get "/login", (req, res) ->
-    if req.user != null and req.user.id != undefined
+    if req.user != undefined and req.user.id != undefined
       res.redirect "/home/publisher"
     else
       res.render "account/login.jade"
 
   app.get "/register", (req, res) ->
-    if req.user != null and req.user.id != undefined
+    if req.user != undefined and req.user.id != undefined
       res.redirect "/home/publisher"
     else
       res.render "account/register.jade"
 
   # Alias for /register
   app.get "/signup", (req, res) ->
-    if req.user != null and req.user.id != undefined
+    if req.user != undefined and req.user.id != undefined
       res.redirect "/home/publisher"
     else
       res.render "account/register.jade"
 
-  # Logout, clear redis session
+  # Logout
   app.get "/logout", (req, res) ->
-    redis.del "sessions:#{req.user.id}:#{req.user.session}", (err) ->
-      if err then spew.error err
-
-      res.clearCookie "user"
-      if req.user then delete req.user
-
-      res.redirect "/login"
+    req.logout()
+    res.redirect "/login"
 
   # Login
-  app.post "/api/v1/login", (req, res) ->
-    if not req.param("username") or not req.param "password"
-      return res.send 403
-
-    db.model("User").findOne { username: req.param "username" }, (err, user) ->
-      if utility.dbError err, res then return
-      if not user then return res.send 403
-
-      user.comparePassword req.param("password"), (err, isMatch) ->
-        if err then spew.error err; return res.send 500
-        if not isMatch then return res.send 403
-
-        authorizeUser user, res, -> res.send 200
+  app.post "/api/v1/login", passport.authenticate("local", failureFlash: true)
+  , (req, res) ->
+    res.send 200
 
   # Register
   app.post "/api/v1/register", (req, res) ->
@@ -134,7 +106,7 @@ setup = (options, imports, register) ->
       newUser.save -> authorizeUser newUser, res, -> res.send 200
 
   # Delete user
-  app.delete "/api/v1/user/delete", (req, res) ->
+  app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
     if not req.user.admin
       res.json 403, { error: "Unauthorized" }
@@ -151,11 +123,10 @@ setup = (options, imports, register) ->
       res.json 200
 
   # Retrieve user, expects {filter}
-  app.get "/api/v1/user/get", (req, res) ->
+  app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("filter"), res, "Filter" then return
     if not req.user.admin
-      res.json 403, { error: "Unauthorized" }
-      return
+      return res.json 403, error: "Unauthorized"
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
@@ -191,14 +162,15 @@ setup = (options, imports, register) ->
   # Retrieve the user represented by the cookies on the request. Used on
   # the backend account page, and for rendering advertising credit and
   # publisher balance
-  app.get "/api/v1/user", (req, res) ->
+  app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      user.updateFunds -> res.json user.toAPI()
+      user.updateFunds ->
+        res.json user.toAPI()
 
   # Update the user account. Users can only save themselves!
-  app.put "/api/v1/user", (req, res) ->
+  app.put "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
@@ -238,7 +210,7 @@ setup = (options, imports, register) ->
         res.send 200
 
   # Returns a list of transactions: deposits, withdrawals, reserves
-  app.get "/api/v1/user/transactions", (req, res) ->
+  app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
       if not user then return res.json 500, error: "User not found"
@@ -246,7 +218,7 @@ setup = (options, imports, register) ->
       res.json user.transactions
 
   # Deposit creation
-  app.post "/api/v1/user/deposit/:amount", (req, res) ->
+  app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
     if isNaN req.param "amount"
       return res.json 400, error: "Amount not a number"
 
@@ -302,7 +274,7 @@ setup = (options, imports, register) ->
           res.json approval_url: paymentLinks.approval_url
 
   # Deposit confirmation/cancellation
-  app.put "/api/v1/user/deposit/:token/:action", (req, res) ->
+  app.put "/api/v1/user/deposit/:token/:action", isLoggedInAPI, (req, res) ->
     action = req.param "action"
     token = req.param "token"
     payerID = req.query.payerID

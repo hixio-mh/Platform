@@ -22,6 +22,11 @@ modeConfig = config.modes[config.mode]
 spew = require "spew"
 mongoose = require "mongoose"
 fs = require "fs"
+passport = require "passport"
+passportLocalStrategy = require("passport-local").Strategy
+passportAPIKeyStrategy = require("passport-localapikey").Strategy
+redisInterface = require "../../../helpers/redisInterface"
+redis = redisInterface.main
 
 setup = (options, imports, register) ->
 
@@ -62,73 +67,44 @@ setup = (options, imports, register) ->
     "/api/v1/click/"
   ]
 
-  server.registerRule (req, res, next) ->
+  ##
+  ## Passport setup
+  ##
+  # Local strategy (non-API requests)
+  passport.use new passportLocalStrategy (username, password, done) ->
 
-    # If url includes GET parameters, strip them for later comparison
-    if req.url.indexOf("?") >= 0
-      subUrl = req.url.substring 0, req.url.indexOf "?"
-    else
-      subUrl = req.url
+    mongoose.model("User").findOne username: username, (err, user) ->
+      if err then return done err
+      if not user then return done null, false, message: "Incorrect username"
 
-    # If this is a hot path, then it does not require any auth checks, and
-    # we can simply continue
-    for p in hotPaths
-      if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
-        return next()
+      user.comparePassword password, (err, match) ->
+        if err then return done err
+        if not match then return done null, false, message: "Incorrect password"
 
-    pageIsPublic = false
-    for p in publicPages
-      if subUrl == p or (p[-1..] == "/" and subUrl.indexOf(p) == 0 and p.length > 1)
-        pageIsPublic = true
-        break
+        signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
+        user = user.toAPI()
+        user.admin = user.permissions == 0
+        user.signedup = signedup
 
-    ##
-    ## Check for a user cookie; if we have none, redirect
-    ## If we do, query redis for the session and validate, then attach some
-    ## user info to the request if it is valid
-    ##
-    if req.cookies.user == undefined and not pageIsPublic
-      if req.url.indexOf("/api/") == 0 then return res.send 403
-      else return res.redirect "/login"
+        done null, user
 
-    # Validate cookie by looking up user in redis
+  # API key strategy
+  passport.use new passportAPIKeyStrategy (apikey, done) ->
 
-    # If we have no cookie object, that means the user is invalid and the
-    # page is public. So, specify a random key to get redis to return null.
-    #
-    # We have to do this since some public pages (register + login) need to
-    # know about the user if they can.
-    if req.cookies.user == undefined
-      query = "sessions:#{Math.random()}"
-    else
-      query = "sessions:#{req.cookies.user.id}:#{req.cookies.user.sess}"
-
-    redis.get query , (err, user) ->
+    # We lookup the user in the redis db
+    redis.get "user:apikey:#{apikey}", (err, data) ->
       if err then spew.error err
+      if data == null then return done null, false, message: "Invalid apikey"
 
-      # Session is invalid
-      if user == null
-        req.user = null
-        res.clearCookie "user"
-        validUser = false
+      done null, JSON.parse data
 
-      # Valid session, save user data on request
-      else
-        try
-          req.user = JSON.parse user
-          validUser = true
-        catch
-          req.user = null
-          res.clearCookie "user"
-          validUser = false
-          return res.redirect 403, "/login"
+  # Session handling (only for local strategy)
+  passport.serializeUser (user, done) ->
+    done null, user.id
 
-      # If page is public, then we don't require auth
-      if pageIsPublic then return next()
-
-      # If we've reached this point, the page requires authorization
-      if validUser then next()
-      else res.send 403
+  passport.deserializeUser (id, done) ->
+    mongoose.model("User").findById id, (err, user) ->
+      done err, user
 
   ##
   ## Initialize express
@@ -138,8 +114,7 @@ setup = (options, imports, register) ->
   server.setup \
     "#{__dirname}/../../../views/",  # JADE Views
     "#{__dirname}/../../../static/", # Static files
-    modeConfig.port,
-    false
+    modeConfig.port
 
   ##
   ## Connect to MongoDB
