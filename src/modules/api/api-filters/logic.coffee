@@ -17,13 +17,26 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   filterEngine = require "../../../helpers/filters"
 
-  app.get "/api/v1/filters/countries", (req, res) ->
+  app.get "/api/v1/filters/countries", isLoggedInAPI, (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getCountries()
     else
@@ -31,7 +44,7 @@ setup = (options, imports, register) ->
         res.json d
       , uniqueIDs: true
 
-  app.get "/api/v1/filters/categories", (req, res) ->
+  app.get "/api/v1/filters/categories", isLoggedInAPI, (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getCategories()
     else
@@ -39,7 +52,7 @@ setup = (options, imports, register) ->
         res.json d
       , uniqueIDs: true
 
-  app.get "/api/v1/filters/devices", (req, res) ->
+  app.get "/api/v1/filters/devices", isLoggedInAPI, (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getDevices()
     else
@@ -47,7 +60,7 @@ setup = (options, imports, register) ->
         res.json d
       , uniqueIDs: true
 
-  app.get "/api/v1/filters/manufacturers", (req, res) ->
+  app.get "/api/v1/filters/manufacturers", isLoggedInAPI, (req, res) ->
     if req.query.q == undefined
       res.json filterEngine.getManufacturers()
     else

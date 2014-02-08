@@ -12,11 +12,23 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-db = require "mongoose"
 request = require "request"
 url = require "url"
 cheerio = require "cheerio"
 accounting = require "accounting"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 # Redundent checks, just to make sure. We don't want to be fooled into
 # parsing a non-play-store URL
@@ -102,7 +114,6 @@ setup = (options, imports, register) ->
         price: deSpace $(info).find("button.price.buy span[itemprop=offers] meta[itemprop=price]").attr "content"
 
         screenshots: []
-
 
       # TODO: Figure out a way to avoid duplicates (not as easy as it seems)
       for screenshot in $ ".thumbnails img.screenshot"

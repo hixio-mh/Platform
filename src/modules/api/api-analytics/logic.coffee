@@ -15,6 +15,19 @@ graphiteInterface = require "../../../helpers/graphiteInterface"
 spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 ##
 ## Analytics API, some paths are admin-only
@@ -33,7 +46,7 @@ setup = (options, imports, register) ->
       sum: req.param("sum") or false
       total: req.param("total") or false
 
-  app.get "/api/v1/analytics/campaigns/:id/:stat", (req, res) ->
+  app.get "/api/v1/analytics/campaigns/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param "id")
     .populate("ads")
@@ -46,7 +59,7 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       campaign.fetchStatGraphData options, (data) -> res.json data
 
-  app.get "/api/v1/analytics/ads/:id/:stat", (req, res) ->
+  app.get "/api/v1/analytics/ads/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById(req.param "id")
     .populate("campaigns.campaign")
@@ -59,7 +72,7 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       ad.fetchStatGraphData options, (data) -> res.json data
 
-  app.get "/api/v1/analytics/publishers/:id/:stat", (req, res) ->
+  app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res then return
 
@@ -97,7 +110,7 @@ setup = (options, imports, register) ->
       options.multipleSeries = adRefs
       graphiteInterface.makeAnalyticsQuery options, (data) -> res.json data
 
-  app.get "/api/v1/analytics/totals/:stat", (req, res) ->
+  app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) ->
     stat = req.param "stat"
     options = buildOptionsFromQuery req
 
@@ -144,7 +157,7 @@ setup = (options, imports, register) ->
   ## Admin-only
   ##
 
-  app.get "/api/v1/analytics/counts/:model", (req, res) ->
+  app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return res.send 403
 
     model = req.param "model"

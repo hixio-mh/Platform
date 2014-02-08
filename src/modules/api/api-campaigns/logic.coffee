@@ -18,6 +18,19 @@
 spew = require "spew"
 db = require "mongoose"
 _ = require "underscore"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 setup = (options, imports, register) ->
 
@@ -26,7 +39,7 @@ setup = (options, imports, register) ->
   engineFilters = require "#{__dirname}/../../../helpers/filters"
 
   # Create new cmapaign
-  app.post "/api/v1/campaigns", (req, res) ->
+  app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Campaign name" then return
     if not utility.param req.param("category"), res, "Category" then return
     if not utility.param req.param("pricing"), res, "Pricing" then return
@@ -64,7 +77,7 @@ setup = (options, imports, register) ->
     res.json 200
 
   # Fetch campaigns owned by the user identified by the cookie
-  app.get "/api/v1/campaigns", (req, res) ->
+  app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .find({ owner: req.user.id })
     .populate("ads")
@@ -83,7 +96,7 @@ setup = (options, imports, register) ->
           done()
 
   # Finds a single Campaign by ID
-  app.get "/api/v1/campaigns/:id", (req, res) ->
+  app.get "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param("id"))
     .populate("ads")
@@ -99,7 +112,7 @@ setup = (options, imports, register) ->
 
   # Saves the campaign, and creates campaign references where needed. User must
   # either be admin or own the campaign in question!
-  app.post "/api/v1/campaigns/:id", (req, res) ->
+  app.post "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
     # Fetch campaign
@@ -313,7 +326,7 @@ setup = (options, imports, register) ->
 
   # Delete the campaign identified by req.param("id")
   # If we are not the administrator, we must own the campaign!
-  app.delete "/api/v1/campaigns/:id", (req, res) ->
+  app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
     # Don't populate ads! We do so explicitly in the model
@@ -329,7 +342,7 @@ setup = (options, imports, register) ->
       res.json 200
 
   # Fetch campaign stats over a specific period of time
-  app.get "/api/v1/campaigns/stats/:id/:stat/:range", (req, res) ->
+  app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Campaign id" then return
     if not utility.param req.param("range"), res, "Temporal range" then return
     if not utility.param req.param("stat"), res, "Stat" then return
@@ -345,7 +358,7 @@ setup = (options, imports, register) ->
         res.json data
 
   # Activates the campaign
-  app.post "/api/v1/campaigns/:id/activate", (req, res) ->
+  app.post "/api/v1/campaigns/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param("id"))
     .populate("ads")
@@ -360,7 +373,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # De-activates the campaign
-  app.post "/api/v1/campaigns/:id/deactivate", (req, res) ->
+  app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param("id"))
     .populate("ads")

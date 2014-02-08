@@ -6,6 +6,7 @@ crypto = require "crypto"
 fs = require "fs"
 spew = require "spew"
 expressValidator = require "express-validator"
+passport = require "passport"
 
 setup = (options, imports, register) ->
 
@@ -53,15 +54,10 @@ setup = (options, imports, register) ->
       #  view_root    - Base path for views
       # static_root   - Base path for static files
       #  port     - Port number to listen on
-      #  secure     - Enables/Disables HTTPS
-      #  secure_files - Required for secure, an object containing paths to
-      #                    key and cert
       #
-      setup: (view_root, static_root, port, secure, secure_files) ->
+      setup: (view_root, static_root, port) ->
 
         # Local config
-        config.secure = secure
-        config.secure_files = secure_files
         config.port = port
 
         # Generate secret
@@ -72,15 +68,16 @@ setup = (options, imports, register) ->
 
         app.configure ->
           app.set "views", view_root
-          app.set "view options", { layout: false }
+          app.set "view options", layout: false
           app.use connect.bodyParser()
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
           app.use express.session sessionSecret
+          app.use passport.initialize()
+          app.use passport.session()
 
           # Register custom middleware
-          for rule in rules
-            lowRuleRegister rule
+          lowRuleRegister rule for rule in rules
 
           app.use app.router
           app.use (err, req, res, next) ->

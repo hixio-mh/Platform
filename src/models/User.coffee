@@ -22,6 +22,7 @@ schema = new mongoose.Schema
   username: String
   email: String
   password: String
+  apikey: String
 
   fname: { type: String, default: "" }
   lname: { type: String, default: "" }
@@ -69,11 +70,18 @@ schema.methods.toAPI = ->
 
 # NOTE: This overwrites the fund count stored in redis!
 schema.methods.createRedisStruture = (cb) ->
-  redis.set "#{@getRedisId()}:adFunds", @adFunds, (err) =>
+  signedup = new Date(Date.parse(@_id.getTimestamp())).getTime() / 1000
+  data = @toAPI()
+  data.admin = data.permissions == 0
+  data.signedup = signedup
+
+  redis.set "user:apikey:#{@apikey}", JSON.stringify(data), (err) =>
     if err then spew.error err
-    redis.set "#{@getRedisId()}:pubFunds", @pubFunds, (err) =>
+    redis.set "#{@getRedisId()}:adFunds", @adFunds, (err) =>
       if err then spew.error err
-      if cb then cb()
+      redis.set "#{@getRedisId()}:pubFunds", @pubFunds, (err) =>
+        if err then spew.error err
+        if cb then cb()
 
 schema.methods.updateFunds = (cb) ->
   redis.get "#{@getRedisId()}:adFunds", (err, adFunds) =>
@@ -91,8 +99,28 @@ schema.methods.updateFunds = (cb) ->
       if needsFundsRecreation then @createRedisStruture()
       if cb then cb()
 
+##
+## API Key handling
+##
+
+schema.methods.createAPIKey = ->
+  if @hasAPIKey() then return
+
+  @apikey = ""
+  map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+  for i in [0...24]
+    @apikey += map.charAt Math.floor(Math.random() * map.length)
+
+schema.methods.hasAPIKey = ->
+  if @apikey and @apikey.length == 24
+    true
+  else
+    false
+
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
+  if not @hasAPIKey() then @createAPIKey()
 
   bcrypt.genSalt 10, (err, salt) =>
     if err
