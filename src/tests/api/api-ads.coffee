@@ -13,6 +13,8 @@ testAdId1 = testAdName
 testAdId2 = testAdName
 testAdId3 = testAdName
 
+apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+
 module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
@@ -27,14 +29,14 @@ module.exports = (user, admin) ->
 
     # GET /api/v1/ads/:id
     it "Should fail to retrieve non-existant ad", (done) ->
-      util.expect404User "/api/v1/ads/#{testAdId1}", done
+      util.expect404User "/api/v1/ads/#{testAdId1}?#{apiKey}", done
 
     # POST /api/v1/ads
     it "Should allow registered user to create 3 ads", (done) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
+      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validateAdFormat res.body
@@ -42,7 +44,7 @@ module.exports = (user, admin) ->
         testAdId1 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
+      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validateAdFormat res.body
@@ -50,7 +52,7 @@ module.exports = (user, admin) ->
         testAdId2 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}", "post"
+      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validateAdFormat res.body
@@ -63,20 +65,20 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/ads/#{testAdId1}"
+      req = util.userRequest "/api/v1/ads/#{testAdId1}?#{apiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId2}"
+      req = util.userRequest "/api/v1/ads/#{testAdId2}?#{apiKey}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
         if err then return done(err)
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId3}"
+      req = util.userRequest "/api/v1/ads/#{testAdId3}?#{apiKey}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
         if err then return done(err)
@@ -86,7 +88,7 @@ module.exports = (user, admin) ->
     # GET /api/v1/ads
     it "Should retrieve all three created ads", (done) ->
 
-      req = util.userRequest "/api/v1/ads"
+      req = util.userRequest "/api/v1/ads?#{apiKey}"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         res.body.length.should.equal 3
@@ -105,17 +107,17 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/ads/#{testAdId1}", "del"
+      req = util.userRequest "/api/v1/ads/#{testAdId1}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId2}", "del"
+      req = util.userRequest "/api/v1/ads/#{testAdId2}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId3}", "del"
+      req = util.userRequest "/api/v1/ads/#{testAdId3}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests
@@ -125,17 +127,17 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/ads/#{testAdId1}"
+      req = util.userRequest "/api/v1/ads/#{testAdId1}?#{apiKey}"
       req.expect(404).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId2}"
+      req = util.userRequest "/api/v1/ads/#{testAdId2}?#{apiKey}"
       req.expect(404).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads/#{testAdId3}"
+      req = util.userRequest "/api/v1/ads/#{testAdId3}?#{apiKey}"
       req.expect(404).end (err, res) ->
         if err then return done(err)
         requests = util.actuallyDoneCheck done, requests

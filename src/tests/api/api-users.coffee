@@ -6,6 +6,8 @@ config = require "../../config.json"
 config = config.modes[config.mode]
 api = supertest "http://#{config.domain}:#{config.port}"
 
+apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+
 module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
