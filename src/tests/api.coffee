@@ -1,6 +1,7 @@
 should = require("chai").should()
 supertest = require "supertest"
 superagent = require "superagent"
+spew = require "spew"
 
 config = require "../config.json"
 config = config.modes[config.mode]
@@ -32,11 +33,11 @@ describe "API Authentication", ->
 
 # Run all other API tests using authenticated credentials from above
 require("./api/api-ads") agent, agentAdmin
-require("./api/api-analytics") agent, agentAdmin
+require("./api/api-publishers") agent, agentAdmin
 require("./api/api-campaigns") agent, agentAdmin
+require("./api/api-users") agent, agentAdmin
+require("./api/api-analytics") agent, agentAdmin
+require("./api/api-filters") agent, agentAdmin
 require("./api/api-creator") agent, agentAdmin
 require("./api/api-editor") agent, agentAdmin
-require("./api/api-filters") agent, agentAdmin
-require("./api/api-publishers") agent, agentAdmin
 require("./api/api-serve") agent, agentAdmin
-require("./api/api-users") agent, agentAdmin
