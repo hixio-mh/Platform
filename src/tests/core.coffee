@@ -24,7 +24,7 @@ describe "General Authentication", ->
     api.post("/api/v1/login").send
       username: "testy-tristat"
       password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
-    .expect 403, done
+    .expect 401, done
 
   it "Should accept and authenticate test credentials", (done) ->
     api.post("/api/v1/login").send
@@ -34,8 +34,3 @@ describe "General Authentication", ->
     .end (err, res) ->
       agent.saveCookies res
       done()
-
-  it "Should 404 on authorized access of non-existent page", (done) ->
-    req = api.get("/tz4mnKtz4mnKqE03OqzDMWqE03OqzDMW")
-    agent.attachCookies req
-    req.expect 404, done
