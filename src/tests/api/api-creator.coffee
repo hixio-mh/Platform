@@ -6,13 +6,14 @@ config = require "../../config.json"
 config = config.modes[config.mode]
 api = supertest "http://#{config.domain}:#{config.port}"
 
-apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 
 module.exports = (user, admin) ->
 
   testInvalidCreatorImage = "default.cake"
   testValidCreatorImage = "default.png"
-  testInvalidURL = "htti:/cheese cake.sup"
+  testInvalidURL = "^^^htti:/cheese cake.sup"
   testValidURL = "" # I dunno
 
   util = require("../utility") api, user, admin
@@ -56,14 +57,18 @@ module.exports = (user, admin) ->
     # GET /api/v1/creator/image/:image
     describe "Images", ->
 
-      it "Should 400 with invalid Creator Image", (done) ->
+      it "Should 404 with invalid Creator Image", (done) ->
+
+        @timeout 8000
 
         req = util.userRequest "/api/v1/creator/image/#{testInvalidCreatorImage}", "get"
-        req.expect(400).end (err, res) ->
+        req.expect(404).end (err, res) ->
           if err then return done(err)
           done()
 
       it "Should retrieve a Creator Image", (done) ->
+
+        @timeout 8000
 
         req = util.userRequest "/api/v1/creator/image/#{testValidCreatorImage}", "get"
         req.expect(200).end (err, res) ->
@@ -87,10 +92,10 @@ module.exports = (user, admin) ->
     # GET /api/v1/creator/:url
     describe "URL", ->
 
-      it "Should 400 with invalid url", (done) ->
+      it "Should 404 with invalid url", (done) ->
 
         req = util.userRequest "/api/v1/creator/#{testInvalidURL}", "get"
-        req.expect(400).end (err, res) ->
+        req.expect(404).end (err, res) ->
           if err then return done(err)
           done()
 
