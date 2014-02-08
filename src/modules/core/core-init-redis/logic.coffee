@@ -24,28 +24,13 @@ async = require "async"
 
 handleError = (err) -> if err then spew.error err
 
-setup = (options, imports, register) ->
-
-  # If we are a worker in a cluster, only execute for worker 1
-  if cluster.worker != null and cluster.worker.id != 1
-    return register null, {}
-
-  spew.info "Initializing user redis data...."
-
-  ##
-  ## Update user apikey entries
-  ##
+updateUserRedisEntries = (cb) ->
   db.model("User").find {}, (err, users) ->
 
     # This is critical, and should not fail. If it does, then return without
     # registering to hold back the entire initialization process
     if err then return spew.error err
 
-    doneCount = users.length
-    done = (cb) -> doneCount--; if doneCount == 0 then cb()
-
-    # For each user, update funds from redis, then reset redis user data.
-    # Updating funds ensures mongo has the newest counts
     async.each users, (user, cb) ->
       if not user.hasAPIKey() then user.createAPIKey()
       user.save()
@@ -53,12 +38,30 @@ setup = (options, imports, register) ->
       user.updateFunds ->
         user.createRedisStruture ->
           cb()
-    , ->
+    , -> cb()
 
-      # If we don't need to rebuild the redis DB, then finish
+updateAdRedisEntries = (cb) ->
+  db.model("Ad").find {}, (err, ads) ->
+    if err then return spew.error err
+
+    async.each ads, (ad, cb) ->
+      ad.createRedisStruture -> cb()
+    , -> cb()
+
+setup = (options, imports, register) ->
+
+  # If we are a worker in a cluster, only execute for worker 1
+  if cluster.worker != null and cluster.worker.id != 1
+    return register null, {}
+
+  spew.info "Initializing redis data...."
+
+  updateUserRedisEntries ->
+    updateAdRedisEntries ->
+
+      # If we don't need to rebuild the entire redis DB, then finish
       if rebuild != true then register null, {}
-
-  spew.info "...done"
+      spew.info "...done with basic entries"
 
   if rebuild != true then return
 
@@ -97,19 +100,10 @@ setup = (options, imports, register) ->
 
     # Fetch all models that store data in redis
     fetchModels (models) ->
-
-      doneCount = models.length
-      done = (cb) ->
-        doneCount--
-        if doneCount == 0
-          spew.info "...done, redis structures generated"
-          register null, {}
-
-      if models.length == 0
-        doneCount++
-        done()
-      else
-        for model in models
-          model.createRedisStruture -> done()
+      async.each models, (model, cb) ->
+        model.createRedisStruture -> cb()
+      , ->
+        spew.info "...done, redis structures generated"
+        register null, {}
 
 module.exports = setup
