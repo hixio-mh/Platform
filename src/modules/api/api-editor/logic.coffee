@@ -11,11 +11,23 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 fs = require "fs"
 db = require "mongoose"
 http = require "http"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 ##
 ## Editor routes (locked down by core-init-start)
@@ -24,31 +36,17 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   utility = imports["logic-utility"]
-
   staticDir = "#{__dirname}/../../../static"
 
-  ##
-  ## Routing
-  ##
-
-  # Main editor ad serving, assumes a valid req.cookies.user
-  app.get "/api/v1/editor/:ad", (req, res) ->
+  app.get "/api/v1/editor/:ad", isLoggedInAPI, (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
 
-    res.render "editor.jade", { ad: req.params.ad }, (err, html) ->
+    res.render "editor.jade", ad: req.params.ad, (err, html) ->
       if err
         spew.error
-        res.json 500, { error: "Internal error" }
-      else res.send html
-
-  # Editor load/save, expects a valid user
-  app.post "/api/v1/editor/:action", (req, res) ->
-    if not utility.param req.params.action, res, "Action" then return
-
-    if req.params.action == "load" then loadAd req, res
-    else if req.params.action == "save" then saveAd req, res
-    else if req.params.action == "export" then exportAd req, res
-    else res.json 400, { error: "Unknown action #{req.params.action}" }
+        res.send 500
+      else
+        res.send html
 
   # Exports
   app.get "/api/v1/editor/exports/:folder/:file", (req, res) ->
@@ -59,18 +57,16 @@ setup = (options, imports, register) ->
 
     db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
       if utility.dbError err, res then return
-      if not ex then res.send(404); return
+      if not ex then return res.send 404
 
       if not req.user.admin and not ex.owner.equals req.user.id
-        res.json 403, { error: "Unauthorized!" }
-        return
+        return res.send 403
 
       expired = new Date() > ex.expiration
 
       if expired
         ex.remove()
-        res.json 404, { error: "Export expired" }
-        return
+        return res.json 404, error: "Export expired"
 
       folder = ex.folder
       file = ex.file
@@ -80,42 +76,37 @@ setup = (options, imports, register) ->
       if req.query.download == undefined
         res.set "Content-Type", "text/html"
         res.send fs.readFileSync path
-      else res.send fs.readFileSync path
+      else res.send fs.rea
 
-  ##
-  ## Logic
-  ##
-  loadAd = (req, res) ->
+  app.get "/api/v1/editor", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
       if utility.dbError err, res then return
-      if not ad then res.send(404); return
+      if not ad then return res.send 404
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        res.json 403, { error: "Unauthorized" }
-        return
+        return res.send 403
 
-      res.json { ad: ad.data }
+      res.json ad: ad.data
 
-  saveAd = (req, res) ->
+  app.post "/api/v1/editor", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
       if utility.dbError err, res then return
-      if not ad then res.send(404); return
+      if not ad then return res.send 404
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        res.json 403, { error: "Unauthorized" }
-        return
+        return res.send 403
 
       ad.data = req.query.data
       ad.save()
 
-      res.json { msg: "Saved" }
+      res.send 200
 
-  exportAd = (req, res) ->
+  app.post "/api/v1/editor/export", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
 
@@ -193,8 +184,8 @@ setup = (options, imports, register) ->
           ajs_res.on "data", (chunk) -> ajsSrc += chunk
           ajs_res.on "end", -> buildExport awglSrc, ajsSrc
 
-        .on "error", (e) -> res.json 500, { error: "AJS request error: #{e}" }
-    .on "error", (e) -> res.json 500, { error: "AWGL request error: #{e}" }
+        .on "error", (e) -> res.send 500
+    .on "error", (e) -> res.send 500
 
   register null, {}
 

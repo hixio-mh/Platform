@@ -33,7 +33,7 @@ window.AdefyLogin.controller "AdefyLoginController", ($scope, $http) ->
     password = "password=#{$scope.password}"
     $http.post("/api/v1/login?#{username}&#{password}")
     .success(-> window.location.href = "/")
-    .error (res) -> $scope.error = "Wrong username or password"
+    .error (res) -> $scope.error = "Wrong credentials"
 
   $scope.enterSubmit = (e) ->
     if e.which == 10 or e.which == 13 then $scope.login()

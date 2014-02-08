@@ -21,6 +21,19 @@ config = require "../../../config.json"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 NodeCache = require "node-cache"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 # Cache used for guarding against multiple duplicate impressions/clicks
 guardCache = new NodeCache stdTTL: 1
@@ -32,7 +45,8 @@ setup = (options, imports, register) ->
   adEngine = imports["engine-ads"]
 
   # Fetch a test ad (unidentified request)
-  app.get "/api/v1/serve", (req, res) -> adEngine.fetchTest req, res
+  app.get "/api/v1/serve", (req, res) ->
+    adEngine.fetchTest req, res
 
   # Try to fetch a real ad
   app.get "/api/v1/serve/:apikey", (req, res) ->
