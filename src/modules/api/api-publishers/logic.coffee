@@ -17,6 +17,19 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedInAPI = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else
+    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
+      if err then return next err
+      else if not user then return res.send 403
+      else
+        req.user = user
+        next()
+    ) req, res, next
 
 setup = (options, imports, register) ->
 
@@ -24,7 +37,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   # Create new publisher on identified user
-  app.post "/api/v1/publishers", (req, res) ->
+  app.post "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Application name" then return
 
     # Validate type
@@ -58,7 +71,7 @@ setup = (options, imports, register) ->
 
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
-  app.post "/api/v1/publishers/:id", (req, res) ->
+  app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
@@ -97,7 +110,7 @@ setup = (options, imports, register) ->
           res.json 200, pub.toAnonAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
-  app.delete "/api/v1/publishers/:id", (req, res) ->
+  app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
@@ -110,7 +123,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Fetches owned publisher list.
-  app.get "/api/v1/publishers", (req, res) ->
+  app.get "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     db.model("Publisher").find owner: req.user.id, (err, publishers) ->
       if utility.dbError err, res then return
 
@@ -133,7 +146,7 @@ setup = (options, imports, register) ->
         fetchPublisher p, res
 
   # Fetches all publishers. Admin privileges required
-  app.get "/api/v1/publishers/all", (req, res) ->
+  app.get "/api/v1/publishers/all", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return res.send 401
 
     db.model("Publisher")
@@ -161,7 +174,7 @@ setup = (options, imports, register) ->
         fetchPublisher p, res
 
   # Finds a single publisher by ID
-  app.get "/api/v1/publishers/:id", (req, res) ->
+  app.get "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findOne
       _id: req.param "id"
       owner: req.user.id
@@ -182,7 +195,7 @@ setup = (options, imports, register) ->
   #
   # If we are not an administator, an admin approval is requested. Otherwise,
   # the publisher is approved directly.
-  app.post "/api/v1/publishers/:id/approve", (req, res) ->
+  app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
@@ -200,7 +213,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Disapproves the publisher
-  app.post "/api/v1/publishers/:id/disaprove", (req, res) ->
+  app.post "/api/v1/publishers/:id/disaprove", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return res.json 403
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
@@ -213,7 +226,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Activates the publisher
-  app.post "/api/v1/publishers/:id/activate", (req, res) ->
+  app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
@@ -226,7 +239,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # De-activates the publisher
-  app.post "/api/v1/publishers/:id/deactivate", (req, res) ->
+  app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
@@ -239,7 +252,7 @@ setup = (options, imports, register) ->
       res.send 200
 
   # Fetch publisher stats over a specific period of time
-  app.get "/api/v1/publishers/stats/:id/:stat/:range", (req, res) ->
+  app.get "/api/v1/publishers/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Publisher id" then return
     if not utility.param req.param("range"), res, "Temporal range" then return
     if not utility.param req.param("stat"), res, "Stat" then return

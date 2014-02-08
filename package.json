@@ -24,11 +24,17 @@
     "hiredis": "~0.1.16",
     "statsd-client": "0.0.15",
     "accounting": "~0.3.2",
-    "coffee-script": "~1.6.3"
+    "coffee-script": "~1.6.3",
+    "time-grunt": "~0.2.9",
+    "passport": "~0.2.0",
+    "passport-localapikey": "0.0.3",
+    "async": "~0.2.10",
+    "passport-local": "~0.1.6",
+    "connect-flash": "~0.1.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-coffee": "~0.9.0",
     "grunt-mocha": "~0.4.10",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-watch": "~0.4.4",
@@ -47,7 +53,8 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-cache-breaker": "~0.5.6",
     "grunt-contrib-uglify": "~0.3.2",
-    "grunt-ngmin": "0.0.3"
+    "grunt-ngmin": "0.0.3",
+    "jit-grunt": "~0.2.1"
   },
   "private": true,
   "engine": "node >= 0.10.12"

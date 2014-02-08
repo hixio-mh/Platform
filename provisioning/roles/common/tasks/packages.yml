@@ -8,6 +8,7 @@
   apt: pkg={{ item }} state=present
   tags: [packages]
   with_items:
+    - build-essential
     - git
     - mongodb
     - redis-server

@@ -15,6 +15,12 @@ spew = require "spew"
 routes = require "../../../angularDashboardViews.json"
 config = require "../../../config.json"
 crypto = require "crypto"
+passport = require "passport"
+
+# Route middleware to make sure a user is logged in
+isLoggedIn = (req, res, next) ->
+  if req.isAuthenticated() then next()
+  else res.redirect "/login"
 
 setup = (options, imports, register) ->
 
@@ -23,7 +29,7 @@ setup = (options, imports, register) ->
 
   # Serve layout to each path
   for p in routes.views
-    app.get p, (req, res) ->
+    app.get p, isLoggedIn, (req, res) ->
 
       viewData = {}
       viewData.user = req.user
@@ -42,7 +48,7 @@ setup = (options, imports, register) ->
   ##
 
   # Dashboard views
-  app.get "/views/dashboard/:view", (req, res) ->
+  app.get "/views/dashboard/:view", isLoggedIn, (req, res) ->
 
     # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
     if req.params.view.indexOf(":") != -1
