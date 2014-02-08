@@ -123,20 +123,20 @@
 				"user": "adefy",
 				"pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
 				"host": "localhost",
-				"port": 45452,
+				"port": 27017,
 				"db": "adefy_testing"
 			},
 
 			"redis-main": {
 				"db": 1,
 				"host": "localhost",
-				"port": 23521
+				"port": 6379
 			},
 
 			"redis-autocomplete": {
 				"db": 1,
 				"host": "localhost",
-				"port": 23521
+				"port": 6379
 			},
 
 			"stats": {
