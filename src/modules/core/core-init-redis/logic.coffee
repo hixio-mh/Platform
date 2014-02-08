@@ -20,14 +20,53 @@ config = require "../../../config.json"
 rebuild = config.modes[config.mode]["redis-main"].rebuild
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
+async = require "async"
 
 handleError = (err) -> if err then spew.error err
 
 setup = (options, imports, register) ->
 
   # If we are a worker in a cluster, only execute for worker 1
-  if (cluster.worker != null and cluster.worker.id != 1) or rebuild != true
+  if cluster.worker != null and cluster.worker.id != 1
     return register null, {}
+
+  spew.info "Initializing user redis data...."
+
+  ##
+  ## Update user apikey entries
+  ##
+  db.model("User").find {}, (err, users) ->
+
+    # This is critical, and should not fail. If it does, then return without
+    # registering to hold back the entire initialization process
+    if err then return spew.error err
+
+    doneCount = users.length
+    done = (cb) -> doneCount--; if doneCount == 0 then cb()
+
+    # For each user, update funds from redis, then reset redis user data.
+    # Updating funds ensures mongo has the newest counts
+    async.each users, (user, cb) ->
+      if not user.hasAPIKey() then user.createAPIKey()
+      user.save()
+
+      user.updateFunds ->
+        user.createRedisStruture ->
+          cb()
+    , ->
+
+      # If we don't need to rebuild the redis DB, then finish
+      if rebuild != true then register null, {}
+
+  spew.info "...done"
+
+  if rebuild != true then return
+
+  ##
+  ## WARNING: This flushes the redis DB and rebuilds all entries!
+  ##          If the autocomplete DB is running on the same instance as main,
+  ##          it will need to be rebuilt!
+  ##
 
   spew.info "Re-generating redis structures (this may take awhile)..."
 
