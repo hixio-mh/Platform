@@ -7,6 +7,7 @@ fs = require "fs"
 spew = require "spew"
 expressValidator = require "express-validator"
 passport = require "passport"
+flash = require "connect-flash"
 
 setup = (options, imports, register) ->
 
@@ -73,6 +74,7 @@ setup = (options, imports, register) ->
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
           app.use express.session sessionSecret
+          app.use flash()
           app.use passport.initialize()
           app.use passport.session()
 
@@ -100,7 +102,11 @@ setup = (options, imports, register) ->
 
           # Routes
           app.get "/500", (req, res) -> res.send 500
-          app.get "/*", (req, res) -> res.send 404
+
+          # Redirect to login page for unauthorized users
+          app.get "/*", (req, res) ->
+            if req.isAuthenticated() then return res.send 404
+            else res.redirect "/login"
 
           # Actually start the server
           hServ = http.createServer app

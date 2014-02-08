@@ -15,6 +15,8 @@ testPublisherId1 = testPublisherName
 testPublisherId2 = testPublisherName
 testPublisherId3 = testPublisherName
 
+apiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
+
 module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
@@ -49,14 +51,14 @@ module.exports = (user, admin) ->
 
     # GET /api/v1/publishers/:id
     it "Should fail to retrieve non-existant publisher", (done) ->
-      util.expect404User "/api/v1/publishers/#{testPublisherId1}", done
+      util.expect404User "/api/v1/publishers/#{testPublisherId1}?#{apiKey}", done
 
     # POST /api/v1/publishers
     it "Should allow registered user to create 3 publishers", (done) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
         validatePublisherFormat res.body
@@ -64,7 +66,7 @@ module.exports = (user, admin) ->
         testPublisherId1 = res.body.id
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
         validatePublisherFormat res.body
@@ -72,7 +74,7 @@ module.exports = (user, admin) ->
         testPublisherId2 = res.body.id
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}", "post"
+      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{apiKey}", "post"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
         validatePublisherFormat res.body
@@ -87,7 +89,7 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
 
@@ -96,7 +98,7 @@ module.exports = (user, admin) ->
 
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
 
@@ -105,7 +107,7 @@ module.exports = (user, admin) ->
 
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
 
@@ -119,7 +121,7 @@ module.exports = (user, admin) ->
 
       @timeout 3333
 
-      req = util.userRequest "/api/v1/publishers"
+      req = util.userRequest "/api/v1/publishers?#{apiKey}"
       req.expect(200).end (err, res) ->
         res.body.should.not.have.property "error"
         res.body.length.should.equal 3
@@ -140,15 +142,15 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}", "del"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}", "del"
       req.expect(200).end (err, res) ->
         requests = actuallyDone done, requests
 
@@ -157,14 +159,14 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{apiKey}"
       req.expect(404).end (err, res) ->
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{apiKey}"
       req.expect(404).end (err, res) ->
         requests = actuallyDone done, requests
 
-      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}"
+      req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{apiKey}"
       req.expect(404).end (err, res) ->
         requests = actuallyDone done, requests

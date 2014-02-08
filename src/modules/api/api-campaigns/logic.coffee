@@ -24,7 +24,7 @@ passport = require "passport"
 isLoggedInAPI = (req, res, next) ->
   if req.isAuthenticated() then next()
   else
-    passport.authenticate("localapikey", (err, user, info) ->
+    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
       if err then return next err
       else if not user then return res.send 403
       else
