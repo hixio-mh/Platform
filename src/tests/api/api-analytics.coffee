@@ -400,7 +400,7 @@ module.exports = (user, admin) ->
         ## Admin (network totals)
         it "Should have access to spent:admin", (done) ->
 
-          @timeout 30000
+          @timeout 15000
 
           req = util.adminRequest "/api/v1/analytics/totals/spent:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
@@ -410,7 +410,7 @@ module.exports = (user, admin) ->
 
         it "Should have access to impressions:admin", (done) ->
 
-          @timeout 30000
+          @timeout 15000
 
           req = util.adminRequest "/api/v1/analytics/totals/impressions:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
@@ -420,7 +420,7 @@ module.exports = (user, admin) ->
 
         it "Should have access to clicks:admin", (done) ->
 
-          @timeout 30000
+          @timeout 15000
 
           req = util.adminRequest "/api/v1/analytics/totals/clicks:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
@@ -430,7 +430,7 @@ module.exports = (user, admin) ->
 
         it "Should have access to earnings:admin", (done) ->
 
-          @timeout 30000
+          @timeout 15000
 
           req = util.adminRequest "/api/v1/analytics/totals/earnings:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
