@@ -92,9 +92,11 @@ setup = (options, imports, register) ->
         return aem.send res, "401"
 
       ad.data = req.query.data
-      ad.save()
-
-      res.send 200
+      ad.save (err) ->
+        if err
+          res.send 400
+        else
+          res.json 200, ad.toAnonAPI()
 
   app.post "/api/v1/editor/export", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return

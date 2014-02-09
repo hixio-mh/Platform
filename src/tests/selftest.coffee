@@ -27,8 +27,8 @@ before (done) ->
 
 after -> if adefy != null then adefy.kill()
 
-require "./api"
+#require "./utility"
 require "./core"
-require "./helpers"
 require "./models"
-require "./utility"
+require "./helpers"
+require "./api"

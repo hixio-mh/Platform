@@ -64,7 +64,7 @@ setup = (options, imports, register) ->
       ads: []
 
     newCampaign.save()
-    res.json 200
+    res.json newCampaign.toAnonAPI()
 
   # Fetch campaigns owned by the user identified by the cookie
   app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) ->

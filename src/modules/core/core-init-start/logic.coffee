@@ -70,7 +70,6 @@ setup = (options, imports, register) ->
   ##
   ## Passport setup
   ##
-
   # Local strategy (non-API requests)
   passport.use new passportLocalStrategy (username, password, done) ->
 
@@ -105,6 +104,11 @@ setup = (options, imports, register) ->
 
   passport.deserializeUser (id, done) ->
     mongoose.model("User").findById id, (err, user) ->
+      signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
+      user = user.toAPI()
+      user.admin = user.permissions == 0
+      user.signedup = signedup
+
       done err, user
 
   ##

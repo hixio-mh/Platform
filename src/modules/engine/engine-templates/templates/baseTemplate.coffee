@@ -102,7 +102,7 @@ class AdefyBaseAdTemplate
         type: texture.type
         name: texture.name
 
-  # Sends an HTML ad, pulling in AWGL
+  # Sends an HTML ad, pulling in AWGL.
   #
   # @param [Object] creative
   # @param [Object] options
@@ -110,8 +110,10 @@ class AdefyBaseAdTemplate
   # @option options [Number] height
   # @option options [Number] click
   # @option options [Number] impression
-  # @param [Object] res
-  sendHTML: (creative, options, res) ->
+  # @param [Object] res optional response to send ad to
+  # @param [Method] cb optional callback to send ad to
+  # @return [String] htmlAd
+  sendHTML: (creative, options, res, cb) ->
     width = options.width
     height = options.height
     clickURL = options.click
@@ -156,7 +158,9 @@ class AdefyBaseAdTemplate
     </html>
     """
 
-    res.send fullAd
+    if res then res.send fullAd
+    if cb then cb fullAd
+    fullAd
 
   # Sends a packaged ad for mobile execution
   #
@@ -168,15 +172,18 @@ class AdefyBaseAdTemplate
   # @option options [Number] impression
   # @param [Object] res
   sendArchive: (creative, options, res) ->
-    width = options.width
-    height = options.height
-    clickURL = options.click
-    impressionURL = options.impression
+
+    getAssetKeyFilename = (key) ->
+      if key.split("/").length > 0
+        filename = key.split "/"
+        return filename[filename.length - 1]
+      else
+        key
 
     archive = archiver "zip"
     archive.on "error", (err) ->
       spew.error err
-      res.json 500, error: "Internal error"
+      res.send 500
 
     archive.pipe res
 
@@ -184,17 +191,35 @@ class AdefyBaseAdTemplate
       archive.append file.buffer, name: file.filename
 
     source = """
-      var width = #{width};
-      var height = #{height};
+      var width = #{options.width};
+      var height = #{options.height};
 
       #{creative.header}
 
       #{creative.body}
     """
 
+    # Build manifest
     manifest = _.clone @manifest
-    manifest.click = clickURL
-    manifest.impression = impressionURL
+    manifest.click = options.click
+    manifest.impression = options.impression
+    manifest.pushTitle = options.pushTitle
+    manifest.pushDesc = options.pushDesc
+    manifest.pushURL = options.pushURL
+    manifest.pushIcon = "push-icon"
+
+    # Append assets
+    if options.assets != undefined
+      for asset in options.assets
+        filename = getAssetKeyFilename asset.key
+
+        manifest.textures.push
+          path: @prefixRemoteAssetPath filename
+          compression: "none"
+          type: "image"
+          name: asset.name
+
+        archive.append new Buffer(asset.buffer, "base64"), name: filename
 
     archive.append JSON.stringify(manifest), name: "package.json"
     archive.append source, name: "scene.js"
@@ -203,7 +228,7 @@ class AdefyBaseAdTemplate
     archive.finalize (err, bytes) ->
       if err
         spew.error err
-        res.json 500, error: "Internal error"
+        res.send 500
 
   # Generate a creative. This needs to be overriden by actual templates!
   #
