@@ -15,19 +15,9 @@ graphiteInterface = require "../../../helpers/graphiteInterface"
 spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require "../../../apikeyLogin"
 
 ##
 ## Analytics API, some paths are admin-only
@@ -46,45 +36,9 @@ setup = (options, imports, register) ->
       sum: req.param("sum") or false
       total: req.param("total") or false
 
-  app.get "/api/v1/analytics/campaigns/:id/:stat", isLoggedInAPI, (req, res) ->
-    db.model("Campaign")
-    .findById(req.param "id")
-    .populate("ads")
-    .exec (err, campaign) ->
-      if utility.dbError err, res then return
-
-      if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
-        return res.send 401
-
-      options = buildOptionsFromQuery req
-      campaign.fetchStatGraphData options, (data) -> res.json data
-
-  app.get "/api/v1/analytics/ads/:id/:stat", isLoggedInAPI, (req, res) ->
-    db.model("Ad")
-    .findById(req.param "id")
-    .populate("campaigns.campaign")
-    .exec (err, ad) ->
-      if utility.dbError err, res then return
-
-      if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
-        return res.send 401
-
-      options = buildOptionsFromQuery req
-      ad.fetchStatGraphData options, (data) -> res.json data
-
-  app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
-    db.model("Publisher").findById req.param("id"), (err, publisher) ->
-      if utility.dbError err, res then return
-
-      if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
-        return res.send 401
-
-      options = buildOptionsFromQuery req
-      publisher.fetchStatGraphData options, (data) -> res.json data
-
   queryPublishers = (query, options, stat, res) ->
     db.model("Publisher").find query, (err, publishers) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       pubRefs = []
       for publisher in publishers
@@ -99,7 +53,7 @@ setup = (options, imports, register) ->
     .find(query)
     .populate("ads")
     .exec (err, campaigns) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       adRefs = []
       for campaign in campaigns
@@ -109,6 +63,42 @@ setup = (options, imports, register) ->
       delete options.stat
       options.multipleSeries = adRefs
       graphiteInterface.makeAnalyticsQuery options, (data) -> res.json data
+
+  app.get "/api/v1/analytics/campaigns/:id/:stat", isLoggedInAPI, (req, res) ->
+    db.model("Campaign")
+    .findById(req.param "id")
+    .populate("ads")
+    .exec (err, campaign) ->
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+
+      if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
+        return aem.send res, "401"
+
+      options = buildOptionsFromQuery req
+      campaign.fetchStatGraphData options, (data) -> res.json data
+
+  app.get "/api/v1/analytics/ads/:id/:stat", isLoggedInAPI, (req, res) ->
+    db.model("Ad")
+    .findById(req.param "id")
+    .populate("campaigns.campaign")
+    .exec (err, ad) ->
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+
+      if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
+        return aem.send res, "401"
+
+      options = buildOptionsFromQuery req
+      ad.fetchStatGraphData options, (data) -> res.json data
+
+  app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
+    db.model("Publisher").findById req.param("id"), (err, publisher) ->
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+
+      if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
+        return aem.send res, "401"
+
+      options = buildOptionsFromQuery req
+      publisher.fetchStatGraphData options, (data) -> res.json data
 
   app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) ->
     stat = req.param "stat"
@@ -138,27 +128,27 @@ setup = (options, imports, register) ->
 
     # Admin (network totals)
     else if stat == "spent:admin"
-      if not req.user.admin then return res.send 403
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "spent", res
     else if stat == "impressions:admin"
-      if not req.user.admin then return res.send 403
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "impressions", res
     else if stat == "clicks:admin"
-      if not req.user.admin then return res.send 403
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "clicks", res
     else if stat == "earnings:admin"
-      if not req.user.admin then return res.send 403
+      if not req.user.admin then return aem.send res, "403"
       queryPublishers {}, options, "earnings", res
 
     else
-      res.json 400, error: "Unknown stat"
+      aem.send res, "400", error: "Unknown stat: #{stat}"
 
   ##
   ## Admin-only
   ##
 
   app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return res.send 403
+    if not req.user.admin then return aem.send res, "403"
 
     model = req.param "model"
     validModels = [
@@ -174,7 +164,7 @@ setup = (options, imports, register) ->
         validModel = true
         break
 
-    if not validModel then return res.send 400
+    if not validModel then return return aem.send res, "400", error: "Invalid model: #{model}"
 
     db.model(model).find {}, (err, objects) ->
       if err then spew.error err

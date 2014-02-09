@@ -17,19 +17,9 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require "../../../apikeyLogin"
 
 setup = (options, imports, register) ->
 
@@ -49,7 +39,7 @@ setup = (options, imports, register) ->
     newAd.save (err) ->
       if err
         spew.error "Error saving new ad [#{err}]"
-        res.send 500
+        aem.send res, "500:ad:save"
       else
         res.json 200, newAd.toAnonAPI()
 
@@ -57,11 +47,11 @@ setup = (options, imports, register) ->
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
 
     db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       # For now, only support saving of single creative
       data = ad.data
@@ -78,7 +68,7 @@ setup = (options, imports, register) ->
       ad.save (err) ->
         if err
           spew.error err
-          res.send 500
+          aem.send res, "500:ad:save"
         else
           res.json 200, ad.toAnonAPI()
 
@@ -89,18 +79,17 @@ setup = (options, imports, register) ->
     .populate("campaigns.campaign")
     .exec (err, ad) ->
 
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
-
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
       if not req.user.admin and not ad.owner.equals req.user.id
-        return res.send 403
+        return aem.send res, "401"
 
       # Remove ourselves from all campaigns we are currently part of
       ad.removeFromCampaigns ->
 
         # Now remove ourselves. So sad ;(
         ad.remove()
-        res.send 200
+        aem.send res, "200:delete"
 
   # Fetches owned ads
   app.get "/api/v1/ads", isLoggedInAPI, (req, res) ->
@@ -108,7 +97,7 @@ setup = (options, imports, register) ->
     .find({ owner: req.user.id })
     .populate("campaigns.campaign")
     .exec (err, ads) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       # This is a tad ugly, as we need to fetch stats both for all ads, and
       # for all campagins within the ads.
@@ -164,13 +153,13 @@ setup = (options, imports, register) ->
 
   # Fetches all ads. Admin privileges required
   app.get "/api/v1/ads/all", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return res.send 401
+    if not req.user.admin then return aem.send res, "401"
 
     db.model("Ad")
     .find()
     .populate("owner")
     .exec (err, ads) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       adCount = ads.length
       ret = []
@@ -197,14 +186,14 @@ setup = (options, imports, register) ->
     .find({ _id: req.param "id" })
     .populate("campaigns.campaign")
     .exec (err, ads) ->
-      if utility.dbError err, res then return
-      if ads.length == 0 then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if ads.length == 0
+        return aem.send res, "404:ad"
 
       ad = ads[0]
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        res.send 403
-        return
+        return aem.send res, "401"
 
       ad.fetchCompiledStats (stats) ->
         advertisement = ad.toAnonAPI()
@@ -217,35 +206,38 @@ setup = (options, imports, register) ->
   # the ad is approved directly.
   app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and req.user.id != ad.owner
-        return res.send 403
+        return aem.send res, "401"
 
+      dat = null
       # If we are admin, approve directly
       if req.user.admin
         ad.approve()
+        dat = aem.make "200:approve"
       else
         ad.clearApproval()
+        dat = aem.make "200:approve_pending"
 
       ad.save()
-      res.send 200
+      res.json dat.status, dat
 
   # Disapproves the ad
   app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return res.json 403
+    if not req.user.admin then return aem.send res, "403:ad"
 
     db.model("Ad")
     .findById(req.param("id"))
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
       ad.disaprove ->
         ad.save()
-        res.send 200
+        aem.send res, "200:disapprove"
 
   register null, {}
 
