@@ -198,94 +198,139 @@ module.exports = (user, admin) ->
           return if handleError(err, res, done)
           done()
 
-      it "Should allow User to access analytics totals", (done) ->
+      describe "Valid totals", ->
 
-        @timeout 15000
+        ## Publishers
+        it "Should have access to earnings", (done) ->
 
-        requests = 9
+          @timeout 15000
 
-        # Publishers
-        req = util.userRequest "/api/v1/analytics/totals/earnings?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.userRequest "/api/v1/analytics/totals/earnings?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.userRequest "/api/v1/analytics/totals/impressionsp?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to impressions:publisher", (done) ->
 
-        req = util.userRequest "/api/v1/analytics/totals/clicksp?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.userRequest "/api/v1/analytics/totals/requests?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.userRequest "/api/v1/analytics/totals/impressions:publisher?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        # Campaigns
-        req = util.userRequest "/api/v1/analytics/totals/spent?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to clicks:publisher", (done) ->
 
-        req = util.userRequest "/api/v1/analytics/totals/impressionsa?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.userRequest "/api/v1/analytics/totals/impressionsc?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.userRequest "/api/v1/analytics/totals/clicks:publisher?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.userRequest "/api/v1/analytics/totals/clicksa?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to requests", (done) ->
 
-        req = util.userRequest "/api/v1/analytics/totals/clicksc?#{userApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-      it "Should not allow User to access Admin-only analytics totals", (done) ->
+          req = util.userRequest "/api/v1/analytics/totals/requests?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        @timeout 15000
+        ## Campaigns
+        it "Should have access to spent", (done) ->
 
-        requests = 4
+          @timeout 15000
 
-        # Admin (network totals)
-        req = util.userRequest "/api/v1/analytics/totals/spent:admin?#{userApiKey}", "get"
-        req.expect(403).end (err, res) ->
-          return if handleError(err, res, done)
-          requests = util.actuallyDoneCheck done, requests
+          req = util.userRequest "/api/v1/analytics/totals/spent?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.userRequest "/api/v1/analytics/totals/impressions:admin?#{userApiKey}", "get"
-        req.expect(403).end (err, res) ->
-          return if handleError(err, res, done)
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to impressions:ad", (done) ->
 
-        req = util.userRequest "/api/v1/analytics/totals/clicks:admin?#{userApiKey}", "get"
-        req.expect(403).end (err, res) ->
-          return if handleError(err, res, done)
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.userRequest "/api/v1/analytics/totals/earnings:admin?#{userApiKey}", "get"
-        req.expect(403).end (err, res) ->
-          return if handleError(err, res, done)
-          requests = util.actuallyDoneCheck done, requests
+          req = util.userRequest "/api/v1/analytics/totals/impressions:ad?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to impressions:campaign", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/impressions:campaign?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to clicks:ad", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/clicks:ad?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to clicks:campaign", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/clicks:campaign?#{userApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+      describe "Valid Admin-only totals", ->
+
+        ## Admin (network totals)
+        it "Should not have access to spent:admin", (done) ->
+
+          @timeout 15000
+
+          # Admin (network totals)
+          req = util.userRequest "/api/v1/analytics/totals/spent:admin?#{userApiKey}", "get"
+          req.expect(403).end (err, res) ->
+            return if handleError(err, res, done)
+            requests = util.actuallyDoneCheck done, requests
+
+        it "Should not have access to impressions:admin", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/impressions:admin?#{userApiKey}", "get"
+          req.expect(403).end (err, res) ->
+            return if handleError(err, res, done)
+            requests = util.actuallyDoneCheck done, requests
+
+        it "Should not have access to clicks:admin", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/clicks:admin?#{userApiKey}", "get"
+          req.expect(403).end (err, res) ->
+            return if handleError(err, res, done)
+            requests = util.actuallyDoneCheck done, requests
+
+        it "Should not have access to earnings:admin", (done) ->
+
+          @timeout 15000
+
+          req = util.userRequest "/api/v1/analytics/totals/earnings:admin?#{userApiKey}", "get"
+          req.expect(403).end (err, res) ->
+            return if handleError(err, res, done)
+            requests = util.actuallyDoneCheck done, requests
 
 
     ##
@@ -320,7 +365,7 @@ module.exports = (user, admin) ->
 
           @timeout 15000
 
-          req = util.adminRequest "/api/v1/analytics/totals/impressionsp?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/impressions:publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
@@ -330,7 +375,7 @@ module.exports = (user, admin) ->
 
           @timeout 15000
 
-          req = util.adminRequest "/api/v1/analytics/totals/clicksp?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/clicks:publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
@@ -361,7 +406,7 @@ module.exports = (user, admin) ->
 
           @timeout 15000
 
-          req = util.adminRequest "/api/v1/analytics/totals/impressionsa?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/impressions:ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
@@ -371,7 +416,7 @@ module.exports = (user, admin) ->
 
           @timeout 15000
 
-          req = util.adminRequest "/api/v1/analytics/totals/impressionsc?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/impressions:campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
@@ -381,7 +426,7 @@ module.exports = (user, admin) ->
 
           @timeout 15000
 
-          req = util.adminRequest "/api/v1/analytics/totals/clicksa?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/clicks:ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
@@ -389,7 +434,7 @@ module.exports = (user, admin) ->
 
         it "Should have access to clicks:campaign", (done) ->
 
-          req = util.adminRequest "/api/v1/analytics/totals/clicksc?#{adminApiKey}", "get"
+          req = util.adminRequest "/api/v1/analytics/totals/clicks:campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
             ## TODO: Validate JSON
