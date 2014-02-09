@@ -17,24 +17,17 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require "../../../apikeyLogin"
 
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
   utility = imports["logic-utility"]
+
+  error404 = (res, id) ->
+    aem.send res, "404", error: "Publisher(#{id}) could not be found"
 
   # Create new publisher on identified user
   app.post "/api/v1/publishers", isLoggedInAPI, (req, res) ->
@@ -61,7 +54,7 @@ setup = (options, imports, register) ->
     newPublisher.save (err) ->
       if err
         spew.error err
-        res.json 500
+        aem.send res, "500:save"
       else
 
         # Note that we don't wait for the generated thumbnail. This speeds
@@ -74,14 +67,13 @@ setup = (options, imports, register) ->
   app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
-        res.send 403
-        return
+        return aem.send res, "401"
 
-      req.onValidationError (msg) -> res.json 400, error: msg.path
+      req.onValidationError (msg) -> aem.send res, "400", error: msg.path
 
       pub.name = req.param("name") || pub.name
       pub.category = req.param("category") || pub.category
@@ -105,19 +97,18 @@ setup = (options, imports, register) ->
       pub.save (err) ->
         if err
           spew.error err
-          res.send 500
+          aem.send res, "500:save"
         else
           res.json 200, pub.toAnonAPI()
 
   # Delete publisher, user must either own the publisher or be an admin,
   app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not req.user.admin and not pub.owner.equals req.user.id
-        res.send 403
-        return
+        return aem.send res, "401"
 
       pub.remove()
       res.send 200
@@ -125,7 +116,7 @@ setup = (options, imports, register) ->
   # Fetches owned publisher list.
   app.get "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     db.model("Publisher").find owner: req.user.id, (err, publishers) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       pubCount = publishers.length
       ret = []
@@ -147,13 +138,13 @@ setup = (options, imports, register) ->
 
   # Fetches all publishers. Admin privileges required
   app.get "/api/v1/publishers/all", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return res.send 401
+    if not req.user.admin then return aem.send res, "403"
 
     db.model("Publisher")
     .find()
     .populate("owner")
     .exec (err, publishers) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       pubCount = publishers.length
       ret = []
@@ -179,12 +170,11 @@ setup = (options, imports, register) ->
       _id: req.param "id"
       owner: req.user.id
     , (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not pub.owner.equals req.user.id
-        res.send 403
-        return
+        return aem.send res, "401"
 
       pub.fetchOverviewStats (stats) ->
         publisher = pub.toAnonAPI()
@@ -197,11 +187,11 @@ setup = (options, imports, register) ->
   # the publisher is approved directly.
   app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       # If we are admin, approve directly
       if req.user.admin
@@ -214,25 +204,25 @@ setup = (options, imports, register) ->
 
   # Disapproves the publisher
   app.post "/api/v1/publishers/:id/disaprove", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return res.json 403
+    if not req.user.admin then return aem.send res, "403"
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       pub.disaprove()
       pub.deactivate()
       pub.save()
-      res.send 200
+      return aem.send res, "200:disapprove"
 
   # Activates the publisher
   app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       pub.activate()
       pub.save()
@@ -241,11 +231,11 @@ setup = (options, imports, register) ->
   # De-activates the publisher
   app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       pub.deactivate()
       pub.save()
@@ -258,8 +248,8 @@ setup = (options, imports, register) ->
     if not utility.param req.param("stat"), res, "Stat" then return
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res then return
-      if not pub then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not pub then return error404(res, req.param("id"))
 
       pub.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data

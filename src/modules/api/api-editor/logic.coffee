@@ -15,19 +15,9 @@ spew = require "spew"
 fs = require "fs"
 db = require "mongoose"
 http = require "http"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require "../../../apikeyLogin"
 
 ##
 ## Editor routes (locked down by core-init-start)
@@ -43,8 +33,8 @@ setup = (options, imports, register) ->
 
     res.render "editor.jade", ad: req.params.ad, (err, html) ->
       if err
-        spew.error
-        res.send 500
+        spew.error err
+        aem.send res, "500", error: "Error occurred while rendering page"
       else
         res.send html
 
@@ -56,17 +46,17 @@ setup = (options, imports, register) ->
     file = req.params.file
 
     db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
-      if utility.dbError err, res then return
-      if not ex then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ex then return aem.send res, "404"
 
       if not req.user.admin and not ex.owner.equals req.user.id
-        return res.send 403
+        return aem.send res, "401"
 
       expired = new Date() > ex.expiration
 
       if expired
         ex.remove()
-        return res.json 404, error: "Export expired"
+        return aem.send res, "404", error: "The requested export has expired"
 
       folder = ex.folder
       file = ex.file
@@ -82,11 +72,11 @@ setup = (options, imports, register) ->
     if not utility.param req.query.id, res, "Id" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        return res.send 403
+        return aem.send res, "401"
 
       res.json ad: ad.data
 
@@ -95,11 +85,11 @@ setup = (options, imports, register) ->
     if not utility.param req.query.data, res, "Data" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res then return
-      if not ad then return res.send 404
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
-        return res.send 403
+        return aem.send res, "401"
 
       ad.data = req.query.data
       ad.save()

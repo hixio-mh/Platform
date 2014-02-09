@@ -21,19 +21,9 @@ config = require "../../../config.json"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 NodeCache = require "node-cache"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require "../../../apikeyLogin"
 
 # Cache used for guarding against multiple duplicate impressions/clicks
 guardCache = new NodeCache stdTTL: 1
@@ -105,14 +95,15 @@ setup = (options, imports, register) ->
 
     # Guard against duplicate clicks
     guardCache.get cacheKey, (err, data) ->
-      if data.set != undefined then return res.send 404
+      #if err then spew.error err
+      if data.set != undefined then return aem.send res, "404"
 
       guardCache.set cacheKey, set: true, ->
         redis.get "actions:#{actionId}", (err, data) ->
           if err then spew.error err
           if data == null
             guardCache.del cacheKey
-            return res.send 404
+            return aem.send res, "404"
 
           data = data.split "|"
 
@@ -121,7 +112,7 @@ setup = (options, imports, register) ->
           # continue logging it
           if Number(data[0]) == 1
             guardCache.del cacheKey
-            return res.send 400
+            return aem.send res, "400"
           else
             res.send 200
 
@@ -141,13 +132,13 @@ setup = (options, imports, register) ->
           # Ensure we can actually charge the advertiser
           redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
             if err then spew.error err
-            if funds == null then return res.send 500
+            if funds == null then return aem.send res, "500", error: "NULL funds"
 
             funds = Number funds
 
             # Bail early if the advertiser doesn't have enough money
             # Sux to be broke
-            if funds < data[3] then return res.send 200
+            if funds < data[3] then return aem.send res, "200:nofunds"
 
             # Track action
             redis.incr "#{campaignRef}:impressions"
@@ -158,7 +149,7 @@ setup = (options, imports, register) ->
             # Return after logging request if it isn't a CPC bid
             if data[2] != "CPM"
               guardCache.del cacheKey
-              return res.send 200
+              return aem.send res, "200"
 
             # Charge advertiser and credit publisher. Continue after
             # advertiser charge goes through
@@ -171,7 +162,7 @@ setup = (options, imports, register) ->
 
             redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
               guardCache.del cacheKey
-              res.send 200
+              aem.send res, "200"
 
   # Register clicks, in charge of deleting the redis key, since clicks assume
   # impressions (we check otherwise)
@@ -181,7 +172,7 @@ setup = (options, imports, register) ->
 
     # Guard against duplicate clicks
     guardCache.get cacheKey, (err, data) ->
-      if data.set != undefined then return res.send 404
+      if data.set != undefined then return aem.send res, "404"
 
       guardCache.set cacheKey, set: true, ->
         redis.get "actions:#{actionId}", (err, data) ->
@@ -189,7 +180,7 @@ setup = (options, imports, register) ->
 
           if data == null
             guardCache.del cacheKey
-            return res.send 404
+            return aem.send res, "404"
 
           data = data.split "|"
           data[3] = Number data[3]
@@ -197,7 +188,7 @@ setup = (options, imports, register) ->
           # Should never happen, signals click without impression
           if Number(data[0]) == 0
             guardCache.del cacheKey
-            return res.send 400
+            return aem.send res, "400"
 
           # We don't even use the click field, we simple clear the key :D
           redis.del "actions:#{actionId}", (err) ->
@@ -213,13 +204,13 @@ setup = (options, imports, register) ->
             # Ensure we can actually charge the advertiser
             redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
               if err then spew.error err
-              if funds == null then return res.send 500
+              if funds == null then return aem.send res, "500", error: "NULL funds"
 
               funds = Number funds
 
               # Bail early if the advertiser doesn't have enough money
               # Sux to be broke
-              if funds < data[3] then return res.send 200
+              if funds < data[3] then return aem.send res, "200:nofunds"
 
               # Track action
               redis.incr "#{campaignRef}:clicks"
@@ -230,7 +221,7 @@ setup = (options, imports, register) ->
               # Return after logging request if it isn't a CPC bid
               if data[2] != "CPC"
                 guardCache.del cacheKey
-                return res.send 200
+                return aem.send res, "200"
 
               # Charge advertiser and credit publisher. Continue after
               # advertiser charge goes through
@@ -243,7 +234,7 @@ setup = (options, imports, register) ->
 
               redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
                 guardCache.del cacheKey
-                res.send 200
+                aem.send res, "200"
 
   spew.info "Ad server listening"
   register null, {}
