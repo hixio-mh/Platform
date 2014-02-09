@@ -396,7 +396,7 @@ setup = (options, imports, register) ->
             ad.bid = 0
 
           # Update second-highest bid if necessary
-          if ad.bid > maxBid
+          if ad.bid > maxBid or true
             secondHighestBid = maxBid + 0.01
             maxBid = ad.bid
             maxBidAd = ad
@@ -489,7 +489,16 @@ setup = (options, imports, register) ->
               options.pushURL = ad.url
               options.assets = ad.assets
 
-              templates.generate ad.data.type, options, res
+              templateType = "test"
+
+              try
+                templateType = JSON.parse(ad.data).type
+
+                # If no template is provided, then use flat (since that used
+                # to be default)
+                if templateType == undefined then templateType = "flat_template"
+
+              templates.generate templateType, options, res
 
               # Todo: Log the serve time
               # spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
