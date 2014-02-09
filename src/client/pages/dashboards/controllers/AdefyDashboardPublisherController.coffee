@@ -50,13 +50,13 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
 
     graphs: [
       name: "Impressions"
-      stat: "impressionsp"
+      stat: "impressions:publisher"
       y: "counts"
       from: "-24h"
       interval: "30minutes"
     ,
       name: "Clicks"
-      stat: "clicksp"
+      stat: "clicks:publisher"
       y: "counts"
       from: "-24h"
       interval: "30minutes"
@@ -96,13 +96,13 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
 
     graphs: [
       name: "Impressions"
-      stat: "impressionsp"
+      stat: "impressions:publisher"
       y: "counts"
       interval: "2hours"
       sum: true
     ,
       name: "Clicks"
-      stat: "clicksp"
+      stat: "clicks:publisher"
       y: "counts"
       interval: "2hours"
       sum: true
