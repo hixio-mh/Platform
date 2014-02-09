@@ -251,6 +251,7 @@ setup = (options, imports, register) ->
       if req.user.admin
         ad.approve()
         dat = aem.make "200:approve"
+        spew.info "Approved"
       else
         ad.clearApproval()
         dat = aem.make "200:approve_pending"

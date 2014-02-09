@@ -499,6 +499,8 @@ schema.methods.createRedisStruture = (cb) ->
   performRedisRefresh -> cb()
 
 schema.methods.fetchAssetsFromS3 = (finalCb) ->
+  if @assets.length == 0 then return finalCb()
+
   async.each @assets, (asset, cb) ->
     if asset.buffer.length > 0 then return cb()
 
@@ -506,17 +508,20 @@ schema.methods.fetchAssetsFromS3 = (finalCb) ->
       Bucket: "adefyplatformmain"
       Key: asset.key
     , (err, data) ->
+
       if err
         spew.error err
-        return cb()
+      else
+        asset.buffer = new Buffer(data.Body).toString "base64"
 
-      asset.buffer = new Buffer(data.Body).toString "base64"
-      finalCb()
+      cb()
+  , -> finalCb()
 
 # Rebuild our redis structures
 schema.pre "save", (next) ->
   @fetchAssetsFromS3 =>
-    @createRedisStruture -> next()
+    @createRedisStruture ->
+      next()
 
 schema.path("data").validate (value) ->
   try
