@@ -28,6 +28,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
       loadingColorClass: "loading-white"
       loadingStyleClass: "loading-style-round"
       loaded: false
+      price: "Free"
 
     if scope.controls == false or scope.controls == "false"
       scope.showControls = false
@@ -124,6 +125,9 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
         scope.data.currentBG = data.screenshots[0]
         scope.loading = false
         scope.data.loaded = true
+
+        if Number(scope.data.price) == 0 or isNaN scope.data.price
+          scope.data.price = "Free"
 
         if scope.loaded then scope.loaded scope.data
 

@@ -392,7 +392,8 @@ schema.methods.updatePaceData = (cb) ->
 schema.methods.createRedisStruture = (cb) ->
   @updatePaceData =>
     @populate "ads", =>
-      @refreshAdRefs -> if cb then cb()
+      @refreshAdRefs ->
+        if cb then cb()
 
 # Cleans up campaign references within ads
 schema.pre "remove", (next) ->

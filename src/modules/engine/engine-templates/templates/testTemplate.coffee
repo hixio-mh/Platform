@@ -43,6 +43,11 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
       compression: "none"
       type: "image"
       name: "line"
+    ,
+      path: "notification_icon.png"
+      compression: "none"
+      type: "image"
+      name: "push-icon"
     ]
 
   # Returns our test ad creative, as a seperated header and body.

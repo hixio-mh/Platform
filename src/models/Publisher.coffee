@@ -307,7 +307,7 @@ schema.methods.updateColdRedisData = (cb) ->
           redis.set "#{ref}:category", @category, =>
             cb()
 
-schema.methods.createRedisStruture = ->
+schema.methods.createRedisStruture = (cb) ->
 
   # We don't specify an owner id in some tests
   if @owner != undefined
@@ -319,17 +319,19 @@ schema.methods.createRedisStruture = ->
     ownerId = null
 
   ref = @getRedisId()
-  redis.set "#{ref}:impressions", 0, =>
-  redis.set "#{ref}:clicks", 0, =>
-  redis.set "#{ref}:earnings", 0, =>
-  redis.set "#{ref}:requests", 0, =>
-  redis.set "#{ref}:owner", ownerId, =>
-  redis.set "#{ref}:active", @active, =>
-  redis.set "#{ref}:graphiteId", @getGraphiteId(), =>
-  redis.set "#{ref}:pricing", @preferredPricing, =>
-  redis.set "#{ref}:minCPC", @minimumCPC, =>
-  redis.set "#{ref}:minCPM", @minimumCPM, =>
-  redis.set "#{ref}:category", @category, =>
+  redis.set "#{ref}:impressions", 0, (err) => if err then spew.error err
+  redis.set "#{ref}:clicks", 0, (err) => if err then spew.error err
+  redis.set "#{ref}:earnings", 0, (err) => if err then spew.error err
+  redis.set "#{ref}:requests", 0, (err) => if err then spew.error err
+  redis.set "#{ref}:owner", ownerId, (err) => if err then spew.error err
+  redis.set "#{ref}:active", @active, (err) => if err then spew.error err
+  redis.set "#{ref}:minCPC", @minimumCPC, (err) => if err then spew.error err
+  redis.set "#{ref}:minCPM", @minimumCPM, (err) => if err then spew.error err
+  redis.set "#{ref}:category", @category, (err) => if err then spew.error err
+  redis.set "#{ref}:graphiteId", @getGraphiteId(), (err) => if err then spew.error err
+  redis.set "#{ref}:pricing", @preferredPricing, (err) => if err then spew.error err
+
+  if cb then cb()
 
 schema.methods.clearRedisStructure = ->
   ref = @getRedisId()

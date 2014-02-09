@@ -23,12 +23,15 @@ setup = (options, imports, register) ->
   # assets into memory
   testTemplate = require "./templates/testTemplate"
   flatTemplate = require "./templates/flatTemplate"
+  skittleTemplate = require "./templates/skittleTemplate"
 
   generate = (type, options, res) ->
     if type == "test"
-      flatTemplate.generate options, res
+      testTemplate.generate options, res
     else if type == "flat_template"
       flatTemplate.generate options, res
+    else if type == "skittle_template"
+      skittleTemplate.generate options, res
     else
       spew.info "Unknown template type: #{type}"
       res.json 400, error: "Bad template: #{type }"
