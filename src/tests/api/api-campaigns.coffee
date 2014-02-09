@@ -146,11 +146,11 @@ module.exports = (user, admin) ->
     describe "Get Campaign Stats by Id, Stat, and Range", ->
 
       it "Should 404 if Campaign does not exist", (done) ->
-        util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}/earnings?from=-24h&until=-12h&#{userApiKey}", done, "get"
+        util.expect404User "/api/v1/campaigns/stats/#{testInvalidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", done, "get"
 
       it "Should retrieve existing Campaign stats", (done) ->
 
-        req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}/earnings?from=-24h&until=-12h&#{userApiKey}", "get"
+        req = util.userRequest "/api/v1/campaigns/stats/#{testValidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           for stat in res.body
@@ -186,7 +186,7 @@ module.exports = (user, admin) ->
           return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
-          if not campaign.active then return false
+          expect(campaign).property("active").to.equal true
           done()
 
     # POST /api/v1/campaigns/:id/deactivate
@@ -218,7 +218,7 @@ module.exports = (user, admin) ->
           return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
-          if campaign.active then return false
+          expect(campaign).property("active").to.equal false
           done()
 
         # DELETE /api/v1/campaigns/:id

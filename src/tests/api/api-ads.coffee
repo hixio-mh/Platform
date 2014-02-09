@@ -95,14 +95,17 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/ads?#{userApiKey}"
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
-        res.body.length.should.equal 3
         validateAdFormat ad for ad in res.body
 
-        idHunt = "#{testAdId1} #{testAdId2} #{testAdId3}"
+        found = [false, false, false]
+        for ad in res.body
+          found[0] = true if ad.id == testAdId1
+          found[1] = true if ad.id == testAdId2
+          found[2] = true if ad.id == testAdId3
 
-        expect(idHunt.indexOf res.body[0].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[1].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[2].id).to.be.at.least 0
+        expect(found[0]).to.equal true
+        expect(found[1]).to.equal true
+        expect(found[2]).to.equal true
 
         done()
 

@@ -128,16 +128,18 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/publishers?#{userApiKey}"
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
-        res.body.length.should.equal 3
-
         validatePublisherFormat publisher for publisher in res.body
         expectPublisherStats publisher for publisher in res.body
 
-        idHunt = "#{testPublisherId1} #{testPublisherId2} #{testPublisherId3}"
+        found = [false, false, false]
+        for pub in res.body
+          found[0] = true if pub.id == testPublisherId1
+          found[1] = true if pub.id == testPublisherId2
+          found[2] = true if pub.id == testPublisherId3
 
-        expect(idHunt.indexOf res.body[0].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[1].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[2].id).to.be.at.least 0
+        expect(found[0]).to.equal true
+        expect(found[1]).to.equal true
+        expect(found[2]).to.equal true
 
         done()
 

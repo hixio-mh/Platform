@@ -48,7 +48,7 @@ setup = (options, imports, register) ->
 
   app.get "/api/v1/creator/image/:image", (req, res) ->
     image = req.param "image"
-    if not validImage image then return aem.send res, "400", error: "Invalid image url #{image}"
+    if not validImage image then return aem.send res, "404", error: "Invalid image url #{image}"
 
     image = image.split("https").join "http"
 
