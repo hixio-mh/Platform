@@ -1,3 +1,4 @@
+spew = require "spew"
 should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
@@ -29,6 +30,8 @@ module.exports = (user, admin) ->
   testValidPublisherId = testValidId
   testValidPublisherId2 = testValidId
 
+  handleError = util.handleError
+
   validateStatFormat = (stat) ->
     expect(stat).to.exist
     stat.should.have.property "name"
@@ -43,7 +46,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=TestAd1&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidAdId = res.body.id
         done()
 
@@ -53,7 +56,7 @@ module.exports = (user, admin) ->
 
       req = util.adminRequest "/api/v1/ads?name=TestAd2&#{adminApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidAdId2 = res.body.id
         done()
 
@@ -64,7 +67,7 @@ module.exports = (user, admin) ->
       param_str = "name=TestCampaign1&category=None&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{userApiKey}"
       req = util.userRequest "/api/v1/campaigns?#{param_str}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidCampaignId = res.body.id
         done()
 
@@ -75,7 +78,7 @@ module.exports = (user, admin) ->
       param_str = "name=TestCampaign2&category=None&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{adminApiKey}"
       req = util.adminRequest "/api/v1/campaigns?#{param_str}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidCampaignId2 = res.body.id
         done()
 
@@ -86,7 +89,7 @@ module.exports = (user, admin) ->
       param_str = "name=TestPublisher1&category=None&type=0&#{userApiKey}"
       req = util.userRequest "/api/v1/publishers?#{param_str}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidPublisherId = res.body.id
         done()
 
@@ -97,7 +100,7 @@ module.exports = (user, admin) ->
       param_str = "name=TestPublisher2&category=None&type=0&#{adminApiKey}"
       req = util.adminRequest "/api/v1/publishers?#{param_str}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidPublisherId2 = res.body.id
         done()
 
@@ -119,7 +122,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/campaigns/#{testValidCampaignId2}/earnings?#{userApiKey}", "get"
         req.expect(401).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should allow User to access owned Campaign", (done) ->
@@ -128,8 +131,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/campaigns/#{testValidCampaignId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate Stat JSON
           done()
 
@@ -145,7 +147,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/ads/#{testValidAdId2}/earnings?#{userApiKey}", "get"
         req.expect(401).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
 
           done()
 
@@ -155,8 +157,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/ads/#{testValidAdId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate Stat JSON
           done()
 
@@ -172,7 +173,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/publishers/#{testValidPublisherId2}/earnings?#{userApiKey}", "get"
         req.expect(401).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
 
           done()
 
@@ -182,8 +183,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/analytics/publishers/#{testValidPublisherId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate Stat JSON
           done()
 
@@ -195,7 +195,7 @@ module.exports = (user, admin) ->
         ## with invalid stat
         req = util.userRequest "/api/v1/analytics/totals/foobar?#{userApiKey}", "get"
         req.expect(400).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should allow User to access analytics totals", (done) ->
@@ -207,65 +207,56 @@ module.exports = (user, admin) ->
         # Publishers
         req = util.userRequest "/api/v1/analytics/totals/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/impressionsp?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/clicksp?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/requests?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         # Campaigns
         req = util.userRequest "/api/v1/analytics/totals/spent?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/impressionsa?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/impressionsc?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/clicksa?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/clicksc?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
+          return if handleError(err, res, done)
           ## TODO: Validate JSON
           requests = util.actuallyDoneCheck done, requests
 
@@ -278,22 +269,22 @@ module.exports = (user, admin) ->
         # Admin (network totals)
         req = util.userRequest "/api/v1/analytics/totals/spent:admin?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/impressions:admin?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/clicks:admin?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/totals/earnings:admin?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
 
@@ -302,121 +293,150 @@ module.exports = (user, admin) ->
     ##
 
     # GET /api/v1/analytics/totals/:stat
-    describe "Admin Stat Totals", ->
+    describe "Admin Analytics Totals", ->
 
       it "Should fail if Admin asks for invalid stat", (done) ->
 
         ## with invalid stat
         req = util.adminRequest "/api/v1/analytics/totals/foobar?#{adminApiKey}", "get"
         req.expect(400).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
-      it "Should allow Admin to access analytics totals", (done) ->
+      describe "Valid totals", ->
 
-        @timeout 15000
+        ## Publishers
+        it "Should have access to earnings", (done) ->
 
-        requests = 9
+          @timeout 15000
 
-        # Publishers
-        req = util.adminRequest "/api/v1/analytics/totals/earnings?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.adminRequest "/api/v1/analytics/totals/earnings?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.adminRequest "/api/v1/analytics/totals/impressionsp?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to impressions:publisher", (done) ->
 
-        req = util.adminRequest "/api/v1/analytics/totals/clicksp?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.adminRequest "/api/v1/analytics/totals/requests?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.adminRequest "/api/v1/analytics/totals/impressionsp?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        # Campaigns
-        req = util.adminRequest "/api/v1/analytics/totals/spent?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to clicks:publisher", (done) ->
 
-        req = util.adminRequest "/api/v1/analytics/totals/impressionsa?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.adminRequest "/api/v1/analytics/totals/impressionsc?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.adminRequest "/api/v1/analytics/totals/clicksp?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.adminRequest "/api/v1/analytics/totals/clicksa?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to requests", (done) ->
 
-        req = util.adminRequest "/api/v1/analytics/totals/clicksc?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-      it "Should allow Admin to access Admin-only analytics totals", (done) ->
+          req = util.adminRequest "/api/v1/analytics/totals/requests?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        @timeout 15000
+        ## Campaigns
+        it "Should have access to spent", (done) ->
 
-        requests = 4
+          @timeout 15000
 
-        # Admin (network totals)
-        req = util.adminRequest "/api/v1/analytics/totals/spent:admin?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.adminRequest "/api/v1/analytics/totals/spent?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
-        req = util.adminRequest "/api/v1/analytics/totals/impressions:admin?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+        it "Should have access to impressions:ad", (done) ->
 
-        req = util.adminRequest "/api/v1/analytics/totals/clicks:admin?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          @timeout 15000
 
-        req = util.adminRequest "/api/v1/analytics/totals/earnings:admin?#{adminApiKey}", "get"
-        req.expect(200).end (err, res) ->
-          if err then return done(err)
-          res.body.should.not.have.property "error"
-          ## TODO: Validate JSON
-          requests = util.actuallyDoneCheck done, requests
+          req = util.adminRequest "/api/v1/analytics/totals/impressionsa?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to impressions:campaign", (done) ->
+
+          @timeout 15000
+
+          req = util.adminRequest "/api/v1/analytics/totals/impressionsc?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to clicks:ad", (done) ->
+
+          @timeout 15000
+
+          req = util.adminRequest "/api/v1/analytics/totals/clicksa?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to clicks:campaign", (done) ->
+
+          req = util.adminRequest "/api/v1/analytics/totals/clicksc?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+      describe "Valid Admin-only totals", ->
+
+        ## Admin (network totals)
+        it "Should have access to spent:admin", (done) ->
+
+          @timeout 30000
+
+          req = util.adminRequest "/api/v1/analytics/totals/spent:admin?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to impressions:admin", (done) ->
+
+          @timeout 30000
+
+          req = util.adminRequest "/api/v1/analytics/totals/impressions:admin?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to clicks:admin", (done) ->
+
+          @timeout 30000
+
+          req = util.adminRequest "/api/v1/analytics/totals/clicks:admin?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
+
+        it "Should have access to earnings:admin", (done) ->
+
+          @timeout 30000
+
+          req = util.adminRequest "/api/v1/analytics/totals/earnings:admin?#{adminApiKey}", "get"
+          req.expect(200).end (err, res) ->
+            return if handleError(err, res, done)
+            ## TODO: Validate JSON
+            done()
 
     # GET /api/v1/analytics/counts/:model
     describe "Count Model", ->
@@ -430,28 +450,28 @@ module.exports = (user, admin) ->
         ## with invalid model
         req = util.userRequest "/api/v1/analytics/counts/FooBar?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         ## with valid model
         req = util.userRequest "/api/v1/analytics/counts/User?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/counts/Ad?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/counts/Campaign?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
         req = util.userRequest "/api/v1/analytics/counts/Publisher?#{userApiKey}", "get"
         req.expect(403).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           requests = util.actuallyDoneCheck done, requests
 
       it "Should fail if Admin accesses invalid model", (done) ->
@@ -459,7 +479,7 @@ module.exports = (user, admin) ->
         ## with invalid model
         req = util.adminRequest "/api/v1/analytics/counts/FooBarZee?#{adminApiKey}", "get"
         req.expect(400).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       describe "Admin to access analytics counts", ->
@@ -470,7 +490,7 @@ module.exports = (user, admin) ->
 
           req = util.adminRequest "/api/v1/analytics/counts/User?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
-            if err then return done(err)
+            return if handleError(err, res, done)
             ## TODO: Validate JSON
             requests = util.actuallyDoneCheck done, requests
 
@@ -478,7 +498,7 @@ module.exports = (user, admin) ->
 
           req = util.adminRequest "/api/v1/analytics/counts/Ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
-            if err then return done(err)
+            return if handleError(err, res, done)
             ## TODO: Validate JSON
             requests = util.actuallyDoneCheck done, requests
 
@@ -486,7 +506,7 @@ module.exports = (user, admin) ->
 
           req = util.adminRequest "/api/v1/analytics/counts/Campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
-            if err then return done(err)
+            return if handleError(err, res, done)
             ## TODO: Validate JSON
             requests = util.actuallyDoneCheck done, requests
 
@@ -494,7 +514,7 @@ module.exports = (user, admin) ->
 
           req = util.adminRequest "/api/v1/analytics/counts/Publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
-            if err then return done(err)
+            return if handleError(err, res, done)
             ## TODO: Validate JSON
             requests = util.actuallyDoneCheck done, requests
 
@@ -506,7 +526,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testValidAdId}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         done()
 
     it "Should remove a second Ad", (done) ->
@@ -515,7 +535,7 @@ module.exports = (user, admin) ->
 
       req = util.adminRequest "/api/v1/ads/#{testValidAdId2}?#{adminApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         done()
 
     it "Should remove a Campaign", (done) ->
@@ -524,7 +544,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         done()
 
     it "Should remove a second Campaign", (done) ->
@@ -533,7 +553,7 @@ module.exports = (user, admin) ->
 
       req = util.adminRequest "/api/v1/campaigns/#{testValidCampaignId2}?#{adminApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidCampaignId2 = res.body.id
         done()
 
@@ -543,7 +563,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testValidPublisherId}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         testValidPublisherId = res.body.id
         done()
 
@@ -553,5 +573,5 @@ module.exports = (user, admin) ->
 
       req = util.adminRequest "/api/v1/publishers/#{testValidPublisherId2}?#{adminApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         done()

@@ -525,12 +525,11 @@ schema.pre "save", (next) ->
 
 schema.path("data").validate (value) ->
   try
-    hash = JSON.parse(value)
-    if hash.min < 16
-      false
-    ## add other validations here
-    else
-      true
+    if (value)
+      hash = JSON.parse(value)
+      if hash.min < 16
+        return false
+    return true
   catch e
     spew.error e
     false

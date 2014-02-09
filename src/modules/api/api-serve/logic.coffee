@@ -37,6 +37,7 @@ setup = (options, imports, register) ->
 
   # Fetch a test ad (unidentified request)
   app.get "/api/v1/serve", (req, res) ->
+    console.log req.url
     adEngine.fetchTest req, res
 
   # Try to fetch a real ad

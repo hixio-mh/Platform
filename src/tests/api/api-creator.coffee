@@ -1,3 +1,5 @@
+spew = require "spew"
+
 should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
@@ -17,6 +19,8 @@ module.exports = (user, admin) ->
   testValidURL = "" # I dunno
 
   util = require("../utility") api, user, admin
+
+  handleError = util.handleError
 
   validateSuggestionFormat = (sug) ->
     expect(sug).to.exist
@@ -51,7 +55,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/creator", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
     # GET /api/v1/creator/image/:image
@@ -63,7 +67,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/creator/image/#{testInvalidCreatorImage}", "get"
         req.expect(404).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should retrieve a Creator Image", (done) ->
@@ -72,7 +76,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/creator/image/#{testValidCreatorImage}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
     # GET /api/v1/creator/suggestions
@@ -84,7 +88,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/creator/suggestions", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           for sug in res.body
             validateSuggestionFormat sug
           done()
@@ -96,13 +100,13 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/creator/#{testInvalidURL}", "get"
         req.expect(404).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should retrieve App with valid url", (done) ->
 
         req = util.userRequest "/api/v1/creator/#{testValidURL}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           validateAppFormat res.body
           done()
