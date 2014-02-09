@@ -48,13 +48,13 @@ angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($sc
 
     graphs: [
       name: "Impressions"
-      stat: "impressionsc"
+      stat: "impressions:campaign"
       y: "counts"
       from: "-24h"
       interval: "30minutes"
     ,
       name: "Clicks"
-      stat: "clicksc"
+      stat: "clicks:campaign"
       y: "counts"
       from: "-24h"
       interval: "30minutes"
@@ -94,13 +94,13 @@ angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($sc
 
     graphs: [
       name: "Impressions"
-      stat: "impressionsc"
+      stat: "impressions:campaign"
       y: "counts"
       interval: "2hours"
       sum: true
     ,
       name: "Clicks"
-      stat: "clicksc"
+      stat: "clicks:campaign"
       y: "counts"
       interval: "2hours"
       sum: true
