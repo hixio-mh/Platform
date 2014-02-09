@@ -70,7 +70,6 @@ setup = (options, imports, register) ->
   ##
   ## Passport setup
   ##
-
   # Local strategy (non-API requests)
   passport.use new passportLocalStrategy (username, password, done) ->
 
