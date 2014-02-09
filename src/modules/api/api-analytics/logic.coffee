@@ -39,7 +39,7 @@ setup = (options, imports, register) ->
 
   queryPublishers = (query, options, stat, res) ->
     db.model("Publisher").find query, (err, publishers) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
 
       pubRefs = []
       for publisher in publishers
@@ -54,7 +54,7 @@ setup = (options, imports, register) ->
     .find(query)
     .populate("ads")
     .exec (err, campaigns) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
 
       adRefs = []
       for campaign in campaigns
@@ -70,7 +70,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
 
       if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -83,7 +83,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
 
       if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -93,7 +93,7 @@ setup = (options, imports, register) ->
 
   app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
 
       if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -129,16 +129,16 @@ setup = (options, imports, register) ->
 
     # Admin (network totals)
     else if stat == "spent:admin"
-      if not req.user.admin then return aem.send res, "403"
+      if not req.user.admin then return aem.send res, "403", error: req.user
       queryCampaigns {}, options, "spent", res
     else if stat == "impressions:admin"
-      if not req.user.admin then return aem.send res, "403"
+      if not req.user.admin then return aem.send res, "403", error: req.user
       queryCampaigns {}, options, "impressions", res
     else if stat == "clicks:admin"
-      if not req.user.admin then return aem.send res, "403"
+      if not req.user.admin then return aem.send res, "403", error: req.user
       queryCampaigns {}, options, "clicks", res
     else if stat == "earnings:admin"
-      if not req.user.admin then return aem.send res, "403"
+      if not req.user.admin then return aem.send res, "403", error: req.user
       queryPublishers {}, options, "earnings", res
 
     else
@@ -149,7 +149,7 @@ setup = (options, imports, register) ->
   ##
 
   app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403"
+    if not req.user.admin then return aem.send res, "403", error: req.user
 
     model = req.param "model"
     validModels = [

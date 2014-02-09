@@ -11,12 +11,13 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 fs = require "fs"
 request = require "request"
 archiver = require "archiver"
 _ = require "underscore"
+
+s3Host = "adefyplatformmain.s3.amazonaws.com"
 
 class AdefyBaseAdTemplate
 
@@ -102,6 +103,13 @@ class AdefyBaseAdTemplate
         type: texture.type
         name: texture.name
 
+  getAssetKeyFilename: (key) ->
+    if key.split("/").length > 0
+      filename = key.split "/"
+      return filename[filename.length - 1]
+    else
+      key
+
   # Sends an HTML ad, pulling in AWGL.
   #
   # @param [Object] creative
@@ -124,6 +132,16 @@ class AdefyBaseAdTemplate
     manifestHTML = _.clone @manifestHMTL
     manifestHTML.click = clickURL
     manifestHTML.impression = impressionURL
+
+    # Append assets
+    if options.assets != undefined
+      for asset in options.assets
+
+        manifestHTML.textures.push
+          path: "//#{s3Host}/#{asset.key}"
+          compression: "none"
+          type: "image"
+          name: asset.name
 
     fullAd = """
     <!DOCTYPE html>
@@ -173,13 +191,6 @@ class AdefyBaseAdTemplate
   # @param [Object] res
   sendArchive: (creative, options, res) ->
 
-    getAssetKeyFilename = (key) ->
-      if key.split("/").length > 0
-        filename = key.split "/"
-        return filename[filename.length - 1]
-      else
-        key
-
     archive = archiver "zip"
     archive.on "error", (err) ->
       spew.error err
@@ -211,10 +222,10 @@ class AdefyBaseAdTemplate
     # Append assets
     if options.assets != undefined
       for asset in options.assets
-        filename = getAssetKeyFilename asset.key
+        filename = @getAssetKeyFilename asset.key
 
         manifest.textures.push
-          path: @prefixRemoteAssetPath filename
+          path: filename
           compression: "none"
           type: "image"
           name: asset.name

@@ -1,3 +1,4 @@
+spew = require "spew"
 should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
@@ -20,6 +21,8 @@ module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
 
+  handleError = util.handleError
+
   validateAdFormat = (ad) ->
     expect(ad).to.exist
     ad.should.have.property "name"
@@ -39,7 +42,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
 
         testAdId1 = res.body.id
@@ -47,7 +50,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
 
         testAdId2 = res.body.id
@@ -55,7 +58,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
 
         testAdId3 = res.body.id
@@ -68,21 +71,21 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId2}?#{userApiKey}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId3}?#{userApiKey}"
       user.attachCookies req
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validateAdFormat res.body
         requests = util.actuallyDoneCheck done, requests
 
@@ -91,7 +94,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         res.body.length.should.equal 3
         validateAdFormat ad for ad in res.body
 
@@ -110,17 +113,17 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId2}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId3}?#{userApiKey}", "del"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 
     # GET /api/v1/ads/:id
@@ -130,16 +133,16 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/ads/#{testAdId1}?#{userApiKey}"
       req.expect(404).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId2}?#{userApiKey}"
       req.expect(404).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 
       req = util.userRequest "/api/v1/ads/#{testAdId3}?#{userApiKey}"
       req.expect(404).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         requests = util.actuallyDoneCheck done, requests
 

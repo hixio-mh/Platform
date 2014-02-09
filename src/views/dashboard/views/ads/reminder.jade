@@ -29,4 +29,6 @@ include _menu
     br
 
     dt
-    dd: button.save.blue(ng-click="save()") Save Notification
+    dd
+      button.save.blue(ng-show="!saving" ng-click="save()") Save Notification
+      button.save(ng-show="saving" disabled="disabled") Saving...

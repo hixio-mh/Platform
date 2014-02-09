@@ -82,8 +82,9 @@ setup = (options, imports, register) ->
         if not match then return done null, false, message: "Incorrect password"
 
         signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
+        admin = user.permissions == 0
         user = user.toAPI()
-        user.admin = user.permissions == 0
+        user.admin = admin
         user.signedup = signedup
 
         done null, user
@@ -105,8 +106,9 @@ setup = (options, imports, register) ->
   passport.deserializeUser (id, done) ->
     mongoose.model("User").findById id, (err, user) ->
       signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
+      admin = user.permissions == 0
       user = user.toAPI()
-      user.admin = user.permissions == 0
+      user.admin = admin
       user.signedup = signedup
 
       done err, user

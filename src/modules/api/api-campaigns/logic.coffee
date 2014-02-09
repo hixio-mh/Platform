@@ -73,7 +73,7 @@ setup = (options, imports, register) ->
     .find({ owner: req.user.id })
     .populate("ads")
     .exec (err, campaigns) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
       if campaigns.length == 0 then res.json 200, []
 
       ret = []
@@ -92,7 +92,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
       if not campaign then return aem.send res, "404"
 
       # Check if authorized
@@ -111,7 +111,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
       if not campaign then return aem.send res, "404"
 
       # Permission check
@@ -170,7 +170,7 @@ setup = (options, imports, register) ->
 
           for adId in adsToRemove
             db.model("Ad").findById adId, (err, ad) ->
-              if utility.dbError err, res, true then return aem.send res, "500:db"
+              if utility.dbError err, res then return
               if not ad
                 spew.error "Tried to remove ad from campaign, ad not found"
                 spew.error "Ad id: #{adId}"
@@ -188,7 +188,7 @@ setup = (options, imports, register) ->
 
           for adId in adsToAdd
             db.model("Ad").findById adId, (err, ad) ->
-              if utility.dbError err, res, true then return aem.send res, "500:db"
+              if utility.dbError err, res then return
               if not ad
                 spew.error "Tried to add ad to campaign, ad not found"
                 spew.error "Ad id: #{adId}"
@@ -322,14 +322,14 @@ setup = (options, imports, register) ->
 
     # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res then return
       if not campaign then return aem.send res, "404", error: "Campaign not found"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return aem.send res, "401"
 
       campaign.remove()
-      res.json 200, { message: "Poof, its gone" }
+      aem.send res, "200:delete"
 
   # Fetch campaign stats over a specific period of time
   app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
@@ -341,8 +341,8 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
-      if not campaign then res.json 404, { message: "I present you: NULL" }
+      if utility.dbError err, res then return
+      if not campaign then return aem.send res, "404"
 
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data
@@ -353,14 +353,14 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
-      if not campaign then return res.json 404, { message: "Looks like we need Sherlock for this one" }
+      if utility.dbError err, res then return
+      if not campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.json 403, { message: "" }
+        return aem.send res, "401"
 
       if not campaign.active then campaign.activate -> campaign.save()
-      res.json 200, { message: "" }
+      res.json 200, campaign.toAnonAPI
 
   # De-activates the campaign
   app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) ->
@@ -368,14 +368,14 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
-      if not campaign then return res.json 404, { message: "" }
+      if utility.dbError err, res then return
+      if not campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.json 403, { message: "" }
+        return aem.send res, "401"
 
       if campaign.active then campaign.deactivate -> campaign.save()
-      res.json 200, { message: "" }
+      res.json 200, campaign.toAnonAPI
 
   register null, {}
 

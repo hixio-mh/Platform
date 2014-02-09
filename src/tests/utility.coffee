@@ -1,3 +1,4 @@
+spew = require("spew")
 should = require("chai").should()
 expect = require("chai").expect
 
@@ -38,6 +39,16 @@ generateInterface = (api, user, admin) ->
     expect(object.id).to.exist
 
   @actuallyDoneCheck = (done, i) -> i--; if i > 0 then return i; else done()
+
+  @handleError = (err, res, done) ->
+    if err
+      spew.error err
+      if res
+        spew.error res.text
+      done(err)
+      true
+    else
+      false
 
   @
 
