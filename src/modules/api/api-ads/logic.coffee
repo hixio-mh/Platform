@@ -18,8 +18,10 @@
 spew = require "spew"
 db = require "mongoose"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 
 setup = (options, imports, register) ->

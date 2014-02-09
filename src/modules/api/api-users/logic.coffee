@@ -23,9 +23,8 @@ modeConfig = config.modes[config.mode]
 adefyDomain = "http://#{modeConfig.domain}"
 
 passport = require "passport"
-
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 paypalCredentials = modeConfig.paypal
 

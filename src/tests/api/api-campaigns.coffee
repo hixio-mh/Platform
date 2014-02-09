@@ -123,10 +123,10 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}?#{userApiKey}", done, "post"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}?#{userApiKey}", "post"
-        req.expect(403).end (err, res) ->
+        req.expect(401).end (err, res) ->
           if err then return done(err)
           done()
 
@@ -161,10 +161,10 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}/activate?#{userApiKey}", done, "post"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}/activate?#{userApiKey}", "post"
-        req.expect(403).end (err, res) ->
+        req.expect(401).end (err, res) ->
           if err then return done(err)
           done()
 

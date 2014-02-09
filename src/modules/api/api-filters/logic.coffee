@@ -18,8 +18,9 @@
 spew = require "spew"
 db = require "mongoose"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 setup = (options, imports, register) ->
 

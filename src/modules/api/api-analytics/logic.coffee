@@ -16,8 +16,9 @@ spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 ##
 ## Analytics API, some paths are admin-only
@@ -164,7 +165,7 @@ setup = (options, imports, register) ->
         validModel = true
         break
 
-    if not validModel then return return aem.send res, "400", error: "Invalid model: #{model}"
+    if not validModel then return aem.send res, "400", error: "Invalid model: #{model}"
 
     db.model(model).find {}, (err, objects) ->
       if err then spew.error err
