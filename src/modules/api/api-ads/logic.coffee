@@ -259,6 +259,7 @@ setup = (options, imports, register) ->
       # If we are admin, approve directly
       if req.user.admin
         ad.approve()
+        spew.info "Approved"
       else
         ad.clearApproval()
 
