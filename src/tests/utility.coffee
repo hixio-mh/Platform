@@ -10,7 +10,9 @@ generateInterface = (api, user, admin) ->
 
     req = api[method] url
     if user != undefined then user.attachCookies req
-    req.expect(404).end (err, res) -> done()
+    req.expect(404).end (err, res) ->
+      if err then throw err
+      done()
 
   # 404 checks with specific users
   @expect404User = (url, done, method) => @expect404 url, done, method, user

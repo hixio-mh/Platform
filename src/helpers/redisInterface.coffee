@@ -28,6 +28,9 @@ redisMain.select mainConfig.db
 redisAutocomplete = redisLib.createClient autocompleteConfig.port, autocompleteConfig.host
 redisAutocomplete.select autocompleteConfig.db
 
+redisMain.on "error", (err) -> spew.error "Redis main: #{err}"
+redisAutocomplete.on "error", (err) -> spew.error "Redis autocomplete: #{err}"
+
 module.exports =
   main: redisMain
   autocomplete: redisAutocomplete
