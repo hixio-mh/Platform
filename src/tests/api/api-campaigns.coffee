@@ -1,8 +1,8 @@
+spew = require "spew"
+
 should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
-
-spew = require "spew"
 
 config = require "../../config.json"
 config = config.modes[config.mode]
@@ -22,6 +22,8 @@ module.exports = (user, admin) ->
   testValidCampaignId2 = "77677"
 
   util = require("../utility") api, user, admin
+
+  handleError = util.handleError
 
   validateCampaignFormat = (campaign) ->
     expect(campaign).to.exist
@@ -58,7 +60,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "post"
         req.expect(400).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should create Campaign with necessary params", (done) ->
@@ -68,7 +70,7 @@ module.exports = (user, admin) ->
         param_str = "name=TheAdefier&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{userApiKey}"
         req = util.userRequest "/api/v1/campaigns?#{param_str}", "post"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
           testValidCampaignId = campaign.id
@@ -81,7 +83,7 @@ module.exports = (user, admin) ->
         param_str = "name=TheAdefierAdmin&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{adminApiKey}"
         req = util.adminRequest "/api/v1/campaigns?#{param_str}", "post"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
           testValidCampaignId2 = campaign.id
@@ -94,7 +96,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaigns = res.body
           for campaign in campaigns
             validateCampaignFormat campaign
@@ -111,7 +113,7 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
 
@@ -123,18 +125,18 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}?#{userApiKey}", done, "post"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}?#{userApiKey}", "post"
-        req.expect(403).end (err, res) ->
-          if err then return done(err)
+        req.expect(401).end (err, res) ->
+          return if handleError(err, res, done)
           done()
 
       it "Should update an existing Campaign", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
 
@@ -144,13 +146,13 @@ module.exports = (user, admin) ->
     describe "Get Campaign Stats by Id, Stat, and Range", ->
 
       it "Should 404 if Campaign does not exist", (done) ->
-        util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}/earnings/?from=-24h&until=-12h&#{userApiKey}", done, "get"
+        util.expect404User "/api/v1/campaigns/stats/#{testInvalidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", done, "get"
 
       it "Should retrieve existing Campaign stats", (done) ->
 
-        req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}/earnings/?from=-24h&until=-12h&#{userApiKey}", "get"
+        req = util.userRequest "/api/v1/campaigns/stats/#{testValidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           for stat in res.body
             validateStatFormat stat
           done()
@@ -161,18 +163,18 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}/activate?#{userApiKey}", done, "post"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}/activate?#{userApiKey}", "post"
-        req.expect(403).end (err, res) ->
-          if err then return done(err)
+        req.expect(401).end (err, res) ->
+          return if handleError(err, res, done)
           done()
 
       it "Should activate an existing Campaign", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}/activate?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should ensure that Campaign is active", (done) ->
@@ -181,10 +183,10 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
-          if not campaign.active then return false
+          expect(campaign).property("active").to.equal true
           done()
 
     # POST /api/v1/campaigns/:id/deactivate
@@ -193,18 +195,18 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}/deactivate?#{userApiKey}", done, "post"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}/deactivate?#{userApiKey}", "post"
-        req.expect(403).end (err, res) ->
-          if err then return done(err)
+        req.expect(401).end (err, res) ->
+          return if handleError(err, res, done)
           done()
 
       it "Should deactivate an existing Campaign", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}/deactivate?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           done()
 
       it "Should ensure that Campaign is inactive", (done) ->
@@ -213,10 +215,10 @@ module.exports = (user, admin) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
           campaign = res.body
           validateCampaignFormat campaign
-          if campaign.active then return false
+          expect(campaign).property("active").to.equal false
           done()
 
         # DELETE /api/v1/campaigns/:id
@@ -225,18 +227,18 @@ module.exports = (user, admin) ->
       it "Should 404 if Campaign does not exist", (done) ->
         util.expect404User "/api/v1/campaigns/#{testInvalidCampaignId}?#{userApiKey}", done, "del"
 
-      it "Should 403 if Campaign does not belong to User", (done) ->
+      it "Should 401 if Campaign does not belong to User", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId2}?#{userApiKey}", "del"
-        req.expect(403).end (err, res) ->
-          if err then return done(err)
+        req.expect(401).end (err, res) ->
+          return if handleError(err, res, done)
           done()
 
       it "Should delete an existing Campaign", (done) ->
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "del"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
 
           done()
 
@@ -244,7 +246,7 @@ module.exports = (user, admin) ->
 
         req = util.adminRequest "/api/v1/campaigns/#{testValidCampaignId2}?#{adminApiKey}", "del"
         req.expect(200).end (err, res) ->
-          if err then return done(err)
+          return if handleError(err, res, done)
 
           done()
 

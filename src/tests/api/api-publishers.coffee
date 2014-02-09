@@ -1,3 +1,5 @@
+spew = require "spew"
+
 should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
@@ -19,6 +21,8 @@ adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
+
+  handleError = util.handleError
 
   validatePublisherFormat = (publisher) ->
     expect(publisher).to.exist
@@ -60,7 +64,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validatePublisherFormat res.body
 
         testPublisherId1 = res.body.id
@@ -68,7 +72,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validatePublisherFormat res.body
 
         testPublisherId2 = res.body.id
@@ -76,7 +80,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
         validatePublisherFormat res.body
 
         testPublisherId3 = res.body.id
@@ -91,7 +95,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId1}?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -100,7 +104,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId2}?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -109,7 +113,7 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers/#{testPublisherId3}?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
+        return if handleError(err, res, done)
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
@@ -123,17 +127,19 @@ module.exports = (user, admin) ->
 
       req = util.userRequest "/api/v1/publishers?#{userApiKey}"
       req.expect(200).end (err, res) ->
-        if err then return done(err)
-        res.body.length.should.equal 3
-
+        return if handleError(err, res, done)
         validatePublisherFormat publisher for publisher in res.body
         expectPublisherStats publisher for publisher in res.body
 
-        idHunt = "#{testPublisherId1} #{testPublisherId2} #{testPublisherId3}"
+        found = [false, false, false]
+        for pub in res.body
+          found[0] = true if pub.id == testPublisherId1
+          found[1] = true if pub.id == testPublisherId2
+          found[2] = true if pub.id == testPublisherId3
 
-        expect(idHunt.indexOf res.body[0].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[1].id).to.be.at.least 0
-        expect(idHunt.indexOf res.body[2].id).to.be.at.least 0
+        expect(found[0]).to.equal true
+        expect(found[1]).to.equal true
+        expect(found[2]).to.equal true
 
         done()
 

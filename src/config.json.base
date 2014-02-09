@@ -9,7 +9,7 @@
 	"modes": {
 		"development": {
 			"domain": "www.adefy.dev",
-			"port": 5000,
+			"port": 10000,
 			"loglevel": 10,
 			"newrelic": false,
 			"trafficgen": false,

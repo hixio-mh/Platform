@@ -16,19 +16,10 @@ request = require "request"
 url = require "url"
 cheerio = require "cheerio"
 accounting = require "accounting"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+passport = require "passport"
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 # Redundent checks, just to make sure. We don't want to be fooled into
 # parsing a non-play-store URL
@@ -57,7 +48,7 @@ setup = (options, imports, register) ->
 
   app.get "/api/v1/creator/image/:image", (req, res) ->
     image = req.param "image"
-    if not validImage image then return res.send 400
+    if not validImage image then return aem.send res, "404", error: "Invalid image url #{image}"
 
     image = image.split("https").join "http"
 
@@ -67,10 +58,10 @@ setup = (options, imports, register) ->
 
   # Fetch top paid games list from google
   app.get "/api/v1/creator/suggestions", (req, res) ->
-    request "https://play.google.com/store/apps/category/GAME/collection/topselling_paid", (error, response, body) ->
-      if error
-        spew.error error
-        return res.send 500
+    request "https://play.google.com/store/apps/category/GAME/collection/topselling_paid", (err, response, body) ->
+      if err
+        spew.error err
+        return aem.send res, "500", error: ""
 
       $ = cheerio.load body
       apps = []
@@ -84,12 +75,12 @@ setup = (options, imports, register) ->
 
   app.get "/api/v1/creator/:url", (req, res) ->
     urlObj = url.parse req.param "url"
-    if not validURL urlObj then return res.json 400, error: "Invalid URL"
+    if not validURL urlObj then return aem.send res, "400", error: "Invalid Creator url #{req.param("url")}"
 
     request req.param("url"), (error, response, body) ->
       if error
         spew.error error
-        return res.send 500
+        return aem.send res, "500"
 
       $ = cheerio.load body
       info = $ ".details-wrapper.apps .info-container"

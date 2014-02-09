@@ -13,6 +13,7 @@
 ##
 spew = require "spew"
 db = require "mongoose"
+aem = require "../../../helpers/apiErrorMessages"
 
 # Utility methods, mostly for validation
 setup = (options, imports, register) ->
@@ -57,7 +58,12 @@ setup = (options, imports, register) ->
       # @return [Boolean] wasError false if error object invalid
       dbError: (error, res, passive) ->
         if error
-          if passive != true then res.send 404
+          # Just treat cast errors as 404s
+          if error.name == "CastError"
+            if passive != true then aem.send res, "404"
+          else
+            spew.error error
+            if passive != true then aem.send res, "500:db", error: error
           return true
         false
 
