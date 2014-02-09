@@ -58,7 +58,10 @@ setup = (options, imports, register) ->
   # Save ad edits
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
 
-    db.model("Ad").findById req.param("id"), (err, ad) ->
+    db.model("Ad")
+    .findById(req.param("id"))
+    .populate("campaigns.campaign")
+    .exec (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
 
@@ -113,7 +116,10 @@ setup = (options, imports, register) ->
           spew.error err
           res.send 500
         else
-          res.json 200, ad.toAnonAPI()
+          ad.fetchCompiledStats (stats) ->
+            adData = ad.toAPI()
+            adData.stats = stats
+            res.json 200, adData
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
