@@ -11,6 +11,8 @@ a.new-item(href="/campaigns/new")
         img(ng-src="{{ ad.data.creative.image }}")
 
     .name(ng-bind="campaign.name")
+    .label.blue(ng-if="campaign.tutorial") Example
+
     .metrics(ng-if="campaign.graphData")
       div.noAxes(analytics data="campaign.graphData" width="335" height="200")
       .wrap: .text

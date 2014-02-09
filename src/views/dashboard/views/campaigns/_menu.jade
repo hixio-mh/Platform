@@ -25,5 +25,6 @@
   .toggle-wrap(style="float:right" ng-if="me.adFunds > 0")
     toggle-switch(method="activeToggled()" model="campaign.active")
 
-  span(style="float:right" ng-if="me.adFunds == 0")
-    .label.gray Upload Funds To Enable
+  .right
+    .label.blue(ng-if="campaign.tutorial") Example
+    .label.gray(ng-if="me.adFunds == 0") Upload Funds To Enable

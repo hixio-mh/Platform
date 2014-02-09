@@ -11,6 +11,7 @@ ul.list(ng-if="ads")
       img.icon(ng-if="ad.data.creative" ng-src="{{ ad.data.creative.image }}")
 
       .name(ng-bind="ad.name")
+      .label.blue(ng-if="ad.tutorial") Example
 
       span(ng-switch="ad.status" ng-if="ad.data.creative")
         .label.gray(ng-switch-when="0") Pending Approval

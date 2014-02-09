@@ -19,6 +19,7 @@ a.new-item(href="/apps/new")
   a.item(ng-repeat="app in apps | orderBy:'stats.earnings':true" ng-href="/apps/{{app.id}}")
     img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
+    .label.blue(ng-if="app.tutorial") Example
     .metrics(ng-if="app.graphData")
       div.noAxes(analytics data="app.graphData" width="335" height="200")
       .wrap: .text
