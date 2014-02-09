@@ -17,19 +17,10 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+passport = require "passport"
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 setup = (options, imports, register) ->
 

@@ -288,12 +288,12 @@ getIdFromArgument = (arg) ->
   arg
 
 schema.methods.activate = (cb) ->
-  if @tutorial then return cb() else return
+  if @tutorial then return cb()
   @active = true
   @refreshAdRefs => cb()
 
 schema.methods.deactivate = (cb) ->
-  if @tutorial then return cb() else return
+  if @tutorial then return cb()
   @active = false
   @clearAdReferences => cb()
 

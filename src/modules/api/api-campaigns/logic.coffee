@@ -18,19 +18,10 @@
 spew = require "spew"
 db = require "mongoose"
 _ = require "underscore"
-passport = require "passport"
 
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
+passport = require "passport"
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 setup = (options, imports, register) ->
 
@@ -38,7 +29,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
   engineFilters = require "#{__dirname}/../../../helpers/filters"
 
-  # Create new cmapaign
+  # Create new campaign
   app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Campaign name" then return
     if not utility.param req.param("category"), res, "Category" then return
@@ -102,11 +93,11 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then return res.send 404
+      if not campaign then return aem.send res, "404"
 
       # Check if authorized
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       campaign.populateSelfAllStats (self) -> res.json self
 
@@ -121,29 +112,29 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then return res.send 404
+      if not campaign then return aem.send res, "404"
 
       # Permission check
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.json 403
+        return aem.send res, "401"
 
       # Perform basic validation
       if req.body.totalBudget != undefined and isNaN req.body.totalBudget
-        return res.send 400, error: "Invalid total budget"
+        return aem.send res, "400", error: "Invalid total budget"
 
       if req.body.dailyBudget != undefined and isNaN req.body.dailyBudget
-        return res.send 400, error: "Invalid daily budget"
+        return aem.send res, "400", error: "Invalid daily budget"
 
       if req.body.bid != undefined and isNaN req.body.bid
-        return res.send 400, error: "Invalid bid amount"
+        return aem.send res, "400", error: "Invalid bid amount"
 
       if req.body.bidSystem != undefined
         if req.body.bidSystem != "Manual" and req.body.bidSystem != "Automatic"
-          return res.send 400, error: "Invalid bid system"
+          return aem.send res, "400", error: "Invalid bid system"
 
       if req.body.pricing != undefined
         if req.body.pricing != "CPM" and req.body.pricing != "CPC"
-          return res.send 400, error: "Invalid pricing"
+          return aem.send res, "400", error: "Invalid pricing"
 
       # Don't allow active state change through edit path
       if req.body.active != undefined then delete req.body.active
@@ -183,7 +174,7 @@ setup = (options, imports, register) ->
               if not ad
                 spew.error "Tried to remove ad from campaign, ad not found"
                 spew.error "Ad id: #{adId}"
-                return res.send 500
+                return aem.send res, "500:delete"
 
               # NOTE: We don't wait for ad references to clear!
               campaign.removeAd ad
@@ -201,11 +192,11 @@ setup = (options, imports, register) ->
               if not ad
                 spew.error "Tried to add ad to campaign, ad not found"
                 spew.error "Ad id: #{adId}"
-                return res.send 500
+                return aem.send res, "500:404"
               else if ad.status != 2
                 spew.error "Tried to add un-approved ad to campaign"
                 spew.error "Client and server-side checks were bypassed!"
-                return res.send 500
+                return aem.send res, "500:unexpected"
 
               ad.registerCampaignParticipation campaign
 
@@ -332,14 +323,13 @@ setup = (options, imports, register) ->
     # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then return res.send 404
+      if not campaign then return aem.send res, "404", error: "Campaign not found"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        res.json 403, { error: "Unauthorized!" }
-        return
+        return aem.send res, "401"
 
       campaign.remove()
-      res.json 200
+      aem.send res, "200:delete"
 
   # Fetch campaign stats over a specific period of time
   app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
@@ -352,7 +342,7 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then res.send(404); return
+      if not campaign then return aem.send res, "404"
 
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data
@@ -364,13 +354,13 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then return res.send 404
+      if not campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       if not campaign.active then campaign.activate -> campaign.save()
-      res.send 200
+      res.json 200, campaign.toAnonAPI
 
   # De-activates the campaign
   app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) ->
@@ -379,13 +369,13 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res then return
-      if not campaign then return res.send 404
+      if not campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
-        return res.send 403
+        return aem.send res, "401"
 
       if campaign.active then campaign.deactivate -> campaign.save()
-      res.send 200
+      res.json 200, campaign.toAnonAPI
 
   register null, {}
 

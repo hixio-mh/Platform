@@ -21,23 +21,15 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config.json"
 modeConfig = config.modes[config.mode]
 adefyDomain = "http://#{modeConfig.domain}"
+
 passport = require "passport"
+aem = require "../../../helpers/apiErrorMessages"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+
 paypalCredentials = modeConfig.paypal
 
 if paypalCredentials.client_id == undefined or paypalCredentials.client_secret == undefined
   throw new Error "Paypal credentials missing on config!"
-
-# Route middleware to make sure a user is logged in
-isLoggedInAPI = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else
-    passport.authenticate("localapikey", { session: false }, (err, user, info) ->
-      if err then return next err
-      else if not user then return res.send 403
-      else
-        req.user = user
-        next()
-    ) req, res, next
 
 paypalSDK.configure
   host: paypalCredentials.host
@@ -78,7 +70,7 @@ setup = (options, imports, register) ->
   # Login
   app.post "/api/v1/login", passport.authenticate("local", failureFlash: true)
   , (req, res) ->
-    res.send 200
+    aem.send res, "200:login"
 
   # Register
   app.post "/api/v1/register", (req, res) ->
@@ -89,7 +81,7 @@ setup = (options, imports, register) ->
     # Ensure username is not taken (don't trust client-side check)
     db.model("User").findOne username: req.param("username"), (err, user) ->
       if utility.dbError err, res then return
-      if user then return res.send 401, error: "Username taken"
+      if user then return aem.send res, "400", error: "Username already taken"
 
       # Create user
       newUser = db.model("User")
@@ -103,30 +95,29 @@ setup = (options, imports, register) ->
         vat: req.param("vat") || ""
         version: 1
 
-      newUser.save -> authorizeUser newUser, res, -> res.send 200
+      newUser.save ->
+        authorizeUser newUser, res, ->
+          aem.send res, "200", error: "Registered successfully"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
-    if not req.user.admin
-      res.json 403, { error: "Unauthorized" }
-      return
+    if not req.user.admin then return aem.send res, "403"
 
     db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res then return
 
       if req.cookies.user.sess == user.session
-        res.json 500, { error: "You can't delete yourself!" }
+        aem.send res, "500", error: "You can't delete yourself!"
         return
 
       user.remove()
-      res.json 200
+      aem.send res, "200", error: "User removed successfully"
 
   # Retrieve user, expects {filter}
   app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("filter"), res, "Filter" then return
-    if not req.user.admin
-      return res.json 403, error: "Unauthorized"
+    if not req.user.admin then return aem.send res, "403"
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
@@ -147,7 +138,7 @@ setup = (options, imports, register) ->
     findOne = (username, res) ->
       db.model("User").findOne { username: username }, (err, user) ->
         if utility.dbError err, res then return
-        if not user then return res.send 404
+        if not user then return aem.send res, "500", error: "User(#{username}) could not be found"
 
         user.updateFunds -> res.json user.toAPI()
 
@@ -174,7 +165,7 @@ setup = (options, imports, register) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
-      req.onValidationError (msg) -> res.json 400, error: msg.path
+      req.onValidationError (msg) -> aem.send res, "400", error: msg.path
 
       if req.param "email"
         req.check("email", "Invalid email").isEmail()
@@ -198,12 +189,12 @@ setup = (options, imports, register) ->
           changingPassword = true
 
           user.comparePassword req.param("currentPass"), (err, isMatch) ->
-            if err then spew.error err; return res.send 500
-            if not isMatch then return res.send 403
+            if err then spew.error err; return aem.send res, "500"
+            if not isMatch then return aem.send res, "401", error: "User password mismatch"
 
             user.password = req.param "newPass"
             user.save()
-            res.send 200
+            aem.send res, "200", error: "Password changed successfully"
 
       if not changingPassword
         user.save()
@@ -213,19 +204,19 @@ setup = (options, imports, register) ->
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return res.json 500, error: "User not found"
+      if not user then return aem.send res, "404", error: "User(#{req.user.id}) not found"
 
       res.json user.transactions
 
   # Deposit creation
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
     if isNaN req.param "amount"
-      return res.json 400, error: "Amount not a number"
+      return aem.send res, "400", error: "Amount not a number"
 
     amount = Number req.param "amount"
 
     if amount < 50
-      return res.json 400, error: "Amount below minimum: $50"
+      return aem.send res, "400", error: "Amount below minimum: $50"
 
     paymentJSON =
       intent: "sale"
@@ -253,12 +244,12 @@ setup = (options, imports, register) ->
 
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return res.json 500, error: "User not found"
+      if not user then return aem.send res, "500", error: "User(req.user.id) not found"
 
       paypalSDK.payment.create paymentJSON, (err, payment) ->
         if err
           spew.error err
-          return res.json 500, error: "Paypal error"
+          return aem.send res, "500", error: "Paypal error"
 
         # Save payment links
         paymentLinks = {}
@@ -280,19 +271,19 @@ setup = (options, imports, register) ->
     payerID = req.query.payerID
 
     if action != "confirm" and action != "cancel"
-      return res.json 400, error: "Unknown action"
+      return aem.send res, "400", error: "Unknown action: #{action}"
     else if action == "confirm" and payerID == undefined
-      return res.json 400, error: "No payer id"
+      return aem.send res, "400", error: "No payer id"
 
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return res.json 500, error: "User not found"
+      if not user then return aem.send res, "500", error: "User not found"
 
       pendingDeposit = user.pendingDeposit.split "|"
 
       # Check if this is the same transaction we are waiting for
       if pendingDeposit.length != 2 or pendingDeposit[1] != token
-        return res.send 404
+        return aem.send res, "404"
 
       paymentID = pendingDeposit[0]
 
@@ -301,12 +292,12 @@ setup = (options, imports, register) ->
       user.save()
 
       # If cancelling, that's all we need to do, so return
-      if action == "cancel" then return res.send 200
+      if action == "cancel" then return aem.send res, "200", error: "Request was cancelled"
 
       paypalSDK.payment.execute paymentID, payer_id: payerID, (err, data) ->
         if err
           spew.error err
-          return res.json 500, error: "Paypal error"
+          return aem.send res, "500", error: "Paypal error"
 
         user.addFunds data.transactions[0].amount.total
         user.save ->

@@ -24,6 +24,7 @@ window.AdefyLogin.controller "AdefyLoginController", ($scope, $http) ->
     "Simpler, Faster, Smarter, Richer"
     "Get With The Flow"
     "Time To Engage Users"
+    "All your Ads are belong to us"
   ]
 
   $scope.teaser = teasers[Math.floor(Math.random() * teasers.length)]
