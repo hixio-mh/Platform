@@ -48,13 +48,13 @@ testUser = {
 };
 
 testAdminUser = {
-  "email": "test@test.com",
+  "email": "test-admin@test.com",
   "funds": 0,
   "password": "$2a$10$51z8xVel4HABCIZNo/Rk1uS.IbbFrlzem5vpw76ddo2qsw0jYEfG6",
   "permissions": 0,
   "username": "testy-trista-admin",
   "version": 1,
-  "apikey": "DyF5l5tMS2n3zgJDEn1OwRga"
+  "apikey": "BAhz4dcT4xgs7ItgkjxhCV8Q"
 };
 
 db.users.insert(testUser);

@@ -18,6 +18,11 @@ redis = redisInterface.main
 mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
+async = require "async"
+
+AWS = require "aws-sdk"
+AWS.config.update require("../config.json")["s3-config"]
+s3 = new AWS.S3()
 
 ##
 ## Ad schema
@@ -29,6 +34,17 @@ schema = new mongoose.Schema
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
   data: { type: String, default: "" }
+  url: { type: String, default: "" }
+  pushTitle: { type: String, default: "" }
+  pushDesc: { type: String, default: "" }
+  pushIcon: { type: String, default: "" }
+
+  # Texture array for creative
+  assets: [
+    name: String    # Asset name (texture handle)
+    buffer: String  # Base64 buffer
+    key: String     # S3 asset key
+  ]
 
   # Added version number in v1
   # Added campaign references in v2
@@ -331,7 +347,7 @@ schema.methods.clearCampaignReferences = (campaign, cb) ->
 #
 # @param [Campaign] campaign
 schema.methods.createCampaignReferences = (campaign, cb) ->
-  if @tutorial then return cb() else return
+  if @tutorial then return cb()
   if not campaign.active then return cb()
 
   ref = @getRedisRefForCampaign campaign
@@ -463,11 +479,55 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
   if cb then cb()
 
 schema.methods.createRedisStruture = (cb) ->
-  redis.set @getRedisRef(), @data, (err) ->
-    if err then spew.error err
-    if cb then cb()
+  performRedisRefresh = =>
+    adData =
+      creative: @data
+      url: @url
+      pushTitle: @pushTitle
+      pushDesc: @pushDesc
+      assets: @assets
+
+    redis.set @getRedisRef(), JSON.stringify(adData), (err) ->
+      if err then spew.error err
+      if cb then cb()
+
+  # Go through and renew assets if needed, otherwise perform a normal refresh
+  for asset in @assets
+    if asset.buffer.length == 0
+      return @fetchAssetsFromS3 => performRedisRefresh -> cb()
+
+  performRedisRefresh -> cb()
+
+schema.methods.fetchAssetsFromS3 = (finalCb) ->
+  async.each @assets, (asset, cb) ->
+    if asset.buffer.length > 0 then return cb()
+
+    s3.getObject
+      Bucket: "adefyplatformmain"
+      Key: asset.key
+    , (err, data) ->
+      if err
+        spew.error err
+        return cb()
+
+      asset.buffer = new Buffer(data.Body).toString "base64"
+      finalCb()
 
 # Rebuild our redis structures
-schema.pre "save", (next) -> @createRedisStruture -> next()
+schema.pre "save", (next) ->
+  @fetchAssetsFromS3 =>
+    @createRedisStruture -> next()
+
+schema.path("data").validate (value) ->
+  try
+    hash = JSON.parse(value)
+    if hash.min < 16
+      false
+    ## add other validations here
+    else
+      true
+  catch e
+    spew.error e
+    false
 
 mongoose.model "Ad", schema

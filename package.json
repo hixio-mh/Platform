@@ -30,7 +30,8 @@
     "passport-localapikey": "0.0.3",
     "async": "~0.2.10",
     "passport-local": "~0.1.6",
-    "connect-flash": "~0.1.1"
+    "connect-flash": "~0.1.1",
+    "aws-sdk": "~2.0.0-rc9"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -155,6 +155,7 @@ module.exports = (grunt) ->
       "#{_buildDir}static/client/pages/ads/controllers/AdefyAdDetailController.js"
       "#{_buildDir}static/client/pages/ads/controllers/AdefyAdIndexController.js"
       "#{_buildDir}static/client/pages/ads/controllers/AdefyAdMenuController.js"
+      "#{_buildDir}static/client/pages/ads/controllers/AdefyAdReminderController.js"
       "#{_buildDir}static/client/pages/ads/factories/AdefyAdFactory.js"
 
       "#{_buildDir}static/client/pages/apps/controllers/AdefyAppsCreateController.js"
