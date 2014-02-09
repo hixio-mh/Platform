@@ -17,8 +17,9 @@ url = require "url"
 cheerio = require "cheerio"
 accounting = require "accounting"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 # Redundent checks, just to make sure. We don't want to be fooled into
 # parsing a non-play-store URL

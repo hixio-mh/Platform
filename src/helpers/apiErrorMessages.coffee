@@ -138,14 +138,15 @@ responses500unexpected = [
   "Somebody slipped by security"
 ]
 
-module.export =
+module.exports =
 
   # Add a humourful message to the response?
   humor: true
 
   #
   # @param [Array] ary
-  @sample: (ary) -> return ary[Math.floor(Math.random() * ary.length)]
+  sample: (ary) ->
+    return ary[Math.floor(Math.random() * ary.length)]
 
   #
   # @param [String] ex expected message type
@@ -160,98 +161,98 @@ module.export =
 
     switch exp
       when "200"
-        msg = sample(responses200)
+        msg = @sample(responses200)
         err = "OK"
         code = 200
       when "200:login"
-        msg = sample(responses200login)
+        msg = @sample(responses200login)
         err = "Login successful"
         code = 200
       when "200:nofunds"
-        msg = sample(responses200nofunds)
+        msg = @sample(responses200nofunds)
         err = "OK"
         code = 200
       when "200:delete"
-        msg = sample(responses200delete)
+        msg = @sample(responses200delete)
         err = "Request received"
         code = 200
       when "200:disapprove"
-        msg = sample(responses200disapprove)
+        msg = @sample(responses200disapprove)
         err = "Object has been Disapproved"
         code = 200
       when "200:approve"
-        msg = sample(responses200approve)
+        msg = @sample(responses200approve)
         err = "Object has been approved"
         code = 200
       when "200:approve_pending"
-        msg = sample(responses200approve_pending)
+        msg = @sample(responses200approve_pending)
         err = "Request received"
         code = 200
       when "302"
-        msg = sample(responses302)
+        msg = @sample(responses302)
         err = "Unexpected internal error occurred"
         code = 302
       when "400"
-        msg = sample(responses400)
+        msg = @sample(responses400)
         err = "Malformed request"
         code = 400
       when "401"
-        msg = sample(responses401)
+        msg = @sample(responses401)
         err = "Unauthorized access!"
         code = 401
       when "403"
-        msg = sample(responses403)
+        msg = @sample(responses403)
         err = "Forbidden"
         code = 403
       when "403:ad"
-        msg = sample(responses403ad)
+        msg = @sample(responses403ad)
         err = "Attempted to access protected Ad"
         code = 403
       when "403:apikey"
-        msg = sample(responses403apikey)
+        msg = @sample(responses403apikey)
         err = "Apikey authentication failed, forbidden to continue"
         code = 403
       when "404"
-        msg = sample(responses404)
+        msg = @sample(responses404)
         err = "Could not find requested resource"
         code = 404
       when "404:ad"
-        msg = sample(responses404ad)
+        msg = @sample(responses404ad)
         err = "Ad could not be found"
         code = 404
       when "500"
-        msg = sample(responses500)
+        msg = @sample(responses500)
         err = "An internal error occurred"
         code = 500
       # When an error occurred because of a missing internal reference
       when "500:404"
-        msg = sample(responses404)
+        msg = @sample(responses404)
         err = "An internal error occurred"
         code = 500
       when "500:delete"
-        msg = sample(responses500delete)
+        msg = @sample(responses500delete)
         err = "Error occurred while removing object"
         code = 500
       when "500:db"
-        msg = sample(responses500db)
+        msg = @sample(responses500db)
         err = "A database error occurred"
         code = 500
       when "500:save"
-        msg = sample(responses500save)
+        msg = @sample(responses500save)
         err = "An error occurred while saving the resource"
         code = 500
       when "500:ad:save"
-        msg = sample(responses500ad_save)
+        msg = @sample(responses500ad_save)
         err = "An error occurred while saving the Ad"
         code = 500
       when "500:unexpected"
-        msg = sample(responses500unexpected)
+        msg = @sample(responses500unexpected)
         err = "An unexpected internal error occurred"
         code = 500
 
     is_error = code >= 400
     err = errmsg if errmsg != undefined
-    msg = err unless humor
+    msg = err unless @humor
     if is_error
       return { status: code, error: err, message: msg }
     else
@@ -263,6 +264,6 @@ module.export =
   # @param [Options] opt
   send: (res, exp, opt) ->
 
-    dat = make(exp, opt)
+    dat = @make(exp, opt)
     # optionally we could drop the "status" from the Hash
     return res.json dat.status, dat

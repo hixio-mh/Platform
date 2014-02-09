@@ -19,8 +19,9 @@ spew = require "spew"
 db = require "mongoose"
 _ = require "underscore"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 setup = (options, imports, register) ->
 
@@ -322,7 +323,7 @@ setup = (options, imports, register) ->
     # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
       if utility.dbError err, res, true then return aem.send res, "500:db"
-      if not campaign then return aem.send "404", error: "Campaign not found"
+      if not campaign then return aem.send res, "404", error: "Campaign not found"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return aem.send res, "401"

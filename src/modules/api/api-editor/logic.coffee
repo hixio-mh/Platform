@@ -16,8 +16,9 @@ fs = require "fs"
 db = require "mongoose"
 http = require "http"
 
+passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
-isLoggedInAPI = require "../../../apikeyLogin"
+isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 ##
 ## Editor routes (locked down by core-init-start)
