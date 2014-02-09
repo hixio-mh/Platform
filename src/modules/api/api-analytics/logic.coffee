@@ -112,9 +112,9 @@ setup = (options, imports, register) ->
     # Publishers
     if stat == "earnings"
       queryPublishers { owner: req.user.id }, options, stat, res
-    else if stat == "impressionsp"
+    else if stat == "impressions:publisher"
       queryPublishers { owner: req.user.id }, options, "impressions", res
-    else if stat == "clicksp"
+    else if stat == "clicks:publisher"
       queryPublishers { owner: req.user.id }, options, "clicks", res
     else if stat == "requests"
       queryPublishers { owner: req.user.id }, options, "requests", res
@@ -122,23 +122,23 @@ setup = (options, imports, register) ->
     # Campaigns
     else if stat == "spent"
       queryCampaigns { owner: req.user.id }, options, stat, res
-    else if stat == "impressionsa" or stat == "impressionsc"
+    else if stat == "impressions:ad" or stat == "impressions:campaign"
       queryCampaigns { owner: req.user.id }, options, "impressions", res
-    else if stat == "clicksa" or stat == "clicksc"
+    else if stat == "clicks:ad" or stat == "clicks:campaign"
       queryCampaigns { owner: req.user.id }, options, "clicks", res
 
     # Admin (network totals)
     else if stat == "spent:admin"
-      if not req.user.admin then return aem.send res, "403", error: req.user
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "spent", res
     else if stat == "impressions:admin"
-      if not req.user.admin then return aem.send res, "403", error: req.user
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "impressions", res
     else if stat == "clicks:admin"
-      if not req.user.admin then return aem.send res, "403", error: req.user
+      if not req.user.admin then return aem.send res, "403"
       queryCampaigns {}, options, "clicks", res
     else if stat == "earnings:admin"
-      if not req.user.admin then return aem.send res, "403", error: req.user
+      if not req.user.admin then return aem.send res, "403"
       queryPublishers {}, options, "earnings", res
 
     else
@@ -149,7 +149,7 @@ setup = (options, imports, register) ->
   ##
 
   app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403", error: req.user
+    if not req.user.admin then return aem.send res, "403"
 
     model = req.param "model"
     validModels = [
