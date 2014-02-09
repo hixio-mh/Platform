@@ -1,6 +1,11 @@
 {
 	"mode": "development",
 
+	"s3-config": {
+		"accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
+		"secretAccessKey": "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"
+	},
+
 	"modes": {
 		"development": {
 			"domain": "www.adefy.dev",

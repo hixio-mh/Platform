@@ -216,7 +216,7 @@ setup = (options, imports, register) ->
   # @param [String] targeting key
   # @param [Object] res response
   # @param [Method] cb callback, accepts array of ad objects
-  fetchTargetedAdEntries = (targetingKey, res, cb) ->
+  fetchTargetedAdEntries = (targetingKey, req, res, cb) ->
     redis.smembers targetingKey, (err, adKeys) ->
       redis.del targetingKey
       if err then spew.error err; return fetchEmpty req, res
@@ -258,7 +258,12 @@ setup = (options, imports, register) ->
             userFunds: Number data[7]
 
           try
-            structuredAds[key].data = JSON.parse data[8]
+            adData = JSON.parse data[8]
+            structuredAds[key].data = adData.creative
+            structuredAds[key].url = adData.url
+            structuredAds[key].pushTitle = adData.pushTitle
+            structuredAds[key].pushDesc = adData.pushDesc
+            structuredAds[key].assets = adData.assets
 
             # If no type is specified, default to flat_template
             if structuredAds[key].data.type == undefined
@@ -465,7 +470,7 @@ setup = (options, imports, register) ->
         if country == "None" then country = null
 
         performCountryTargeting targetingKey, country, res, (finalKey) ->
-          fetchTargetedAdEntries finalKey, res, (ads) ->
+          fetchTargetedAdEntries finalKey, req, res, (ads) ->
             performRTB ads, publisher, req, res, (ad) ->
 
               # If ad is null, that means we couldn't find a suitable one
@@ -479,6 +484,10 @@ setup = (options, imports, register) ->
               options.click = ad.clickURL
               options.impression = ad.impressionURL
               options.data = ad.data
+              options.pushTitle = ad.pushTitle
+              options.pushDesc = ad.pushDesc
+              options.pushURL = ad.url
+              options.assets = ad.assets
 
               templates.generate ad.data.type, options, res
 
@@ -494,8 +503,12 @@ setup = (options, imports, register) ->
     if error != null then return res.json error: error, 400
 
     options = parseRequestOptions req
-    options.click = ""
-    options.impression = ""
+    options.click = "http://www.google.com"
+    options.impression = "http://www.google.com"
+    options.pushTitle = "Test Ad"
+    options.pushDesc = "Test Ad Description"
+    options.pushURL = "http://www.adefy.com"
+    options.assets = []
 
     templates.generate "test", options, res
 

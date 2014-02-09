@@ -19,6 +19,8 @@ spew = require "spew"
 db = require "mongoose"
 passport = require "passport"
 
+s3Host = "adefyplatformmain.s3.amazonaws.com"
+
 # Route middleware to make sure a user is logged in
 isLoggedInAPI = (req, res, next) ->
   if req.isAuthenticated() then next()
@@ -63,6 +65,10 @@ setup = (options, imports, register) ->
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
         return res.send 403
 
+      ##
+      ## Creative saving
+      ##
+
       # For now, only support saving of single creative
       data = ad.data
 
@@ -74,6 +80,33 @@ setup = (options, imports, register) ->
           if data.type == undefined then data.type = "flat_template"
 
       ad.data = data
+
+      ##
+      ## Notification stuff
+      ##
+
+      ad.url = req.param "url"
+      ad.pushTitle = req.param "pushTitle"
+      ad.pushDesc = req.param "pushDesc"
+
+      if req.param("pushIcon").key != undefined
+        iconKey = req.param("pushIcon").key
+      else
+        iconKey = req.param("pushIcon").split("//#{s3Host}/")[1]
+
+      ad.pushIcon = "//#{s3Host}/#{iconKey}"
+
+      ##
+      ## Todo: Fill in assets as needed!
+      ##
+      ## In the future, only update assets that need to be updated
+      ad.assets = []
+
+      # Add icon url
+      ad.assets.push
+        name: "push-icon"
+        buffer: ""
+        key: iconKey
 
       ad.save (err) ->
         if err
