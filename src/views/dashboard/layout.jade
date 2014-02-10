@@ -59,7 +59,8 @@ html(lang="en" ng-app="AdefyApp")
 
   body(ng-controller="AdefyRootController" ng-class="{withNotification: notification}").tk-proxima-nova
     header.navbar.cf
-      #logo Adefy
+      a(href="/")
+        #logo Adefy
       .menu.left.full
         a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
           i.fa.fa-fw.fa-home
