@@ -151,112 +151,118 @@ module.exports =
   #
   # @param [String] ex expected message type
   # @param [Option] opt
-  #   @option [String] error replacement error message
+  #   @option [String] message
+  #   @option [String] msg
+  #   @option [String] error replacement error/message
   make: (exp, opt) ->
-    errmsg = opt && opt["error"]
-    err = ""
+    # 3 ways to declare the same thing
+    usrmsg = opt && (opt["error"] || opt["message"] || opt["msg"])
     msg = ""
+    resp = ""
 
     code = 200
 
     switch exp
       when "200"
-        msg = @sample(responses200)
-        err = "OK"
+        resp = @sample(responses200)
+        msg = "OK"
         code = 200
       when "200:login"
-        msg = @sample(responses200login)
-        err = "Login successful"
+        resp = @sample(responses200login)
+        msg = "Login successful"
         code = 200
       when "200:nofunds"
-        msg = @sample(responses200nofunds)
-        err = "OK"
+        resp = @sample(responses200nofunds)
+        msg = "OK"
         code = 200
       when "200:delete"
-        msg = @sample(responses200delete)
-        err = "Request received"
+        resp = @sample(responses200delete)
+        msg = "Request received"
         code = 200
       when "200:disapprove"
-        msg = @sample(responses200disapprove)
-        err = "Object has been Disapproved"
+        resp = @sample(responses200disapprove)
+        msg = "Object has been Disapproved"
         code = 200
       when "200:approve"
-        msg = @sample(responses200approve)
-        err = "Object has been approved"
+        resp = @sample(responses200approve)
+        msg = "Object has been approved"
         code = 200
       when "200:approve_pending"
-        msg = @sample(responses200approve_pending)
-        err = "Request received"
+        resp = @sample(responses200approve_pending)
+        msg = "Request received"
         code = 200
       when "302"
-        msg = @sample(responses302)
-        err = "Unexpected internal error occurred"
+        resp = @sample(responses302)
+        msg = "Redirecting"
         code = 302
       when "400"
-        msg = @sample(responses400)
-        err = "Malformed request"
+        resp = @sample(responses400)
+        msg = "Malformed request"
         code = 400
       when "401"
-        msg = @sample(responses401)
-        err = "Unauthorized access!"
+        resp = @sample(responses401)
+        msg = "Unauthorized access!"
         code = 401
       when "403"
-        msg = @sample(responses403)
-        err = "Forbidden"
+        resp = @sample(responses403)
+        msg = "Forbidden"
         code = 403
       when "403:ad"
-        msg = @sample(responses403ad)
-        err = "Attempted to access protected Ad"
+        resp = @sample(responses403ad)
+        msg = "Attempted to access protected Ad"
         code = 403
       when "403:apikey"
-        msg = @sample(responses403apikey)
-        err = "Apikey authentication failed, forbidden to continue"
+        resp = @sample(responses403apikey)
+        msg = "Apikey authentication failed, forbidden to continue"
         code = 403
       when "404"
-        msg = @sample(responses404)
-        err = "Could not find requested resource"
+        resp = @sample(responses404)
+        msg = "Could not find requested resource"
         code = 404
       when "404:ad"
-        msg = @sample(responses404ad)
-        err = "Ad could not be found"
+        resp = @sample(responses404ad)
+        msg = "Ad could not be found"
         code = 404
       when "500"
-        msg = @sample(responses500)
-        err = "An internal error occurred"
+        resp = @sample(responses500)
+        msg = "An internal error occurred"
         code = 500
       # When an error occurred because of a missing internal reference
       when "500:404"
-        msg = @sample(responses404)
-        err = "An internal error occurred"
+        resp = @sample(responses404)
+        msg = "An internal error occurred"
         code = 500
       when "500:delete"
-        msg = @sample(responses500delete)
-        err = "Error occurred while removing object"
+        resp = @sample(responses500delete)
+        msg = "Error occurred while removing object"
         code = 500
       when "500:db"
-        msg = @sample(responses500db)
-        err = "A database error occurred"
+        resp = @sample(responses500db)
+        msg = "A database error occurred"
         code = 500
       when "500:save"
-        msg = @sample(responses500save)
-        err = "An error occurred while saving the resource"
+        resp = @sample(responses500save)
+        msg = "An error occurred while saving the resource"
         code = 500
       when "500:ad:save"
-        msg = @sample(responses500ad_save)
-        err = "An error occurred while saving the Ad"
+        resp = @sample(responses500ad_save)
+        msg = "An error occurred while saving the Ad"
         code = 500
       when "500:unexpected"
-        msg = @sample(responses500unexpected)
-        err = "An unexpected internal error occurred"
+        resp = @sample(responses500unexpected)
+        msg = "An unexpected internal error occurred"
         code = 500
 
     is_error = code >= 400
-    err = errmsg if errmsg != undefined
-    msg = err unless @humor
-    if is_error
-      return { status: code, error: err, message: msg }
-    else
-      return { status: code, response: err, message: msg }
+
+    msg = usrmsg if usrmsg != undefined
+
+    obj = {}
+    obj.status = code
+    obj.humor = resp if @humor
+    obj.error = msg if is_error
+    obj.message = msg unless is_error
+    return obj
 
   #
   # @param [ResultObject] res result object

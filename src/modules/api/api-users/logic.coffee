@@ -97,7 +97,7 @@ setup = (options, imports, register) ->
 
       newUser.save ->
         authorizeUser newUser, res, ->
-          aem.send res, "200", error: "Registered successfully"
+          aem.send res, "200", msg: "Registered successfully"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
@@ -112,7 +112,7 @@ setup = (options, imports, register) ->
         return
 
       user.remove()
-      aem.send res, "200", error: "User removed successfully"
+      aem.send res, "200", msg: "User removed successfully"
 
   # Retrieve user, expects {filter}
   app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
@@ -194,7 +194,7 @@ setup = (options, imports, register) ->
 
             user.password = req.param "newPass"
             user.save()
-            aem.send res, "200", error: "Password changed successfully"
+            aem.send res, "200", msg: "Password changed successfully"
 
       if not changingPassword
         user.save()
@@ -292,7 +292,7 @@ setup = (options, imports, register) ->
       user.save()
 
       # If cancelling, that's all we need to do, so return
-      if action == "cancel" then return aem.send res, "200", error: "Request was cancelled"
+      if action == "cancel" then return aem.send res, "200", msg: "Request was cancelled"
 
       paypalSDK.payment.execute paymentID, payer_id: payerID, (err, data) ->
         if err
