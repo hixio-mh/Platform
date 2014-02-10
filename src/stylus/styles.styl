@@ -269,12 +269,16 @@ header
   line-height 50px // font's x-height is fucked up, manually push up
   margin-right 25px
   user-select: none
-  cursor: default
+  // cursor: default
+  color #fff
 
   &.centered, &.tcenter
     text-align center
     float none
     margin 0
+
+  &:hover
+    color hsl(196, 77%, 55%)
 
 .menu
   position relative
