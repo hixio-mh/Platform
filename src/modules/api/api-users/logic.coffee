@@ -96,9 +96,8 @@ setup = (options, imports, register) ->
     db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res, false then return
 
-      if req.cookies.user.sess == user.session
-        aem.send res, "500", error: "You can't delete yourself!"
-        return
+      if req.user.session == user.session
+        return aem.send res, "500", error: "You can't delete yourself!"
 
       user.remove()
       aem.send res, "200", msg: "User removed successfully"
