@@ -6,8 +6,12 @@ crypto = require "crypto"
 fs = require "fs"
 spew = require "spew"
 expressValidator = require "express-validator"
+RedisStore = require('connect-redis')(express)
 passport = require "passport"
 flash = require "connect-flash"
+
+redisInterface = require "../../../helpers/redisInterface"
+redis = redisInterface.main
 
 setup = (options, imports, register) ->
 
@@ -61,19 +65,17 @@ setup = (options, imports, register) ->
         # Local config
         config.port = port
 
-        # Generate secret
-        sessionSecret = crypto
-          .createHash("md5")
-          .update(String(new Date().getTime()))
-          .digest "base64"
-
         app.configure ->
           app.set "views", view_root
           app.set "view options", layout: false
           app.use connect.bodyParser()
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
-          app.use express.session sessionSecret
+          app.use express.session
+            store: new RedisStore
+              client: redis
+            secret: "4bfddfd3e630db97bffbd922aae468fa"
+
           app.use flash()
           app.use passport.initialize()
           app.use passport.session()

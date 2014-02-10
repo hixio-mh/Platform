@@ -28,6 +28,7 @@
     "time-grunt": "~0.2.9",
     "passport": "~0.2.0",
     "passport-localapikey": "0.0.3",
+    "connect-redis": "~1.4.6",
     "async": "~0.2.10",
     "passport-local": "~0.1.6",
     "connect-flash": "~0.1.1",
