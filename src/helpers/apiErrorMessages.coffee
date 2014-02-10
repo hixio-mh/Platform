@@ -145,7 +145,8 @@ module.exports =
   ###
   make: (exp, opt) ->
     # 3 ways to declare the same thing
-    usrmsg = opt && (opt["error"] || opt["message"] || opt["msg"])
+    errmsg = opt && (opt["error"])
+    usrmsg = opt && (opt["message"] || opt["msg"])
     msg = ""
     resp = ""
 
@@ -242,9 +243,9 @@ module.exports =
         msg = "An unexpected internal error occurred"
         code = 500
 
-    is_error = code >= 400
+    is_error = (not not errmsg) || code >= 400
 
-    msg = usrmsg if usrmsg != undefined
+    msg = errmsg || usrmsg || msg
 
     obj = {}
     obj.status = code
