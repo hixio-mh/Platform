@@ -31,8 +31,10 @@ validURL = (url) ->
   true
 
 validImage = (imageUrl) ->
-  imageUrl = url.parse(imageUrl).hostname.split "."
-  if imageUrl[1] == "ggpht" and imageUrl[2] == "com" then return true
+  try
+    imageUrl = url.parse(imageUrl).hostname.split "."
+    if imageUrl[1] == "ggpht" and imageUrl[2] == "com" then return true
+
   false
 
 deSpace = (text) -> text.split(" ").join ""
@@ -52,7 +54,15 @@ setup = (options, imports, register) ->
 
     image = image.split("https").join "http"
 
-    request { url: image, encoding: null }, (error, response, body) ->
+    request
+      url: image
+      encoding: null
+      timeout: 4000
+    , (error, response, body) ->
+      if error
+        spew.error error
+        return aem.send res, "500"
+
       res.setHeader "Content-Type", response.headers["content-type"]
       res.end body, "binary"
 
@@ -77,7 +87,10 @@ setup = (options, imports, register) ->
     urlObj = url.parse req.param "url"
     if not validURL urlObj then return aem.send res, "400", error: "Invalid Creator url #{req.param("url")}"
 
-    request req.param("url"), (error, response, body) ->
+    request
+      url: req.param "url"
+      timeout: 4000
+    , (error, response, body) ->
       if error
         spew.error error
         return aem.send res, "500"
