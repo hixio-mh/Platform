@@ -13,10 +13,11 @@ adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 
 module.exports = (user, admin) ->
 
-  testInvalidCreatorImage = "default.cake"
-  testValidCreatorImage = "default.png"
-  testInvalidURL = "^^^htti:/cheese cake.sup"
-  testValidURL = "" # I dunno
+  testInvalidCreatorImage = "http://spectrumcoding.com/img/me.png"
+  testValidCreatorImage = "https://lh5.ggpht.com/kjm6sVP0tDczl2muBerYRCBD7rixaeeESMBplqncnoi6frTytgzbBLVlmVRUSM_8A1o=w300"
+  testInvalidURL = "http://spectrumcoding.com/"
+  testBrokenURL = "^^^htti:/cheese cake.sup"
+  testValidURL = "https://play.google.com/store/apps/details?id=com.hyperspaceyard.cell"
 
   util = require("../utility") api, user, admin
 
@@ -65,7 +66,7 @@ module.exports = (user, admin) ->
 
         @timeout 8000
 
-        req = util.userRequest "/api/v1/creator/image/#{testInvalidCreatorImage}", "get"
+        req = util.userRequest "/api/v1/creator/image/#{encodeURIComponent testInvalidCreatorImage}", "get"
         req.expect(404).end (err, res) ->
           return if handleError(err, res, done)
           done()
@@ -74,7 +75,7 @@ module.exports = (user, admin) ->
 
         @timeout 8000
 
-        req = util.userRequest "/api/v1/creator/image/#{testValidCreatorImage}", "get"
+        req = util.userRequest "/api/v1/creator/image/#{encodeURIComponent testValidCreatorImage}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           done()
@@ -96,16 +97,23 @@ module.exports = (user, admin) ->
     # GET /api/v1/creator/:url
     describe "URL", ->
 
-      it "Should 404 with invalid url", (done) ->
+      it "Should 400 with invalid url (not google play)", (done) ->
 
-        req = util.userRequest "/api/v1/creator/#{testInvalidURL}", "get"
-        req.expect(404).end (err, res) ->
+        req = util.userRequest "/api/v1/creator/#{encodeURIComponent testInvalidURL}", "get"
+        req.expect(400).end (err, res) ->
+          return if handleError(err, res, done)
+          done()
+
+      it "Should 400 with broken url (invalid format)", (done) ->
+
+        req = util.userRequest "/api/v1/creator/#{encodeURIComponent testBrokenURL}", "get"
+        req.expect(400).end (err, res) ->
           return if handleError(err, res, done)
           done()
 
       it "Should retrieve App with valid url", (done) ->
 
-        req = util.userRequest "/api/v1/creator/#{testValidURL}", "get"
+        req = util.userRequest "/api/v1/creator/#{encodeURIComponent testValidURL}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           validateAppFormat res.body
