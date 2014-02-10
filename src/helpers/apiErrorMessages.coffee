@@ -115,7 +115,8 @@ responses500 = [
   "Oh no, the duct tape broke (again)",
   "Do not panic, this is not a drill!",
   "Something went wrong, I think we ran out of bugspray",
-  "Arrrg, meltdown in the systems!"
+  "Arrrg, meltdown in the systems!",
+  "Something weird just happened"
 ]
 
 responses500delete = [

@@ -96,8 +96,9 @@ setup = (options, imports, register) ->
         version: 1
 
       newUser.save ->
-        authorizeUser newUser, res, ->
-          aem.send res, "200", msg: "Registered successfully"
+        req.login newUser, (err) -> # login after signup
+          aem.send res, "500", error: "Somthing weird just happened"
+        aem.send res, "200", msg: "Registered successfully"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
