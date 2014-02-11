@@ -221,8 +221,6 @@ setup = (options, imports, register) ->
           currentAds[ad._id.toString()] = "deleted"
 
         for ad in req.body.ads
-          if typeof ad == "string" then ad = JSON.parse ad
-
           if ad.status == 2
             adFound = false
 
