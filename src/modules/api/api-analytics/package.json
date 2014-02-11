@@ -7,7 +7,7 @@
     "consumes": [
       "core-express",
       "logic-utility"
-      ],
+    ],
     "provides": []
   }
 }
