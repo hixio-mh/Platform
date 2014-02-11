@@ -84,11 +84,28 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
     $scope.countriesInclude = campaign.countriesInclude.join ","
     $scope.countriesExclude = campaign.countriesExclude.join ","
 
+    # Stringify that shit
+    for i in [0...$scope.campaign.ads.length]
+
+      for key of $scope.campaign.ads[i]
+        if key != "id" and key != "name" and key != "status"
+          delete $scope.campaign.ads[i][key]
+
+      $scope.campaign.ads[i] = JSON.stringify $scope.campaign.ads[i]
+
     Ad.query (ads) ->
       $scope.ads = []
 
       for ad in ads
-        if ad.status == 2 then $scope.ads.push ad
+        if ad.status == 2
+          selectableAd = angular.copy ad
+
+          # STRINGIFY ME
+          for key of selectableAd
+            if key != "id" and key != "name" and key != "status"
+              delete selectableAd[key]
+
+          $scope.ads.push selectableAd
 
       $timeout -> initializeSelect2Fields()
 
@@ -122,6 +139,10 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
     saveCampaign = angular.copy $scope.campaign
     saveCampaign.startDate = getRawDate saveCampaign.startDate
     saveCampaign.endDate = getRawDate saveCampaign.endDate
+
+    # Un-stringify that shit
+    for i in [0...saveCampaign.ads.length]
+      saveCampaign.ads[i] = JSON.parse saveCampaign.ads[i]
 
     $scope.saveInProgress = true
     saveCampaign.$save().then(
