@@ -15,6 +15,10 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
+  $routeProvider.when "/home/news",
+    controller: "AdefyDashboardNewsController"
+    templateUrl: "/views/dashboard/home:news"
+
   $routeProvider.when "/home/publisher",
     controller: "AdefyDashboardPublisherController"
     templateUrl: "/views/dashboard/home:publisher"

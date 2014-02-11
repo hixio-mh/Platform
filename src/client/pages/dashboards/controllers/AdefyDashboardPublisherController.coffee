@@ -9,6 +9,20 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
       if user.tutorials.dashboard then window.showTutorial()
 
   ##
+  ## Fetch latest news
+  $scope.news =
+    title: "We are live!",
+    time: "11:23 PM",
+    date: "January 31th, 2014",
+    content: """
+      Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
+      <a href="https://developer.adefy.com" target="_blank">Developer Center</a>
+      If you need any assistance we will gladly help!
+    """
+
+
+  ##
+  ##
   ## Fetch app table data
   ##
 
