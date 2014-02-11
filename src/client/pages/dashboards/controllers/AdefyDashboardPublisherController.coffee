@@ -10,16 +10,21 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
 
   ##
   ## Fetch latest news
-  $scope.news =
-    title: "We are live!",
-    time: "11:23 PM",
-    date: "January 31th, 2014",
-    content: """
-      Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
-      <a href="https://developer.adefy.com" target="_blank">Developer Center</a>
-      If you need any assistance we will gladly help!
-    """
+  news = null
+  News.query (n) ->
+    news = n[n.length-1]
+    if news
+      datetime = news.date
+      time = dateFormat(datetime, "hh:MM TT")
+      date = dateFormat(datetime, "mmmm d, yyyy")
 
+      $scope.news =
+        title: news.title,
+        time: "#{time}",
+        date: "#{date}",
+        text: news.text
+    else
+      $scope.news = title: "<No News>", time: "<Never>", date: "<Never>", text: ""
 
   ##
   ##

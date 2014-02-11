@@ -54,6 +54,8 @@ responses400 = [
   "Not quite what we where expecting"
 ]
 
+responses400save = responses400
+
 responses401 = [
   "Check your privilege"
   "Go back and get your VIP card"
@@ -115,9 +117,6 @@ responses500db = [
   "The database has exploded! Don't worry, your data is safe. (probably)"
   "The database has exploded! NOOOOOOOOOOOooooooooooo....."
 ]
-
-responses500save = responses500
-responses500ad_save = responses500
 
 responses500unexpected = [
   "Wow, some mojo went down"
@@ -193,6 +192,10 @@ module.exports =
         resp = @sample responses500ad_save
         msg = "Validation has failed"
         code = 500
+      when "400:save"
+        resp = @sample(responses400save)
+        msg = "An error occurred while saving the resource"
+        code = 400
       when "401"
         resp = @sample responses401
         msg = "Unauthorized access!"
