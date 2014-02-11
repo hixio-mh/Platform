@@ -221,6 +221,8 @@ setup = (options, imports, register) ->
           currentAds[ad._id.toString()] = "deleted"
 
         for ad in req.body.ads
+          if typeof ad == "string" then ad = JSON.parse ad
+
           if ad.status == 2
             adFound = false
 
@@ -306,7 +308,6 @@ setup = (options, imports, register) ->
 
         # Refresh ad refs on unchanged ads (if we are active)
         if needsAdRefRefresh and campaign.active then campaign.refreshAdRefs ->
-          spew.info "Refreshed refs for campaign #{campaign.id}"
 
         # Generate refs and commit new list
         optionallyAddAds ->
