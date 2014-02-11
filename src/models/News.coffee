@@ -26,19 +26,29 @@ async = require "async"
 
 schema = new mongoose.Schema
 
-  # Generic per-ad information
   writtenBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   title: String
   date: Date
-  time: String
   summary: String
-  contents: String
+  text: String
+
+schema.methods.toAPI = ->
+  ret = @toObject()
+  ret.id = ret._id.toString()
+
+  delete ret._id
+  delete ret.__v
+
+  ret
+
+schema.methods.toAnonAPI = ->
+  ret = @toAPI()
+  ret
 
 schema.path("title").validate (value) ->
-  not not value
+  return not not value
 
-schema.path("contents").validate (value) ->
-  not not value
-
+schema.path("text").validate (value) ->
+  return not not value
 
 mongoose.model "News", schema
