@@ -37,6 +37,7 @@ require("./api/api-campaigns") agent, agentAdmin
 require("./api/api-users") agent, agentAdmin
 require("./api/api-analytics") agent, agentAdmin
 require("./api/api-filters") agent, agentAdmin
+require("./api/api-news") agent, agentAdmin
 require("./api/api-creator") agent, agentAdmin
 require("./api/api-editor") agent, agentAdmin
 require("./api/api-serve") agent, agentAdmin
