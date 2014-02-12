@@ -18,10 +18,8 @@ include _menu
     legend Ads
     p Add existing creatives
     dt
-    dd
-      select(ui-select2 multiple ng-model="campaign.ads" data-placeholder="Select Ads")
-        option(value="")
-        option(ng-repeat="ad in ads track by ad.id" value="{{ ad }}") {{ ad.name }}
+    dd(ng-if="campaign.ads != null")
+      select(chosen multiple ng-options="ad as ad.name for ad in ads track by ad.id" ng-model="campaign.ads" data-placeholder="Select Ads")
 
   fieldset: dl.form.center
     legend Bidding

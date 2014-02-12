@@ -17,6 +17,7 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
     budget: 10
     cpm: 1.00
     cpc: 0.10
+    ads: null
 
   $scope.pricingOptions = ["CPM", "CPC"]
   $scope.bidSysOptions = ["Automatic", "Manual"]
@@ -84,28 +85,11 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
     $scope.countriesInclude = campaign.countriesInclude.join ","
     $scope.countriesExclude = campaign.countriesExclude.join ","
 
-    # Stringify that shit
-    for i in [0...$scope.campaign.ads.length]
-
-      for key of $scope.campaign.ads[i]
-        if key != "id" and key != "name" and key != "status"
-          delete $scope.campaign.ads[i][key]
-
-      $scope.campaign.ads[i] = JSON.stringify $scope.campaign.ads[i]
-
     Ad.query (ads) ->
       $scope.ads = []
 
       for ad in ads
-        if ad.status == 2
-          selectableAd = angular.copy ad
-
-          # STRINGIFY ME
-          for key of selectableAd
-            if key != "id" and key != "name" and key != "status"
-              delete selectableAd[key]
-
-          $scope.ads.push selectableAd
+        if ad.status == 2 then $scope.ads.push ad
 
       $timeout -> initializeSelect2Fields()
 
