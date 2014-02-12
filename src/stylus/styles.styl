@@ -268,9 +268,11 @@ header
   float left
   line-height 50px // font's x-height is fucked up, manually push up
   margin-right 25px
-  user-select: none
+  user-select none
   // cursor: default
   color #fff
+
+  transition color 0.25s
 
   &.centered, &.tcenter
     text-align center
@@ -301,6 +303,9 @@ header
   display inline-block
   padding 0 20px
   cursor pointer
+
+  transition color 0.25s, background-color 0.25s, border-color 0.25s
+
   &.active, &:hover
     background-color rgba(0,0,0,.1)
 
