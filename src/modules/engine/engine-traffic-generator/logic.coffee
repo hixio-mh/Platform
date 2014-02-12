@@ -28,8 +28,8 @@ url = "http://#{modeConfig.domain}/api/v1/serve"
 ##
 publisherUpdateDelay = 60 * 1000
 
-maxDelay = 5000
-minDelay = 1000
+maxDelay = 1000
+minDelay = 100
 
 keyChance = 0.9
 impressionChance = 0.8
@@ -60,16 +60,16 @@ setup = (options, imports, register) ->
     genCTR = -> Math.round((Math.random() * (maxCTR - minCTR)) + minCTR)
 
     impressionsAndClicks = (ad) ->
-      if Math.random() < impressionChance and ad.impressionURL
-        request ad.impressionURL, (err, res, body) ->
+      if Math.random() < impressionChance and ad.impression
+        request ad.impression, (err, res, body) ->
           if Math.random() < genCTR()
-            request ad.clickURL, (err, res, body) ->
+            request ad.click, (err, res, body) ->
 
     # Request generator
     genTraffic = ->
       for key in apikeys
         if Math.random() < keyChance
-          request "#{url}/#{key}?width=400&height=400", (err, res, body) ->
+          request "#{url}/#{key}?width=400&height=400&json", (err, res, body) ->
             ad = null
 
             try

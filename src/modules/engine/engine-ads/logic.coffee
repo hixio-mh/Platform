@@ -229,7 +229,7 @@ setup = (options, imports, register) ->
 
       fetchAdKeys = (key) ->
         campaignUserRef = key.split(":")[3]
-        adId = campaignUserRef = key.split(":")[2]
+        adId = key.split(":")[2]
 
         redis.mget [
           "#{key}:pricing"
@@ -375,7 +375,8 @@ setup = (options, imports, register) ->
           if paceData.pace > 1 then ad.bid *= paceData.pace
 
           ## If we can't afford the bid, zero it out
-          if ad.bid > ad.userFunds then ad.bid = 0
+          if ad.bid > ad.userFunds
+            ad.bid = 0
 
           ##
           ## If bid is below the publishers' floor limit, or of the wrong
@@ -498,7 +499,12 @@ setup = (options, imports, register) ->
                 # to be default)
                 if templateType == undefined then templateType = "flat_template"
 
-              templates.generate templateType, options, res
+              # If the request asks for JSON, and we are in a mode allowing
+              # it, then return JSON
+              if configMode.allowAdJSON and req.param("json") != undefined
+                res.json options
+              else
+                templates.generate templateType, options, res
 
               # Todo: Log the serve time
               # spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
