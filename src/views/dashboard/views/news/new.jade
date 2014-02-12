@@ -1,0 +1,15 @@
+.inner: form(novalidate ng-class="{ submitted: submitted }")
+  dl.form.center
+    dt
+      label Title
+    dd: input(required ng-model="news.title" type="text" ng-keypress="enterSubmit($event)")
+
+    dt
+      label Summary
+      span Displayed on the User dashboard, instead of the entire news Text
+    dd: input(ng-model="news.summary" type="text" ng-keypress="enterSubmit($event)" placeholder="optional summary")
+
+    dt
+      label Text
+      span The body of this News Article
+    dd: textarea(required ng-model="news.text" ng-keypress="enterSubmit($event)" style="width: 100%; height: 240px")
