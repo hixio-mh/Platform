@@ -17,6 +17,9 @@ angular.module("AdefyApp").service "NewsService", [
           ret = []
 
           for news in list
+            datetime = news.date
+            news.time = dateFormat(datetime, "hh:MM TT")
+            news.date = dateFormat(datetime, "mmmm d, yyyy")
             cache[news.id] = news
             ret.push cache[news.id]
 
@@ -26,6 +29,9 @@ angular.module("AdefyApp").service "NewsService", [
         if cache[id] != undefined then cb cache[id]
         else
           News.get id: id, (news) ->
+            datetime = news.date
+            news.time = dateFormat(datetime, "hh:MM TT")
+            news.date = dateFormat(datetime, "mmmm d, yyyy")
             cache[id] = news
             cb cache[id]
 

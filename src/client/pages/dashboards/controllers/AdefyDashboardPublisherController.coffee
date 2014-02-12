@@ -14,15 +14,7 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
   News.query (n) ->
     news = n[n.length-1]
     if news
-      datetime = news.date
-      time = dateFormat(datetime, "hh:MM TT")
-      date = dateFormat(datetime, "mmmm d, yyyy")
-
-      $scope.news =
-        title: news.title,
-        time: "#{time}",
-        date: "#{date}",
-        text: news.text
+      $scope.news = news
     else
       $scope.news = title: "<No News>", time: "<Never>", date: "<Never>", text: ""
 
