@@ -396,7 +396,7 @@ setup = (options, imports, register) ->
             ad.bid = 0
 
           # Update second-highest bid if necessary
-          if ad.bid > maxBid or true
+          if ad.bid > maxBid
             secondHighestBid = maxBid + 0.01
             maxBid = ad.bid
             maxBidAd = ad
