@@ -71,19 +71,19 @@ html(lang="en" ng-app="AdefyApp")
     header.navbar.cf
       #logo Adefy
       .menu.left.full
-        a(href="/home/publisher" alias="/home/advertiser" tab)
+        a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
           i.fa.fa-fw.fa-home
           | Dashboard
-        a(href="/reports/campaigns" tab)
+        a#reports-tab(href="/reports/campaigns" tab)
           i.fa.fa-fw.fa-signal
           | Reports
-        a(href="/campaigns" tab)
+        a#campaigns-tab(href="/campaigns" tab)
           i.fa.fa-fw.fa-bullhorn
           | Campaigns
-        a(href="/ads" tab)
+        a#ads-tab(href="/ads" tab)
           i.fa.fa-fw.fa-sitemap
           | Ads
-        a(href="/apps" tab)
+        a#apps-tab(href="/apps" tab)
           i.fa.fa-fw.fa-rocket
           | Apps
 
@@ -103,6 +103,9 @@ html(lang="en" ng-app="AdefyApp")
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
+            a(ng-click="showTutorial()")
+              i.fa.fa-fw.fa-question
+              | Show tutorial
             a(ng-click="showIntercom()")
               i.fa.fa-fw.fa-comment
               | Support
@@ -151,6 +154,11 @@ html(lang="en" ng-app="AdefyApp")
           script(src="/client/routes/normal.js")
 
         script(src="/client/controllers/AdefyRootController.js")
+
+        //-
+        //- Tutorial
+        //-
+        script(src="/client/tutorial/dashboard.js")
 
         //--
         //-- Root directives
@@ -223,99 +231,3 @@ html(lang="en" ng-app="AdefyApp")
       script.
         try{Typekit.load();}catch(e){}
         // ferno │ .tk-proxima-nova
-
-      script.
-        guiders.createGuider({
-          title: "Welcome to Adefy!",
-          description: "This is a short guide that will walk you through the basics. You may cancel at any time, and restart this guide from the options menu.",
-          attachTo: "#logo",
-          buttons: [{ name: "Next" }],
-          id: "guider1",
-          next: "guider2",
-          position: "bottomLeft"
-        }).show();
-
-        guiders.createGuider({
-          title: "Support & Feedback",
-          description: "You can talk to us by clicking this question mark! We reply quickly, so feel free to reach out with any questions or comments you may have.",
-          attachTo: "#IntercomDefaultWidget",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider2",
-          next: "guider3",
-          position: "8",
-          overlay: true,
-          highlight: "#IntercomDefaultWidget",
-          offset: { top: 3, left: 0 }
-        });
-
-        guiders.createGuider({
-          title: "Options Menu",
-          description: "This is the options menu, where you can access account settings, funds, support, and this tutorial.",
-          attachTo: "header.navbar .menu.right div.da",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider3",
-          next: "guider4",
-          position: "5",
-          overlay: true,
-          highlight: "header.navbar",
-          offset: { top: 0, left: 10 }
-        });
-
-        guiders.createGuider({
-          title: "Funds",
-          description: "These are your Advertiser and Publisher balances. You may deposit advertising credit on the funds page, and withdraw from both balances.",
-          attachTo: "header.navbar .menu.right",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider4",
-          next: "guider5",
-          position: "6",
-          overlay: true,
-          highlight: "header.navbar"
-        });
-
-        guiders.createGuider({
-          title: "Navigation",
-          description: "Here you can access different sections of the platform.",
-          attachTo: "header.navbar .menu.left",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider5",
-          next: "guider6",
-          position: "6",
-          overlay: true,
-          highlight: "header.navbar"
-        });
-
-        guiders.createGuider({
-          title: "Publisher Dashboard",
-          description: "This is the publisher dashboard, where you can see a summary of your metrics from the past 24h hours, along with a lifetime graph.",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider6",
-          next: "guider7",
-          position: "6",
-          overlay: true,
-          highlight: ".content"
-        });
-
-        guiders.createGuider({
-          title: "Top Apps",
-          description: "Here you can view lifetime details for your top 10 best performing apps.",
-          attachTo: "#home-publisher table.info",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider7",
-          next: "guider8",
-          position: "12",
-          overlay: true,
-          highlight: "#home-publisher table.info"
-        });
-
-        guiders.createGuider({
-          title: "News",
-          description: "Any noteworthy events and updates will be posted here from time to time.",
-          attachTo: "#home-publisher ul.news",
-          buttons: [{ name: "Next" }, { name: "Previous" }],
-          id: "guider8",
-          next: "guider9",
-          position: "12",
-          overlay: true,
-          highlight: "#home-publisher ul.news"
-        });
