@@ -12,7 +12,8 @@
 			"port": 10000,
 			"loglevel": 10,
 			"newrelic": false,
-			"trafficgen": false,
+			"trafficgen": true,
+			"allowAdJSON": true,
 
 			"mongo": {
 				"user": "adefy",

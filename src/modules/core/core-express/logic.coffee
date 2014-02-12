@@ -68,6 +68,7 @@ setup = (options, imports, register) ->
         app.configure ->
           app.set "views", view_root
           app.set "view options", layout: false
+          app.use express.logger()
           app.use connect.bodyParser()
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
