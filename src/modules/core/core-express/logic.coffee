@@ -70,7 +70,6 @@ setup = (options, imports, register) ->
           if cfg.mode is "development" then app.use express.logger()
           app.set "views", view_root
           app.set "view options", layout: false
-          app.use express.logger()
           app.use connect.bodyParser()
           app.use expressValidator()
           app.use express.cookieParser sessionSecret
