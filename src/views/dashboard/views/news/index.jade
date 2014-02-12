@@ -1,0 +1,12 @@
+if user.admin
+  a.new-item(href="/news/new")
+    i.fa.fa-plus
+    | New News
+.grid
+  ul.news
+    a.item(ng-repeat="article in news | orderBy:'ctr':true" ng-href="/news/{{article.id}}")
+      li
+        span.title {{ article.title }}
+        span.date {{ article.date }}
+        span.date @ {{ article.time }}
+        p {{ article.text }}
