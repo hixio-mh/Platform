@@ -18,5 +18,6 @@ angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope
     $rootScope.notification = { type: type, text: text }
 
   $scope.showIntercom = -> Intercom "show"
+  $scope.showTutorial = -> if window.showTutorial then window.showTutorial()
   $http.get("/api/v1/user").success (me) -> $scope.me = me
   $rootScope.$on "$locationChangeStart", -> $scope.clearNotification()
