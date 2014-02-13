@@ -127,6 +127,14 @@ module.exports = (grunt) ->
     concatNormalSrc = ["#{_buildDir}static/client/routes/normal.js"]
     concatAdminSrc = ["#{_buildDir}static/client/routes/admin.js"]
     commonClientSrc = [
+      "#{_buildDir}static/client/tutorial/dashboard.js"
+      "#{_buildDir}static/client/tutorial/apps.js"
+      "#{_buildDir}static/client/tutorial/appDetails.js"
+      "#{_buildDir}static/client/tutorial/ads.js"
+      "#{_buildDir}static/client/tutorial/adDetails.js"
+      "#{_buildDir}static/client/tutorial/campaigns.js"
+      "#{_buildDir}static/client/tutorial/campaignDetails.js"
+
       "#{_buildDir}static/client/controllers/AdefyRootController.js"
 
       "#{_buildDir}static/client/directives/AdefyDropdownDirective.js"
@@ -199,6 +207,7 @@ module.exports = (grunt) ->
       "#{_buildDir}static/js/vendor/moment.min.js"
       "#{_buildDir}static/js/vendor/d3.min.js"
       "#{_buildDir}static/js/vendor/rickshaw.min.js"
+      "#{_buildDir}static/js/vendor/ace/ace.js"
       "#{_buildDir}static/js/script.min.js"
     ]
 
@@ -219,6 +228,7 @@ module.exports = (grunt) ->
       "#{_buildDir}static/js/vendor/moment.min.js"
       "#{_buildDir}static/js/vendor/d3.min.js"
       "#{_buildDir}static/js/vendor/rickshaw.min.js"
+      "#{_buildDir}static/js/vendor/ace/ace.js"
       "#{_buildDir}static/js/script-admin.min.js"
     ]
 
