@@ -84,8 +84,15 @@ setup = (options, imports, register) ->
 
   # Finds a single Campaign by ID
   app.get "/api/v1/campaigns/:id", (req, res) ->
+    query = owner: req.user.id
+
+    if req.param("id") == "tutorial"
+      query.tutorial = true
+    else
+      query._id = req.param "id"
+
     db.model("Campaign")
-    .findById req.param "id"
+    .find query
     .populate "ads"
     .exec (err, campaign) ->
       if utility.dbError err, res then return

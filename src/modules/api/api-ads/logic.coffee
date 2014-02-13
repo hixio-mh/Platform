@@ -180,8 +180,15 @@ setup = (options, imports, register) ->
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->
+    query = owner: req.user.id
+
+    if req.param("id") == "tutorial"
+      query.tutorial = true
+    else
+      query._id = req.param "id"
+
     db.model("Ad")
-    .findById req.param "id"
+    .find query
     .populate "campaigns.campaign"
     .exec (err, ads) ->
       if utility.dbError err, res then return
