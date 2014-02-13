@@ -153,9 +153,7 @@ setup = (options, imports, register) ->
   # Retrieve user, expects {filter}
   app.get "/api/v1/user/get", (req, res) ->
     if not utility.param req.param("filter"), res, "Filter" then return
-    if not req.user.admin
-      res.json 403, { error: "Unauthorized" }
-      return
+    if not req.user.admin then return res.send 403
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
@@ -194,6 +192,7 @@ setup = (options, imports, register) ->
   app.get "/api/v1/user", (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
+      if not user then return res.send 404
 
       user.updateFunds -> res.json user.toAPI()
 

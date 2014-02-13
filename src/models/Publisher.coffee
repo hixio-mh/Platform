@@ -34,6 +34,7 @@ statCache = new NodeCache stdTTL: 60
 schema = new mongoose.Schema
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: { type: String, required: true }
+  tutorial: { type: Boolean, default: false }
 
   url: { type: String, default: "" }
   _previouslyGeneratedUrl: { type: String, default: "-" }
@@ -58,6 +59,8 @@ schema = new mongoose.Schema
   minimumCPM: { type: Number, default: 0 }
   minimumCPC: { type: Number, default: 0 }
   preferredPricing: { type: String, default: "Any" }
+
+  version: { type: Number, default: 1 }
 
 ##
 ## ID and handle generation
@@ -89,6 +92,7 @@ schema.methods.disaprove = -> @status = 1
 
 schema.methods.activate = (cb) ->
   if @active then return cb()
+  if @tutorial then return cb()
 
   @active = true
   @createRedisStruture()
@@ -97,6 +101,7 @@ schema.methods.activate = (cb) ->
 
 schema.methods.deactivate = (cb) ->
   if not @active then return cb()
+  if @tutorial then return cb()
 
   @active = false
   @clearRedisStructure()

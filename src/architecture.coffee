@@ -20,6 +20,7 @@ module.exports = [
   "./modules/core/core-express",
 
   "./modules/core/core-init-start",
+  "./modules/core/core-init-mongo",
   "./modules/core/core-init-redis",
   "./modules/core/core-init-autocomplete",
 
@@ -44,7 +45,6 @@ module.exports = [
   "./modules/api/api-filters",
 
   # Maintenance routes
-  "./modules/logic/migration",
   "./modules/logic/seed",
 
   # Angular route definitions

@@ -30,14 +30,13 @@ schema = new mongoose.Schema
   name: String
   data: { type: String, default: "" }
 
-  # Added version number in v1
-  # Added campaign references in v2
-  version: { type: Number, default: 2 }
+  version: { type: Number, default: 1 }
 
   # 0 - Pending
   # 1 - Rejected
   # 2 - Approved
   status: { type: Number, default: 0 }
+  tutorial: { type: Boolean, default: false }
 
   campaigns: [
 
