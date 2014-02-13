@@ -90,9 +90,16 @@ setup = (options, imports, register) ->
 
   # Fetches owned ads
   app.get "/api/v1/ads", (req, res) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
     db.model("Ad")
-    .find({ owner: req.user.id })
-    .populate("campaigns.campaign")
+    .find
+      owner: req.user.id
+      tutorial: tutorial
+    .populate "campaigns.campaign"
     .exec (err, ads) ->
       if utility.dbError err, res then return
 
@@ -153,7 +160,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return res.send 401
 
     db.model("Ad")
-    .find()
+    .find tutorial: false
     .populate("owner")
     .exec (err, ads) ->
       if utility.dbError err, res then return
@@ -179,9 +186,16 @@ setup = (options, imports, register) ->
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
     db.model("Ad")
-    .find({ _id: req.param "id" })
-    .populate("campaigns.campaign")
+    .find
+      _id: req.param "id"
+      tutorial: tutorial
+    .populate "campaigns.campaign"
     .exec (err, ads) ->
       if utility.dbError err, res then return
       if ads.length == 0 then return res.send 404
@@ -205,6 +219,7 @@ setup = (options, imports, register) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
+      if ad.tutorial == true then return res.send 401
 
       if not req.user.admin and req.user.id != ad.owner
         return res.send 403
@@ -228,6 +243,7 @@ setup = (options, imports, register) ->
     .exec (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
+      if ad.tutorial == true then return res.send 401
 
       ad.disaprove ->
         ad.save()

@@ -111,7 +111,16 @@ setup = (options, imports, register) ->
 
   # Fetches owned publisher list.
   app.get "/api/v1/publishers", (req, res) ->
-    db.model("Publisher").find owner: req.user.id, (err, publishers) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
+    db.model("Publisher")
+    .find
+      owner: req.user.id
+      tutorial: tutorial
+    .exec (err, publishers) ->
       if utility.dbError err, res then return
 
       pubCount = publishers.length
@@ -137,7 +146,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return res.send 401
 
     db.model("Publisher")
-    .find()
+    .find tutorial: false
     .populate("owner")
     .exec (err, publishers) ->
       if utility.dbError err, res then return
@@ -162,16 +171,18 @@ setup = (options, imports, register) ->
 
   # Finds a single publisher by ID
   app.get "/api/v1/publishers/:id", (req, res) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
     db.model("Publisher").findOne
       _id: req.param "id"
       owner: req.user.id
+      tutorial: tutorial
     , (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
-
-      if not pub.owner.equals req.user.id
-        res.send 403
-        return
 
       pub.fetchOverviewStats (stats) ->
         publisher = pub.toAnonAPI()
@@ -186,6 +197,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
+      if pub.tutorial == true then return res.send 401
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403
@@ -206,6 +218,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
+      if pub.tutorial == true then return res.send 401
 
       pub.disaprove()
       pub.deactivate()
@@ -217,6 +230,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
+      if pub.tutorial == true then return res.send 401
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403
@@ -230,6 +244,7 @@ setup = (options, imports, register) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
+      if pub.tutorial == true then return res.send 401
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
         return res.send 403

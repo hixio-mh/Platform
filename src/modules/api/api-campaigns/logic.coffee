@@ -63,11 +63,18 @@ setup = (options, imports, register) ->
     newCampaign.save()
     res.json 200
 
-  # Fetch campaigns owned by the user identified by the cookie
+  # Fetch owned camaigns
   app.get "/api/v1/campaigns", (req, res) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
     db.model("Campaign")
-    .find({ owner: req.user.id })
-    .populate("ads")
+    .find
+      owner: req.user.id
+      tutorial: tutorial
+    .populate "ads"
     .exec (err, campaigns) ->
       if utility.dbError err, res then return
       if campaigns.length == 0 then res.json 200, []
@@ -84,9 +91,16 @@ setup = (options, imports, register) ->
 
   # Finds a single Campaign by ID
   app.get "/api/v1/campaigns/:id", (req, res) ->
+    if req.param("tutorial") != undefined and req.param("tutorial") != false
+      tutorial = true
+    else
+      tutorial = false
+
     db.model("Campaign")
-    .findById(req.param("id"))
-    .populate("ads")
+    .findOne
+      _id: req.param "id"
+      tutorial: tutorial
+    .populate "ads"
     .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
@@ -352,6 +366,7 @@ setup = (options, imports, register) ->
     .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
+      if campaign.tutorial == true then return res.send 401
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403
@@ -367,6 +382,7 @@ setup = (options, imports, register) ->
     .exec (err, campaign) ->
       if utility.dbError err, res then return
       if not campaign then return res.send 404
+      if campaign.tutorial == true then return res.send 401
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
         return res.send 403

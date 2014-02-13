@@ -24,7 +24,16 @@
     "hiredis": "~0.1.16",
     "statsd-client": "0.0.15",
     "accounting": "~0.3.2",
-    "coffee-script": "~1.6.3"
+    "coffee-script": "~1.6.3",
+    "time-grunt": "~0.2.9",
+    "passport": "~0.2.0",
+    "passport-localapikey": "0.0.3",
+    "connect-redis": "~1.4.6",
+    "async": "~0.2.10",
+    "passport-local": "~0.1.6",
+    "connect-flash": "~0.1.1",
+    "aws-sdk": "~2.0.0-rc9",
+    "monk": "~0.7.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -30,6 +30,8 @@ schema = new mongoose.Schema
   description: String
   category: String
 
+  tutorial: { type: Boolean, default: false }
+
   # Once created, budget is subtracted from funds, and expenses are subtracted
   # from budget. If budget cannot pay next CPC/CPM, ad in question is disabled,
   # untill finally all ads are disabled + budget is near-zero.
