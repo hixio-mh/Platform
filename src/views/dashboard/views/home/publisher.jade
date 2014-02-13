@@ -41,7 +41,7 @@
     h6.block.tcenter Lifetime Metrics
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
 
-  h1 Top Apps
+  .section Top Apps
   table.info
     thead: tr
       th
@@ -57,7 +57,7 @@
         td {{ app.stats.ctr | number:2 }}%
         td $ {{ app.stats.earnings | number:2 }}
   div
-    h1 News
+    .section News
     ul.news
       li
         span.title We are live!
