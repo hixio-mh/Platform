@@ -29,4 +29,4 @@ guiders.createGuider
   position: "7"
   overlay: true
   highlight: "a.new-item"
-  onHide: -> window.location.href = "/apps/tutorial#guider=appsGuider1"
+  onHide: -> window.location.href = "/apps/tutorial#guider=appDetailsGuider1"
