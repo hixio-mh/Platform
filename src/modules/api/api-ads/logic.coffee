@@ -188,7 +188,7 @@ setup = (options, imports, register) ->
       query._id = req.param "id"
 
     db.model("Ad")
-    .find query
+    .findOne query
     .populate "campaigns.campaign"
     .exec (err, ads) ->
       if utility.dbError err, res then return
