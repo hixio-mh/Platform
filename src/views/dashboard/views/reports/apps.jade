@@ -26,7 +26,7 @@ include _menu
   h2.loading Loading comparison data...
 
 .contents.w920.center(ng-if="comparisonData != null")
-  h1 Comparison
+  .section Comparison
 
   table.info
     thead: tr
@@ -47,7 +47,7 @@ include _menu
   h2.loading Loading performance data...
 
 .contents.w920.center(ng-show="impressionsData != null && clicksData != null && earningsData != null")
-  h1 Metric Performance
+  .section Metric Performance
     .w50.right.header-controls.app-reports-controls
       .w50.contents-right
         label(for="interval") Graph Interval:
