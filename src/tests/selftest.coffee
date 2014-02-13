@@ -3,6 +3,7 @@
 childProcess = require("child_process")
 config = require "#{__dirname}/../config.json"
 config = config.modes[config.mode]
+buildDir = "build/"
 
 adefy = null
 
@@ -14,7 +15,7 @@ before (done) ->
   dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}../../setup_db.js"
   dbSetup.on "close", ->
 
-    adefy = childProcess.fork "#{__dirname}/../../#{config.buildDir}/adefy.js", [],
+    adefy = childProcess.fork "#{__dirname}/../../#{buildDir}/adefy.js", [],
       silent: false
 
     # Await server ready state
