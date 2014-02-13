@@ -111,15 +111,8 @@ setup = (options, imports, register) ->
 
   # Fetches owned publisher list.
   app.get "/api/v1/publishers", (req, res) ->
-    if req.param("tutorial") != undefined and req.param("tutorial") != false
-      tutorial = true
-    else
-      tutorial = false
-
     db.model("Publisher")
-    .find
-      owner: req.user.id
-      tutorial: tutorial
+    .find owner: req.user.id
     .exec (err, publishers) ->
       if utility.dbError err, res then return
 
@@ -171,15 +164,9 @@ setup = (options, imports, register) ->
 
   # Finds a single publisher by ID
   app.get "/api/v1/publishers/:id", (req, res) ->
-    if req.param("tutorial") != undefined and req.param("tutorial") != false
-      tutorial = true
-    else
-      tutorial = false
-
     db.model("Publisher").findOne
       _id: req.param "id"
       owner: req.user.id
-      tutorial: tutorial
     , (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404

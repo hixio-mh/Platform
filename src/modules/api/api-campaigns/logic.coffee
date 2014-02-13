@@ -65,15 +65,8 @@ setup = (options, imports, register) ->
 
   # Fetch owned camaigns
   app.get "/api/v1/campaigns", (req, res) ->
-    if req.param("tutorial") != undefined and req.param("tutorial") != false
-      tutorial = true
-    else
-      tutorial = false
-
     db.model("Campaign")
-    .find
-      owner: req.user.id
-      tutorial: tutorial
+    .find owner: req.user.id
     .populate "ads"
     .exec (err, campaigns) ->
       if utility.dbError err, res then return
@@ -91,15 +84,8 @@ setup = (options, imports, register) ->
 
   # Finds a single Campaign by ID
   app.get "/api/v1/campaigns/:id", (req, res) ->
-    if req.param("tutorial") != undefined and req.param("tutorial") != false
-      tutorial = true
-    else
-      tutorial = false
-
     db.model("Campaign")
-    .findOne
-      _id: req.param "id"
-      tutorial: tutorial
+    .findById req.param "id"
     .populate "ads"
     .exec (err, campaign) ->
       if utility.dbError err, res then return
