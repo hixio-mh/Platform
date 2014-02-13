@@ -164,10 +164,14 @@ setup = (options, imports, register) ->
 
   # Finds a single publisher by ID
   app.get "/api/v1/publishers/:id", (req, res) ->
-    db.model("Publisher").findOne
-      _id: req.param "id"
-      owner: req.user.id
-    , (err, pub) ->
+    query = owner: req.user.id
+
+    if req.param("id") == "tutorial"
+      query.tutorial = true
+    else
+      query._id = req.param "id"
+
+    db.model("Publisher").findOne query, (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
 
