@@ -3,10 +3,59 @@ include _menu
 .contents.center
   h1 Android SDK integration
 
-  blockquote Grab our android library <a href="https://developer.adefy.com/sdks/adefy-android-v1.0.aar">here</a>. It includes JBox2D v2.2.1.1, so you don't need to include it separately if you are already using it.
-  
-  p lorem ipsum
-
-  p lipsum
-
   p.label.green.tcenter.block(style="margin-left: 0") Your API key is {{ app.apikey }}
+
+  blockquote Grab our android library <a href="https://developer.adefy.com/sdks/adefy-android-v1.0.aar">here</a>. It includes JBox2D v2.2.1.1, so you don't need to include it separately if you are already using it.
+
+  h3 Add the AAR to your gradle config
+  p Android handles local AAR libs poorly; you will need to specify a local folder as a local maven repo, then include the AAR from there.
+  p An example build.config:
+  .editor(style="height:300px")
+    | apply plugin: 'android'
+    | 
+    | android {
+    |   ...
+    | }
+    | 
+    | repositories {
+    |     mavenCentral()
+    |     flatDir {
+    |         dirs '../AdefyLib/build/libs'
+    |     }
+    | }
+    | 
+    | dependencies {
+    |     ...
+    |     compile 'com.sit.adefy:AdefyLib:1.0@aar'
+    | }
+
+  br
+
+  .content.no-pad
+    .col12
+      h3 The simplest fetch
+      p To load and launch a loadscreen ad in a single call, build an intent for an AdefyScene. Pass it your publisher API key, along with a requested loadscreen length, and start the activity:
+      .editor(style="height:100px")
+        | Intent adIntent = new Intent(getApplicationContext(), AdefyScene.class);
+        | adIntent.putExtra("apiKey", "{{ app.apikey }}");
+        | adIntent.putExtra("estimatedLength", 6);
+        | startActivity(adIntent);
+
+  br
+
+  h3
+    | For many more examples, check out the 
+    a(href="https://developer.adefy.com/tutorials/integration/android" target="_blank") tutorial
+    | .
+
+script.
+  $(document).ready(function() {
+    setTimeout(function() {
+      $(".editor").each(function(i, editor) {
+        var editor = ace.edit(editor);
+        editor.getSession().setMode("ace/mode/java");
+        editor.setTheme("ace/theme/tomorrow");
+        editor.setReadOnly(true);
+      });
+    }, 200);
+  });
