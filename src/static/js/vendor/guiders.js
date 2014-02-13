@@ -52,7 +52,18 @@ var guiders = (function($) {
     xButton: false // This places a closer "x" button in the top right of the guider.
   };
 
-  guiders._htmlSkeleton = ["<div class='guider'>", "  <div class='guiders_content'>", "    <h1 class='guiders_title'></h1>", "    <div class='guiders_close'></div>", "    <p class='guiders_description'></p>", "    <div class='guiders_buttons_container'>", "    </div>", "  </div>", "  <div class='guiders_arrow'>", "  </div>", "</div>"].join("");
+  guiders._htmlSkeleton = [
+  "<div class='guider'>",
+  "  <div class='guiders_content'>",
+  "    <h1 class='guiders_title section'></h1>",
+  "    <div class='guiders_close'></div>",
+  "    <p class='guiders_description'></p>",
+  "    <div class='guiders_buttons_container'>",
+  "    </div>",
+  "  </div>",
+  "  <div class='guiders_arrow'>",
+  "  </div>",
+  "</div>"].join("");
 
   guiders._arrowSize = 42; // This is the arrow's width and height.
   guiders._backButtonTitle = "Previous";

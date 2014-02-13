@@ -77,4 +77,4 @@ guiders.createGuider
   position: "12"
   overlay: true
   highlight: "#home-publisher ul.news"
-  onHide: -> window.location.href = "/apps/#guider=tutorialStart"
+  onHide: -> window.location.href = "/apps/#guider=appsGuider1"
