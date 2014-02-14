@@ -11,7 +11,13 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+
 angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope, Campaign, $http) ->
+
+  guiders.hideAll();
+  window.showTutorial = -> guiders.show "reportsGuider1"
+  UserService.getUser (user) ->
+    if user.tutorials.reports then window.showTutorial()
 
   ##
   ## Initial render settings and options

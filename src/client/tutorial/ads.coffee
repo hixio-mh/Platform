@@ -8,5 +8,10 @@ guiders.createGuider
   overlay: true
   highlight: ".content"
   onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "ads"
     adId = $(".list .ad.tutorial").attr "data-id"
     window.location.href = "/ads/#{adId}#guider=adDetailsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "ads"

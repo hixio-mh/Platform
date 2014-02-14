@@ -11,13 +11,12 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, App, UserService) ->
 
-angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $route, App) ->
-
+  guiders.hideAll();
   window.showTutorial = -> guiders.show "dashboardGuider1"
-  window.showTutorial()
-
-  $http.post "/api/v1/user/tutorial/all/true"
+  UserService.getUser (user) ->
+    if user.tutorials.dashboard then window.showTutorial()
 
   ##
   ## Fetch app table data

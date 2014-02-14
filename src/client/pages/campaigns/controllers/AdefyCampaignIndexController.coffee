@@ -11,7 +11,13 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+
 angular.module("AdefyApp").controller "AdefyCampaignIndexController", ($scope, CampaignService, $http) ->
+
+  guiders.hideAll();
+  window.showTutorial = -> guiders.show "campaignsGuider1"
+  UserService.getUser (user) ->
+    if user.tutorials.campaigns then window.showTutorial()
 
   buildGraphData = (campaign) ->
     campaign.graphData =

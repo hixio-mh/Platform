@@ -6,6 +6,9 @@ guiders.createGuider
   next: "reportsGuider2"
   position: "6"
   overlay: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "reports"
 
 guiders.createGuider
   title: "Report Timespan"
@@ -16,4 +19,10 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".contents.w920.center.campaign-reports-controls"
-  onNavigate: -> window.location.href = "/funds#guider=fundsGuider1"
+  onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "reports"
+    window.location.href = "/funds#guider=fundsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "reports"

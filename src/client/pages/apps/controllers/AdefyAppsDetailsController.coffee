@@ -14,6 +14,11 @@
 
 angular.module("AdefyApp").controller "AdefyAppsDetailsController", ($scope, $routeParams, AppService) ->
 
+  guiders.hideAll();
+  window.showTutorial = -> guiders.show "appDetailsGuider1"
+  UserService.getUser (user) ->
+    if user.tutorials.appDetails then window.showTutorial()
+
   AppService.getApp $routeParams.id, (app) -> $scope.app = app
 
   $scope.graphInterval = "30minutes"

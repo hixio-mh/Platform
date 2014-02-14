@@ -11,8 +11,12 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $http, $routeParams, UserService) ->
 
-angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $http, $routeParams) ->
+  guiders.hideAll();
+  window.showTutorial = -> guiders.show "fundsGuider1"
+  UserService.getUser (user) ->
+    if user.tutorials.funds then showTutorial()
 
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data
@@ -29,7 +33,7 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
     if action == "confirm" or action == "cancel"
       $scope.action = "pending"
 
-      $http.put("/api/v1/user/deposit/#{token}/#{action}?payerID=#{payerID}")
+      $http.post("/api/v1/user/deposit/#{token}/#{action}?payerID=#{payerID}")
       .success (data) ->
         $scope.action = action
         $scope.paymentData = data

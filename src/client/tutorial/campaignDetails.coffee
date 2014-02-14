@@ -10,6 +10,9 @@ guiders.createGuider
   onNavigate: ->
     campaignId = $(".titlebar.cf.full.campaign").attr "data-id"
     window.location.href = "/campaigns/#{campaignId}/edit#guider=campaignDetailsGuider2"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "campaignDetails"
 
 guiders.createGuider
   title: "Campaign Settings"
@@ -20,4 +23,10 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".titlebar.cf.full"
-  onNavigate: -> window.location.href = "/reports/campaigns#guider=reportsGuider1"
+  onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "campaignDetails"
+    window.location.href = "/reports/campaigns#guider=reportsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "campaignDetails"
