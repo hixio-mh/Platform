@@ -43,6 +43,4 @@ describe "User Model", ->
 
     expect(exp.pendingDeposit).to.equal ""
 
-    expect(exp.version).to.not.exist
-
     done()

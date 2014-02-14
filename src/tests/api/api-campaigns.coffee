@@ -41,8 +41,6 @@ module.exports = (user, admin) ->
     campaign.should.have.property "devicesExclude"
     campaign.should.have.property "countriesInclude"
     campaign.should.have.property "countriesExclude"
-    campaign.should.have.property "startDate"
-    campaign.should.have.property "endDate"
     campaign.should.have.property "tutorial"
 
     util.apiObjectIdSanitizationCheck campaign

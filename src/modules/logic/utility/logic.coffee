@@ -58,12 +58,12 @@ setup = (options, imports, register) ->
       # @return [Boolean] wasError false if error object invalid
       dbError: (error, res, passive) ->
         if error
+
           # Just treat cast errors as 404s
           if error.name == "CastError"
             if passive != true then aem.send res, "404"
           else
-            spew.error error
-            if passive != true then aem.send res, "500:db", error: error
+            if passive != true then aem.send res, "500:db"
           return true
         false
 

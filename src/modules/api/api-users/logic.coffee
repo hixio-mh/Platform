@@ -80,7 +80,7 @@ setup = (options, imports, register) ->
 
     # Ensure username is not taken (don't trust client-side check)
     db.model("User").findOne username: req.param("username"), (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if user then return aem.send res, "400", error: "Username already taken"
 
       # Create user
@@ -106,7 +106,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return aem.send res, "403"
 
     db.model("User").findById req.param("id"), (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
 
       if req.cookies.user.sess == user.session
         aem.send res, "500", error: "You can't delete yourself!"
@@ -122,7 +122,7 @@ setup = (options, imports, register) ->
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
-        if utility.dbError err, res, true then return aem.send res, "500:db"
+        if utility.dbError err, res, false then return
         if users.length == 0 then return res.json []
 
         doneCount = users.length
@@ -138,7 +138,7 @@ setup = (options, imports, register) ->
 
     findOne = (username, res) ->
       db.model("User").findOne { username: username }, (err, user) ->
-        if utility.dbError err, res, true then return aem.send res, "500:db"
+        if utility.dbError err, res, false then return
         if not user then return aem.send res, "500", error: "User(#{username}) could not be found"
 
         user.updateFunds -> res.json user.toAPI()
@@ -156,7 +156,7 @@ setup = (options, imports, register) ->
   # publisher balance
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not user then return res.send 404
 
       user.updateFunds ->
@@ -165,7 +165,7 @@ setup = (options, imports, register) ->
   # Update the user account. Users can only save themselves!
   app.post "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
 
       req.onValidationError (msg) -> aem.send res, "400", error: msg.path
 
@@ -207,7 +207,7 @@ setup = (options, imports, register) ->
   # Returns a list of transactions: deposits, withdrawals, reserves
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User(#{req.user.id}) not found"
 
       res.json user.transactions
@@ -224,7 +224,7 @@ setup = (options, imports, register) ->
       return res.send 400
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not user then return res.json 500, error: "User not found"
 
       if section == "all" or section == "dashboard" then user.tutorials.dashboard = status
@@ -276,7 +276,7 @@ setup = (options, imports, register) ->
       ]
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not user then return aem.send res, "500", error: "User(req.user.id) not found"
 
       paypalSDK.payment.create paymentJSON, (err, payment) ->
@@ -309,7 +309,7 @@ setup = (options, imports, register) ->
       return aem.send res, "400", error: "No payer id"
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not user then return aem.send res, "500", error: "User not found"
 
       pendingDeposit = user.pendingDeposit.split "|"

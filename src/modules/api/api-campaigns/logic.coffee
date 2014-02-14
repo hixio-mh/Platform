@@ -73,7 +73,7 @@ setup = (options, imports, register) ->
     .find owner: req.user.id
     .populate "ads"
     .exec (err, campaigns) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if campaigns.length == 0 then res.json 200, []
 
       ret = []
@@ -92,7 +92,7 @@ setup = (options, imports, register) ->
     .findById req.param "id"
     .populate "ads"
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       # Check if authorized
@@ -111,7 +111,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       # Permission check
@@ -321,7 +321,7 @@ setup = (options, imports, register) ->
 
     # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404", error: "Campaign not found"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
@@ -340,7 +340,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
@@ -352,7 +352,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
       if campaign.tutorial == true then return aem.send res, "401"
 
@@ -368,7 +368,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if utility.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
       if campaign.tutorial == true then return aem.send res, "404"
 
