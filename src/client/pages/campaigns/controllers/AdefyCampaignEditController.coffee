@@ -134,10 +134,6 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
     saveCampaign.startDate = getRawDate saveCampaign.startDate
     saveCampaign.endDate = getRawDate saveCampaign.endDate
 
-    # Un-stringify that shit
-    for i in [0...saveCampaign.ads.length]
-      saveCampaign.ads[i] = JSON.parse saveCampaign.ads[i]
-
     $scope.saveInProgress = true
     saveCampaign.$save().then(
       ->
