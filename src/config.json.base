@@ -50,7 +50,7 @@
 			"domain": "staging.adefy.com",
 			"port": 10000,
 			"loglevel": 10,
-			"newrelic": true,
+			"newrelic": false,
 			"trafficgen": true,
 
 			"mongo": {
