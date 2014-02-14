@@ -13,8 +13,6 @@
 ##
 angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope, $http, UserService) ->
 
-  guiders.hideAll();
-
   $scope.clearNotification = ->
     $rootScope.notification = null
   $scope.setNotification = (text, type) ->

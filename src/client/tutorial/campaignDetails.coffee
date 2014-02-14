@@ -17,16 +17,16 @@ guiders.createGuider
 guiders.createGuider
   title: "Campaign Settings"
   description: "Here you can add approved ads to your campaign, manage your budget, pricing, scheduling, and targeting."
-  attachTo: ".titlebar.cf.full .menu.full"
-  buttons: [{ name: "Head on over to Reports", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Head on over to Reports", onclick: guiders.navigate }, { name: "Close" }]
   id: "campaignDetailsGuider2"
   position: "6"
   overlay: true
-  highlight: ".titlebar.cf.full"
   onNavigate: ->
     if window.UserService != undefined
-      window.UserService.disableTutorial "campaignDetails"
-    window.location.href = "/reports/campaigns#guider=reportsGuider1"
+      window.UserService.disableTutorial "campaignDetails", ->
+        window.location.href = "/reports/campaigns#guider=reportsGuider1"
+    else
+      window.location.href = "/reports/campaigns#guider=reportsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "campaignDetails"

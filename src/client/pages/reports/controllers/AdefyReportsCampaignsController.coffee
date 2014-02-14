@@ -14,10 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope, Campaign, $http) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "reportsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.reports then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.reports then window.showTutorial()
 
   ##
   ## Initial render settings and options

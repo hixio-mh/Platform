@@ -13,10 +13,13 @@
 ##
 angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $http, $routeParams, UserService) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "fundsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.funds then showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.funds then showTutorial()
 
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data

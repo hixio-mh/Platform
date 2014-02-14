@@ -21,8 +21,10 @@ guiders.createGuider
   highlight: ".contents.w920.center.campaign-reports-controls"
   onNavigate: ->
     if window.UserService != undefined
-      window.UserService.disableTutorial "reports"
-    window.location.href = "/funds#guider=fundsGuider1"
+      window.UserService.disableTutorial "reports", ->
+        window.location.href = "/funds#guider=fundsGuider1"
+    else
+      window.location.href = "/funds#guider=fundsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "reports"

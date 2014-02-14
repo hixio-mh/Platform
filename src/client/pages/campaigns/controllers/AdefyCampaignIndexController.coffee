@@ -14,10 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyCampaignIndexController", ($scope, CampaignService, $http) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "campaignsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.campaigns then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.campaigns then window.showTutorial()
 
   buildGraphData = (campaign) ->
     campaign.graphData =

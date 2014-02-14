@@ -13,6 +13,14 @@
 ##
 angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout, CampaignService) ->
 
+  window.showTutorial = -> guiders.show "campaignDetailsGuider2"
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.campaignDetails then window.showTutorial()
+
   $scope.min =
     budget: 10
     cpm: 1.00
