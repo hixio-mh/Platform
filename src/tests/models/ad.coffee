@@ -16,7 +16,7 @@ describe "Ad Model", ->
   it "Should offer sane defaults", (done) ->
     ad = model()
 
-    expect(ad.version).to.equal 2
+    expect(ad.version).to.equal 1
     expect(ad.data).to.equal ""
     expect(ad.status).to.equal 0
     expect(ad.campaigns).to.exist
