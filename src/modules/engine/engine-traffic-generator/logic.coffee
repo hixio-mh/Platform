@@ -47,7 +47,7 @@ setup = (options, imports, register) ->
     apikeys = []
 
     updateKeyList = ->
-      db.model("Publisher").find {}, (err, pubs) ->
+      db.model("Publisher").find { tutorial: false }, (err, pubs) ->
         if err then spew.error err
         apikeys = []
         apikeys.push pub.apikey for pub in pubs
