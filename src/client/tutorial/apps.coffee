@@ -7,6 +7,9 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".content"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "apps"
 
 guiders.createGuider
   title: "App Tile"
@@ -18,6 +21,9 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".grid a:first-child"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "apps"
 
 guiders.createGuider
   title: "Add an Application"
@@ -30,5 +36,11 @@ guiders.createGuider
   overlay: true
   highlight: "a.new-item"
   onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "apps"
+
     tutorialAppId = $(".grid .item.tutorial").attr "data-id"
     window.location.href = "/apps/#{tutorialAppId}#guider=appDetailsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "apps"

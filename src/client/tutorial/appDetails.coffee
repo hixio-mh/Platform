@@ -7,6 +7,9 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".content"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "appDetails"
 
 guiders.createGuider
   title: "Settings & Integration"
@@ -17,4 +20,10 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".titlebar.cf.full"
-  onNavigate: -> window.location.href = "/ads#guider=adsGuider1"
+  onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "appDetails"
+    window.location.href = "/ads#guider=adsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "appDetails"

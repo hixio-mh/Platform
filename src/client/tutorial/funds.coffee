@@ -6,6 +6,9 @@ guiders.createGuider
   next: "fundsGuider2"
   position: "6"
   overlay: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "funds"
 
 guiders.createGuider
   title: "All done!"
@@ -14,3 +17,6 @@ guiders.createGuider
   id: "fundsGuider2"
   position: "6"
   overlay: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "funds"

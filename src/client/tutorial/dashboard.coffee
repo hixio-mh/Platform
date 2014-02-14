@@ -7,6 +7,9 @@ guiders.createGuider
   next: "dashboardGuider2"
   position: "bottomLeft"
   fixed: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Publisher Dashboard"
@@ -17,6 +20,9 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".content"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Support & Feedback"
@@ -29,6 +35,9 @@ guiders.createGuider
   overlay: true
   highlight: "#IntercomDefaultWidget"
   offset: { top: 3, left: 0 }
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Options Menu"
@@ -42,6 +51,9 @@ guiders.createGuider
   highlight: "header.navbar"
   offset: { top: 0, left: 10 }
   fixed: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Funds"
@@ -54,6 +66,9 @@ guiders.createGuider
   overlay: true
   highlight: "header.navbar"
   fixed: true
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Top Apps"
@@ -66,6 +81,9 @@ guiders.createGuider
   overlay: true
   highlight: "#home-publisher table.info"
   onShow: -> $("#home-publisher table.info")[0].scrollIntoView()
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "News"
@@ -77,8 +95,10 @@ guiders.createGuider
   position: "12"
   overlay: true
   highlight: "#home-publisher ul.news"
-  onNavigate: -> window.location.href = "/apps/#guider=appsGuider1"
   onShow: -> $("#home-publisher ul.news")[0].scrollIntoView()
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
   title: "Advertiser Dashboard"
@@ -88,4 +108,10 @@ guiders.createGuider
   id: "dashboardGuider8"
   position: "6"
   onShow: -> $(window).scrollTop 0
-  onNavigate: -> window.location.href = "/apps/#guider=appsGuider1"
+  onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"
+    window.location.href = "/apps/#guider=appsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "dashboard"

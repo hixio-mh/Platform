@@ -7,6 +7,9 @@ guiders.createGuider
   position: "6"
   overlay: true
   highlight: ".content"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "adDetails"
 
 guiders.createGuider
   title: "Creatives are needed"
@@ -17,4 +20,10 @@ guiders.createGuider
   position: "5"
   overlay: true
   highlight: ".titlebar.cf.full"
-  onNavigate: -> window.location.href = "/campaigns#guider=campaignsGuider1"
+  onNavigate: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "adDetails"
+    window.location.href = "/campaigns#guider=campaignsGuider1"
+  onClose: ->
+    if window.UserService != undefined
+      window.UserService.disableTutorial "adDetails"

@@ -134,8 +134,11 @@ module.exports = (grunt) ->
       "#{_buildDir}static/client/tutorial/adDetails.js"
       "#{_buildDir}static/client/tutorial/campaigns.js"
       "#{_buildDir}static/client/tutorial/campaignDetails.js"
+      "#{_buildDir}static/client/tutorial/reports.js"
+      "#{_buildDir}static/client/tutorial/funds.js"
 
       "#{_buildDir}static/client/controllers/AdefyRootController.js"
+      "#{_buildDir}static/client/factories/AdefyUserFactory.js"
 
       "#{_buildDir}static/client/directives/AdefyDropdownDirective.js"
       "#{_buildDir}static/client/directives/AdefyTabDirective.js"
