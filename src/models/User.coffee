@@ -53,7 +53,7 @@ schema = new mongoose.Schema
 
   version: { type: Number, default: 2 }
 
-  tutorial:
+  tutorials:
     dashboard: { type: Boolean, default: true }
     apps: { type: Boolean, default: true }
     ads: { type: Boolean, default: true }

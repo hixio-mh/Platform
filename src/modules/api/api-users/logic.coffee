@@ -197,7 +197,7 @@ setup = (options, imports, register) ->
       user.updateFunds -> res.json user.toAPI()
 
   # Update the user account. Users can only save themselves!
-  app.put "/api/v1/user", (req, res) ->
+  app.post "/api/v1/user", (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
 
@@ -250,9 +250,9 @@ setup = (options, imports, register) ->
   app.post "/api/v1/user/tutorial/:section/:status", (req, res) ->
     section = req.param "section"
     
-    if req.param("status") == "true"
+    if req.param("status") == "enable"
       status = true
-    else if req.param("status") == "false"
+    else if req.param("status") == "disable"
       status = false
     else
       return res.send 400
@@ -261,15 +261,17 @@ setup = (options, imports, register) ->
       if utility.dbError err, res then return
       if not user then return res.json 500, error: "User not found"
 
-      if section == "all" or section == "dashboard" then user.tutorial.dashboard = status
-      if section == "all" or section == "apps" then user.tutorial.apps = status
-      if section == "all" or section == "ads" then user.tutorial.ads = status
-      if section == "all" or section == "campaigns" then user.tutorial.campaigns = status
-      if section == "all" or section == "reports" then user.tutorial.reports = status
-      if section == "all" or section == "funds" then user.tutorial.funds = status
-      if section == "all" or section == "appDetails" then user.tutorial.appDetails = status
-      if section == "all" or section == "adDetails" then user.tutorial.adDetails = status
-      if section == "all" or section == "campaignDetails" then user.tutorial.campaignDetails = status
+      if section == "all" or section == "dashboard" then user.tutorials.dashboard = status
+      if section == "all" or section == "apps" then user.tutorials.apps = status
+      if section == "all" or section == "ads" then user.tutorials.ads = status
+      if section == "all" or section == "campaigns" then user.tutorials.campaigns = status
+      if section == "all" or section == "reports" then user.tutorials.reports = status
+      if section == "all" or section == "funds" then user.tutorials.funds = status
+      if section == "all" or section == "appDetails" then user.tutorials.appDetails = status
+      if section == "all" or section == "adDetails" then user.tutorials.adDetails = status
+      if section == "all" or section == "campaignDetails" then user.tutorials.campaignDetails = status
+
+      user.save()
 
       res.json user.toAPI()
 
@@ -330,7 +332,7 @@ setup = (options, imports, register) ->
           res.json approval_url: paymentLinks.approval_url
 
   # Deposit confirmation/cancellation
-  app.put "/api/v1/user/deposit/:token/:action", (req, res) ->
+  app.post "/api/v1/user/deposit/:token/:action", (req, res) ->
     action = req.param "action"
     token = req.param "token"
     payerID = req.query.payerID

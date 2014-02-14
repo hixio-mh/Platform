@@ -1,8 +1,6 @@
 angular.module("AdefyApp").service "CampaignService", [
-  "$http"
-  "$routeParams"
   "Campaign"
-  ($http, $routeParams, Campaign) ->
+  (Campaign) ->
 
     # Cache campaigns by id
     cache = {}
