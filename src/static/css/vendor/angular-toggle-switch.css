@@ -51,6 +51,7 @@
 .switch .switch-left {
     color: #fff;
     background: -webkit-linear-gradient(top,#34b5e5,#5897fb);
+    background: linear-gradient(to top,#34b5e5,#5897fb);
     border: 1px solid #1597c7;
     border-bottom: 1px solid rgba(0,0,0,0.2);
     text-shadow: 0 1px 1px rgba(0,0,0,0.3);
@@ -60,6 +61,7 @@
 .switch .switch-right {
     color: #fff;
     background: -webkit-linear-gradient(top, #e43434, #fa5858);
+    background: linear-gradient(to top,#e43434,#fa5858);
     border: 1px solid #b33b3b;
     border-bottom: 1px solid rgba(0,0,0,0.2);
     text-shadow: 0 1px 1px rgba(0,0,0,0.3);
