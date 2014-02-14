@@ -11,7 +11,16 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
+
 angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope, Campaign, $http) ->
+
+  window.showTutorial = -> guiders.show "reportsGuider1"
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.reports then window.showTutorial()
 
   ##
   ## Initial render settings and options
@@ -140,7 +149,7 @@ angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope
 
     buildTableDataForCampaign = (campaign) ->
       index = tableData.length
-      tableData.push { name: campaign.name, ctr: 0 }
+      tableData.push name: campaign.name, ctr: 0, tutorial: campaign.tutorial
 
       $http.get("#{prefix}/#{c.id}/impressions#{suffix}").success (data) ->
         tableData[index].impressions = data

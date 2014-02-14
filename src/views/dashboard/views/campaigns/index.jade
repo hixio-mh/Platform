@@ -2,7 +2,7 @@ a.new-item(href="/campaigns/new")
   i.fa.fa-plus
   | New campaign
 .grid
-  a.item(ng-repeat="campaign in campaigns | orderBy:'ctr':true" ng-href="/campaigns/{{campaign.id}}")
+  a.item(ng-repeat="campaign in campaigns | orderBy:'ctr':true" ng-href="/campaigns/{{campaign.id}}" data-id="{{ campaign.id }}" ng-class="{ tutorial: campaign.tutorial }" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.campaigns)")
 
     div.icon.noimage(ng-if="campaign.ads.length == 0")
     img.icon(ng-if="campaign.ads.length == 1" ng-src="{{ campaign.ads[0].data.creative.image }}")
@@ -11,6 +11,8 @@ a.new-item(href="/campaigns/new")
         img(ng-src="{{ ad.data.creative.image }}")
 
     .name(ng-bind="campaign.name")
+    .label.blue(ng-if="campaign.tutorial") Example
+
     .metrics(ng-if="campaign.graphData")
       div.noAxes(analytics data="campaign.graphData" width="335" height="200")
       .wrap: .text

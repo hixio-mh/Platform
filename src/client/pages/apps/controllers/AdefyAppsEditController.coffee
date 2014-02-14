@@ -28,9 +28,9 @@ angular.module("AdefyApp").controller "AdefyAppsEditController", ($scope, $locat
 
     AppService.updateCachedApp $scope.app.id, $scope.app
     $scope.app.$save().then(
-      -> # success
+      -> # Success
         $location.path "/apps/#{$scope.app.id}"
-      -> #error
+      -> # Error
         $scope.setNotification "There was an error with your form submission", "error"
     )
 
@@ -38,9 +38,9 @@ angular.module("AdefyApp").controller "AdefyAppsEditController", ($scope, $locat
   $scope.delete = ->
     if $scope.app.name == $scope.form.name
       $scope.app.$delete().then(
-        -> # success
+        -> # Success
           $location.path "/apps"
-        -> #error
+        -> # Error
           $scope.setNotification "There was an error with your form submission", "error"
       )
 

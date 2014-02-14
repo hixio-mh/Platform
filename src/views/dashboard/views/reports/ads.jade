@@ -36,7 +36,7 @@ include _menu
       th CTR
       th Spent
     tbody
-      tr(ng-repeat="ad in comparisonData | orderBy:'ctr':true")
+      tr(ng-repeat="ad in comparisonData | orderBy:'ctr':true" ng-show="!ad.tutorial")
         td {{ ad.name }}
         td {{ ad.impressions | number }}
         td {{ ad.clicks | number }}

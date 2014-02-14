@@ -47,7 +47,7 @@ setup = (options, imports, register) ->
     file = req.params.file
 
     db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ex then return aem.send res, "404"
 
       if not req.user.admin and not ex.owner.equals req.user.id
@@ -73,7 +73,7 @@ setup = (options, imports, register) ->
     if not utility.param req.query.id, res, "Id" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
@@ -86,7 +86,7 @@ setup = (options, imports, register) ->
     if not utility.param req.query.data, res, "Data" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id

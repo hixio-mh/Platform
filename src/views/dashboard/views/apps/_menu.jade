@@ -20,7 +20,7 @@
       i.fa.fa-fw.fa-signal
       | Metrics
     a(ng-href="/apps/{{app.id}}/integration" tab)
-      i.fa.fa-fw.fa-paperclip
+      i.fa.fa-fw.fa-rocket
       | Integration
     a(ng-href="/apps/{{app.id}}/edit" tab)
       i.fa.fa-fw.fa-wrench
@@ -30,11 +30,14 @@
       | Request Approval
 
   .right
-    span(ng-switch="app.status")
-      .label.gray(ng-switch-when="0") Pending Approval
-      .label.red(ng-switch-when="1") Rejected
+    .label.blue(ng-if="app.tutorial") Example
 
-    .label.gray(ng-if="app.status != 2") Approval Required To Enable
+    div(ng-if="!app.tutorial")
+      span(ng-switch="app.status")
+        .label.gray(ng-switch-when="0") Pending Approval
+        .label.red(ng-switch-when="1") Rejected
+
+      .label.gray(ng-if="app.status != 2") Approval Required To Enable
 
   .toggle-wrap.right(ng-if="app.status == 2")
     toggle-switch(method="activeToggled()" model="app.active")

@@ -11,7 +11,6 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
 spew = require "spew"
@@ -53,8 +52,18 @@ schema = new mongoose.Schema
   # format id|token
   pendingDeposit: { type: String, default: "" }
 
-  # Schema version, used by /migrate
-  version: Number
+  version: { type: Number, default: 2 }
+
+  tutorials:
+    dashboard: { type: Boolean, default: true }
+    apps: { type: Boolean, default: true }
+    ads: { type: Boolean, default: true }
+    campaigns: { type: Boolean, default: true }
+    reports: { type: Boolean, default: true }
+    funds: { type: Boolean, default: true }
+    appDetails: { type: Boolean, default: true }
+    adDetails: { type: Boolean, default: true }
+    campaignDetails: { type: Boolean, default: true }
 
 schema.methods.getRedisId = -> "user:#{@_id}"
 schema.methods.toAPI = ->
@@ -67,6 +76,91 @@ schema.methods.toAPI = ->
   delete ret.hash
   delete ret.password
   ret
+
+# Tutorial object initialization. Only works if they don't already exist!
+schema.methods.createTutorialObjects = (cb) ->
+
+  tutorialPublisher = mongoose.model("Publisher")
+    owner: @_id
+    name: "Example Publisher"
+    tutorial: true
+
+    url: "https://play.google.com/store/apps/details?id=com.rovio.angrybirds"
+    description: "Tutorial publisher. No description needed (should be self-explanatory)"
+    category: "Games"
+
+    type: 0
+    minimumCPM: 2.50
+    minimumCPC: 0.30
+    preferredPricing: "CPM"
+
+    version: 1
+
+  tutorialAd = mongoose.model("Ad")
+    owner: @_id
+    name: "Example Ad"
+    campaigns: []
+    version: 1
+    tutorial: true
+
+  tutorialCampaign = mongoose.model("Campaign")
+    owner: @_id
+    name: "Example Campaign"
+    description: "Tutorial campaign. No description needed (should be self-explanatory)"
+    category: "Games"
+    tutorial: true
+
+    dailyBudget: 1500
+    pricing: "CPM"
+
+    bidSystem: "automatic"
+    bid: 4.50
+
+    active: false
+    ads: []
+    networks: ["wifi", "mobile"]
+
+  createPublisher = (done) ->
+    mongoose.model("Publisher").findOne
+      owner: @_id
+      tutorial: true
+    , (err, pub) =>
+      if err then spew.error err
+      if pub then return done()
+
+      tutorialPublisher.generateThumbnailUrl ->
+        tutorialPublisher.save (err) ->
+          if err then spew.error err
+
+          done()
+
+  createAd = (done) ->
+    mongoose.model("Ad").findOne
+      owner: @_id
+      tutorial: true
+    , (err, ad) =>
+      if err then spew.error err
+      if ad then return done()
+
+      tutorialAd.save (err) ->
+        if err then spew.error err
+
+        done()
+
+  createCampaign = (done) ->
+    mongoose.model("Campaign").findOne
+      owner: @_id
+      tutorial: true
+    , (err, campaign) =>
+      if err then spew.error err
+      if campaign then return done()
+
+      tutorialCampaign.save (err) ->
+        if err then spew.error err
+
+        done()
+
+  createPublisher -> createAd -> createCampaign -> cb()
 
 # NOTE: This overwrites the fund count stored in redis!
 schema.methods.createRedisStruture = (cb) ->

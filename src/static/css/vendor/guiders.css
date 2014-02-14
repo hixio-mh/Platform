@@ -10,12 +10,16 @@
   border: 1px solid #666;
   position: absolute;
   outline: none;
-  padding: 4px 12px;
+  padding: 8px 16px;
   width: 500px;
   z-index: 900001 !important;
 
   box-shadow: 0 0px 8px 2px rgba(0,0,0,.5);
   border-radius: 4px;
+}
+
+.guiders_title section {
+  margin-bottom: 16px;
 }
 
 .guiders_arrow {
@@ -66,6 +70,7 @@
 
 .guiders_buttons_container button {
   display: inline-block;
+  margin-left: 8px;
 }
 
 .guiders_close {

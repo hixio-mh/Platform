@@ -12,9 +12,9 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 
-angular.module("AdefyApp").controller "AdefyAccountSettingsController", ($scope, $http, $route, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAccountSettingsController", ($scope, $http, UserService, $timeout) ->
 
-  $http.get("/api/v1/user").success (me) ->
+  UserService.getUser (me) ->
     $scope.me = me
     $scope.me.currentPass = ""
     $scope.me.newPass = ""
@@ -31,14 +31,21 @@ angular.module("AdefyApp").controller "AdefyAccountSettingsController", ($scope,
       if $scope.me.newPass != $scope.me.newPassRepeat
         return $scope.error = "Passwords do not match"
 
+    UserService.clearCache()
     $scope.error = ""
 
-    $http.put("/api/v1/user", $scope.me)
-    .success ->
-      $scope.me.currentPass = ""
-      $scope.me.newPass = ""
-      $scope.me.newPassRepeat = ""
+    $scope.me.$save().then(
+      -> # Success
+        UserService.getUser (me) ->
+          $scope.me = me
+          $scope.me.currentPass = ""
+          $scope.me.newPass = ""
+          $scope.me.newPassRepeat = ""
 
-      $scope.setNotification "Saved!", "success"
-    .error ->
-      $scope.setNotification "An error occured (wrong password?)", "error"
+          $scope.setNotification "Saved!", "success"
+
+      -> # Error
+        UserService.getUser (me) ->
+          $scope.me = me
+          $scope.setNotification "An error occured (wrong password?)", "error"
+    )
