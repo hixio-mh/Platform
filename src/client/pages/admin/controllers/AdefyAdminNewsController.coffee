@@ -14,15 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyAdminNewsController", ($scope, $location, $http, News) ->
 
-  $scope.news = { title: "", summary: "", text: "" }
-
+  $scope.news = {}
   $scope.create = ->
-    alert "Creating"
     article = new News $scope.news
-    $http.post("/api/v1/news")
-    .success (res) ->
+    article.$save().then ->
       $scope.setNotification "News Article created successfully", "success"
-    .error (err) ->
+      $scope.closeForm()
+    , ->
       $scope.setNotification "Creating News Article failed", "error"
 
   $scope.get = ->
