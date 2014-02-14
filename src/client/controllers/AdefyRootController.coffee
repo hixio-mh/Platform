@@ -23,5 +23,5 @@ angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope
     UserService.enableTutorials ->
       if window.showTutorial then window.showTutorial()
 
-  $http.get("/api/v1/user").success (me) -> $scope.me = me
+  UserService.getUser (me) -> $scope.me = me
   $rootScope.$on "$locationChangeStart", -> $scope.clearNotification()

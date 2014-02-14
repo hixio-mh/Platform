@@ -36,7 +36,7 @@ include _menu
       th CTR
       th Earnings
     tbody
-      tr(ng-repeat="app in comparisonData | orderBy:'ctr':true")
+      tr(ng-repeat="app in comparisonData | orderBy:'ctr':true" ng-show="!app.tutorial")
         td {{ app.name }}
         td {{ app.impressions | number }}
         td {{ app.clicks | number }}

@@ -3,8 +3,8 @@
         ok-button-text="Save" form-submit="create()" form-object="adForm" close="closeForm")
     i.fa.fa-plus
     | New ad
-ul.list(ng-if="ads")
-  li(ng-repeat="ad in ads | orderBy:'stats.ctr':true")
+ul.list.ad-list(ng-if="ads")
+  li(ng-repeat="ad in ads | orderBy:'stats.ctr':true" ng-if="!ad.tutorial || (ad.tutorial && me.tutorials.ads)")
     a.ad(ng-href="/ads/{{ ad.id }}" data-id="{{ ad.id }}" ng-class="{ tutorial: ad.tutorial }")
 
       div.icon.noimage(ng-if="!ad.data.creative")
