@@ -87,7 +87,7 @@ guiders.createGuider
 
 guiders.createGuider
   title: "News"
-  description: "Any noteworthy events and updates will be posted here from time to time."
+  description: "Any noteworthy events and updates will be posted here."
   attachTo: "#home-publisher ul.news"
   buttons: [{ name: "Next" }, { name: "Previous" }, { name: "Close" }]
   id: "dashboardGuider7"
@@ -102,7 +102,7 @@ guiders.createGuider
 
 guiders.createGuider
   title: "Advertiser Dashboard"
-  description: "Click here at any time to switch to the advertiser dashboard. It is very similar, except tailored to advertisers, so we won't cover it in this tutorial."
+  description: "The advertiser dashboard offers a similar layout, but tailored to your campaigns and ads."
   attachTo: ".index.dashboard#home-publisher a.switch-view"
   buttons: [{ name: "Check out Apps", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "dashboardGuider8"

@@ -27,7 +27,7 @@ guiders.createGuider
 
 guiders.createGuider
   title: "Add an Application"
-  description: "Click here to add a new application. You may add as many as you like, but applications must be approved before they may receive live ads."
+  description: "You may add as many as you like, but applications must be approved before they may receive live ads."
   attachTo: "a.new-item"
   buttons: [{ name: "Let's look at app details", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "appsGuider3"

@@ -27,7 +27,7 @@ guiders.createGuider
 
 guiders.createGuider
   title: "Add a Campaign"
-  description: "Click here to add a new campaign. Keep in mind that ads must be approved before they may be added to a campaign."
+  description: "You may create as many campaigns as you like, but keep in mind that ads must be approved before they may be added to a campaign."
   attachTo: "a.new-item"
   buttons: [{ name: "Let's look at campaign details", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "campaignsGuider3"
