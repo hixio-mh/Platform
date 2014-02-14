@@ -12,9 +12,9 @@ guiders.createGuider
   title: "Creatives are needed"
   description: "You will need to define a creative on the 'Creative' tab before your ad may be approved. Once your ad is approved, you may add it to a campaign."
   attachTo: ".titlebar.cf.full .right"
-  buttons: [{ name: "Check out campaigns", onclick: guiders.hideAll }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Check out campaigns", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "adDetailsGuider2"
   position: "5"
   overlay: true
   highlight: ".titlebar.cf.full"
-  onHide: -> window.location.href = "/campaigns#guider=campaignsGuider1"
+  onNavigate: -> window.location.href = "/campaigns#guider=campaignsGuider1"

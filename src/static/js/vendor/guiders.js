@@ -561,6 +561,13 @@ var guiders = (function($) {
     guiders._attach(currentGuider);
   };
 
+  guiders.navigate = function() {
+    var currentGuider = guiders._guiders[guiders._currentGuiderID];
+    if(currentGuider.onNavigate !== undefined) {
+      currentGuider.onNavigate();
+    }
+  }
+
   guiders.scrollToCurrent = function() {
     var currentGuider = guiders._guiders[guiders._currentGuiderID];
     if (typeof currentGuider === "undefined") {

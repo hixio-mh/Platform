@@ -23,10 +23,12 @@ guiders.createGuider
   title: "Add an Application"
   description: "Click here to add a new application. You may add as many as you like, but applications must be approved before they may receive live ads."
   attachTo: "a.new-item"
-  buttons: [{ name: "Let's look at app details", onclick: guiders.hideAll }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Let's look at app details", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "appsGuider3"
   next: "appsGuider4"
   position: "7"
   overlay: true
   highlight: "a.new-item"
-  onHide: -> window.location.href = "/apps/tutorial#guider=appDetailsGuider1"
+  onNavigate: ->
+    tutorialAppId = $(".grid .item.tutorial").attr "data-id"
+    window.location.href = "/apps/#{tutorialAppId}#guider=appDetailsGuider1"

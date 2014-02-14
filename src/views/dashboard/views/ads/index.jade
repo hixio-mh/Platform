@@ -5,7 +5,7 @@
     | New ad
 ul.list(ng-if="ads")
   li(ng-repeat="ad in ads | orderBy:'stats.ctr':true")
-    a.ad(ng-href="/ads/{{ ad.id }}")
+    a.ad(ng-href="/ads/{{ ad.id }}" data-id="{{ ad.id }}" ng-class="{ tutorial: ad.tutorial }")
 
       div.icon.noimage(ng-if="!ad.data.creative")
       img.icon(ng-if="ad.data.creative" ng-src="{{ ad.data.creative.image }}")
