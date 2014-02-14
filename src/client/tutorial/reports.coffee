@@ -1,6 +1,6 @@
 guiders.createGuider
   title: "Reports"
-  description: "The reports pages are for comparing your ads, campaigns, and apps against each other. We are constantly adding new features to this area, and will support PDF exports soon."
+  description: "The reports pages are for comparing your ads, campaigns, and apps against each other. We are constantly adding new features to this area."
   buttons: [{ name: "Next" }, { name: "Close" }]
   id: "reportsGuider1"
   next: "reportsGuider2"

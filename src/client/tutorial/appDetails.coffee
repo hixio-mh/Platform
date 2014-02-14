@@ -13,7 +13,7 @@ guiders.createGuider
 
 guiders.createGuider
   title: "Settings & Integration"
-  description: "Check out the settings page to configure your app, and the integration page for links to our SDKs and integration tutorials."
+  description: "You can configure your app on the settings page, and find links to our SDKs and integration tutorials on the integration page."
   attachTo: ".titlebar.cf.full .menu.full"
   buttons: [{ name: "Check out ads", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "appDetailsGuider2"

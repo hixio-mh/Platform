@@ -1,6 +1,6 @@
 guiders.createGuider
   title: "Ad Details"
-  description: "Here you can see your 24hr and lifetime metrics, and manage your ads' creative and notification."
+  description: "Here you can see your 24 hour and lifetime metrics, and manage your ads' creative and notification."
   buttons: [{ name: "Next" }, { name: "Close" }]
   id: "adDetailsGuider1"
   next: "adDetailsGuider2"
