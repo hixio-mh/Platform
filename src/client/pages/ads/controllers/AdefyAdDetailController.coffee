@@ -14,10 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "adDetailsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.adDetails then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+  
+    UserService.getUser (user) ->
+      if user.tutorials.adDetails then window.showTutorial()
 
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true

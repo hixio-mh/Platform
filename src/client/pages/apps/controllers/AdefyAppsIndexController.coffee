@@ -14,10 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyAppsIndexController", ($scope, $location, AppService, $http) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "appsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.apps then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.apps then window.showTutorial()
 
   buildGraphData = (publisher) ->
     publisher.graphData =

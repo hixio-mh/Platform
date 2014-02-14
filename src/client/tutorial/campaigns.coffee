@@ -36,11 +36,13 @@ guiders.createGuider
   overlay: true
   highlight: "a.new-item"
   onNavigate: ->
-    if window.UserService != undefined
-      window.UserService.disableTutorial "campaigns"
-
     campaignId = $(".grid .item.tutorial").attr "data-id"
-    window.location.href = "/campaigns/#{campaignId}#guider=campaignDetailsGuider1"
+
+    if window.UserService != undefined
+      window.UserService.disableTutorial "campaigns", ->
+        window.location.href = "/campaigns/#{campaignId}#guider=campaignDetailsGuider1"
+    else
+      window.location.href = "/campaigns/#{campaignId}#guider=campaignDetailsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "campaigns"

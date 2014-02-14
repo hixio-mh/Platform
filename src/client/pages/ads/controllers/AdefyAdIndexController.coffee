@@ -14,10 +14,13 @@
 
 angular.module("AdefyApp").controller "AdefyAdIndexController", ($scope, $location, Ad, AdService) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "adsGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.ads then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.ads then window.showTutorial()
 
   refreshAds = -> AdService.getAllAds (ads) -> $scope.ads = ads
   refreshAds()

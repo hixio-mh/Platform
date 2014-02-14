@@ -13,10 +13,13 @@
 ##
 angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, App, UserService) ->
 
-  guiders.hideAll();
   window.showTutorial = -> guiders.show "dashboardGuider1"
-  UserService.getUser (user) ->
-    if user.tutorials.dashboard then window.showTutorial()
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.dashboard then window.showTutorial()
 
   ##
   ## Fetch app table data

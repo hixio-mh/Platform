@@ -22,8 +22,10 @@ guiders.createGuider
   highlight: ".titlebar.cf.full"
   onNavigate: ->
     if window.UserService != undefined
-      window.UserService.disableTutorial "appDetails"
-    window.location.href = "/ads#guider=adsGuider1"
+      window.UserService.disableTutorial "appDetails", ->
+        window.location.href = "/ads#guider=adsGuider1"
+    else
+      window.location.href = "/ads#guider=adsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "appDetails"

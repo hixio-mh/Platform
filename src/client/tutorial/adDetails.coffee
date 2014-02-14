@@ -22,8 +22,10 @@ guiders.createGuider
   highlight: ".titlebar.cf.full"
   onNavigate: ->
     if window.UserService != undefined
-      window.UserService.disableTutorial "adDetails"
-    window.location.href = "/campaigns#guider=campaignsGuider1"
+      window.UserService.disableTutorial "adDetails", ->
+        window.location.href = "/campaigns#guider=campaignsGuider1"
+    else
+      window.location.href = "/campaigns#guider=campaignsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "adDetails"

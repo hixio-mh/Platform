@@ -110,8 +110,10 @@ guiders.createGuider
   onShow: -> $(window).scrollTop 0
   onNavigate: ->
     if window.UserService != undefined
-      window.UserService.disableTutorial "dashboard"
-    window.location.href = "/apps/#guider=appsGuider1"
+      window.UserService.disableTutorial "dashboard", ->
+        window.location.href = "/apps/#guider=appsGuider1"
+    else
+      window.location.href = "/apps/#guider=appsGuider1"
   onClose: ->
     if window.UserService != undefined
       window.UserService.disableTutorial "dashboard"
