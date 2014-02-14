@@ -48,10 +48,9 @@ setup = (options, imports, register) ->
 
   # Save ad edits
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
-
     db.model("Ad")
-    .findById(req.param("id"))
-    .populate("campaigns.campaign")
+    .findById req.param("id")
+    .populate "campaigns.campaign"
     .exec (err, ad) ->
       if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
@@ -118,9 +117,9 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
+
       if not req.user.admin and not ad.owner.equals req.user.id
         return aem.send res, "401"
 
@@ -134,10 +133,10 @@ setup = (options, imports, register) ->
   # Fetches owned ads
   app.get "/api/v1/ads", isLoggedInAPI, (req, res) ->
     db.model("Ad")
-    .find({ owner: req.user.id })
-    .populate("campaigns.campaign")
+    .find owner: req.user.id
+    .populate "campaigns.campaign"
     .exec (err, ads) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       # This is a tad ugly, as we need to fetch stats both for all ads, and
       # for all campagins within the ads.
@@ -196,10 +195,10 @@ setup = (options, imports, register) ->
     if not req.user.admin then return aem.send res, "401"
 
     db.model("Ad")
-    .find()
+    .find tutorial: false
     .populate("owner")
     .exec (err, ads) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
 
       adCount = ads.length
       ret = []
@@ -223,16 +222,13 @@ setup = (options, imports, register) ->
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
-    .find({ _id: req.param "id" })
-    .populate("campaigns.campaign")
-    .exec (err, ads) ->
-      if utility.dbError err, res then return
-      if ads.length == 0
-        return aem.send res, "404:ad"
+    .findById req.param "id"
+    .populate "campaigns.campaign"
+    .exec (err, ad) ->
+      if utility.dbError err, res, true then return aem.send res, "500:db"
+      if not ad then return aem.send res, "404:ad"
 
-      ad = ads[0]
-
-      if not req.user.admin and not ad.owner.equals req.user.id
+      if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
         return aem.send res, "401"
 
       ad.fetchCompiledStats (stats) ->
@@ -246,8 +242,9 @@ setup = (options, imports, register) ->
   # the ad is approved directly.
   app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
+      if ad.tutorial == true then return aem.send res, "401"
 
       if not req.user.admin and req.user.id != ad.owner
         return aem.send res, "401"
@@ -273,8 +270,9 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res then return
+      if utility.dbError err, res, true then return aem.send res, "500:db"
       if not ad then return aem.send res, "404:ad"
+      if ad.tutorial == true then return aem.send res, "401"
 
       ad.disaprove ->
         ad.save()

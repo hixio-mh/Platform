@@ -13,6 +13,14 @@
 ##
 angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $location, $routeParams, Campaign, Ad, $http, $timeout, CampaignService) ->
 
+  window.showTutorial = -> guiders.show "campaignDetailsGuider2"
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.campaignDetails then window.showTutorial()
+
   $scope.min =
     budget: 10
     cpm: 1.00
@@ -89,7 +97,9 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
       $scope.ads = []
 
       for ad in ads
-        if ad.status == 2 then $scope.ads.push ad
+        if ad.status == 2
+          if campaign.tutorial == ad.tutorial
+            $scope.ads.push ad
 
       $timeout -> initializeSelect2Fields()
 

@@ -76,19 +76,19 @@ html(lang="en" ng-app="AdefyApp")
     header.navbar.cf
       #logo Adefy
       .menu.left.full
-        a(href="/home/publisher" alias="/home/advertiser" tab)
+        a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
           i.fa.fa-fw.fa-home
           | Dashboard
-        a(href="/reports/campaigns" tab)
+        a#reports-tab(href="/reports/campaigns" tab)
           i.fa.fa-fw.fa-signal
           | Reports
-        a(href="/campaigns" tab)
+        a#campaigns-tab(href="/campaigns" tab)
           i.fa.fa-fw.fa-bullhorn
           | Campaigns
-        a(href="/ads" tab)
+        a#ads-tab(href="/ads" tab)
           i.fa.fa-fw.fa-sitemap
           | Ads
-        a(href="/apps" tab)
+        a#apps-tab(href="/apps" tab)
           i.fa.fa-fw.fa-rocket
           | Apps
 
@@ -108,6 +108,9 @@ html(lang="en" ng-app="AdefyApp")
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
+            a(ng-click="showTutorial()")
+              i.fa.fa-fw.fa-question
+              | Show tutorial
             a(ng-click="showIntercom()")
               i.fa.fa-fw.fa-comment
               | Support
@@ -146,6 +149,7 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/vendor/angular.chosen.js")
         script(src="/js/vendor/ng-quick-date.min.js")
         script(src="/js/vendor/moment.min.js")
+        script(src="/js/vendor/ace/ace.js")
 
         script(src="/js/vendor/d3.min.js")
         script(src="/js/vendor/rickshaw.min.js")
@@ -160,6 +164,24 @@ html(lang="en" ng-app="AdefyApp")
           script(src="/client/routes/normal.js")
 
         script(src="/client/controllers/AdefyRootController.js")
+
+        //-
+        //- Tutorial
+        //-
+        script(src="/client/tutorial/dashboard.js")
+        script(src="/client/tutorial/apps.js")
+        script(src="/client/tutorial/appDetails.js")
+        script(src="/client/tutorial/ads.js")
+        script(src="/client/tutorial/adDetails.js")
+        script(src="/client/tutorial/campaigns.js")
+        script(src="/client/tutorial/campaignDetails.js")
+        script(src="/client/tutorial/reports.js")
+        script(src="/client/tutorial/funds.js")
+
+        //--
+        //-- User factory
+        //--
+        script(src="/client/factories/AdefyUserFactory.js")
 
         //--
         //-- Root directives
@@ -180,6 +202,7 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/client/services/CampaignService.js")
         script(src="/client/services/AppService.js")
         script(src="/client/services/AdService.js")
+        script(src="/client/services/UserService.js")
 
         //--
         //-- Pages (controllers, factories, directives, and services)

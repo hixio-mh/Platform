@@ -14,6 +14,14 @@
 
 angular.module("AdefyApp").controller "AdefyAppsIndexController", ($scope, $location, AppService, $http) ->
 
+  window.showTutorial = -> guiders.show "appsGuider1"
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    UserService.getUser (user) ->
+      if user.tutorials.apps then window.showTutorial()
+
   buildGraphData = (publisher) ->
     publisher.graphData =
       prefix: "/api/v1/analytics/publishers/#{publisher.id}"

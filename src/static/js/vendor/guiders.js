@@ -52,10 +52,21 @@ var guiders = (function($) {
     xButton: false // This places a closer "x" button in the top right of the guider.
   };
 
-  guiders._htmlSkeleton = ["<div class='guider'>", "  <div class='guiders_content'>", "    <h1 class='guiders_title'></h1>", "    <div class='guiders_close'></div>", "    <p class='guiders_description'></p>", "    <div class='guiders_buttons_container'>", "    </div>", "  </div>", "  <div class='guiders_arrow'>", "  </div>", "</div>"].join("");
+  guiders._htmlSkeleton = [
+  "<div class='guider'>",
+  "  <div class='guiders_content'>",
+  "    <h1 class='guiders_title section'></h1>",
+  "    <div class='guiders_close'></div>",
+  "    <p class='guiders_description'></p>",
+  "    <div class='guiders_buttons_container'>",
+  "    </div>",
+  "  </div>",
+  "  <div class='guiders_arrow'>",
+  "  </div>",
+  "</div>"].join("");
 
   guiders._arrowSize = 42; // This is the arrow's width and height.
-  guiders._backButtonTitle = "Back";
+  guiders._backButtonTitle = "Previous";
   guiders._buttonAttributes = {
     "href": "javascript:void(0);"
   };
@@ -228,7 +239,7 @@ var guiders = (function($) {
     var positionType = "absolute";
     // If the element you are attaching to is position: fixed, then we will make the guider
     // position: fixed as well.
-    if (attachTo.css("position") === "fixed" && guiders._fixedOrAbsolute === "fixed") {
+    if ((attachTo.css("position") === "fixed" && guiders._fixedOrAbsolute === "fixed") || myGuider.fixed == true) {
       positionType = "fixed";
       top -= $(window).scrollTop();
       left -= $(window).scrollLeft();
@@ -550,6 +561,13 @@ var guiders = (function($) {
     guiders._attach(currentGuider);
   };
 
+  guiders.navigate = function() {
+    var currentGuider = guiders._guiders[guiders._currentGuiderID];
+    if(currentGuider.onNavigate !== undefined) {
+      currentGuider.onNavigate();
+    }
+  }
+
   guiders.scrollToCurrent = function() {
     var currentGuider = guiders._guiders[guiders._currentGuiderID];
     if (typeof currentGuider === "undefined") {
@@ -576,7 +594,7 @@ var guiders = (function($) {
       guiders._showOverlay(myGuider);
       // if guider is attached to an element, make sure it's visible
       if (myGuider.highlight && myGuider.attachTo) {
-        guiders._highlightElement(myGuider.attachTo);
+        guiders._highlightElement(myGuider.highlight);
       }
     }
 

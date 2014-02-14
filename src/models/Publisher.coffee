@@ -34,6 +34,7 @@ statCache = new NodeCache stdTTL: 60
 schema = new mongoose.Schema
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: { type: String, required: true }
+  tutorial: { type: Boolean, default: false }
 
   url: { type: String, default: "" }
   _previouslyGeneratedUrl: { type: String, default: "-" }
@@ -61,6 +62,9 @@ schema = new mongoose.Schema
 
   # example items should not be allowed to get used
   tutorial: { type: Boolean, default: false }
+
+  version: { type: Number, default: 1 }
+
 
 ##
 ## ID and handle generation
@@ -92,7 +96,7 @@ schema.methods.disaprove = -> @status = 1
 
 schema.methods.activate = (cb) ->
   if @active or @tutorial
-    if cb then return cb() else return
+    if cb then return cb()
 
   @active = true
   @createRedisStruture()
@@ -101,7 +105,7 @@ schema.methods.activate = (cb) ->
 
 schema.methods.deactivate = (cb) ->
   if not @active or @tutorial
-    if cb then return cb() else return
+    if cb then return cb()
 
   @active = false
   @clearRedisStructure()

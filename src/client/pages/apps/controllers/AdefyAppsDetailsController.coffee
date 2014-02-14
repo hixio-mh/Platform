@@ -14,6 +14,16 @@
 
 angular.module("AdefyApp").controller "AdefyAppsDetailsController", ($scope, $routeParams, AppService) ->
 
+  window.showTutorial = -> guiders.show "appDetailsGuider1"
+
+  if window.location.href.indexOf("#guider=") == -1
+    guiders.hideAll()
+
+    if window.location.href.indexOf("integration") == -1
+      if window.location.href.indexOf("edit") == -1
+        UserService.getUser (user) ->
+          if user.tutorials.appDetails then window.showTutorial()
+
   AppService.getApp $routeParams.id, (app) -> $scope.app = app
 
   $scope.graphInterval = "30minutes"

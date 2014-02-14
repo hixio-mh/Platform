@@ -37,6 +37,8 @@
       | Request Approval
 
   .right
+    .label.blue(ng-if="ad.tutorial") Example
+
     span(ng-switch="ad.status" ng-if="ad.data.creative")
       .label.gray(ng-switch-when="0") Pending Approval
       .label.red(ng-switch-when="1") Rejected

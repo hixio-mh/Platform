@@ -16,9 +16,10 @@ a.new-item(href="/apps/new")
   i.fa.fa-plus
   | New app
 .grid
-  a.item(ng-repeat="app in apps | orderBy:'stats.earnings':true" ng-href="/apps/{{app.id}}")
+  a.item(ng-repeat="app in apps | orderBy:'stats.earnings':true" ng-href="/apps/{{ app.id }}" data-id="{{ app.id }}" ng-class="{ tutorial: app.tutorial }" ng-show="!app.tutorial || (app.tutorial && me.tutorials.apps)")
     img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
+    .label.orange(ng-if="app.tutorial") Tutorial
     .metrics(ng-if="app.graphData")
       div.noAxes(analytics data="app.graphData" width="335" height="200")
       .wrap: .text
