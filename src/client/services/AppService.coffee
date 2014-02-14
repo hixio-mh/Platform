@@ -1,8 +1,6 @@
 angular.module("AdefyApp").service "AppService", [
-  "$http"
-  "$routeParams"
   "App"
-  ($http, $routeParams, App) ->
+  (App) ->
 
     # Cache apps by id
     cache = {}
