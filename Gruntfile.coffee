@@ -30,14 +30,6 @@ module.exports = (grunt) ->
   # built as they are during development but concated in production.
 
   # Source paths relative to src/
-  modelSrc = [ "models/*.coffee" ]
-  moduleSrc = [
-    "*.coffee"
-    "modules/**/*.coffee"
-    "helpers/*.coffee"
-    "tests/*.coffee"
-    "tests/**/*.coffee"
-  ]
   clientSrc = [
     "client/*.coffee"
     "client/**/*.coffee"
@@ -78,8 +70,6 @@ module.exports = (grunt) ->
     ret
 
   # Filled in by buildPaths()
-  WmodelSrc = []
-  WmoduleSrc = []
   WclientSrc = []
   WstylusSrc = []
   WjadeSrc = []
@@ -103,8 +93,6 @@ module.exports = (grunt) ->
     staticJadeFiles["#{buildPref}/404.html"] = "#{srcPref}/404.jade"
 
     # Create watch versions of each src array
-    WmodelSrc = _watchify modelSrc
-    WmoduleSrc = _watchify moduleSrc
     WclientSrc = _watchify clientSrc
     WstylusSrc = _watchify stylusSrc
     WjadeSrc = _watchify jadeSrc
@@ -223,26 +211,6 @@ module.exports = (grunt) ->
     # Proper source files (client and server-side logic)
     coffee:
 
-      # Server-side modules, build as they are (1 to 1)
-      modules:
-        expand: true
-        options:
-          bare: true
-        ext: ".js"
-        cwd: srcDir
-        dest: buildDir
-        src: moduleSrc
-
-      # Database models, again build as they are
-      models:
-        expand: true
-        options:
-          bare: true
-        ext: ".js"
-        cwd: srcDir
-        dest: buildDir
-        src: modelSrc
-
       # Dev client settings, build files as they are
       client_dev:
         expand: true
@@ -298,15 +266,6 @@ module.exports = (grunt) ->
 
     copy:
 
-      # Copy module package.json files
-      packageJSON:
-        files: [
-          expand:true
-          src: modulePackageJSON
-          cwd: srcDir
-          dest: buildDir
-        ]
-
       # True static files (images, fonts, etc)
       static:
         files: [
@@ -314,15 +273,6 @@ module.exports = (grunt) ->
           cwd: "#{srcDir}/static"
           src: "**"
           dest: "#{buildDir}/static"
-        ]
-
-      # Helper data files
-      helperJSON:
-        files: [
-          expand: "true"
-          cwd: "#{srcDir}/helpers"
-          src: "**/*.json"
-          dest: "#{buildDir}/helpers"
         ]
 
       # Jade templates
@@ -340,14 +290,6 @@ module.exports = (grunt) ->
           cwd: "#{srcDir}/ssl"
           src: "**"
           dest: "#{buildDir}/ssl"
-        ]
-
-      templateAssets:
-        files: [
-          expand: true
-          cwd: "#{srcDir}/modules/engine/engine-templates/templates"
-          src: "*/*"
-          dest: "#{buildDir}/modules/engine/engine-templates/templates"
         ]
 
       templateAssetsRemote:
@@ -371,9 +313,9 @@ module.exports = (grunt) ->
     nodemon:
       dev:
         options:
-          file: "#{buildDir}adefy.js"
-          watchedExtensions: [ ".js" ]
-          watchedFolders: [ buildDir ]
+          file: "#{srcDir}adefy.coffee"
+          watchedExtensions: [ ".coffee" ]
+          watchedFolders: [ srcDir ]
 
     # Our dev task, combines watch with nodemon (sexy!)
     concurrent:
@@ -407,12 +349,6 @@ module.exports = (grunt) ->
 
     # Watch files for changes and ship updates to build folder
     watch:
-      serverCS:
-        files: WmoduleSrc
-        tasks: [ "coffee:modules" ]
-      models:
-        files: WmodelSrc
-        tasks: [ "coffee:models" ]
       clientCS:
         files: WclientSrc
         tasks: [ "coffee:client_dev" ]
