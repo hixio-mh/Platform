@@ -71,10 +71,10 @@ guiders.createGuider
   title: "News"
   description: "Any noteworthy events and updates will be posted here from time to time."
   attachTo: "#home-publisher ul.news"
-  buttons: [{ name: "Check out Apps", onclick: guiders.hideAll }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Check out Apps", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "dashboardGuider7"
   next: "dashboardGuider8"
   position: "12"
   overlay: true
   highlight: "#home-publisher ul.news"
-  onHide: -> window.location.href = "/apps/#guider=appsGuider1"
+  onNavigate: -> window.location.href = "/apps/#guider=appsGuider1"

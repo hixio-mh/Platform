@@ -23,10 +23,12 @@ guiders.createGuider
   title: "Add a Campaign"
   description: "Click here to add a new campaign. Keep in mind that ads must be approved before they may be added to a campaign."
   attachTo: "a.new-item"
-  buttons: [{ name: "Let's look at campaign details", onclick: guiders.hideAll }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Let's look at campaign details", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
   id: "campaignsGuider3"
   next: "campaignsGuider4"
   position: "7"
   overlay: true
   highlight: "a.new-item"
-  onHide: -> window.location.href = "/campaigns/tutorial#guider=campaignDetailsGuider1"
+  onNavigate: ->
+    campaignId = $(".grid .item.tutorial").attr "data-id"
+    window.location.href = "/campaigns/#{campaignId}#guider=campaignDetailsGuider1"

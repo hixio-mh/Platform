@@ -42,7 +42,6 @@ setup = (options, imports, register) ->
 
   # Save ad edits
   app.post "/api/v1/ads/:id", (req, res) ->
-
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res then return
       if not ad then return res.send 404
@@ -180,25 +179,15 @@ setup = (options, imports, register) ->
 
   # Finds a single ad by ID
   app.get "/api/v1/ads/:id", (req, res) ->
-    query = owner: req.user.id
-
-    if req.param("id") == "tutorial"
-      query.tutorial = true
-    else
-      query._id = req.param "id"
-
     db.model("Ad")
-    .findOne query
+    .findById req.param "id"
     .populate "campaigns.campaign"
-    .exec (err, ads) ->
+    .exec (err, ad) ->
       if utility.dbError err, res then return
-      if ads.length == 0 then return res.send 404
+      if not ad then return res.send 404
 
-      ad = ads[0]
-
-      if not req.user.admin and not ad.owner.equals req.user.id
-        res.send 403
-        return
+      if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
+        return res.send 403
 
       ad.fetchCompiledStats (stats) ->
         advertisement = ad.toAnonAPI()

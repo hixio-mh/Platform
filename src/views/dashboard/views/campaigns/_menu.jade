@@ -12,13 +12,13 @@
     .amount.large $ {{ campaign.stats.spent | number:2 }}
     .desc Total Spent
 
-.titlebar.cf.full(ng-controller="AdefyCampaignMenuController")
+.titlebar.cf.full.campaign(ng-controller="AdefyCampaignMenuController" data-id="{{ campaign.id }}")
   .name(ng-bind="campaign.name")
   .menu.full
-    a(ng-href="/campaigns/{{campaign.id}}" tab partial="false")
+    a(ng-href="/campaigns/{{ campaign.id }}" tab partial="false")
       i.fa.fa-fw.fa-signal
       | Metrics
-    a(ng-href="/campaigns/{{campaign.id}}/edit" tab)
+    a(ng-href="/campaigns/{{ campaign.id }}/edit" tab)
       i.fa.fa-fw.fa-wrench
       | Settings
 

@@ -59,7 +59,6 @@ setup = (options, imports, register) ->
   # Save edits to existing publisher, user must either own the publisher or be
   # an admin
   app.post "/api/v1/publishers/:id", (req, res) ->
-
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
@@ -164,16 +163,12 @@ setup = (options, imports, register) ->
 
   # Finds a single publisher by ID
   app.get "/api/v1/publishers/:id", (req, res) ->
-    query = owner: req.user.id
-
-    if req.param("id") == "tutorial"
-      query.tutorial = true
-    else
-      query._id = req.param "id"
-
-    db.model("Publisher").findOne query, (err, pub) ->
+    db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res then return
       if not pub then return res.send 404
+
+      if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
+        return res.send 403
 
       pub.fetchOverviewStats (stats) ->
         publisher = pub.toAnonAPI()
