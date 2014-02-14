@@ -220,7 +220,6 @@ module.exports = (grunt) ->
       "#{_buildDir}static/js/vendor/moment.min.js"
       "#{_buildDir}static/js/vendor/d3.min.js"
       "#{_buildDir}static/js/vendor/rickshaw.min.js"
-      "#{_buildDir}static/js/vendor/ace/ace.js"
       "#{_buildDir}static/js/script.min.js"
     ]
 
@@ -242,7 +241,6 @@ module.exports = (grunt) ->
       "#{_buildDir}static/js/vendor/moment.min.js"
       "#{_buildDir}static/js/vendor/d3.min.js"
       "#{_buildDir}static/js/vendor/rickshaw.min.js"
-      "#{_buildDir}static/js/vendor/ace/ace.js"
       "#{_buildDir}static/js/script-admin.min.js"
     ]
 
