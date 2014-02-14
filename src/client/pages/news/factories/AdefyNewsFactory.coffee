@@ -13,4 +13,4 @@
 ##
 
 angular.module("AdefyApp").factory "News", ($resource) ->
-  return $resource "/api/v1/news/:id", id: "@id"
+  $resource "/api/v1/news/:id", id: "@id"
