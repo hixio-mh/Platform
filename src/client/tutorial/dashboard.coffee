@@ -71,10 +71,21 @@ guiders.createGuider
   title: "News"
   description: "Any noteworthy events and updates will be posted here from time to time."
   attachTo: "#home-publisher ul.news"
-  buttons: [{ name: "Check out Apps", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
+  buttons: [{ name: "Next" }, { name: "Previous" }, { name: "Close" }]
   id: "dashboardGuider7"
   next: "dashboardGuider8"
   position: "12"
   overlay: true
   highlight: "#home-publisher ul.news"
+  onNavigate: -> window.location.href = "/apps/#guider=appsGuider1"
+  onShow: -> $("#home-publisher ul.news")[0].scrollIntoView()
+
+guiders.createGuider
+  title: "Advertiser Dashboard"
+  description: "Click here at any time to switch to the advertiser dashboard. It is very similar, except tailored to advertisers, so we won't cover it in this tutorial."
+  attachTo: ".index.dashboard#home-publisher a.switch-view"
+  buttons: [{ name: "Check out Apps", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
+  id: "dashboardGuider8"
+  position: "6"
+  onShow: -> $(window).scrollTop 0
   onNavigate: -> window.location.href = "/apps/#guider=appsGuider1"

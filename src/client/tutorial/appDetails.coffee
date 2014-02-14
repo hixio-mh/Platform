@@ -1,6 +1,6 @@
 guiders.createGuider
   title: "App Details"
-  description: "Here you can see your 24hr and lifetime metrics, and configure your application."
+  description: "Here you can see your 24 hour and lifetime metrics, and configure your application."
   buttons: [{ name: "Next" }, { name: "Close" }]
   id: "appDetailsGuider1"
   next: "appDetailsGuider2"
