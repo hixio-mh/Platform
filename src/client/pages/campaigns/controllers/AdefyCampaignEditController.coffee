@@ -96,7 +96,9 @@ angular.module("AdefyApp").controller "AdefyCampaignEditController", ($scope, $l
       $scope.ads = []
 
       for ad in ads
-        if ad.status == 2 then $scope.ads.push ad
+        if ad.status == 2
+          if campaign.tutorial == ad.tutorial
+            $scope.ads.push ad
 
       $timeout -> initializeSelect2Fields()
 

@@ -140,7 +140,7 @@ angular.module("AdefyApp").controller "AdefyReportsAppsController", ($scope, App
 
     buildTableDataForApp = (app) ->
       index = tableData.length
-      tableData.push { name: app.name, ctr: 0 }
+      tableData.push name: app.name, ctr: 0, tutorial: app.tutorial
 
       $http.get("#{prefix}/#{app.id}/impressions#{suffix}").success (data) ->
         tableData[index].impressions = data

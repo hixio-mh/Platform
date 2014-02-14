@@ -65,7 +65,7 @@
       th CTR
       th Earnings
     tbody
-      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10")
+      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
         td {{ app.name }}
         td {{ app.stats.impressions | number }}
         td {{ app.stats.clicks | number }}
