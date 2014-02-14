@@ -1,4 +1,4 @@
-angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, $timeout) ->
+angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", "$location", ($http, $timeout, $location) ->
 
   templateUrl: "/views/creator/creator"
   restrict: "AE"
@@ -147,12 +147,26 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", ($http, 
 
     if scope.url and scope.url.length > 0
       scope.updateTemplateURL()
+    else
+      # Attempt to grab app URL from location
+      params = window.location.search.split("?").join("&").split "&"
+
+      for p in params
+        p = p.split "="
+
+        if p[0] == "app"
+          scope.pickSuggestion "/store/apps/details?id=#{p[1]}"
+          break
 
     scope.$watch "data.blur", (blur) ->
+      if blur == undefined then return
+
       if bgImage != null
         stackBlurImageElement bgImage, "device-bg", blur, 344, 613
 
     scope.$watch "data.currentBG", (bg) ->
+      if bg == undefined then return
+
       bgImage = new Image()
       bgImage.onload = ->
         stackBlurImageElement bgImage, "device-bg", scope.data.blur, 344, 613

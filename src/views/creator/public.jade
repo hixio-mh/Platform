@@ -49,7 +49,8 @@ html(lang="en" ng-app="AdefyApp")
       script(src="/js/vendor/zepto.min.js")
       script(src="/js/vendor/zepto.fx.min.js")
 
-      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
+      script(src="/js/vendor/angular-1.2.11.min.js")
+      script(src="/js/vendor/angular-route.min.js")
       script.
-        window.AdefyApp = angular.module("AdefyApp", []);
+        window.AdefyApp = angular.module("AdefyApp", ["ngRoute"]);
       script(src="/client/directives/AdefyCreatorDirective.js")
