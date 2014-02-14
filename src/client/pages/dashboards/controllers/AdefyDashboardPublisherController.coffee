@@ -17,6 +17,8 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
   window.showTutorial = -> guiders.show "dashboardGuider1"
   window.showTutorial()
 
+  $http.post "/api/v1/user/tutorial/all/true"
+
   ##
   ## Fetch app table data
   ##
