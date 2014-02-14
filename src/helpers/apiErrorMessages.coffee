@@ -94,6 +94,11 @@ responses404 = [
 
 responses404ad = responses404
 
+responses409 = [
+  "Looks like you already have something",
+  "No you can't, because the system would explode"
+]
+
 responses500 = [
   "ERMAGAWD ERROR!!!"
   "He's dead Jim!"
@@ -220,6 +225,10 @@ module.exports =
         resp = @sample responses404ad
         msg = "Ad could not be found"
         code = 404
+      when "409"
+        resp = @sample(responses409)
+        msg = "Conflict!"
+        code = 409
       when "500"
         resp = @sample responses500
         msg = "An internal error occurred"
