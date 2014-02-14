@@ -218,6 +218,8 @@ setup = (options, imports, register) ->
       user.phone = req.param("phone") || user.phone
       user.vat = req.param("vat") || user.vat
 
+      # NOTE: Tutorial visiblity can not be updated from this point!
+
       changingPassword = false
 
       if req.param("newPass") and req.param("newPass").length > 0
@@ -243,6 +245,33 @@ setup = (options, imports, register) ->
       if not user then return res.json 500, error: "User not found"
 
       res.json user.transactions
+
+  # Update tutorial visibility status. Section may also be "all"
+  app.post "/api/v1/user/tutorial/:section/:status", (req, res) ->
+    section = req.param "section"
+    
+    if req.param("status") == "true"
+      status = true
+    else if req.param("status") == "false"
+      status = false
+    else
+      return res.send 400
+
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return res.json 500, error: "User not found"
+
+      if section == "all" or section == "dashboard" then user.tutorial.dashboard = status
+      if section == "all" or section == "apps" then user.tutorial.apps = status
+      if section == "all" or section == "ads" then user.tutorial.ads = status
+      if section == "all" or section == "campaigns" then user.tutorial.campaigns = status
+      if section == "all" or section == "reports" then user.tutorial.reports = status
+      if section == "all" or section == "funds" then user.tutorial.funds = status
+      if section == "all" or section == "appDetails" then user.tutorial.appDetails = status
+      if section == "all" or section == "adDetails" then user.tutorial.adDetails = status
+      if section == "all" or section == "campaignDetails" then user.tutorial.campaignDetails = status
+
+      res.json user.toAPI()
 
   # Deposit creation
   app.post "/api/v1/user/deposit/:amount", (req, res) ->

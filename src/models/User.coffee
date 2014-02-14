@@ -53,6 +53,17 @@ schema = new mongoose.Schema
 
   version: { type: Number, default: 2 }
 
+  tutorial:
+    dashboard: { type: Boolean, default: true }
+    apps: { type: Boolean, default: true }
+    ads: { type: Boolean, default: true }
+    campaigns: { type: Boolean, default: true }
+    reports: { type: Boolean, default: true }
+    funds: { type: Boolean, default: true }
+    appDetails: { type: Boolean, default: true }
+    adDetails: { type: Boolean, default: true }
+    campaignDetails: { type: Boolean, default: true }
+
 schema.methods.getRedisId = -> "user:#{@_id}"
 schema.methods.toAPI = ->
   ret = @toObject()
