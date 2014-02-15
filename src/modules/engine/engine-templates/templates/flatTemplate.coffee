@@ -18,10 +18,8 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
   name: "Flat Template"
   assets: "flatAssets"
 
+  # NOTE: The ETC1 bg looks pretty bad, so don't use it :(
   androidCompresssed: [
-    path: "bg.pkm"
-    name: "bg"
-  ,
     path: "icon.pkm"
     name: "icon"
   ,
