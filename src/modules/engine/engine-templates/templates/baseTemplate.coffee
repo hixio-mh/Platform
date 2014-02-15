@@ -200,8 +200,26 @@ class AdefyBaseAdTemplate
 
     archive.pipe res
 
+    manifest = _.clone @manifest
+
+    # Replace texture paths with compressed textures where we can
+    if @androidCompresssed != undefined
+
+      for compressedTexture in @androidCompresssed
+        for texture, i in manifest.textures
+          if texture.name == compressedTexture.name
+
+            manifest.textures[i].path = compressedTexture.path
+            manifest.textures[i].compression = "etc1"
+
+            break
+
+    # Add only the files we use to the archive
     for file in @files
-      archive.append file.buffer, name: file.filename
+      for texture in manifest.textures
+        if file.filename.indexOf(texture.path) != -1
+          archive.append file.buffer, name: file.filename
+          break
 
     source = """
       var width = #{options.width};
@@ -213,7 +231,6 @@ class AdefyBaseAdTemplate
     """
 
     # Build manifest
-    manifest = _.clone @manifest
     manifest.click = options.click
     manifest.impression = options.impression
     manifest.pushTitle = options.pushTitle

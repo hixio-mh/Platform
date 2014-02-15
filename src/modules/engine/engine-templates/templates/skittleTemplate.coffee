@@ -18,6 +18,14 @@ class AdefySkittleAdTemplate extends require "./baseTemplate"
   name: "Skittle Template"
   assets: "skittleAssets"
 
+  androidCompresssed: [
+    path: "bg1.pkm"
+    name: "bg"
+  ,
+    path: "ground.pkm"
+    name: "ground"
+  ]
+
   manifest:
     ad: "scene.js"
     lib: "adefy.js"
