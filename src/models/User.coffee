@@ -38,6 +38,7 @@ schema = new mongoose.Schema
   pubFunds: { type: Number, default: 0 }
 
   transactions: [{ action: String, amount: Number, time: Number }]
+  pendingWithdrawls: [{ source: String, amount: Number, time: Number, email: String }]
 
   # Used to store intermediate transaction information. String is of the
   # format id|token
@@ -210,23 +211,6 @@ schema.methods.hasAPIKey = ->
   else
     false
 
-schema.pre "save", (next) ->
-  if not @isModified "password" then return next()
-  if not @hasAPIKey() then @createAPIKey()
-
-  bcrypt.genSalt 10, (err, salt) =>
-    if err
-      spew.error "Error when generating salt"
-      return next err
-
-    bcrypt.hash @password, salt, (err, hash) =>
-      if err
-        spew.error "Error when hashing password"
-        return next err
-
-      @password = hash
-      next()
-
 schema.methods.comparePassword = (candidatePassword, cb) ->
   bcrypt.compare candidatePassword, @password, (err, isMatch) ->
     if err
@@ -265,5 +249,32 @@ schema.methods.withdrawFunds = (type, amount) ->
       time: new Date().getTime()
 
   true
+
+schema.methods.pushWithdrawlRequest = (source, amount, email) ->
+
+  @pendingWithdrawls.push
+    source: (String source)
+    amount: (Number amount)
+    time: new Date().getTime()
+    email: (String email)
+
+  true
+
+schema.pre "save", (next) ->
+  if not @isModified "password" then return next()
+  if not @hasAPIKey() then @createAPIKey()
+
+  bcrypt.genSalt 10, (err, salt) =>
+    if err
+      spew.error "Error when generating salt"
+      return next err
+
+    bcrypt.hash @password, salt, (err, hash) =>
+      if err
+        spew.error "Error when hashing password"
+        return next err
+
+      @password = hash
+      next()
 
 mongoose.model "User", schema
