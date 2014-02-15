@@ -16,15 +16,6 @@ buildDir = "build/"
 
 module.exports = (grunt) ->
 
-  # To build the site, we must do a few things
-  # First, we build our modules to a modules folder inside of our build
-  # directory. At this point, we copy the package.json files to the build folder
-  # as well.
-  #
-  # The models have to be built as well, but they are built as they are, no
-  # facy stuff.
-  #
-  # Once the models have been built, we turn our attention to the static files.
   # We need to copy over the static folder, then build our stylus files into
   # a single style.css. Followed by this comes our client scripts. They are
   # built as they are during development but concated in production.
@@ -38,30 +29,10 @@ module.exports = (grunt) ->
     "stylus/*.styl"
     "stylus/**/*.styl"
   ]
-  jadeSrc = [
-    "views/*.jade"
-
-    "views/account/*.jade"
-    "views/creator/*.jade"
-    "views/dashboard/*.jade"
-
-    "views/account/**/*.jade"
-    "views/creator/**/*.jade"
-    "views/dashboard/**/*.jade"
-  ]
 
   stylusMin = {}
   clientProdSrc = {}
   staticJadeFiles = {}
-
-  # Module package.json paths
-  modulePackageJSON = [
-    "*.json"
-    "modules/**/*.json"
-  ]
-
-  _prodSrc = []
-  _prodSrc.push "#{srcDir}#{s}" for s in clientSrc
 
   # Watch doesn't work properly with cwd, so tag on src path manually
   _watchify = (paths) ->
@@ -72,8 +43,6 @@ module.exports = (grunt) ->
   # Filled in by buildPaths()
   WclientSrc = []
   WstylusSrc = []
-  WjadeSrc = []
-  WmodulePackageJSON = []
   concatNormalSrc = []
   concatAdminSrc = []
   commonClientSrc = []
@@ -95,8 +64,6 @@ module.exports = (grunt) ->
     # Create watch versions of each src array
     WclientSrc = _watchify clientSrc
     WstylusSrc = _watchify stylusSrc
-    WjadeSrc = _watchify jadeSrc
-    WmodulePackageJSON = _watchify modulePackageJSON
 
     concatNormalSrc = ["#{buildDir}static/client/routes/normal.js"]
     concatAdminSrc = ["#{buildDir}static/client/routes/admin.js"]
@@ -275,15 +242,6 @@ module.exports = (grunt) ->
           dest: "#{buildDir}/static"
         ]
 
-      # Jade templates
-      jade:
-        files: [
-          expand: true
-          cwd: srcDir
-          src: jadeSrc
-          dest: buildDir
-        ]
-
       templateAssetsRemote:
         files: [
           expand: true
@@ -353,36 +311,26 @@ module.exports = (grunt) ->
       jadeStatic:
         files: [ "#{srcDir}views/static/*.jade" ]
         tasks: [ "jade:static" ]
-      jade:
-        files: WjadeSrc
-        tasks: [ "copy:jade" ]
 
     cachebreaker:
       js:
         asset_url: "/js/script.min.js"
         files:
-          src: "#{buildDir}/views/dashboard/layout.jade"
+          src: "#{srcDir}/views/dashboard/layout.jade"
       jsAdmin:
         asset_url: "/js/script-admin.min.js"
         files:
-          src: "#{buildDir}/views/dashboard/layout.jade"
+          src: "#{srcDir}/views/dashboard/layout.jade"
       css:
         asset_url: "/css/styles.min.css"
         files:
-          src: "#{buildDir}/views/dashboard/layout.jade"
+          src: "#{srcDir}/views/dashboard/layout.jade"
 
   # Perform a full build
   grunt.registerTask "persistentFull", [
-    "copy:packageJSON"
     "copy:static"
-    "copy:jade"
-    "copy:ssl"
-    "copy:templateAssets"
     "copy:templateAssetsRemote"
-    "copy:helperJSON"
     "jade:static"
-    "coffee:modules"
-    "coffee:models"
     "coffee:client_dev"
     "stylus:full"
     "cssmin:minify"
