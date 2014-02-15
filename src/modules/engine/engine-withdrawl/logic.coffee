@@ -88,7 +88,7 @@ setup = (options, imports, register) ->
 
     request_head =
       headers: { 'content-type': 'application/x-www-form-urlencoded' }
-      url: paypalCredentials.host
+      url: "#{paypalCredentials.host}/nvp"
       body: qs.stringify(result)
 
     request.post request_head, (err, res, body) ->
