@@ -17,8 +17,7 @@
 #
 # Core-init-end completes the bootstraping by registering all queued routes,
 # socket listeners, and then starting the socket IO and express servers.
-config = require "../../../config.json"
-modeConfig = config.modes[config.mode]
+config = require "../../../config"
 spew = require "spew"
 mongoose = require "mongoose"
 fs = require "fs"
@@ -121,21 +120,22 @@ setup = (options, imports, register) ->
   server.setup \
     "#{__dirname}/../../../views/",  # JADE Views
     "#{__dirname}/../../../static/", # Static files
-    modeConfig.port
+    config("port")
 
   ##
   ## Connect to MongoDB
   ##
 
-  con = "mongodb://#{modeConfig.mongo.user}:#{modeConfig.mongo.pass}"
-  con += "@#{modeConfig.mongo.host}:#{modeConfig.mongo.port}"
-  con += "/#{modeConfig.mongo.db}"
+  mongoCfg = config("mongo")
+  con = "mongodb://#{mongoCfg.user}:#{mongoCfg.pass}"
+  con += "@#{mongoCfg.host}:#{mongoCfg.port}"
+  con += "/#{mongoCfg.db}"
 
   dbConnection = mongoose.connect con, (err) ->
     if err
       spew.critical "Error connecting to database [#{err}]"
       spew.critical "Using connection: #{con}"
-      spew.critical "Config mode: #{JSON.stringify modeConfig}"
+      spew.critical "Environment: #{config("NODE_ENV")}"
     else
       spew.init "Connected to MongoDB [#{config.mode}]"
 

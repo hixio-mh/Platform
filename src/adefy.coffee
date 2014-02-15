@@ -11,15 +11,15 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-config = require "./config.json"
+config = require "./config"
 architect = require "architect"
 cluster = require "cluster"
 spew = require "spew"
 
 # New relic! :D
-if config.modes[config.mode].newrelic then require "newrelic"
+if config('newrelic') then require "newrelic"
 
-spew.setLogLevel config.modes[config.mode].loglevel
+spew.setLogLevel config.('loglevel')
 spew.init "Starting Adefy..."
 
 app = architect.createApp architect.loadConfig(__dirname + "/architecture.js") , (err, app) ->

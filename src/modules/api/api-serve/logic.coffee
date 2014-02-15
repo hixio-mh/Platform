@@ -17,7 +17,6 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-config = require "../../../config.json"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 NodeCache = require "node-cache"
