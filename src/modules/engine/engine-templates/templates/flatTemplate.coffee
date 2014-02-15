@@ -20,6 +20,20 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
   name: "Flat Template"
   assets: "flatAssets"
 
+  androidCompresssed: [
+    path: "bg.pkm"
+    name: "bg"
+  ,
+    path: "icon.pkm"
+    name: "icon"
+  ,
+    path: "button.pkm"
+    name: "button"
+  ,
+    path: "image.pkm"
+    name: "image"
+  ]
+
   manifest:
     ad: "scene.js"
     lib: "adefy.js"
