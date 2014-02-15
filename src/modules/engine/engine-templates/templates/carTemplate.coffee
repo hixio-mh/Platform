@@ -240,7 +240,7 @@ class AdefyCarAdTemplate extends require "./baseTemplate"
       carVerts[vertSet] *= scale.x
       carVerts[vertSet + 1] *= scale.y
 
-    car = new AJS.createRectangleActor 960, 370, 736, 471
+    car = new AJS.createPolygonActor 960, 370, 10, 3
     .setLayer 3
     car._setRenderMode 2
     car._verts = carVerts
@@ -250,10 +250,10 @@ class AdefyCarAdTemplate extends require "./baseTemplate"
     car.enablePsyx 0, 0.5, 0.8
     car.attachTexture "car", 736, 471, 0, 0
 
-    AJS.createRectangleActor 700, 346, 208, 76
+    AJS.createRectangleActor 690, 346, 208, 76
     .setTexture("leftlight").setLayer 4
 
-    AJS.createRectangleActor 1220, 346, 218, 76
+    AJS.createRectangleActor 1230, 346, 218, 76
     .setTexture("rightlight").setLayer 4
 
     AJS.createRectangleActor 1770, 150, 181, 84
