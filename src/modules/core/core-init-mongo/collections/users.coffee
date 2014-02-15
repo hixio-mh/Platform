@@ -27,19 +27,19 @@ module.exports =
       pubFunds: 2000
 
       transactions: [
-        action: "Deposit"
+        action: "deposit"
         amount: 1500
         time: 1385816208
       ,
-        action: "Deposit"
+        action: "deposit"
         amount: 5000
         time: 1389185798
       ,
-        action: "Deposit"
+        action: "deposit"
         amount: 2500
         time: 1391432180  
       ,
-        action: "Deposit"
+        action: "deposit"
         amount: 1000
         time: 1392296133
       ]
@@ -60,7 +60,7 @@ module.exports =
       pubFunds: 0
 
       transactions: [
-        action: "Deposit"
+        action: "deposit"
         amount: 10000
         time: 1391432180
       ]
