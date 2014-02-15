@@ -2,4 +2,20 @@ form
   fieldset: dl.form.thin.center
 
     .field
-      label You must have at least $100 to initiate a withdrawal
+      label NOTE. You must have at least $100 to initiate a withdrawal
+    .field.w50
+      label Ad Funds
+      input(type="radio" name="model" ng-change="fundModelChanged()" value="ad" ng-model="formObject.model" selected)
+    .field.w50
+      label Publisher Funds
+      input(type="radio" name="model" ng-change="fundModelChanged()" value="pub" ng-model="formObject.model")
+    .field
+      label Available Funds {{ formObject.availableFunds }}
+    .field.w50
+      label Amount to withdraw $
+    .field.w50
+      input.wide(type="number" placeholder="100" ng-model="formObject.amount" ng-keypress="enterSubmit($event)")
+    .field.w50
+      label Alt-Email to send payment
+    .field.w50
+      input.wide(type="text" placeholder="alt@email.com" ng-model="formObject.alt_email" ng-keypress="enterSubmit($event)")

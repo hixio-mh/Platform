@@ -269,10 +269,17 @@ setup = (options, imports, register) ->
   # Returns a list of transactions: deposits, withdrawals, reserves
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
-      if not user then return aem.send res, "404", error: "User(#{req.user.id}) not found"
+      if utility.dbError err, res then return
+      if not user then return aem.send res, "500", error: "User(#{req.user.id}) not found"
 
       res.json user.transactions
+
+  app.get "/api/v1/user/pendingwithdrawls", isLoggedInAPI, (req, res) ->
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return aem.send res, "500", error: "User(#{req.user.id}) not found"
+
+      res.json user.pendingWithdrawls
 
   # Update tutorial visibility status. Section may also be "all"
   app.post "/api/v1/user/tutorial/:section/:status", (req, res) ->
@@ -304,42 +311,75 @@ setup = (options, imports, register) ->
       res.json user.toAPI()
 
   # Deposit creation
+  app.post "/api/v1/user/withdraw/:model", isLoggedInAPI, (req, res) ->
+    db.model("User").findById req.user.id, (err, user) ->
+      if utility.dbError err, res then return
+      if not user then return aem.send res, "404", error: "User(req.user.id) not found"
+
+      if isNaN req.param "amount"
+        return aem.send res, "400", error: "Amount not a number"
+
+      amount = Number req.param "amount"
+      model = req.param "model"
+      email = req.param "email"
+
+      if amount < 100
+        return aem.send res, "400", error: "Amount below minimum: $100"
+
+      if model == "ad"
+        if amount > user.adFunds
+          return aem.send res, "400", error: "Amount exceeds available Ad funds"
+        user.pushWithdrawlRequest("ad", amount, email)
+      else if model == "pub"
+        if amount > user.pubFunds
+          return aem.send res, "400", error: "Amount exceeds available Pub funds"
+        user.pushWithdrawlRequest("pub", amount, email)
+      else
+        return aem.send res, "400", error: "Invalid model: #{model}"
+
+      user.save (err) ->
+        if (err)
+          return aem.send res, "400", error: err
+
+      aem.send res, "200"
+
+  # Deposit creation
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
-    if isNaN req.param "amount"
-      return aem.send res, "400", error: "Amount not a number"
-
-    amount = Number req.param "amount"
-
-    if amount < 50
-      return aem.send res, "400", error: "Amount below minimum: $50"
-
-    paymentJSON =
-      intent: "sale"
-      payer:
-        payment_method: "paypal"
-      redirect_urls:
-        return_url: "#{adefyDomain}/funds/confirm"
-        cancel_url: "#{adefyDomain}/funds/cancel"
-      transactions: [
-        item_list:
-          items: [
-            name: "Adefy"
-            sku: "1"
-            price: amount
-            currency: "USD"
-            quantity: 1
-          ]
-
-        amount:
-          currency: "USD"
-          total: amount
-
-        description: "$#{amount} Adefy Deposit"
-      ]
-
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User(req.user.id) not found"
+
+      if isNaN req.param "amount"
+        return aem.send res, "400", error: "Amount not a number"
+
+      amount = Number req.param "amount"
+
+      if amount < 50
+        return aem.send res, "400", error: "Amount below minimum: $50"
+
+      paymentJSON =
+        intent: "sale"
+        payer:
+          payment_method: "paypal"
+        redirect_urls:
+          return_url: "#{adefyDomain}/funds/confirm"
+          cancel_url: "#{adefyDomain}/funds/cancel"
+        transactions: [
+          item_list:
+            items: [
+              name: "Adefy"
+              sku: "1"
+              price: amount
+              currency: "USD"
+              quantity: 1
+            ]
+
+          amount:
+            currency: "USD"
+            total: amount
+
+          description: "$#{amount} Adefy Deposit"
+        ]
 
       paypalSDK.payment.create paymentJSON, (err, payment) ->
         if err

@@ -11,6 +11,9 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data
 
+  $http.get("/api/v1/user/pendingwithdrawls").success (data) ->
+    $scope.pendingWithdrawls = data
+
   scheduleRedirect = ->
     setTimeout (-> window.location.href = "/funds"), 2000
 
@@ -34,7 +37,41 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
 
   $scope.paymentInfo = disabled: false
 
-  $scope.withdraw = -> true
+  $scope.fundModelChanged = ->
+    if $scope.paymentInfo.model == "ad"
+      $scope.paymentInfo.availableFunds = me.adFunds
+    else if $scope.paymentInfo.model == "pub"
+      $scope.paymentInfo.availableFunds = me.pubFunds
+    else
+      $scope.paymentInfo.availableFunds = 0
+      $scope.paymentInfo.errorMessage = "Please select a Fund to withdraw from"
+    alert "RAAAAR"
+
+  $scope.withdraw = ->
+    amount = $scope.paymentInfo.amount
+    model = $scope.paymentInfo.model
+    email = $scope.paymentInfo.alt_email
+    if model == "ad"
+    else if model == "pub"
+    else
+      $scope.paymentInfo.disabled = false
+      $scope.paymentInfo.infoMessage = ""
+      $scope.paymentInfo.errorMessage = "Please select a Fund to withdraw from"
+      return
+
+    $scope.paymentInfo.disabled = true
+    $scope.paymentInfo.infoMessage = "Please wait"
+    $scope.paymentInfo.errorMessage = ""
+
+    $http.post("/api/v1/user/withdraw/#{model}", amount: amount, email: email)
+    .success (data) ->
+      $scope.paymentInfo.disabled = false
+      $scope.paymentInfo.infoMessage = "Your request has been sent."
+    .error (err) ->
+      $scope.paymentInfo.disabled = false
+      $scope.paymentInfo.infoMessage = ""
+      $scope.paymentInfo.errorMessage = err
+
   $scope.deposit = ->
     amount = $scope.paymentInfo.amount
 
@@ -48,6 +85,6 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
       $scope.paymentInfo.infoMessage = ""
 
       window.location.href = data.approval_url
-    .error (data) ->
+    .error (err) ->
       $scope.paymentInfo.disabled = false
       $scope.paymentInfo.infoMessage = ""
