@@ -11,10 +11,8 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 
-# Todo: Document
 class AdefyTestAdTemplate extends require "./baseTemplate"
 
   name: "Test Template"
@@ -57,51 +55,38 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: """
-      var hR = height / 1080;
-      var wR = width / 1920;
-      var scaleSmall;
-      var scaleBig;
-
-      if(hR > wR) {
-        scaleSmall = wR;
-        scaleBig = hR;
-      } else {
-        scaleSmall = hR;
-        scaleBig = wR;
-      }
-      """
-
+      header: ""
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
-    AJS.setLogLevel 4
+    AJS.setAutoScale width / 1920, height / 1080
+    AJS.setLogLevel 1
     AJS.setClearColor 0, 153, 204
 
-    edgeLeft = AJS.createRectangleActor -10, height / 2, 10, height
+    edgeLeft = AJS.createRectangleActor -10, 540, 10, 1080
     edgeLeft.enablePsyx 0, 0.5, 0.5
 
-    edgeRight = AJS.createRectangleActor width + 10, height * 1.25, 10, height
+    edgeRight = AJS.createRectangleActor 1930, 1080, 10, 1080
     edgeRight.enablePsyx 0, 0.5, 0.5
 
-    testAd = AJS.createRectangleActor 1000 * wR, 560 * hR, 1024 * scaleSmall, 256 * scaleSmall
+    testAd = AJS.createRectangleActor 1000, 560, 768, 192, 0, 0, 0, scaleAR: true
     testAd.setTexture "testad"
 
-    spinner = AJS.createRectangleActor width / 2, 100 * hR, 240 * scaleBig, 240 * scaleBig
+    spinner = AJS.createRectangleActor 960, 100, 240, 240
     spinner.setTexture "spinner"
 
-    circle = AJS.createCircleActor width / 2, 100 * hR, 128
-    circle.attachTexture "adefy", 120 * scaleBig, 120 * scaleBig
+    circle = AJS.createCircleActor 960, 100, 128
+    circle.attachTexture "adefy", 120, 120
 
-    topline = AJS.createRectangleActor 1920 * wR, 760 * hR, 1620 * wR, 12 * scaleSmall
+    topline = AJS.createRectangleActor 1920, 760, 1620, 5, 255, 255, 255
     topline.setTexture "line"
 
-    bottomline = AJS.createRectangleActor 0, 360 * hR, 1620 * wR, 12 * scaleSmall
+    bottomline = AJS.createRectangleActor 0, 360, 1620, 5, 255, 255, 255
     bottomline.setTexture "line"
 
     swooshIt = ->
-      topline.move 1410 * wR, null, 1000, 0
-      bottomline.move 410 * wR, null, 1000, 0
+      topline.move 1410, null, 1000, 0
+      bottomline.move 410, null, 1000, 0
 
     tiltIt = ->
       topline.rotate 10, 200, 1000
@@ -121,11 +106,11 @@ class AdefyTestAdTemplate extends require "./baseTemplate"
         count++
         if count == 150 then clearInterval spawner
 
-        px = Math.floor Math.random() * 1920 * wR
-        py = Math.floor (Math.random() * 100) + (1100 * hR)
+        px = Math.floor Math.random() * 1920
+        py = Math.floor (Math.random() * 100) + 1100
         mass = Math.round (Math.random() * 100) + 25
 
-        circle = AJS.createCircleActor px, py, 10 * scaleBig
+        circle = AJS.createCircleActor px, py, 10
         circle.setColor color
         circle.enablePsyx mass, 0.1, 0.6
       , 25
