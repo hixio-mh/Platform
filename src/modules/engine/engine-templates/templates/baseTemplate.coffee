@@ -42,6 +42,8 @@ class AdefyBaseAdTemplate
   #
   # Any files which do not end in "coffee" or "js" are considered assets!
   constructor: ->
+    @files = []
+
     @loadAssets()
     @fetchAJS =>
       @fetchAWGL =>
