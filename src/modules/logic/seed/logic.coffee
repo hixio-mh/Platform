@@ -11,7 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-config = require "../../../config.json"
+config = require "../../../config"
 db = require "mongoose"
 
 ##
@@ -23,7 +23,7 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
 
   # If we aren't in development mode, return early
-  if config.mode != "development"
+  if config('NODE_ENV') != "development"
     register null, {}
     return
 

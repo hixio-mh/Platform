@@ -21,7 +21,7 @@ _ = require "underscore"
 async = require "async"
 
 AWS = require "aws-sdk"
-AWS.config.update require("../config.json")["s3-config"]
+AWS.config.update require("../config")("s3-config")
 s3 = new AWS.S3()
 
 ##

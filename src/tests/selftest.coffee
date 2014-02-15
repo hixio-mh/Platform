@@ -1,13 +1,12 @@
 # This runs all of the other tests, while launching an instance of the platform
 # NOTE: This expects a full, clean testing build!
 childProcess = require("child_process")
-config = require "#{__dirname}/../config.json"
-config = config.modes[config.mode]
+config = require "#{__dirname}/../config"
 buildDir = "build/"
 
 adefy = null
 
-dbHost = "#{config.mongo.host}:#{config.mongo.port}"
+dbHost = "#{config('mongo').host}:#{config('mongo').port}"
 
 before (done) ->
   @timeout 0

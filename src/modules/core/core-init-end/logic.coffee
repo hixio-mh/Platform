@@ -18,7 +18,6 @@
 #
 # End of the initialiation process; we initialize final routes and socket
 # listeners, then start socket.io and express.
-config = require "../../../config.json"
 spew = require "spew"
 
 setup = (options, imports, register) ->

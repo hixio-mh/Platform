@@ -3,9 +3,8 @@ should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
 
-config = require "../../config.json"
-config = config.modes[config.mode]
-api = supertest "http://#{config.domain}:#{config.port}"
+config = require "../../config"
+api = supertest "http://#{config('domain')}:#{config('port')}"
 
 testAdName = String Math.floor(Math.random() * 10000)
 
