@@ -64,8 +64,13 @@ setup = (options, imports, register) ->
 
       ads: []
 
-    newCampaign.save()
-    res.json newCampaign.toAnonAPI()
+    newCampaign.validate (err) ->
+      if err
+        spew.error err
+        aem.send res, "400:validate", error: err
+      else
+        newCampaign.save()
+        res.json newCampaign.toAnonAPI()
 
   # Fetch owned camaigns
   app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
