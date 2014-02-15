@@ -97,6 +97,8 @@ module.exports = (user, admin) ->
     # GET /api/v1/creator/:url
     describe "URL", ->
 
+      @timeout 8000
+
       it "Should 400 with invalid url (not google play)", (done) ->
 
         req = util.userRequest "/api/v1/creator/#{encodeURIComponent testInvalidURL}", "get"

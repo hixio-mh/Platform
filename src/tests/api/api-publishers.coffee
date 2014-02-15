@@ -123,7 +123,7 @@ module.exports = (user, admin) ->
     # GET /api/v1/publishers
     it "Should retrieve all three created publishers", (done) ->
 
-      @timeout 3333
+      @timeout 8000
 
       req = util.userRequest "/api/v1/publishers?#{userApiKey}"
       req.expect(200).end (err, res) ->
