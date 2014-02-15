@@ -11,10 +11,8 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-
 spew = require "spew"
 
-# Todo: Document
 class AdefyFlatAdTemplate extends require "./baseTemplate"
 
   name: "Flat Template"
@@ -101,25 +99,12 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: """
-      var hR = height / 1280;
-      var wR = width / 720;
-      var scaleSmall;
-      var scaleBig;
-
-      if(hR > wR) {
-        scaleSmall = wR;
-        scaleBig = hR;
-      } else {
-        scaleSmall = hR;
-        scaleBig = wR;
-      }
-      """
-
+      header: ""
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
-    AJS.setLogLevel 4
+    AJS.setAutoScale width / 720, height / 1280
+    AJS.setLogLevel 1
     AJS.setClearColor 0, 0, 0
 
     color = new AJSColor3 255, 255, 255
@@ -135,10 +120,10 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
 
       for i in [0...carouselText.length]
         if i == 0
-          carousel[i] = new AJS.createRectangleActor start * wR, 270 * hR, 641 * wR, 401 * hR
+          carousel[i] = new AJS.createRectangleActor start, 270, 641, 401
           .setTexture(carouselText[i]).setLayer 1
         else
-          carousel[i] = new AJS.createRectangleActor start + (delta * i) * wR, 270 * hR, 641 * wR, 401 * hR
+          carousel[i] = new AJS.createRectangleActor start + (delta * i), 270, 641, 401
           .setTexture(carouselText[i]).setLayer 1
 
     # Makes all images move to the left
@@ -148,7 +133,7 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
 
       for i in [0...len]
         start = 360 + (delta * i)
-        carousel[i].move (start - (delta * (len - 1))) * wR, 270 * hR, len * 800, 0
+        carousel[i].move (start - (delta * (len - 1))), 270, len * 800, 0
 
     # Makes all images move to the right
     animateRight = ->
@@ -156,7 +141,7 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
       len = carousel.length
 
       for i in [0...len]
-        carousel[i].move (360 + (delta * i)) * wR, 270 * hR, len * 800, 0
+        carousel[i].move (360 + (delta * i)), 270, len * 800, 0
 
     # Starts the animation
     # Each animation takes 800 so we move in the other direction
@@ -173,14 +158,14 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
 
       # Set empty stars
       for i in [0...5]
-        AJS.createRectangleActor start * wR, 975 * hR, 25 * wR, 25 * hR
+        AJS.createRectangleActor start, 975, 25, 25
         .setTexture("starfullnone").setLayer 1
         start += 33
 
       # Set full stars
       start = 60
       while rating > 0.5
-        AJS.createRectangleActor start * wR, 975 * hR, 25 * wR, 25 * hR
+        AJS.createRectangleActor start, 975, 25, 25
         .setTexture("starfull").setLayer 2
 
         rating--
@@ -188,7 +173,7 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
 
       # Set the half star if necessary
       if rating > 0
-        AJS.createRectangleActor start * wR, 975 * hR, 25 * wR, 25 * hR
+        AJS.createRectangleActor start, 975, 25, 25
         .setTexture("starfullhalf").setLayer 2
 
     ##
@@ -196,34 +181,34 @@ class AdefyFlatAdTemplate extends require "./baseTemplate"
     ##
 
     # Background
-    AJS.createRectangleActor 360 * wR, 640 * hR, 720 * wR, 1280 * hR
+    AJS.createRectangleActor 360, 640, 720, 1280
     .setTexture("bg").setLayer 0
 
     # Prandom text and icons
-    AJS.createRectangleActor 360 * wR, 640 * hR, 720 * wR, 1280 * hR
+    AJS.createRectangleActor 360, 640, 720, 1280
     .setTexture("prandom").setLayer 1
 
     # Icon
-    AJS.createRectangleActor 125 * wR, 1100 * hR, 161 * wR, 161 * hR
+    AJS.createRectangleActor 125, 1100, 161, 161
     .setTexture("icon").setLayer 1
 
     # Rating
     setRating 3.5
 
     # Developer icon
-    AJS.createRectangleActor 251 * wR, 1065 * hR, 24 * wR, 24 * hR
+    AJS.createRectangleActor 251, 1065, 24, 24
     .setTexture("devicon").setLayer 1
 
     # Text/description icon
-    AJS.createRectangleActor 251 * wR, 969 * hR, 21 * wR, 24 * hR
+    AJS.createRectangleActor 251, 969, 21, 24
     .setTexture("ticon").setLayer 1
 
     # Button
-    AJS.createRectangleActor 460 * wR, 600 * hR, 441 * wR, 64 * hR
+    AJS.createRectangleActor 460, 600, 441, 64
     .setTexture("button").setLayer 1
 
     # Mask - temporary - 4px thick line between images
-    AJS.createRectangleActor 360 * wR, 270 * hR, 720 * wR, 410 * hR
+    AJS.createRectangleActor 360, 270, 720, 410
     .setTexture("mask").setLayer 1
 
     # Create carousel

@@ -133,25 +133,12 @@ class AdefySkittleAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: """
-      var hR = height / 1280;
-      var wR = width / 720;
-      var scaleSmall;
-      var scaleBig;
-
-      if(hR > wR) {
-        scaleSmall = wR;
-        scaleBig = hR;
-      } else {
-        scaleSmall = hR;
-        scaleBig = wR;
-      }
-      """
-
+      header: ""
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
-    AJS.setLogLevel 4
+    AJS.setAutoScale width / 720, height / 1280
+    AJS.setLogLevel 1
 
     ##
     ## Methods
@@ -347,7 +334,7 @@ class AdefySkittleAdTemplate extends require "./baseTemplate"
     angryBirds()
 
     # Drop the skittles
-    setTimeout (->  makeItSkittle()), 805
+    setTimeout (-> makeItSkittle()), 805
 
     # Empty the bag animation
     setTimeout ->
