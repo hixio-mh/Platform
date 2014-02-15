@@ -12,6 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
+config = require "../../../../config.json"
+adLogLevel = config.modes[config.mode].adloglevel
 
 class AdefyCarAdTemplate extends require "./baseTemplate"
 
@@ -148,12 +150,12 @@ class AdefyCarAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: ""
+      header: "var logLevel = #{adLogLevel};"
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
     AJS.setAutoScale width / 1920, height / 1080
-    AJS.setLogLevel 1
+    AJS.setLogLevel logLevel
 
     animateText = ->
       C1.move 400, 850, 200, 0

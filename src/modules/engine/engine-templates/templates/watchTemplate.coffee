@@ -12,6 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
+config = require "../../../../config.json"
+adLogLevel = config.modes[config.mode].adloglevel
 
 class AdefyWatchAdTemplate extends require "./baseTemplate"
 
@@ -90,12 +92,12 @@ class AdefyWatchAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: ""
+      header: "var logLevel = #{adLogLevel};"
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
     AJS.setAutoScale width / 720, height / 1280
-    AJS.setLogLevel 1
+    AJS.setLogLevel logLevel
     AJS.setClearColor 0, 0, 0
 
     AJS.createRectangleActor 360, 640, 720, 1280

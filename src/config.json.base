@@ -11,6 +11,7 @@
 			"domain": "www.adefy.dev",
 			"port": 10000,
 			"loglevel": 10,
+			"adloglevel": 4,
 			"newrelic": false,
 			"trafficgen": true,
 			"allowAdJSON": true,
@@ -49,6 +50,7 @@
 		"staging": {
 			"domain": "staging.adefy.com",
 			"port": 10000,
+			"adloglevel": 4,
 			"loglevel": 10,
 			"newrelic": false,
 			"trafficgen": true,
@@ -87,6 +89,7 @@
 		"production": {
 			"domain": "app.adefy.com",
 			"port": 10000,
+			"adloglevel": 0,
 			"loglevel": 0,
 			"newrelic": true,
 			"trafficgen": false,
@@ -121,6 +124,7 @@
 		"testing": {
 			"domain": "localhost",
 			"port": 11000,
+			"adloglevel": 0,
 			"loglevel": 0,
 			"newrelic": false,
 			"trafficgen": false,
@@ -159,6 +163,7 @@
 		"testing-codeship": {
 			"domain": "localhost",
 			"port": 11000,
+			"adloglevel": 0,
 			"loglevel": 0,
 			"newrelic": false,
 			"trafficgen": false,
@@ -197,6 +202,7 @@
 		"testing-staging": {
 			"domain": "localhost",
 			"port": 11000,
+			"adloglevel": 0,
 			"loglevel": 0,
 			"newrelic": false,
 			"trafficgen": false,
