@@ -509,13 +509,16 @@ setup = (options, imports, register) ->
               # Todo: Log the serve time
               # spew.info "Served in #{new Date().getTime() - startTimestamp}ms"
 
-  # Fetches a test ad tuned for the publisher in question.
+  # Fetches a test ad
   #
   # @param [Object] req request
   # @param [Object] res response
-  fetchTest = (req, res, publisher) ->
+  # @param [String] type optional template type, defaults to test
+  fetchTest = (req, res, type) ->
     error = validateRequest req
     if error != null then return res.json error: error, 400
+
+    if type == undefined then type = "test"
 
     options = parseRequestOptions req
     options.click = "http://www.google.com"
@@ -525,7 +528,7 @@ setup = (options, imports, register) ->
     options.pushURL = "http://www.adefy.com"
     options.assets = []
 
-    templates.generate "test", options, res
+    templates.generate type, options, res
 
   # Directly returns an empty response. (Used when a suitable ad is not
   # available)
