@@ -12,6 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
+config = require "../../../../config.json"
+adLogLevel = config.modes[config.mode].adloglevel
 
 class AdefySkittleAdTemplate extends require "./baseTemplate"
 
@@ -133,12 +135,12 @@ class AdefySkittleAdTemplate extends require "./baseTemplate"
   create: (options) ->
     creative =
 
-      header: ""
+      header: "var logLevel = #{adLogLevel};"
       body: "(#{@adExec.toString()})()"
 
   adExec: ->
     AJS.setAutoScale width / 720, height / 1280
-    AJS.setLogLevel 1
+    AJS.setLogLevel logLevel
 
     ##
     ## Methods
