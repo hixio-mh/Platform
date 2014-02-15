@@ -38,7 +38,7 @@ schema = new mongoose.Schema
   pubFunds: { type: Number, default: 0 }
 
   transactions: [{ action: String, amount: Number, time: Number }]
-  pendingWithdrawls: [{ source: String, amount: Number, time: Number, email: String }]
+  pendingWithdrawals: [{ source: String, amount: Number, time: Number, email: String }]
 
   # Used to store intermediate transaction information. String is of the
   # format id|token
@@ -250,9 +250,9 @@ schema.methods.withdrawFunds = (type, amount) ->
 
   true
 
-schema.methods.pushWithdrawlRequest = (source, amount, email) ->
+schema.methods.pushWithdrawalRequest = (source, amount, email) ->
 
-  @pendingWithdrawls.push
+  @pendingWithdrawals.push
     source: (String source)
     amount: (Number amount)
     time: new Date().getTime()

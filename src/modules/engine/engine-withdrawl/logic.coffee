@@ -40,10 +40,10 @@ if paypalCredentials.client_id == undefined or paypalCredentials.client_secret =
 ##
 setup = (options, imports, register) ->
 
-  calcWithdrawlAmount = (user) ->
+  calcWithdrawalAmount = (user) ->
     ad_amount = 0
     pub_amount = 0
-    for w in user.pendingWithdrawls
+    for w in user.pendingWithdrawals
       if w.source == "ad"
         ad_amount += w.amount
       else if w.source == "pub"
@@ -78,7 +78,7 @@ setup = (options, imports, register) ->
 
     _.extend(result, head)
     for user in users
-      amnt = calcWithdrawlAmount user
+      amnt = calcWithdrawalAmount user
       d = {}
       d["L_EMAIL#{index}"] = user.email
       d["L_AMT#{index}"] = amnt
@@ -95,7 +95,7 @@ setup = (options, imports, register) ->
       if err then return spew.error err
       ## TODO. Iterate each error key
       ## For users who don't show up in the errors,
-      ## clear their pendingWithdrawls
+      ## clear their pendingWithdrawals
       ## Otherwise send an email/message to the user
       spew.info res
 

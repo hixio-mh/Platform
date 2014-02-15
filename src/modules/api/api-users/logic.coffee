@@ -274,12 +274,12 @@ setup = (options, imports, register) ->
 
       res.json user.transactions
 
-  app.get "/api/v1/user/pendingwithdrawls", isLoggedInAPI, (req, res) ->
+  app.get "/api/v1/user/pendingwithdrawals", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
       if not user then return aem.send res, "500", error: "User(#{req.user.id}) not found"
 
-      res.json user.pendingWithdrawls
+      res.json user.pendingWithdrawals
 
   # Update tutorial visibility status. Section may also be "all"
   app.post "/api/v1/user/tutorial/:section/:status", (req, res) ->
@@ -329,11 +329,11 @@ setup = (options, imports, register) ->
       if model == "ad"
         if amount > user.adFunds
           return aem.send res, "400", error: "Amount exceeds available Ad funds"
-        user.pushWithdrawlRequest("ad", amount, email)
+        user.pushWithdrawalRequest("ad", amount, email)
       else if model == "pub"
         if amount > user.pubFunds
           return aem.send res, "400", error: "Amount exceeds available Pub funds"
-        user.pushWithdrawlRequest("pub", amount, email)
+        user.pushWithdrawalRequest("pub", amount, email)
       else
         return aem.send res, "400", error: "Invalid model: #{model}"
 

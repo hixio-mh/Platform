@@ -24,7 +24,7 @@
           td.number + ${{ t.amount | number:2 }}
   .field.w50
     table.transactions
-      tbody(ng-repeat="w in pendingWithdrawls")
+      tbody(ng-repeat="w in pendingWithdrawals")
         tr.withdraw
           td.desc Amount ${{ w.amount | number:2 }}
           td.from {{ w.type }}

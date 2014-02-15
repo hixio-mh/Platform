@@ -11,8 +11,8 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data
 
-  $http.get("/api/v1/user/pendingwithdrawls").success (data) ->
-    $scope.pendingWithdrawls = data
+  $http.get("/api/v1/user/pendingwithdrawals").success (data) ->
+    $scope.pendingWithdrawals = data
 
   scheduleRedirect = ->
     setTimeout (-> window.location.href = "/funds"), 2000
