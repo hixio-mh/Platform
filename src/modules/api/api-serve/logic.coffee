@@ -37,7 +37,9 @@ setup = (options, imports, register) ->
 
   # Fetch a test ad (unidentified request)
   app.get "/api/v1/serve", (req, res) ->
-    adEngine.fetchTest req, res
+
+    # If type is undefined, fetchTest() uses "test"
+    adEngine.fetchTest req, res, req.param "type"
 
   # Try to fetch a real ad
   app.get "/api/v1/serve/:apikey", (req, res) ->
