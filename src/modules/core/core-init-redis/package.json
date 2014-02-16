@@ -1,7 +1,7 @@
 {
   "name": "core-init-redis",
   "version": "0.0.1",
-  "main": "logic.js",
+  "main": "logic.coffee",
   "private": true,
   "plugin": {
     "consumes": [],
