@@ -84,13 +84,13 @@ gulp.task "clean", ->
 
 # Rerun the task when a file changes
 gulp.task "watch", ->
-  gulp.watch paths.js, ["js"]
-  gulp.watch paths.angular, ["coffee"]
-  gulp.watch paths.images, ["images"]
-  gulp.watch paths.images, ["fonts"]
-  gulp.watch paths.styl, ["stylus"]
-  gulp.watch paths.css, ["css"]
-  gulp.watch paths.jade, ["jade"]
+  gulp.watch(paths.js, ["js"])
+  gulp.watch(paths.angular, ["coffee"])
+  gulp.watch(paths.images, ["images"])
+  gulp.watch(paths.images, ["fonts"])
+  gulp.watch(paths.styl, ["stylus"])
+  gulp.watch(paths.css, ["css"])
+  gulp.watch(paths.jade, ["jade"])
   return
 
 # Run tests
