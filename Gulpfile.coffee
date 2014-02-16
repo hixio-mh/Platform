@@ -6,10 +6,12 @@ rename = require("gulp-rename")
 stylus = require("gulp-stylus")
 minifycss = require("gulp-minify-css")
 ngmin = require("gulp-ngmin")
+imagemin = require("gulp-imagemin")
 clean = require("gulp-clean")
 nodemon = require("gulp-nodemon")
 jade = require("gulp-jade")
 mocha = require("gulp-mocha")
+cache = require("gulp-cache")
 
 paths =
   angular: [
@@ -93,6 +95,7 @@ gulp.task "watch", ->
 
 # Run tests
 gulp.task "test", ->
+  process.env["NODE_ENV"] = 'testing'
   options =
     reporter: "spec"
     require: "coffee-script"
@@ -100,10 +103,10 @@ gulp.task "test", ->
 
 # Spin-up a development server
 gulp.task "server", ->
-  nodemon(script: "src/adefy.coffee", options: "-e coffee --watch src/")
+  nodemon(script: "src/adefy.coffee", options: "--watch src/")
 
 # Build all of the assets
-gulp.task "build", ["clean", "stylus", "css", "images", "fonts", "jade", "coffee", "js"]
+gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js"]
 
 # Run in development
 gulp.task "develop", ["build", "watch", "server"]

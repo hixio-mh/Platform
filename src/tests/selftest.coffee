@@ -2,7 +2,7 @@
 # NOTE: This expects a full, clean testing build!
 childProcess = require("child_process")
 config = require "#{__dirname}/../config"
-buildDir = "build/"
+srcDir = "src/"
 
 adefy = null
 
@@ -14,7 +14,7 @@ before (done) ->
   dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}../../setup_db.js"
   dbSetup.on "close", ->
 
-    adefy = childProcess.fork "#{__dirname}/../../#{buildDir}/adefy.js", [],
+    adefy = childProcess.fork "#{__dirname}/../../#{srcDir}/adefy.coffee", [],
       silent: false
 
     # Await server ready state

@@ -25,7 +25,7 @@ before (done) ->
     # Setup db models
     modelPath = "#{__dirname}/../models"
     fs.readdirSync(modelPath).forEach (file) ->
-      if ~file.indexOf ".js"
+      if ~file.indexOf ".coffee"
         spew.init "Loading model #{file}"
         require "#{modelPath}/#{file}"
 

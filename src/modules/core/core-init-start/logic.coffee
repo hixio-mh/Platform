@@ -137,12 +137,12 @@ setup = (options, imports, register) ->
       spew.critical "Using connection: #{con}"
       spew.critical "Environment: #{config("NODE_ENV")}"
     else
-      spew.init "Connected to MongoDB [#{config.mode}]"
+      spew.init "Connected to MongoDB [#{config("NODE_ENV")}]"
 
     # Setup db models
     modelPath = "#{__dirname}/../../../models"
     fs.readdirSync(modelPath).forEach (file) ->
-      if ~file.indexOf ".js" then require "#{modelPath}/#{file}"
+      if ~file.indexOf ".coffee" then require "#{modelPath}/#{file}"
 
     register null, {}
 
