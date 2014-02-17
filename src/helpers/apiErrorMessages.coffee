@@ -144,17 +144,19 @@ module.exports =
   # Add a humourful message to the response?
   humor: true
 
-  #
+  ###
   # @param [Array] array
+  ###
   sample: (array) ->
     array[Math.floor(Math.random() * array.length)]
 
-  #
+  ###
   # @param [String] ex expected message type
   # @param [Option] opt
   #   @option [String] message
   #   @option [String] msg
   #   @option [String] error replacement error/message
+  ###
   make: (exp, opt) ->
     # 3 ways to declare the same thing
     usrmsg = opt && (opt["error"] || opt["message"] || opt["msg"])
@@ -165,7 +167,7 @@ module.exports =
 
     switch exp
       when "200"
-        resp = @sample responses200 
+        resp = @sample responses200
         msg = "OK"
         code = 200
       when "200:login"
@@ -200,6 +202,10 @@ module.exports =
         resp = @sample responses400
         msg = "Malformed request"
         code = 400
+      when "400:validate"
+        resp = @sample responses500ad_save
+        msg = "Validation has failed"
+        code = 500
       when "401"
         resp = @sample responses401
         msg = "Unauthorized access!"
@@ -245,10 +251,6 @@ module.exports =
         resp = @sample responses500save
         msg = "An error occurred while saving the resource"
         code = 500
-      when "500:ad:save"
-        resp = @sample responses500ad_save
-        msg = "An error occurred while saving the Ad"
-        code = 500
       when "500:unexpected"
         resp = @sample responses500unexpected
         msg = "An unexpected internal error occurred"
@@ -265,10 +267,11 @@ module.exports =
     obj.message = msg unless is_error
     obj
 
-  #
+  ###
   # @param [ResultObject] res result object
   # @param [String] ex expected message type
   # @param [Options] opt
+  ###
   send: (res, exp, opt) ->
 
     dat = @make exp, opt

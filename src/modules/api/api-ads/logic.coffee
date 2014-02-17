@@ -39,11 +39,12 @@ setup = (options, imports, register) ->
       name: req.param "name"
       campaigns: []
 
-    newAd.save (err) ->
+    newAd.validate (err) ->
       if err
         spew.error "Error saving new ad [#{err}]"
-        aem.send res, "500:ad:save", error: err
+        aem.send res, "400:validate", error: err
       else
+        newAd.save()
         res.json 200, newAd.toAnonAPI()
 
   # Save ad edits
@@ -101,15 +102,17 @@ setup = (options, imports, register) ->
         buffer: ""
         key: iconKey
 
-      ad.save (err) ->
+      ad.validate (err) ->
         if err
           spew.error err
-          aem.send res, "500:ad:save", error: err
+          aem.send res, "400:validate", error: err
         else
+          ad.save()
           ad.fetchCompiledStats (stats) ->
-            adData = ad.toAPI()
+            adData = ad.toAnonAPI()
             adData.stats = stats
             res.json 200, adData
+
 
   # Delete an ad, expects "id" in url and req.cookies.user to be valid
   app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
