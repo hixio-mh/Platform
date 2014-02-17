@@ -12,9 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-config = require "../../../config.json"
-configMode = config.modes[config.mode]
-adefyDomain = "http://#{configMode.domain}"
+config = require "../../../config"
+adefyDomain = "http://#{config("domain")}"
 filters = require "../../../helpers/filters"
 
 ##
@@ -501,7 +500,7 @@ setup = (options, imports, register) ->
 
               # If the request asks for JSON, and we are in a mode allowing
               # it, then return JSON
-              if configMode.allowAdJSON and req.param("json") != undefined
+              if config("allowAdJSON") and req.param("json") != undefined
                 res.json options
               else
                 templates.generate templateType, options, res

@@ -10,7 +10,7 @@ RedisStore = require('connect-redis')(express)
 passport = require "passport"
 flash = require "connect-flash"
 
-cfg = require "../../../config.json"
+cfg = require "../../../config"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 
@@ -67,7 +67,7 @@ setup = (options, imports, register) ->
         config.port = port
 
         app.configure ->
-          if cfg.mode is "development" then app.use express.logger()
+          if cfg("NODE_ENV") is "development" then app.use express.logger()
           app.set "views", view_root
           app.set "view options", layout: false
           app.use connect.bodyParser()

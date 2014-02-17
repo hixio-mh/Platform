@@ -3,9 +3,8 @@ should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
 
-config = require "../../config.json"
-config = config.modes[config.mode]
-api = supertest "http://#{config.domain}:#{config.port}"
+config = require "../../config"
+api = supertest "http://#{config('domain')}:#{config('port')}"
 
 userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
 adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
