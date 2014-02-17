@@ -3,6 +3,7 @@
     "domain": "www.adefy.dev",
     "port": 5000,
     "loglevel": 10,
+    "adloglevel": 4,
     "newrelic": false,
     "trafficgen": true,
     "mongo": {
@@ -32,14 +33,15 @@
       "client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
     },
     "s3-config": {
-    "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
-    "secretAccessKey": "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"
+      "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
+      "secretAccessKey": "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"
     }
   },
   "staging": {
     "domain": "staging.adefy.com",
     "port": 10000,
     "loglevel": 10,
+    "adloglevel": 4,
     "newrelic": true,
     "trafficgen": true,
     "mongo": {
@@ -69,14 +71,15 @@
       "client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
     },
     "s3-config": {
-    "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
-    "secretAccessKey": "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"
+      "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
+      "secretAccessKey": "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"
     }
   },
   "production": {
     "domain": "app.adefy.com",
     "port": 10000,
     "loglevel": 0,
+    "adloglevel": 0,
     "newrelic": true,
     "trafficgen": false,
     "mongo": {
@@ -110,6 +113,7 @@
     "domain": "localhost",
     "port": 11000,
     "loglevel": 0,
+    "adloglevel": 0,
     "newrelic": false,
     "trafficgen": false,
     "mongo": {
@@ -147,6 +151,7 @@
     "domain": "localhost",
     "port": 11000,
     "loglevel": 0,
+    "adloglevel": 0,
     "newrelic": false,
     "trafficgen": false,
     "mongo": {
