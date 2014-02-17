@@ -30,27 +30,97 @@ html(lang="en" ng-app="AdefyApp")
 
     link(rel="icon" href="/img/favicon.png" type="image/png")
 
+    link(rel="stylesheet", href='//fonts.googleapis.com/css?family=Gudea:400,700,400italic|Oleo+Script')
+
     link(rel="stylesheet" href="/css/reset.css")
-    link(rel="stylesheet" href="/css/styles.min.css")
+    // link(rel="stylesheet" href="/css/styles.min.css")
+    link(rel="stylesheet" href="/css/creator.css")
     link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css")
 
-  body.account-page
-    .main
-      header
-        #logo.tcenter Adefy
+  body
 
-    br
-    br
-
-    ad-creator(showsuggestions="true" messages="true" panels="true")
+    header
+      .center#header-mobile
+        .logo: a(href="/") Adefy
+      .center
+        .menu
+          a(href="/technology") How we do native
+          a(href="/publishers") Publishers
+          a(href="/advertisers") Advertisers
+          a(href="/about") About
+          a(href="/contact") Contact us
+        .language
+          //- a(href="http://developer.adefy.com" target="_blank") Help
+          a.white(href="https://app.adefy.com/signup" target="_blank") Sign Up
+          a(href="https://twitter.com/AdefyMobile") Follow us on Twitter
+        //-   a(href="") Language
+      .center#header-desktop
+        .logo: a(href="/") Adefy
+        //- .search
+        //-   input(type="text" placeholder="Search")
+    #content
+      ad-creator(showsuggestions="true" messages="true" panels="true")
 
     footer
-      script(src="/js/vendor/stackBlur.min.js")
-      script(src="/js/vendor/zepto.min.js")
-      script(src="/js/vendor/zepto.fx.min.js")
+      .center
+        ul
+          li
+            h6 Technology
+            a(href="/technology#organic-content") Organic Content
+            a(href="/technology#flow") Nurturing Flow
+            a(href="/technology#ad-formats") Creative Formats
+            a(href="/technology#authoring-tools") Authoring Tools
+          li
+            h6 Advertisers
+            a(href="/advertisers#campaigns") Next-gen Campaigns
+            a(href="/advertisers#ad-generation") Realtime Ad Generation
+            a(href="/advertisers#automatic-bidding") Automatic Bidding
+            a(href="/advertisers#delivery") Intelligent Delivery
+            a(href="https://developer.adefy.com" target="_blank") Designer Resources
+            a(href="https://app.adefy.com/creator" target="_blank") Creative Generator
+          li
+            h6 Publishers
+            a(href="/publishers#monetize") Monetize
+            a(href="/publishers#inventory") Untapped Inventory
+            a(href="/publishers#ads") Innovative Formats
+            a(href="/publishers#floor-limits") Floor Limits
+            //- a(href="/developer") House Ads
+            a(href="https://developer.adefy.com" target="_blank") Developer Resources
+            a(href="https://developer.adefy.com/sdk/" target="_blank") SDK Downloads
+          li
+            h6 Legal
+            a(href="/privacy") Privacy
+            a(href="/ToS") Terms &amp; Conditions
+            a(href="/imprint") Imprint
+          li
+            h6 Help center
+            a(href="/about") About
+            a(href="/contact") Contact Us
+            a(href="https://developer.adefy.com" target="_blank") Developer Center
+      hr
+      .center
+        .menu
+          a(href="/home") Home
+          a(href="/technology") How we do native
+          a(href="/publishers") Publishers
+          a(href="/advertisers") Advertisers
+          a(href="/about") About
+          a(href="/contact") Contact us
+        .language
+          a(href="https://app.adefy.com/signup" target="_blank") Sign Up
+          //- a(href="http://docs.adefy.com" target="_blank") Help
+        //-   a(href="") Language
+      .center
+        p.copyright
+          | Adefy &trade; by Spectrum IT Solutions GmbH 2013-2014
 
-      script(src="/js/vendor/angular-1.2.11.min.js")
-      script(src="/js/vendor/angular-route.min.js")
-      script.
-        window.AdefyApp = angular.module("AdefyApp", ["ngRoute"]);
-      script(src="/client/directives/AdefyCreatorDirective.js")
+    script(src="/js/vendor/stackBlur.min.js")
+    script(src="/js/vendor/zepto.min.js")
+    script(src="/js/vendor/zepto.fx.min.js")
+
+    script(src="/js/vendor/angular-1.2.11.min.js")
+    script(src="/js/vendor/angular-route.min.js")
+    script.
+      window.AdefyApp = angular.module("AdefyApp", ["ngRoute"]);
+    script(src="/client/directives/AdefyCreatorDirective.js")
+
