@@ -57,15 +57,15 @@
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
 
   .section Top Apps
-  table.info
+  table.info(id="TopAppsTable")
     thead: tr
-      th
-      th Impressions
-      th Clicks
-      th CTR
-      th Earnings
+      th(ng-click="changeSorting(\"appst\", \"name\")") App Name
+      th(ng-click="changeSorting(\"appst\", \"stats.impressions\")") Impressions
+      th(ng-click="changeSorting(\"appst\", \"stats.clicks\")") Clicks
+      th(ng-click="changeSorting(\"appst\", \"stats.ctr\")") CTR
+      th(ng-click="changeSorting(\"appst\", \"stats.earnings\")") Earnings
     tbody
-      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
+      tr(ng-repeat="app in apps | orderBy:sortSettings.column:sortSettings.descending | limitTo:10" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
         td {{ app.name }}
         td {{ app.stats.impressions | number }}
         td {{ app.stats.clicks | number }}
@@ -78,6 +78,6 @@
         span.title We are live!
         span.date January 31th, 2014
         p
-          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our 
-          a(href="https://developer.adefy.com" target="_blank") Developer Center. 
+          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
+          a(href="https://developer.adefy.com" target="_blank") Developer Center.
           | If you need any assistance we will gladly help!
