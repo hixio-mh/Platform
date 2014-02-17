@@ -66,7 +66,7 @@ gulp.task "jade", ->
 # Optimize images
 gulp.task "images", ->
   gulp.src(paths.images)
-  .pipe cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
+  #.pipe cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
   .pipe gulp.dest("build/img")
 
 # Copy fonts
