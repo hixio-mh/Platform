@@ -13,7 +13,7 @@
 ##
 spew = require "spew"
 routes = require "../../../angularDashboardViews.json"
-config = require "../../../config.json"
+config = require "../../../config"
 crypto = require "crypto"
 passport = require "passport"
 
@@ -33,7 +33,7 @@ setup = (options, imports, register) ->
 
       viewData = {}
       viewData.user = req.user
-      viewData.mode = config.mode
+      viewData.mode = config("NODE_ENV")
       viewData.intercomSecureHash = (email) ->
         API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
         crypto.createHmac("sha256", API_SECRET)
@@ -61,7 +61,7 @@ setup = (options, imports, register) ->
 
     viewData = {}
     viewData.user = req.user
-    viewData.mode = config.mode
+    viewData.mode = config("NODE_ENV")
     viewData.intercomSecureHash = (email) ->
       API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
       crypto.createHmac("sha256", API_SECRET)
@@ -83,7 +83,7 @@ setup = (options, imports, register) ->
 
     viewData = {}
     viewData.user = req.user
-    viewData.mode = config.mode
+    viewData.mode = config("NODE_ENV")
     viewData.intercomSecureHash = (email) ->
       API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
       crypto.createHmac("sha256", API_SECRET)

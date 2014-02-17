@@ -16,8 +16,8 @@
 spew = require "spew"
 db = require "mongoose"
 cluster = require "cluster"
-config = require "../../../config.json"
-rebuild = config.modes[config.mode]["redis-main"].rebuild
+config = require "../../../config"
+rebuild = config("redis-main").rebuild
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 async = require "async"

@@ -11,8 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-config = require "../../../config.json"
-modeConfig = config.modes[config.mode]
+config = require "../../../config"
 cluster = require "cluster"
 spew = require "spew"
 
@@ -21,9 +20,9 @@ setup = (options, imports, register) ->
 
   SDC = require("statsd-client")
   statsd = new SDC
-    host: modeConfig.stats.host
-    port: modeConfig.stats.port
-    prefix: "#{config.mode}."
+    host: config("stats").host
+    port: config("stats").port
+    prefix: "#{config("NODE_ENV")}."
 
   GLOBAL.statsd = statsd
 

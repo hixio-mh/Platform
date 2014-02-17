@@ -12,7 +12,6 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 graphiteInterface = require "../helpers/graphiteInterface"
-config = require "../config.json"
 mongoose = require "mongoose"
 cheerio = require "cheerio"
 request = require "request"
