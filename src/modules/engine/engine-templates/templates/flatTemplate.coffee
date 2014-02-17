@@ -12,8 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-config = require "../../../../config.json"
-adLogLevel = config.modes[config.mode].adloglevel
+config = require "../../../../config"
+adLogLevel = config("adloglevel")
 
 class AdefyFlatAdTemplate extends require "./baseTemplate"
 
