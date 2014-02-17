@@ -14,10 +14,7 @@ mocha = require("gulp-mocha")
 cache = require("gulp-cache")
 
 paths =
-  angular: [
-    "src/client/**/*.coffee",
-    "!src/client/external/**/*.coffee"
-  ]
+  angular: "src/client/**/*.coffee"
   js: "src/static/js/**/*.js"
   styl: "src/stylus/**/*.styl"
   css: "src/static/css/**/*.css"
@@ -28,69 +25,69 @@ paths =
 # Compile stylus
 gulp.task "stylus", ->
   gulp.src(paths.styl)
-  .pipe(stylus("include css": true))
-  .pipe(gulp.dest("build/css"))
-  .pipe(rename(suffix: ".min"))
-  .pipe(minifycss())
-  .pipe(gulp.dest("build/css"))
+  .pipe stylus("include css": true)
+  .pipe gulp.dest("build/css")
+  .pipe rename(suffix: ".min")
+  .pipe minifycss()
+  .pipe gulp.dest("build/css")
 
 # Compile vendor css
 gulp.task "css", ->
   gulp.src(paths.css)
-  .pipe(concat("vendor.css"))
-  .pipe(gulp.dest("build/css"))
-  .pipe(rename(suffix: ".min"))
-  .pipe(minifycss())
-  .pipe(gulp.dest("build/css"))
+  .pipe concat("vendor.css")
+  .pipe gulp.dest("build/css")
+  .pipe rename(suffix: ".min")
+  .pipe minifycss()
+  .pipe gulp.dest("build/css")
 
 # Compile clientside coffeescript
 gulp.task "coffee", ->
   gulp.src(paths.angular)
-  .pipe(coffee())
-  .pipe(gulp.dest("build/js"))
-  .pipe(concat("script.min.js"))
-  .pipe(ngmin())
-  .pipe(uglify())
-  .pipe(gulp.dest("build/js"))
+  .pipe coffee()
+  .pipe gulp.dest("build/js")
+  .pipe concat("script.min.js")
+  .pipe ngmin()
+  .pipe uglify()
+  .pipe gulp.dest("build/js")
 
 # Compile vendor js
 gulp.task "js", ->
   gulp.src(paths.js)
-  .pipe(gulp.dest("build/js"))
-  .pipe(concat("vendor.min.js"))
-  .pipe(gulp.dest("build/js"))
+  .pipe gulp.dest("build/js")
+  .pipe concat("vendor.min.js")
+  .pipe gulp.dest("build/js")
 
 # Compile static jade files
 gulp.task "jade", ->
   gulp.src(paths.jade)
-  .pipe(jade())
-  .pipe(gulp.dest("build"))
+  .pipe jade()
+  .pipe gulp.dest("build")
 
 # Optimize images
 gulp.task "images", ->
   gulp.src(paths.images)
-  .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
-  .pipe(gulp.dest("build/img"))
+  .pipe cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
+  .pipe gulp.dest("build/img")
 
 # Copy fonts
 gulp.task "fonts", ->
   gulp.src(paths.fonts)
-  .pipe(gulp.dest("build/fonts"))
+  .pipe gulp.dest("build/fonts")
 
 # Clean old build
 gulp.task "clean", ->
   gulp.src("build/*", {read: false})
-  .pipe(clean())
+  .pipe clean()
 
 # Rerun the task when a file changes
 gulp.task "watch", ->
-  gulp.watch(paths.js, ["js"])
-  gulp.watch(paths.angular, ["coffee"])
-  gulp.watch(paths.images, ["images"])
-  gulp.watch(paths.images, ["fonts"])
-  gulp.watch(paths.styl, ["stylus"])
-  gulp.watch(paths.css, ["css"])
-  gulp.watch(paths.jade, ["jade"])
+  gulp.watch paths.js, ["js"]
+  gulp.watch paths.angular, ["coffee"]
+  gulp.watch paths.images, ["images"]
+  gulp.watch paths.images, ["fonts"]
+  gulp.watch paths.styl, ["stylus"]
+  gulp.watch paths.css, ["css"]
+  gulp.watch paths.jade, ["jade"]
   return
 
 # Run tests
@@ -98,8 +95,9 @@ gulp.task "test", ->
   process.env["NODE_ENV"] = 'testing'
   options =
     reporter: "spec"
-    require: "coffee-script"
-  gulp.src("src/tests/*.coffee").pipe(mocha(options))
+    require: "coffee-script/register"
+  gulp.src("src/tests/*.coffee")
+  .pipe mocha(options)
 
 # Spin-up a development server
 gulp.task "server", ->
