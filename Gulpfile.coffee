@@ -21,6 +21,7 @@ paths =
   images: "src/static/img/**/*"
   fonts: "src/static/fonts/**/*"
   jade: "src/views/static/**/*.jade"
+  assets: "src/modules/engine/engine-templates/templates/*Assets/**/*"
 
 # Compile stylus
 gulp.task "stylus", ->
@@ -74,6 +75,11 @@ gulp.task "fonts", ->
   gulp.src(paths.fonts)
   .pipe gulp.dest("build/fonts")
 
+# Copy ad template assets
+gulp.task "assets", ->
+  gulp.src(paths.assets)
+  .pipe gulp.dest("build/assets")
+
 # Clean old build
 gulp.task "clean", ->
   gulp.src("build/*", {read: false})
@@ -88,6 +94,7 @@ gulp.task "watch", ->
   gulp.watch paths.styl, ["stylus"]
   gulp.watch paths.css, ["css"]
   gulp.watch paths.jade, ["jade"]
+  gulp.watch paths.assets, ["assets"]
   return
 
 # Run tests
@@ -104,7 +111,7 @@ gulp.task "server", ->
   nodemon(script: "src/adefy.coffee", options: "--watch src/")
 
 # Build all of the assets
-gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js"]
+gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js", "assets"]
 
 # Run in development
 gulp.task "develop", ["build", "watch", "server"]
