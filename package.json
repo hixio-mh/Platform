@@ -51,7 +51,8 @@
     "gulp-cache": "~0.1.1",
     "gulp-imagemin": "~0.1.5",
     "gulp-jade": "~0.4.2",
-    "gulp-mocha": "~0.4.1"
+    "gulp-mocha": "~0.4.1",
+    "gulp-order": "~1.0.5"
   },
   "private": true,
   "engine": "node >= 0.10.12"

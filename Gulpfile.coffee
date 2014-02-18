@@ -12,6 +12,7 @@ nodemon = require "gulp-nodemon"
 jade = require "gulp-jade"
 mocha = require "gulp-mocha"
 cache = require "gulp-cache"
+order = require "gulp-order"
 
 paths =
   angular: "src/client/**/*.coffee"
@@ -22,6 +23,30 @@ paths =
   fonts: "src/static/fonts/**/*"
   jade: "src/views/static/**/*.jade"
   assets: "src/modules/engine/engine-templates/templates/*Assets/**/*"
+
+  jsConcat: [
+    "src/static/js/vendor/stackBlur.js"
+    "src/static/js/vendor/jquery-2.0.3.min.js"
+    "src/static/js/vendor/accounting.min.js"
+    "src/static/js/vendor/select2.min.js"
+
+    "src/static/js/vendor/chosen.jquery.min.js"
+
+    "src/static/js/vendor/angular-1.2.11.min.js"
+    "src/static/js/vendor/angular-resource.min.js"
+    "src/static/js/vendor/angular-route.min.js"
+    "src/static/js/vendor/angular-country-select.min.js"
+    "src/static/js/vendor/angular-ui-select2.js"
+    "src/static/js/vendor/angular.chosen.js"
+    "src/static/js/vendor/ng-quick-date.min.js"
+
+    "src/static/js/vendor/angles.js"
+    "src/static/js/vendor/guiders.js"
+    "src/static/js/vendor/moment.min.js"
+
+    "src/static/js/vendor/d3.min.js"
+    "src/static/js/vendor/rickshaw.min.js"
+  ]
 
 # Compile stylus
 gulp.task "stylus", ->
@@ -44,6 +69,14 @@ gulp.task "css", ->
 # Compile clientside coffeescript
 gulp.task "coffee", ->
   gulp.src paths.angular
+  .pipe order [
+    "tutorial/**/*.coffee"
+    "routes/**/*.coffee"
+    "factories/**/*.coffee"
+    "directives/**/*.coffee"
+    "services/**/*.coffee"
+    "**/*.coffee"
+  ]
   .pipe coffee()
   .pipe gulp.dest "build/js"
   .pipe concat "script.min.js"
@@ -55,6 +88,8 @@ gulp.task "coffee", ->
 gulp.task "js", ->
   gulp.src paths.js
   .pipe gulp.dest "build/js"
+
+  gulp.src paths.jsConcat
   .pipe concat "vendor.min.js"
   .pipe gulp.dest "build/js"
 
