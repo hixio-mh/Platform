@@ -99,7 +99,7 @@ gulp.task "watch", ->
 
 # Run tests
 gulp.task "test", ->
-  process.env["NODE_ENV"] = 'testing'
+  process.env["NODE_ENV"] = process.env["NODE_ENV"] || "testing"
   options =
     reporter: "spec"
     require: "coffee-script/register"
