@@ -95,11 +95,12 @@ setup = (options, imports, register) ->
         version: 1
 
       newUser.save ->
-        req.login newUser, (err) ->
-          if err
-            aem.send res, "500", error: "Somthing weird just happened"
-          else
-            aem.send res, "200", msg: "Registered successfully"
+        newUser.createTutorialObjects ->
+          req.login newUser, (err) ->
+            if err
+              aem.send res, "500", error: "Somthing weird just happened"
+            else
+              aem.send res, "200", msg: "Registered successfully"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
