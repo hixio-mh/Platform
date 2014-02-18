@@ -39,8 +39,8 @@ setup = (options, imports, register) ->
     else if type == "watch_template"
       watchTemplate.generate options, res
     else
-      spew.info "Unknown template type: #{type}"
-      res.json 400, error: "Bad template: #{type }"
+      spew.error "Unknown template type: #{JSON.stringify type}"
+      res.json 400, error: "Bad template: #{JSON.stringify type}"
 
   register null,
     "engine-templates":
