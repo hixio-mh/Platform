@@ -512,8 +512,9 @@ setup = (options, imports, register) ->
   #
   # @param [Object] req request
   # @param [Object] res response
+  # @param [Object] publisher optional publisher model
   # @param [String] type optional template type, defaults to test
-  fetchTest = (req, res, type) ->
+  fetchTest = (req, res, publisher, type) ->
     error = validateRequest req
     if error != null then return res.json error: error, 400
 
