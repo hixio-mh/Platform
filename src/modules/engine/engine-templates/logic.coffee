@@ -28,6 +28,7 @@ setup = (options, imports, register) ->
   watchTemplate = require "./templates/watchTemplate"
 
   generate = (type, options, res) ->
+
     if type == "test"
       testTemplate.generate options, res
     else if type == "flat_template"

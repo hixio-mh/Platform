@@ -541,7 +541,7 @@ setup = (options, imports, register) ->
   register null,
     "engine-ads":
       fetch: (req, res, publisher, time) -> fetch req, res, publisher, time
-      fetchTest: (req, res, publisher) -> fetchTest req, res, publisher
+      fetchTest: (req, res, publisher, type) -> fetchTest req, res, publisher, type
       fetchEmpty: (req, res) -> fetchEmpty req, res
 
 module.exports = setup
