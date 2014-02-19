@@ -144,7 +144,7 @@ gulp.task "watch", ->
 gulp.task "test", ->
   process.env["NODE_ENV"] = process.env["NODE_ENV"] || "testing"
   options =
-    reporter: "spec"
+    reporter: "nyan"
     require: "coffee-script/register"
   gulp.src("src/tests/*.coffee")
   .pipe mocha(options)
