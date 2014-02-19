@@ -10,6 +10,11 @@ api = supertest "http://#{config('domain')}:#{config('port')}"
 userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
 adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
 
+countries = require "../../helpers/filters/countries.json"
+categories = require "../../helpers/filters/categories.json"
+devices = require "../../helpers/filters/devices.json"
+manufacturers = require "../../helpers/filters/manufacturers.json"
+
 module.exports = (user, admin) ->
 
   util = require("../utility") api, user, admin
@@ -38,8 +43,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/countries?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterEntry fil
+          expect(res.body.length).to.equal countries.length
           done()
 
       it "Should retrieve a list of countries with query", (done) ->
@@ -47,8 +51,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/countries?q=Can?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterFormat fil
+          validateFilterQueryFormat fil for fil in res.body
           done()
 
     # GET /api/v1/filters/categories
@@ -59,8 +62,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/categories?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterEntry fil
+          expect(res.body.length).to.equal categories.length
           done()
 
       it "Should retrieve a list of categories with query", (done) ->
@@ -68,8 +70,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/categories?q=Al?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterFormat fil
+          validateFilterQueryFormat fil for fil in res.body
           done()
 
     # GET /api/v1/filters/devices
@@ -80,8 +81,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/devices?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterEntry fil
+          expect(res.body.length).to.equal devices.length
           done()
 
       it "Should retrieve a list of devices with query", (done) ->
@@ -89,8 +89,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/devices?q=Appl?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterFormat fil
+          validateFilterQueryFormat fil for fil in res.body
           done()
 
     # GET /api/v1/filters/manufacturers
@@ -101,8 +100,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/manufacturers?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterEntry fil
+          expect(res.body.length).to.equal manufacturers.length
           done()
 
       it "Should retrieve a list of manufacturers with query", (done) ->
@@ -110,6 +108,5 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/filters/manufacturers?q=No?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for fil in res.body
-            validateFilterFormat fil
+          validateFilterQueryFormat fil for fil in res.body
           done()

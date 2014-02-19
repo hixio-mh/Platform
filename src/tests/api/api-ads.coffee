@@ -57,10 +57,7 @@ module.exports = (user, admin) ->
       campaign.campaign.should.not.have.property "countries"
       campaign.campaign.should.not.have.property "devices"
 
-    ad.should.not.have.property "owner"
     ad.should.not.have.property "version"
-    ad.should.not.have.property "_id"
-    ad.should.not.have.property "__v"
 
     util.apiObjectIdSanitizationCheck ad
 

@@ -16,6 +16,7 @@ module.exports = (user, admin) ->
 
   handleError = util.handleError
 
+  ###
   describe "Editor API", ->
 
     # GET /api/v1/editor/:ad
@@ -32,4 +33,4 @@ module.exports = (user, admin) ->
     it "---", (done) ->
 
       done()
-
+  ###
