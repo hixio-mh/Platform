@@ -15,8 +15,22 @@ describe "Graphite Interface helper", ->
       expect(query.from).to.equal ""
       expect(query.until).to.equal ""
 
+    it "Should provide basic filter manipulation", ->
+      query = graphiteInterface.query()
+
+      expect(query.isFiltered()).to.be.false
+      query.enableFilter()
+      expect(query.isFiltered()).to.be.true
+      query.disableFilter()
+      expect(query.isFiltered()).to.be.false
+
     it "Should disable result filtering by default", ->
       query = graphiteInterface.query()
       expect(query.isFiltered()).to.be.false
 
-  # Todo: Cause events!
+    it "Should expose stat prefixes", ->
+      graphiteInterface.should.have.property "getPrefixStat"
+      graphiteInterface.should.have.property "getPrefixStatCounts"
+
+      expect(graphiteInterface.getPrefixStat().indexOf "stats.").to.be.above -1
+      expect(graphiteInterface.getPrefixStatCounts().indexOf "stats_counts.").to.be.above -1
