@@ -34,6 +34,12 @@ module.exports = (user, admin) ->
     publisher.should.have.property "apikey"
     publisher.should.have.property "status"
     publisher.should.have.property "type"
+    publisher.should.have.property "minimumCPM"
+    publisher.should.have.property "minimumCPC"
+    publisher.should.have.property "preferredPricing"
+    publisher.should.have.property "tutorial"
+
+    publisher.should.not.have.property "_previouslyGeneratedUrl"
 
     util.apiObjectIdSanitizationCheck publisher
 
@@ -98,6 +104,7 @@ module.exports = (user, admin) ->
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
+        expect(res.body.id).to.equal testPublisherId1
 
         requests = util.actuallyDoneCheck done, requests
 
@@ -107,6 +114,7 @@ module.exports = (user, admin) ->
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
+        expect(res.body.id).to.equal testPublisherId2
 
         requests = util.actuallyDoneCheck done, requests
 
@@ -116,6 +124,7 @@ module.exports = (user, admin) ->
 
         validatePublisherFormat res.body
         expectPublisherStats res.body
+        expect(res.body.id).to.equal testPublisherId3
 
         requests = util.actuallyDoneCheck done, requests
 
