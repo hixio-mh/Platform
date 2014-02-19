@@ -6,76 +6,43 @@ crypto = require "crypto"
 fs = require "fs"
 spew = require "spew"
 expressValidator = require "express-validator"
-RedisStore = require('connect-redis')(express)
+RedisStore = require("connect-redis") express
 passport = require "passport"
 flash = require "connect-flash"
 
-cfg = require "../../../config"
+config = require "../../../config"
 redisInterface = require "../../../helpers/redisInterface"
 redis = redisInterface.main
 
 setup = (options, imports, register) ->
 
-  # The server can act upon 404 and 500 errors, displaying an error page
-  NotFound = (message) ->
-    this.name = "NotFound"
-    Error.call this, message
-    Error.captureStackTrace this, arguments.callee
-
-  eInternalError = (message) ->
-    this.name = "InternalError"
-    this.message = message
-    Error.call this, message
-    Error.captureStackTrace this, arguments.callee
-
   app = express()
   rules = []
   hasSetup = false
-  sessionSecret = null
-  hServ = null
-
-  # Configured with setup
-  config =
-    secure: false
-    secure_files: null
-    port: 0
 
   lowRuleRegister = (rule) -> app.use (req, res, next) -> rule req, res, next
 
   register null,
     "core-express":
 
-      # Register rule
-      #
-      # Args:
-      #  rule - Function handling req, res, next
-      #
       registerRule: (rule) ->
         if not hasSetup then rules.push rule
         else spew.warning "Can't register rule after setup has been called"
 
-      # Setup
-      #
-      # Args
-      #  view_root    - Base path for views
-      # static_root   - Base path for static files
-      #  port     - Port number to listen on
-      #
-      setup: (view_root, static_root, port) ->
-
-        # Local config
-        config.port = port
+      setup: ->
 
         app.configure ->
-          if cfg("NODE_ENV") is "development" then app.use express.logger()
-          app.set "views", view_root
+          if config("NODE_ENV") is "development" then app.use express.logger()
+          app.set "views", "#{__dirname}/../../../views"
           app.set "view options", layout: false
           app.use connect.bodyParser()
           app.use expressValidator()
-          app.use express.cookieParser sessionSecret
+
+          # Hard-code to keep sessions after restart
+          app.use express.cookieParser "rRd0udXZRb0HX5iqHUcSBFck4vNhuUkW"
+
           app.use express.session
-            store: new RedisStore
-              client: redis
+            store: new RedisStore client: redis
             secret: "4bfddfd3e630db97bffbd922aae468fa"
 
           app.use flash()
@@ -86,17 +53,11 @@ setup = (options, imports, register) ->
           lowRuleRegister rule for rule in rules
 
           app.use app.router
-          app.use (err, req, res, next) ->
-            if err instanceof NotFound
-              res.status(404).render "404.jade", path: req.url
-            else if err instanceof eInternalError
-              res.status(500).render "500.jade", error: err.message
 
         hasSetup = true
         spew.init "Registered middleware, express needs initialization"
 
       server: app
-      httpServer: -> return hServ
 
       # Initialize last routes
       #
@@ -112,8 +73,6 @@ setup = (options, imports, register) ->
             if req.isAuthenticated() then return res.send 404
             else res.redirect "/login"
 
-          # Actually start the server
-          hServ = http.createServer app
         else spew.error "Can't perform server initialization without setup!"
 
       # Start server
@@ -122,8 +81,9 @@ setup = (options, imports, register) ->
       beginListen: ->
 
         if hasSetup
-          hServ.listen config.port
-          spew.init "Server listening on port " + config.port
-        else spew.error "Can't start listening before setup!"
+          app.listen config "port"
+          spew.init "Server listening on port #{config "port"}"
+        else
+          spew.error "Can't start listening before setup!"
 
 module.exports = setup
