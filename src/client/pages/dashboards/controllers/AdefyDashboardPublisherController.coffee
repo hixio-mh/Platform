@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, App, UserService) ->
+angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $filter, ngTableParams, App, UserService) ->
 
   window.showTutorial = -> guiders.show "dashboardGuider1"
 
@@ -29,6 +29,27 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
       if app.stats.ctr then app.stats.ctr *= 100
       if app.stats.ctr24h then app.stats.ctr24h *= 100
 
+    h =
+      page: 1       # show first page
+      count: 10     # count per page
+      sorting:
+        name: 'asc' # initial sorting
+
+    d =
+      total: $scope.apps.length
+      getData: ($defer, params) ->
+        orderedData = null
+        if params.sorting()
+          orderedData = $filter('orderBy')($scope.apps, params.orderBy())
+        else
+          orderedData = $scope.apps
+
+        pg = params.page()
+        prmcount = params.count()
+        $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
+
+    $scope.appTableParams = new ngTableParams h, d
+    true
 
   ##
   ## Setup graphs
