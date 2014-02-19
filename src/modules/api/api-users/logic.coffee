@@ -47,6 +47,20 @@ setup = (options, imports, register) ->
     else
       res.render "account/register.jade"
 
+  # Forgot password
+  app.get "/forgot", (req, res) ->
+    if req.user != undefined and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/forgot.jade"
+
+  # Reset password
+  app.get "/reset", (req, res) ->
+    if req.user != undefined and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/reset.jade"
+
   # Logout
   app.get "/logout", (req, res) ->
     req.logout()
@@ -87,6 +101,12 @@ setup = (options, imports, register) ->
               aem.send res, "500", error: "Somthing weird just happened"
             else
               aem.send res, "200", msg: "Registered successfully"
+
+  # Forgot password
+  app.post "/api/v1/forgot", (req, res) ->
+
+  # Change password
+  app.post "/api/v1/reset", (req, res) ->
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->

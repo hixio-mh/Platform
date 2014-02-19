@@ -1,3 +1,17 @@
+//-
+//- Copyright © 2013 Spectrum IT Solutions Gmbh
+//-
+//- Firmensitz: Wien
+//- Firmenbuchgericht: Handelsgericht Wien
+//- Firmenbuchnummer: 393588g
+//-
+//- All Rights Reserved.
+//-
+//- The use and / or modification of this file is subject to
+//- Spectrum IT Solutions GmbH and may not be made without the explicit
+//- permission of Spectrum IT Solutions GmbH
+//-
+
 doctype html
 html(lang="en" ng-app="AdefyLogin")
   head
@@ -19,15 +33,15 @@ html(lang="en" ng-app="AdefyLogin")
     link(rel="stylesheet" href="/css/styles.min.css")
     link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
 
-  body.account-page(ng-controller="AdefyLoginController")
+  body.account-page(ng-controller="AdefyForgotController")
     .main
       header.absolute
         #logo Adefy
 
     .container
-      #subtitle.block.tcenter Login
-      #teaser.block.tcenter(ng-bind="teaser")
-      #description.block.tcenter Enter your credentials to continue
+      #subtitle.block.tcenter Change password
+      #teaser.block.tcenter Almost there!
+      #description.block.tcenter Enter your new password
 
     .container.small
       form
@@ -40,22 +54,21 @@ html(lang="en" ng-app="AdefyLogin")
 
         br
 
-        label Username
-        input(type="text" placeholder="Username" ng-model="username")
-
         label Password
-        input(type="password" placeholder="Password" ng-model="password" ng-keypress="enterSubmit($event)")
+        input(type="password" placeholder="Email" ng-model="password" ng-keypress="enterSubmit($event)")
+
+        label Password Confirmation
+        input(type="password" placeholder="Email" ng-model="password_confirmation" ng-keypress="enterSubmit($event)")
 
     .container.small
       button#main-button(type="button" ng-click="login()")
         div#main-icon
-        | Login
+        | Change password
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
 
     #bottom-action
-      a(href="/forgot") Forgot Password?
       a(href="/register") Need to Register?
 
     footer
       script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
-      script(src="/js/login/login.js")
+      script(src="/js/login/reset.js")
