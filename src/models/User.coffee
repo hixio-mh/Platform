@@ -10,6 +10,9 @@ schema = new mongoose.Schema
   password: String
   apikey: String
 
+  forgotPasswordToken: String
+  forgotPasswordTimestamp: Date
+
   fname: { type: String, default: "" }
   lname: { type: String, default: "" }
 
