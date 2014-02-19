@@ -33,9 +33,10 @@ module.exports = (user, admin) ->
 
   validateStatFormat = (stat) ->
     expect(stat).to.exist
-    stat.should.have.property "name"
 
-    util.apiObjectIdSanitizationCheck stat
+    for data in stat
+      data.should.have.property "x"
+      data.should.have.property "y"
 
   describe "Setup Analytics test data", ->
 
@@ -131,7 +132,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/analytics/campaigns/#{testValidCampaignId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          ## TODO: Validate Stat JSON
+          validateStatFormat res.body
           done()
 
     # GET /api/v1/analytics/ads/:id/:stat
@@ -157,7 +158,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/analytics/ads/#{testValidAdId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          ## TODO: Validate Stat JSON
+          validateStatFormat res.body
           done()
 
     # GET /api/v1/analytics/publishers/:id/:stat
@@ -183,7 +184,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/analytics/publishers/#{testValidPublisherId}/earnings?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          ## TODO: Validate Stat JSON
+          validateStatFormat res.body
           done()
 
     # GET /api/v1/analytics/totals/:stat
@@ -207,7 +208,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/earnings?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:publisher", (done) ->
@@ -217,7 +218,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/impressions:publisher?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:publisher", (done) ->
@@ -227,7 +228,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/clicks:publisher?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to requests", (done) ->
@@ -237,7 +238,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/requests?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         ## Campaigns
@@ -248,7 +249,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/spent?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:ad", (done) ->
@@ -258,7 +259,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/impressions:ad?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:campaign", (done) ->
@@ -268,7 +269,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/impressions:campaign?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:ad", (done) ->
@@ -278,7 +279,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/clicks:ad?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:campaign", (done) ->
@@ -288,7 +289,7 @@ module.exports = (user, admin) ->
           req = util.userRequest "/api/v1/analytics/totals/clicks:campaign?#{userApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
       describe "Valid Admin-only totals", ->
@@ -331,7 +332,6 @@ module.exports = (user, admin) ->
             return if handleError(err, res, done)
             requests = util.actuallyDoneCheck done, requests
 
-
     ##
     ## Admin Tests
     ##
@@ -357,7 +357,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/earnings?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:publisher", (done) ->
@@ -367,7 +367,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/impressions:publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:publisher", (done) ->
@@ -377,7 +377,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/clicks:publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to requests", (done) ->
@@ -387,7 +387,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/requests?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         ## Campaigns
@@ -398,7 +398,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/spent?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:ad", (done) ->
@@ -408,7 +408,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/impressions:ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:campaign", (done) ->
@@ -418,7 +418,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/impressions:campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:ad", (done) ->
@@ -428,7 +428,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/clicks:ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:campaign", (done) ->
@@ -436,7 +436,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/clicks:campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
       describe "Valid Admin-only totals", ->
@@ -449,7 +449,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/spent:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to impressions:admin", (done) ->
@@ -459,7 +459,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/impressions:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to clicks:admin", (done) ->
@@ -469,7 +469,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/clicks:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
         it "Should have access to earnings:admin", (done) ->
@@ -479,7 +479,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/totals/earnings:admin?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             done()
 
     # GET /api/v1/analytics/counts/:model
@@ -535,7 +535,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/counts/User?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             requests = util.actuallyDoneCheck done, requests
 
         it "can access Ad", (done) ->
@@ -543,7 +543,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/counts/Ad?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             requests = util.actuallyDoneCheck done, requests
 
         it "can access Campaign", (done) ->
@@ -551,7 +551,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/counts/Campaign?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             requests = util.actuallyDoneCheck done, requests
 
         it "can access Publisher", (done) ->
@@ -559,7 +559,7 @@ module.exports = (user, admin) ->
           req = util.adminRequest "/api/v1/analytics/counts/Publisher?#{adminApiKey}", "get"
           req.expect(200).end (err, res) ->
             return if handleError(err, res, done)
-            ## TODO: Validate JSON
+            validateStatFormat res.body
             requests = util.actuallyDoneCheck done, requests
 
   describe "Cleanup Analytics test data", ->
