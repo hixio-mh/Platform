@@ -21,31 +21,33 @@ paths =
   css: "src/static/css/**/*.css"
   images: "src/static/img/**/*"
   fonts: "src/static/fonts/**/*"
+  components: "src/static/components/**/*"
   jade: "src/views/static/**/*.jade"
   assets: "src/modules/engine/engine-templates/templates/*Assets/**/*"
 
   jsConcat: [
+    "src/static/components/jquery/dist/jquery.min.js"
+
     "src/static/js/vendor/stackBlur.js"
-    "src/static/js/vendor/jquery-2.0.3.min.js"
-    "src/static/js/vendor/accounting.min.js"
-    "src/static/js/vendor/select2.min.js"
-
-    "src/static/js/vendor/chosen.jquery.min.js"
-
-    "src/static/js/vendor/angular-1.2.11.min.js"
-    "src/static/js/vendor/angular-resource.min.js"
-    "src/static/js/vendor/angular-route.min.js"
-    "src/static/js/vendor/angular-country-select.min.js"
-    "src/static/js/vendor/angular-ui-select2.js"
-    "src/static/js/vendor/angular.chosen.js"
-    "src/static/js/vendor/ng-quick-date.min.js"
-
-    "src/static/js/vendor/angles.js"
     "src/static/js/vendor/guiders.js"
-    "src/static/js/vendor/moment.min.js"
 
-    "src/static/js/vendor/d3.min.js"
-    "src/static/js/vendor/rickshaw.min.js"
+    "src/static/components/accounting/accounting.min.js"
+    "src/static/components/select2/select2.min.js"
+
+    "src/static/components/chosen/chosen.jquery.min.js"
+
+    "src/static/components/angular/angular.min.js"
+    "src/static/components/angular-resource/angular-resource.min.js"
+    "src/static/components/angular-route/angular-route.min.js"
+    "src/static/components/angular-ui-select2/src/select2.js"
+    "src/static/components/angular-chosen-localytics/chosen.js"
+    "src/static/components/ngQuickDate/dist/ng-quick-date.min.js"
+
+    "src/static/components/angles.js"
+    "src/static/components/moment/min/moment.min.js"
+
+    "src/static/components/d3/d3.min.js"
+    "src/static/components/rickshaw/rickshaw.min.js"
   ]
 
 # Compile stylus
@@ -110,6 +112,11 @@ gulp.task "fonts", ->
   gulp.src paths.fonts
   .pipe gulp.dest "build/fonts"
 
+# Copy bower components
+gulp.task "components", ->
+  gulp.src paths.components
+  .pipe gulp.dest "build/components"
+
 # Copy ad template assets
 gulp.task "assets", ->
   gulp.src paths.assets
@@ -123,6 +130,7 @@ gulp.task "clean", ->
 # Rerun the task when a file changes
 gulp.task "watch", ->
   gulp.watch paths.js, ["js"]
+  gulp.watch paths.components, ["components"]
   gulp.watch paths.angular, ["coffee"]
   gulp.watch paths.images, ["images"]
   gulp.watch paths.images, ["fonts"]
@@ -130,7 +138,6 @@ gulp.task "watch", ->
   gulp.watch paths.css, ["css"]
   gulp.watch paths.jade, ["jade"]
   gulp.watch paths.assets, ["assets"]
-  return
 
 # Run tests
 gulp.task "test", ->
@@ -146,7 +153,7 @@ gulp.task "server", ->
   nodemon script: "src/adefy.coffee", options: "--watch src/"
 
 # Build all of the assets
-gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js", "assets"]
+gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js", "assets", "components"]
 
 # Run in development
 gulp.task "develop", ["build", "watch", "server"]
