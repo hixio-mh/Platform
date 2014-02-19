@@ -21,10 +21,6 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
     UserService.getUser (user) ->
       if user.tutorials.dashboard then window.showTutorial()
 
-  $scope.sortSettings =
-    column: "name"
-    descending: false
-
   ##
   ## Fetch app table data
   ##
@@ -46,13 +42,6 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
       if app.stats.ctr then app.stats.ctr *= 100
       if app.stats.ctr24h then app.stats.ctr24h *= 100
 
-
-  $scope.changeSorting = (tablename, headname) ->
-    if $scope.sortSettings.column == headname
-      $scope.sortSettings.descending = !$scope.sortSettings.descending
-    else
-      $scope.sortSettings.column = headname
-      $scope.sortSettings.descending = false
 
   ##
   ## Setup graphs
