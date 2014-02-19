@@ -12,7 +12,7 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-.stats.dashboard
+.stats.dashboard(ng-cloak)
   .stat: .wrap
     .amount.large $ {{ revenue24h | number:2 }}
     .desc Earned today
@@ -57,7 +57,7 @@
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
 
   .section Top Apps
-  table.info
+  table.info(ng-cloak)
     thead: tr
       th
       th Impressions
