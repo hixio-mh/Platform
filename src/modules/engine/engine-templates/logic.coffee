@@ -26,8 +26,10 @@ setup = (options, imports, register) ->
   skittleTemplate = require "./templates/skittleTemplate"
   carTemplate = require "./templates/carTemplate"
   watchTemplate = require "./templates/watchTemplate"
+  adefyShapesTemplate = require "./templates/adefyShapesTemplate"
 
   generate = (type, options, res) ->
+
     if type == "test"
       testTemplate.generate options, res
     else if type == "flat_template"
@@ -38,9 +40,11 @@ setup = (options, imports, register) ->
       carTemplate.generate options, res
     else if type == "watch_template"
       watchTemplate.generate options, res
+    else if type == "adefy_shapes_template"
+      adefyShapesTemplate.generate options, res
     else
-      spew.info "Unknown template type: #{type}"
-      res.json 400, error: "Bad template: #{type }"
+      spew.error "Unknown template type: #{JSON.stringify type}"
+      res.json 400, error: "Bad template: #{JSON.stringify type}"
 
   register null,
     "engine-templates":

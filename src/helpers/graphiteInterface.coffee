@@ -11,8 +11,7 @@
 ## Spectrum IT Solutions GmbH and may not be made without the explicit
 ## permission of Spectrum IT Solutions GmbH
 ##
-config = require "../config.json"
-modeConfig = config.modes[config.mode]
+config = require "../config"
 request = require "request"
 spew = require "spew"
 
@@ -96,7 +95,7 @@ module.exports =
       else
         cb data[0].datapoints
 
-  getPrefix: -> "stats.#{config.mode}."
+  getPrefix: -> "stats.#{config("NODE_ENV")}."
 
   # Builds a new query. Todo: Document fully
   query: ->
@@ -118,35 +117,35 @@ module.exports =
       if method == undefined then method = null
       @_targets.push
         method: method
-        name: "#{config.mode}.#{target}"
+        name: "#{config("NODE_ENV")}.#{target}"
         args: args
 
     @addStatTarget = (target, method, args) =>
       if method == undefined then method = null
       @_targets.push
         method: method
-        name: "stats.#{config.mode}.#{target}"
+        name: "stats.#{config("NODE_ENV")}.#{target}"
         args: args
 
     @addStatSumTarget = (lists) =>
       if method == undefined then method = null
       @_targets.push
         method: "sumSeries"
-        name: "stats.#{config.mode}.#{lists[0]}"
+        name: "stats.#{config("NODE_ENV")}.#{lists[0]}"
         args: lists[1...]
 
     @addStatIntegralTarget = (stat, args) =>
       if method == undefined then method = null
       @_targets.push
         method: "integral"
-        name: "stats.#{config.mode}.#{stat}"
+        name: "stats.#{config("NODE_ENV")}.#{stat}"
         args: args
 
     @addStatCountTarget = (target, method, args) =>
       if method == undefined then method = null
       @_targets.push
         method: method
-        name: "stats_counts.#{config.mode}.#{target}"
+        name: "stats_counts.#{config("NODE_ENV")}.#{target}"
         args: args
 
     @exec = (cb) =>
@@ -169,12 +168,12 @@ module.exports =
             spew.error body
             if cb then cb []
 
-    @getPrefixStat = -> "stats.#{config.mode}."
-    @getPrefixStatCounts = -> "stats_counts.#{config.mode}."
+    @getPrefixStat = -> "stats.#{config("NODE_ENV")}."
+    @getPrefixStatCounts = -> "stats_counts.#{config("NODE_ENV")}."
 
     @_buildQuery = ->
       auth = "ferno:q94vY92GxMCK4nXHZJuKAHly"
-      query = "http://#{auth}@#{modeConfig.stats.host}/render?"
+      query = "http://#{auth}@#{config("stats").host}/render?"
 
       for target, i in @_targets
 

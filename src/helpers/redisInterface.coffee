@@ -13,13 +13,12 @@
 ##
 
 # Redis helper that takes care of selecting the proper database for us
-config = require "../config.json"
-config = config.modes[config.mode]
+config = require "../config"
 cluster = require "cluster"
 spew = require "spew"
 
-mainConfig = config["redis-main"]
-autocompleteConfig = config["redis-autocomplete"]
+mainConfig = config("redis-main")
+autocompleteConfig = config("redis-autocomplete")
 redisLib = require "redis"
 
 redisMain = redisLib.createClient mainConfig.port, mainConfig.host

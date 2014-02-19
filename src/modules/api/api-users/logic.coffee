@@ -18,15 +18,14 @@
 spew = require "spew"
 db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
-config = require "../../../config.json"
-modeConfig = config.modes[config.mode]
-adefyDomain = "http://#{modeConfig.domain}"
+config = require "../../../config"
+adefyDomain = "http://#{config("domain")}"
 
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-paypalCredentials = modeConfig.paypal
+paypalCredentials = config("paypal")
 
 if paypalCredentials.client_id == undefined or paypalCredentials.client_secret == undefined
   throw new Error "Paypal credentials missing on config!"
@@ -96,9 +95,12 @@ setup = (options, imports, register) ->
         version: 1
 
       newUser.save ->
-        req.login newUser, (err) -> # login after signup
-          aem.send res, "500", error: "Somthing weird just happened"
-        aem.send res, "200", msg: "Registered successfully"
+        newUser.createTutorialObjects ->
+          req.login newUser, (err) ->
+            if err
+              aem.send res, "500", error: "Somthing weird just happened"
+            else
+              aem.send res, "200", msg: "Registered successfully"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->

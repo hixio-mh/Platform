@@ -4,9 +4,8 @@ should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
 
-config = require "../../config.json"
-config = config.modes[config.mode]
-api = supertest "http://#{config.domain}:#{config.port}"
+config = require "../../config"
+api = supertest "http://#{config('domain')}:#{config('port')}"
 
 testPublisherName = String Math.floor(Math.random() * 10000)
 
@@ -123,7 +122,7 @@ module.exports = (user, admin) ->
     # GET /api/v1/publishers
     it "Should retrieve all three created publishers", (done) ->
 
-      @timeout 3333
+      @timeout 8000
 
       req = util.userRequest "/api/v1/publishers?#{userApiKey}"
       req.expect(200).end (err, res) ->
