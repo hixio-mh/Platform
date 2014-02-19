@@ -1,13 +1,8 @@
-buildDevelopment/
-buildStaging/
-buildTesting/
-buildProduction/
-buildTestStaging/
+build/
 
 node_modules/
 
 sftp-config.json
-src/config.json
 
 .vagrant
 .ssh/

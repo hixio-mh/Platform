@@ -4,9 +4,8 @@ should = require("chai").should()
 expect = require("chai").expect
 supertest = require "supertest"
 
-config = require "../../config.json"
-config = config.modes[config.mode]
-api = supertest "http://#{config.domain}:#{config.port}"
+config = require "../../config"
+api = supertest "http://#{config('domain')}:#{config('port')}"
 
 userApiKey = "apikey=DyF5l5tMS2n3zgJDEn1OwRga"
 adminApiKey = "apikey=BAhz4dcT4xgs7ItgkjxhCV8Q"
@@ -96,6 +95,8 @@ module.exports = (user, admin) ->
 
     # GET /api/v1/creator/:url
     describe "URL", ->
+
+      @timeout 8000
 
       it "Should 400 with invalid url (not google play)", (done) ->
 

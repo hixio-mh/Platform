@@ -12,11 +12,10 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-config = require "../../../config.json"
-modeConfig = config.modes[config.mode]
+config = require "../../../config"
 db = require "mongoose"
 request = require "request"
-url = "http://#{modeConfig.domain}/api/v1/serve"
+url = "http://#{config("domain")}/api/v1/serve"
 
 ##
 ## Provides a good source of fake data. Updates recognized publisher list every
@@ -40,7 +39,7 @@ setup = (options, imports, register) ->
 
   redis = imports["core-redis"].main
 
-  if modeConfig.trafficgen == true
+  if config("trafficgen") == true
 
     spew.init "Starting traffic generator..."
 

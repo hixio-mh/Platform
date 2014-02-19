@@ -1,3 +1,232 @@
+// homepage styling, ported
+.homepage
+  font-family Gudea
+  color #858585
+  line-height 1.2
+  a
+    color inherit
+    text-decoration none
+    &:hover
+      text-decoration underline
+    &.button
+      &:hover
+        text-decoration none
+  h1
+    font-size 2.625rem
+  h2
+    font-size 2.250rem
+  h3
+    font-size 1.5rem
+  h4
+    font-size 1.125rem
+  h5
+    font-size 1rem
+  h6
+    font-size .875rem
+  p
+    margin 0 0 20px
+  .center
+    overflow hidden
+    *zoom 1
+    width 100%
+    margin 0 auto
+    max-width 1170px
+  .menu
+    a
+      display inline-block
+      margin-right 30px
+      padding-bottom 1px
+      border-bottom 1px solid transparent
+      &:hover
+        text-decoration none
+        border-bottom-color rgba(255, 255, 255, 0.2)
+  .language
+    text-align right
+    a
+      display inline-block
+      padding 0 8px
+      border-right 1px solid rgba(255, 255, 255, 0.2)
+      font-size .750em
+      color #999
+      &:last-of-type
+        padding-right 0
+        border-right none
+    .white
+      color white
+
+.homepage a:hover, .homepage button:hover
+  cursor hand
+  cursor pointer
+
+.homepage h1, .homepage h2, .homepage h3,
+  .homepage h4, .homepage h5, .homepage h6
+  text-rendering optimizeLegibility
+  margin-bottom 1.875rem
+
+.header.homepage
+  margin-top: -52px
+  margin-bottom: 52px
+  background-color #0a242e
+  padding 25px 0 10px
+  font-size 14px
+  color #fff
+  .menu
+    float left
+    margin-right -100%
+    width 82.91%
+    margin-left 0%
+    a
+      display inline
+      width 100%
+      margin-bottom 2px !important
+      text-align center
+      font-size inherit
+      padding 0
+  .language
+    float left
+    margin-right -100%
+    width 14.54%
+    margin-left 85.46%
+  .logo
+    float left
+    margin-right -100%
+    width 14.54%
+    margin-left 0%
+    margin-top 10px
+    font 300 40px Oleo Script
+    a
+      &:hover
+        text-decoration none
+  .search
+    float left
+    margin-right -100%
+    width 82.91%
+    margin-left 17.09%
+    margin-top 20px
+    text-align right
+    input
+      font-family Gudea
+      padding 7px
+      padding-right 0
+      color #fff
+      text-align right
+      background none
+      border none
+
+.footer.homepage
+  background-color #1d1d1d
+  padding 60px 0 30px
+  font-size .875rem
+  margin-bottom -50px
+  ul
+    overflow hidden
+    *zoom 1
+    margin-bottom 80px
+    overflow hidden
+    *zoom 1
+    li
+      float left
+      margin-right -100%
+      width 14.54%
+      float left
+      margin-right -100%
+      width 49%
+      &:nth-child(6n + 1)
+        margin-left 0%
+        margin-bottom 2.55%
+        clear both
+        overflow hidden
+        *zoom 1
+      &:nth-child(6n + 2)
+        margin-left 17.09%
+        margin-bottom 2.55%
+        clear none
+      &:nth-child(6n + 3)
+        margin-left 34.18%
+        margin-bottom 2.55%
+        clear none
+      &:nth-child(6n + 4)
+        margin-left 51.27%
+        margin-bottom 2.55%
+        clear none
+      &:nth-child(6n + 5)
+        margin-left 68.37%
+        margin-bottom 2.55%
+        clear none
+      &:nth-child(6n + 6)
+        margin-left 85.46%
+        margin-bottom 2.55%
+        clear none
+    &:nth-child(2n + 1)
+        margin-left 0%
+        margin-bottom 2%
+        clear both
+        overflow hidden
+        *zoom 1
+      &:nth-child(2n + 2)
+        margin-left 51%
+        margin-bottom 2%
+        clear none
+    h6
+      color white
+    a
+      display block
+      font-size 1rem
+      color #858585
+      line-height 1.5
+  hr
+    border none
+    height 0
+    border-bottom 1px solid rgba(255, 255, 255, 0.1)
+    margin-bottom 30px
+    margin-bottom 20px
+  .menu
+    float left
+    margin-right -100%
+    width 82.91%
+    margin-left 0%
+    color #33b5e5
+    margin-bottom 45px
+    a
+      &:hover
+        border-bottom-color #33b5e5
+  .language
+    float left
+    margin-right -100%
+    width 14.54%
+    margin-left 85.46%
+    a
+      color #bbb
+  .copyright
+    font .750rem/.875rem Arial, Helvetica, sans-serif
+    float left
+    margin-right -100%
+    width 100%
+
+#header-desktop
+  display block
+
+#header-mobile
+  display none
+
+@media screen and (max-width: 1182px)
+  .homepage .center
+    padding-left 12px
+    padding-right 12px
+
+@media screen and (max-width: 400px)
+  #header-mobile
+    display block !important
+  #header-desktop
+    display none !important
+
+  .footer.homepage .menu, .footer.homepage .language
+    display none
+
+
+////////////////////////////
+
+
 .small #ad-creator
   width auto !important
 
@@ -54,10 +283,10 @@
     vertical-align top
 
   #device-container
-    user-select none
     -moz-user-select none
     -webkit-user-select none
     -ms-user-select none
+    user-select none
 
     width 448px
     height 768px
@@ -72,10 +301,6 @@
     margin-right 64px
 
     .panel
-      background-color #f7f7f5
-      border-radius 4px
-      border 1px solid #e0e0df
-      box-shadow 0 0 2px #e0e0df
       margin-bottom 10px
 
       > *
@@ -87,11 +312,14 @@
         &.header
           margin 0
           padding 12px 20px
+          font-weight 600
+          font-size 16px
 
       .header
         color #535353
         border-bottom 1px solid #e0e0df
         text-align left
+        font-size 14px
 
         margin 0
         padding 12px 20px
@@ -119,7 +347,6 @@
       .inset-list
         padding 10px
         border-radius 4px
-        border 1px solid #d1d1d1
         background-color #e8e8e8
 
         &.dark
@@ -330,9 +557,9 @@
       vertical-align top
       margin-left 32px
       margin-bottom 32px
-      padding 16px
+      padding 15px
       background-color #efefef
-      box-shadow 0 0 4px rgba(0, 0, 0, 0.2)
+      border: 1px solid #ddd
 
       img
         width 163px

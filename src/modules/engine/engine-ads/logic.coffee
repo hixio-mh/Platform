@@ -12,9 +12,8 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 spew = require "spew"
-config = require "../../../config.json"
-configMode = config.modes[config.mode]
-adefyDomain = "http://#{configMode.domain}"
+config = require "../../../config"
+adefyDomain = "http://#{config("domain")}"
 filters = require "../../../helpers/filters"
 
 ##
@@ -501,7 +500,7 @@ setup = (options, imports, register) ->
 
               # If the request asks for JSON, and we are in a mode allowing
               # it, then return JSON
-              if configMode.allowAdJSON and req.param("json") != undefined
+              if config("allowAdJSON") and req.param("json") != undefined
                 res.json options
               else
                 templates.generate templateType, options, res
@@ -513,8 +512,9 @@ setup = (options, imports, register) ->
   #
   # @param [Object] req request
   # @param [Object] res response
+  # @param [Object] publisher optional publisher model
   # @param [String] type optional template type, defaults to test
-  fetchTest = (req, res, type) ->
+  fetchTest = (req, res, publisher, type) ->
     error = validateRequest req
     if error != null then return res.json error: error, 400
 
@@ -541,7 +541,7 @@ setup = (options, imports, register) ->
   register null,
     "engine-ads":
       fetch: (req, res, publisher, time) -> fetch req, res, publisher, time
-      fetchTest: (req, res, publisher) -> fetchTest req, res, publisher
+      fetchTest: (req, res, publisher, type) -> fetchTest req, res, publisher, type
       fetchEmpty: (req, res) -> fetchEmpty req, res
 
 module.exports = setup

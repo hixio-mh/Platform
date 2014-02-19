@@ -2,9 +2,8 @@ should = require("chai").should()
 supertest = require "supertest"
 superagent = require "superagent"
 
-config = require "../config.json"
-config = config.modes[config.mode]
-api = supertest "http://#{config.domain}:#{config.port}"
+config = require "../config"
+api = supertest "http://#{config('domain')}:#{config('port')}"
 
 # Auth info
 agent = superagent.agent()

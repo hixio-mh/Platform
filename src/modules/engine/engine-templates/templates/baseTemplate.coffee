@@ -22,7 +22,7 @@ s3Host = "adefyplatformmain.s3.amazonaws.com"
 class AdefyBaseAdTemplate
 
   @AJSCdnUrl: "http://cdn.adefy.com/ajs/ajs.js"
-  @AWGLCdnUrl: "http://cdn.adefy.com/awgl/awgl-full.js"
+  @ARECdnUrl: "http://cdn.adefy.com/are/are-full.js"
 
   name: "Base Template"
   ready: false
@@ -241,15 +241,18 @@ class AdefyBaseAdTemplate
     # Append assets
     if options.assets != undefined
       for asset in options.assets
-        filename = @getAssetKeyFilename asset.key
 
-        manifest.textures.push
-          path: filename
-          compression: "none"
-          type: "image"
-          name: asset.name
+        # Un-initialized assets lack a key (empty push icons, etc)
+        if asset.key != undefined and asset.buffer.length > 0
+          filename = @getAssetKeyFilename asset.key
 
-        archive.append new Buffer(asset.buffer, "base64"), name: filename
+          manifest.textures.push
+            path: filename
+            compression: "none"
+            type: "image"
+            name: asset.name
+
+          archive.append new Buffer(asset.buffer, "base64"), name: filename
 
     archive.append JSON.stringify(manifest), name: "package.json"
     archive.append source, name: "scene.js"
@@ -286,7 +289,7 @@ class AdefyBaseAdTemplate
       else if cb then cb()
 
   fetchAWGL: (cb) ->
-    request.head AdefyBaseAdTemplate.AWGLCdnUrl, (err, res, body) =>
+    request.head AdefyBaseAdTemplate.ARECdnUrl, (err, res, body) =>
       if err then return spew.error err
 
       timestamp = new Date(res.headers["last-modified"]).getTime()
@@ -294,7 +297,7 @@ class AdefyBaseAdTemplate
       if @_cachedAWGLTimestamp == null or @_cachedAWGLTimestamp < timestamp
         @_cachedAWGLTimestamp = timestamp
 
-        request.get AdefyBaseAdTemplate.AWGLCdnUrl, (err, res, body) =>
+        request.get AdefyBaseAdTemplate.ARECdnUrl, (err, res, body) =>
           if err
             @_cachedAWGLTimestamp = null
             return spew.error err

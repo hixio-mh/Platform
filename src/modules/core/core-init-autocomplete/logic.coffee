@@ -12,16 +12,16 @@
 ## permission of Spectrum IT Solutions GmbH
 ##
 filters = require "../../../helpers/filters"
-config = require "../../../config.json"
+config = require "../../../config"
 spew = require "spew"
 cluster = require "cluster"
 
 # If we are in development mode, then the autocomplete DB is the same as the
 # main DB. Meaning, we only rebuild if the main DB rebuilds
-if config.mode == "development"
-  rebuild = config.modes[config.mode]["redis-main"].rebuild
+if config('NODE_ENV') == "development"
+  rebuild = config("redis-main").rebuild
 else
-  rebuild = config.modes[config.mode]["redis-autocomplete"].rebuild
+  rebuild = config("redis-autocomplete").rebuild
 
 # NOTE: Filter sets are set up in a version namespace!
 AUTOCOMPLETE_VERSION = filters.getAutocompleteVersion()

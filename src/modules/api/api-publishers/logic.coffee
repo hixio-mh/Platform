@@ -52,12 +52,12 @@ setup = (options, imports, register) ->
       minimumCPC: Number req.param("minimumCPC") || 0
 
     newPublisher.createAPIKey()
-    newPublisher.save (err) ->
+    newPublisher.validate (err) ->
       if err
         spew.error err
-        aem.send res, "500:save"
+        aem.send res, "400:validate", error: err
       else
-
+        newPublisher.save() # initial saving
         # Note that we don't wait for the generated thumbnail. This speeds
         # things up greatly
         newPublisher.generateThumbnailUrl -> newPublisher.save()
