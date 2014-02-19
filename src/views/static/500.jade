@@ -25,6 +25,9 @@ html(lang="en")
     meta(name="viewport" content="width=device-width, initial-scale=1")
 
     link(rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon")
+    link(rel="stylesheet" href="/css/styles.min.css")
 
-  body
-    h1 500 - Server encountered an error :(
+  body.error
+    h1 500
+    h2 Server encountered an error
+    a(href="history.back()") Try going back to where you were.
