@@ -55,6 +55,7 @@ setup = (options, imports, register) ->
   ##
   ## Passport setup
   ##
+
   # Local strategy (non-API requests)
   passport.use new passportLocalStrategy (username, password, done) ->
 
@@ -101,12 +102,7 @@ setup = (options, imports, register) ->
   ##
   ## Initialize express
   ##
-  ## Todo: Move core-express into here
-
-  server.setup \
-    "#{__dirname}/../../../views/",  # JADE Views
-    "#{__dirname}/../../../static/", # Static files
-    config("port")
+  server.setup()
 
   ##
   ## Connect to MongoDB
@@ -140,6 +136,6 @@ setup = (options, imports, register) ->
 
       # Set a timeout just in case connections take more than a minute to close
       setTimeout (-> process.exit 1), 60000
-      server.httpServer().close -> process.exit 0
+      server.server.close -> process.exit 0
 
 module.exports = setup
