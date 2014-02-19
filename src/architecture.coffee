@@ -30,9 +30,6 @@ module.exports = [
   "./modules/api/api-editor",
   "./modules/api/api-filters",
 
-  # Maintenance routes
-  "./modules/logic/seed",
-
   # Angular route definitions
   "./modules/logic/routes",
 
