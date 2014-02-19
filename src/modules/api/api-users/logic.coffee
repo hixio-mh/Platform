@@ -107,6 +107,15 @@ setup = (options, imports, register) ->
 
   # Change password
   app.post "/api/v1/reset", (req, res) ->
+    db.model("User").findOne forgotPasswordToken: res.param("token"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      if user
+        user.password = req.param("password")
+        user.save
+        # redirect somewhere or render a success page?
+      else
+        aem.send res, "401", error: "Token invalid or expired"
 
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
