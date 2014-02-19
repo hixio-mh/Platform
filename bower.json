@@ -1,0 +1,38 @@
+{
+  "name": "AdefyPlatform",
+  "version": "0.1.0",
+  "authors": [
+    "Cris Mihalache <cris.mihalache@spectrumit.eu>",
+    "Blaž Hrastnik <blaz.hrast@gmail.com>",
+    "Corey Powell <mistdragon100@gmail.com>"
+  ],
+  "main": "src/adefy.coffee",
+  "license": "Closed",
+  "homepage": "https://app.adefy.com",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "accounting": "~0.3.2",
+    "angles": "*",
+    "angular-chosen": "*",
+    "angular-latest": "~1.2.13",
+    "angular-route": "~1.2.13",
+    "angular-resource": "~1.2.13",
+    "angular-ui-select2": "~0.0.5",
+    "chosen": "https://github.com/harvesthq/chosen/releases/download/v1.1.0/chosen_v1.1.0.zip",
+    "d3": "~3.4.2",
+    "ngQuickDate": "~1.2.5",
+    "moment": "~2.5.1",
+    "rickshaw": "~1.4.6",
+    "select2": "~3.4.5",
+    "ace": "~1.1.1",
+    "pace": "~0.4.17",
+    "angular-chosen-localytics": "~1.0.4"
+  }
+}

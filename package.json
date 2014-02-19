@@ -1,8 +1,27 @@
 {
   "name": "AdefyPlatform",
   "description": "",
-  "author": "Cris Mihalache <cris.mihalache@spectrumit.eu>",
-  "version": "0.0.1",
+  "author": "Spectrum IT Solutions GmbH <office@spectrumit.eu>",
+  "version": "0.1.0",
+  "private": true,
+  "engine": "node >= 0.10.12",
+  "main": "src/adefy.coffee",
+  "contributors": [ 
+    {
+      "name": "Cris Mihalache",
+      "email": "cris.mihalache@spectrumit.eu"
+    }, {
+      "name": "Blaž Hrastnik",
+      "email": "blaz.hrast@gmail.com"
+    }, {
+      "name": "Corey Powell",
+      "email": "mistdragon100@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:spectrumit/adefyplatform.git"
+  },
   "dependencies": {
     "connect": "~2.6.0",
     "express": "~3.0.0",
@@ -53,7 +72,5 @@
     "gulp-jade": "~0.4.2",
     "gulp-mocha": "~0.4.1",
     "gulp-order": "~1.0.5"
-  },
-  "private": true,
-  "engine": "node >= 0.10.12"
+  }
 }
