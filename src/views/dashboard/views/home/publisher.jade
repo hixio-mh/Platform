@@ -57,20 +57,19 @@
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
 
   .section Top Apps
-  table.info(id="TopAppsTable")
-    thead: tr
-      th(ng-click="changeSorting(\"appst\", \"name\")") App Name
-      th(ng-click="changeSorting(\"appst\", \"stats.impressions\")") Impressions
-      th(ng-click="changeSorting(\"appst\", \"stats.clicks\")") Clicks
-      th(ng-click="changeSorting(\"appst\", \"stats.ctr\")") CTR
-      th(ng-click="changeSorting(\"appst\", \"stats.earnings\")") Earnings
-    tbody
-      tr(ng-repeat="app in apps | orderBy:sortSettings.column:sortSettings.descending | limitTo:10" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
-        td {{ app.name }}
-        td {{ app.stats.impressions | number }}
-        td {{ app.stats.clicks | number }}
-        td {{ app.stats.ctr | number:2 }}%
-        td $ {{ app.stats.earnings | number:2 }}
+  table.info(ng-table="tableParams" id="TopAppsTable")
+    tr(ng-repeat="app in apps" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
+      td(data-title="'App Name'" sortable="'name'")
+        {{ app.name }}
+      td(data-title="'Impressions'" sortable="'stats.impressions'")
+        {{ app.stats.impressions | number }}
+      td(data-title="'Clicks'" sortable="'stats.clicks'")
+        {{ app.stats.clicks | number }}
+      td(data-title="'CTR'" sortable="'stats.ctr'")
+        {{ app.stats.ctr | number:2 }}
+      td(data-title="'Earnings'" sortable="'stats.earnings'")
+        {{ app.stats.earnings | number:2 }}
+
   div
     .section News
     ul.news
