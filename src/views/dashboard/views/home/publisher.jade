@@ -61,6 +61,6 @@
     ul.news
       li
         span.title {{ news.title }}
-        span.date {{ news.date }}
-        span.date @ {{ news.time }}
+        span.date {{ news.date | date:'MMMM dd, yyyy' }}
+        span.time @ {{ news.time | date:'HH:mm:ss' }}
         p {{ news.text }}

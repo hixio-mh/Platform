@@ -16,7 +16,7 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
     if news
       $scope.news = news
     else
-      $scope.news = title: "<No News>", time: "<Never>", date: "<Never>", text: ""
+      $scope.news = title: "<No News>", time: 0, date: 0, text: ""
 
   ##
   ##
