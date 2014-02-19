@@ -12,7 +12,7 @@
 //- permission of Spectrum IT Solutions GmbH
 //-
 
-.stats.dashboard
+.stats.dashboard(ng-cloak)
   .stat: .wrap
     .amount.large ▲ {{ impressions24h | number }}
     .desc Impressions today
@@ -42,7 +42,7 @@
     div(analytics data="graphLifetimeMetrics" width="800" height="300" type="line" legend="true" hover="hoverFormatter")
 
   .section Top Campaigns
-  table.info
+  table.info(ng-cloak)
     thead: tr
       th
       th Impressions

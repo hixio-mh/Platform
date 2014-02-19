@@ -92,8 +92,8 @@ html(lang="en" ng-app="AdefyApp")
           | Apps
 
       .menu.right
-        a(href="/funds", tab) Advertiser $ {{ me.adFunds | number:2 }}
-        a(href="/funds", tab) Publisher $ {{ me.pubFunds | number:2 }}
+        a(href="/funds" tab ng-cloak) Advertiser $ {{ me.adFunds | number:2 }}
+        a(href="/funds" tab ng-cloak) Publisher $ {{ me.pubFunds | number:2 }}
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")

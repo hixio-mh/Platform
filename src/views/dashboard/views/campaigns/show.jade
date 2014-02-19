@@ -1,7 +1,7 @@
 include _menu
 
 .contents.w920.center
-  .stats.campaign
+  .stats.campaign(ng-cloak)
     .stat: .wrap
       .amount.large.inner ▲ {{ campaign.stats.impressions24h | number }}
       .desc Impressions Today
