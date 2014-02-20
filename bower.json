@@ -27,6 +27,7 @@
     "angular-ui-select2": "~0.0.5",
     "chosen": "https://github.com/harvesthq/chosen/releases/download/v1.1.0/chosen_v1.1.0.zip",
     "d3": "~3.4.2",
+    "ng-table": "~0.3.1",
     "ngQuickDate": "~1.2.5",
     "moment": "~2.5.1",
     "rickshaw": "~1.4.6",
