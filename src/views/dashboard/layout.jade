@@ -126,6 +126,7 @@ html(lang="en" ng-app="AdefyApp")
 
         script(src="/components/accounting/accounting.min.js")
         script(src="/components/select2/select2.min.js")
+        script(src="/components/showdown/src/showdown.js")
 
         script(src="/components/chosen/chosen.jquery.min.js")
 
@@ -135,6 +136,7 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/components/angular-ui-select2/src/select2.js")
         script(src="/components/angular-chosen-localytics/chosen.js")
         script(src="/components/ng-table/ng-table.js")
+        script(src="/components/angular-markdown-filter/markdown.js")
 
         script(src="/components/angles/angles.js")
 
@@ -184,17 +186,11 @@ html(lang="en" ng-app="AdefyApp")
         //-- Services
         //--
 
-<<<<<<< HEAD
         script(src="/js/services/CampaignService.js")
         script(src="/js/services/AppService.js")
         script(src="/js/services/AdService.js")
         script(src="/js/services/UserService.js")
-=======
-        script(src="/client/services/AdService.js")
-        script(src="/client/services/AppService.js")
-        script(src="/client/services/CampaignService.js")
-        script(src="/client/services/NewsService.js")
->>>>>>> Completed the News Model, and API
+        script(src="/js/services/NewsService.js")
 
         //--
         //-- Pages (controllers, factories, directives, and services)
@@ -241,20 +237,12 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/pages/reports/controllers/AdefyReportsCampaignsController.js")
 
         if user.admin
-<<<<<<< HEAD
           script(src="/js/pages/admin/controllers/AdefyAdminIndexController.js")
           script(src="/js/pages/admin/controllers/AdefyAdminPublishersController.js")
           script(src="/js/pages/admin/controllers/AdefyAdminUsersController.js")
           script(src="/js/pages/admin/controllers/AdefyAdminMenuController.js")
           script(src="/js/pages/admin/controllers/AdefyAdminAdsController.js")
-=======
-          script(src="/client/pages/admin/controllers/AdefyAdminAdsController.js")
-          script(src="/client/pages/admin/controllers/AdefyAdminIndexController.js")
-          script(src="/client/pages/admin/controllers/AdefyAdminMenuController.js")
-          script(src="/client/pages/admin/controllers/AdefyAdminNewsController.js")
-          script(src="/client/pages/admin/controllers/AdefyAdminPublishersController.js")
-          script(src="/client/pages/admin/controllers/AdefyAdminUsersController.js")
->>>>>>> Completed the News Model, and API
+          script(src="/js/pages/admin/controllers/AdefyAdminNewsController.js")
 
       script(src="//use.typekit.net/udl8vci.js")
       script.
