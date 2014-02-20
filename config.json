@@ -9,18 +9,18 @@
     "mongo": {
       "user": "adefy",
       "pass": "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ",
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 27017,
       "db": "adefy_development"
     },
     "redis-main": {
       "db": 0,
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 6379
     },
     "redis-autocomplete": {
       "db": 0,
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 6379
     },
     "stats": {
@@ -110,7 +110,7 @@
     }
   },
   "testing": {
-    "domain": "localhost",
+    "domain": "127.0.0.1",
     "port": 11000,
     "loglevel": 0,
     "adloglevel": 0,
@@ -119,18 +119,18 @@
     "mongo": {
       "user": "adefy",
       "pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 27017,
       "db": "adefy_testing"
     },
     "redis-main": {
       "db": 1,
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 6379
     },
     "redis-autocomplete": {
       "db": 1,
-      "host": "localhost",
+      "host": "127.0.0.1",
       "port": 6379
     },
     "stats": {
@@ -148,7 +148,7 @@
     }
   },
   "testing-staging": {
-    "domain": "localhost",
+    "domain": "127.0.0.1",
     "port": 11000,
     "loglevel": 0,
     "adloglevel": 0,
