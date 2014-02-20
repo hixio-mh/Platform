@@ -2,7 +2,6 @@ window.AdefyApp = angular.module "AdefyApp", [
   "ngRoute"
   "ngResource"
   "ngTable"
-  "countrySelect"
   "angles"
   "toggle-switch"
   "localytics.directives"

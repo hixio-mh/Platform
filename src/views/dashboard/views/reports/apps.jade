@@ -26,22 +26,20 @@ include _menu
   h2.loading Loading comparison data...
 
 .contents.w920.center(ng-if="comparisonData != null")
-  .section Comparison
 
-  table.info(ng-cloak)
-    thead: tr
-      th Name
-      th Impressions
-      th Clicks
-      th CTR
-      th Earnings
-    tbody
-      tr(ng-repeat="app in comparisonData | orderBy:'ctr':true" ng-show="!app.tutorial")
-        td {{ app.name }}
-        td {{ app.impressions | number }}
-        td {{ app.clicks | number }}
-        td {{ app.ctr | number:2 }}%
-        td ${{ app.earnings | number:2 }}
+  .section Comparison
+  table.info(ng-cloak ng-table="cmpTableParams")
+    tr(ng-repeat="app in comparisonData" ng-show="!app.tutorial")
+      td(data-title="'App Name'" sortable="'name'")
+        {{ app.name }}
+      td(data-title="'Impressions'" sortable="'impressions'")
+        {{ app.impressions | number }}
+      td(data-title="'Clicks'" sortable="'clicks'")
+        {{ app.clicks | number }}
+      td(data-title="'CTR'" sortable="'ctr'")
+        {{ app.ctr | number:2 }}%
+      td(data-title="'Earnings'" sortable="'earnings'")
+        {{ app.earnings | currency:$ }}
 
 .contents.w920.center(ng-if="impressionsData == null || clicksData == null || earningsData == null")
   h2.loading Loading performance data...
