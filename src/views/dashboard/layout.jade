@@ -115,37 +115,37 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/script.min.js")
 
       else
+
+        script(src="/components/jquery/dist/jquery.min.js")
+
+        //- Modified libs
         script(src="/js/vendor/stackBlur.min.js")
-        script(src="/js/vendor/jquery-2.0.3.min.js")
-        script(src="/js/vendor/accounting.min.js")
-        script(src="/js/vendor/select2.min.js")
-
-        //- Oh gawd
-        script(src="/js/vendor/chosen.jquery.min.js")
-
-        script(src="/js/vendor/angular-1.2.11.min.js")
-        script(src="/js/vendor/angular-resource.min.js")
-        script(src="/js/vendor/angular-route.min.js")
-        script(src="/js/vendor/angular-country-select.min.js")
-        script(src="/js/vendor/angular-ui-select2.js")
-        script(src="/js/vendor/angles.js")
         script(src="/js/vendor/guiders.js")
-        script(src="/js/vendor/angular.chosen.js")
+
+        script(src="/components/accounting/accounting.min.js")
+        script(src="/components/select2/select2.min.js")
+
+        script(src="/components/chosen/chosen.jquery.min.js")
+
+        script(src="/components/angular/angular.min.js")
+        script(src="/components/angular-resource/angular-resource.min.js")
+        script(src="/components/angular-route/angular-route.min.js")
+        script(src="/components/angular-ui-select2/src/select2.js")
+        script(src="/components/angular-chosen-localytics/chosen.js")
+
         script(src="/js/vendor/ng-table.min.js")
-        script(src="/js/vendor/ng-quick-date.min.js")
-        script(src="/js/vendor/moment.min.js")
 
-        script(src="/js/vendor/d3.min.js")
-        script(src="/js/vendor/rickshaw.min.js")
+        script(src="/components/angles/angles.js")
 
-        //--
-        //-- Module, route configs, and root controller
-        //--
+        script(src="/components/ngQuickDate/dist/ng-quick-date.min.js")
+        script(src="/components/moment/min/moment.min.js")
+        script(src="/components/d3/d3.min.js")
+        script(src="/components/rickshaw/rickshaw.min.js")
+
+        script(src="/js/routes/normal.js")
 
         if user.admin
           script(src="/js/routes/admin.js")
-        else
-          script(src="/js/routes/normal.js")
 
         script(src="/js/controllers/AdefyRootController.js")
 
