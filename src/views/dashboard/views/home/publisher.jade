@@ -1,6 +1,6 @@
 .stats.dashboard(ng-cloak)
   .stat: .wrap
-    .amount.large $ {{ revenue24h | number:2 }}
+    .amount.large {{ revenue24h | currency:$ }}
     .desc Earned today
   .stat: .wrap
     .amount.large ▲ {{ impressions24h | number }}
@@ -9,7 +9,7 @@
     .amount.large ▲ {{ clicks24h | number }}
     .desc Clicks today
   .stat: .wrap
-    .amount.large $ {{ totalRevenue | number:2 }}
+    .amount.large {{ totalRevenue | currency:$ }}
     .desc Total revenue
 
 .index.dashboard
@@ -43,7 +43,7 @@
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="hoverFormatter")
 
   .section Top Apps
-  table.info(ng-table="appTableParams")
+  table.info(ng-cloak ng-table="appTableParams")
     tr(ng-repeat="app in apps" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
       td(data-title="'App Name'" sortable="'name'")
         {{ app.name }}
@@ -52,9 +52,9 @@
       td(data-title="'Clicks'" sortable="'stats.clicks'")
         {{ app.stats.clicks | number }}
       td(data-title="'CTR'" sortable="'stats.ctr'")
-        {{ app.stats.ctr | number:2 }}
+        {{ app.stats.ctr | number:2 }}%
       td(data-title="'Earnings'" sortable="'stats.earnings'")
-        {{ app.stats.earnings | number:2 }}
+        {{ app.stats.earnings | currency:$ }}
 
   div
     .section News

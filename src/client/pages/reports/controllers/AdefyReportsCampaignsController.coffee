@@ -157,6 +157,28 @@ angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope
 
       $scope.comparisonData = tableData
 
+      h =
+        page: 1       # show first page
+        count: 10     # count per page
+        sorting:
+          ctr: "asc" # initial sorting
+
+      d =
+        total: $scope.comparisonData.length
+        getData: ($defer, params) ->
+          orderedData = null
+          if params.sorting()
+            orderedData = $filter('orderBy')($scope.comparisonData, params.orderBy())
+          else
+            orderedData = $scope.comparisonData
+
+          pg = params.page()
+          prmcount = params.count()
+          $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
+
+      $scope.cmpTableParams = new ngTableParams h, d
+      true
+
     buildTableDataForCampaign c for c in campaigns
 
   update = ->
