@@ -1,9 +1,9 @@
-angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope, $http, UserService) ->
+angular.module("AdefyApp").controller "AdefyRootController", ($scope, $rootScope, UserService) ->
+  $rootScope.notification = null
 
-  $scope.clearNotification = ->
-    $rootScope.notification = null
+  $scope.clearNotification = -> $rootScope.notification = null
   $scope.setNotification = (text, type) ->
-    $rootScope.notification = { type: type, text: text }
+    $rootScope.notification = text: text, type: type
 
   $scope.showIntercom = -> Intercom "show"
   $scope.showTutorial = ->

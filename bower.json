@@ -34,6 +34,13 @@
     "select2": "~3.4.5",
     "ace-builds": "~1.1.1",
     "pace": "~0.4.17",
-    "angular-chosen-localytics": "~1.0.4"
+    "angular-chosen-localytics": "~1.0.4",
+    "mocha": "~1.17.1",
+    "chai": "~1.9.0",
+    "coffee-script": "~1.7.1",
+    "angular-mocks": "~1.2.13"
+  },
+  "devDependencies": {
+    "mocha": "~1.17.1"
   }
 }
