@@ -104,16 +104,28 @@ setup = (options, imports, register) ->
 
   # Forgot password
   app.post "/api/v1/forgot", (req, res) ->
+    db.model("User").findOne email: res.param("email"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      if user
+        user.generateResetToken()
+        user.save ->
+          # send password reset email to user
+          aem.send res, "200", msg: "Email sent!"
+          # redirect somewhere or render a success page?
+      else
+        aem.send res, "401", error: "Email invalid"
 
   # Change password
   app.post "/api/v1/reset", (req, res) ->
     db.model("User").findOne forgotPasswordToken: res.param("token"), (err, user) ->
       if utility.dbError err, res, false then return
 
-      if user
+      if user # and token from the last 24 hours
         user.password = req.param("password")
-        user.save
-        # redirect somewhere or render a success page?
+        user.save ->
+          aem.send res, "200", msg: "Password changed successfully"
+          # redirect somewhere or render a success page?
       else
         aem.send res, "401", error: "Token invalid or expired"
 

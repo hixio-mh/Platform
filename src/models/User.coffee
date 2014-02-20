@@ -184,6 +184,11 @@ schema.methods.updateFunds = (cb) ->
       if needsFundsRecreation then @createRedisStruture()
       if cb then cb()
 
+schema.methods.generateResetToken = ->
+  crypto.randomBytes 24, (ex, buf) ->
+    @forgotPasswordToken = buf.toString "hex"
+    @forgotPasswordTimestamp = Date.now()
+
 ##
 ## API Key handling
 ##
