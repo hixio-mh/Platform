@@ -32,7 +32,7 @@
     "moment": "~2.5.1",
     "rickshaw": "~1.4.6",
     "select2": "~3.4.5",
-    "ace": "~1.1.1",
+    "ace-builds": "~1.1.1",
     "pace": "~0.4.17",
     "angular-chosen-localytics": "~1.0.4"
   }
