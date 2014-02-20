@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <!-- Testing libs -->
+    <script src="../../static/components/mocha/mocha.js"></script>
+    <script src="../../static/components/chai/chai.js"></script>
+
+    <script>
+      mocha.ui("bdd");
+      mocha.reporter("spec");
+      chai.should();
+      expect = chai.expect;
+    </script>
+
+    <!-- Runtime libs -->
+    <script src="../../static/components/jquery/dist/jquery.min.js"></script>
+    <script src="../../static/js/vendor/stackBlur.min.js"></script>
+    <script src="../../static/js/vendor/guiders.js"></script>
+    <script src="../../static/components/accounting/accounting.min.js"></script>
+    <script src="../../static/components/select2/select2.min.js"></script>
+    <script src="../../static/components/chosen/chosen.jquery.min.js"></script>
+    <script src="../../static/components/moment/min/moment.min.js"></script>
+    <script src="../../static/components/d3/d3.min.js"></script>
+    <script src="../../static/components/rickshaw/rickshaw.min.js"></script>
+
+    <!-- AngularJS -->
+    <script src="../../static/components/angular/angular.min.js"></script>
+    <script src="../../static/components/angular-resource/angular-resource.min.js"></script>
+    <script src="../../static/components/angular-route/angular-route.min.js"></script>
+    <script src="../../static/components/angular-mocks/angular-mocks.js"></script>
+    <script src="../../static/components/angular-ui-select2/src/select2.js"></script>
+    <script src="../../static/components/angular-chosen-localytics/chosen.js"></script>
+
+    <!-- More runtime libs, that depend on angular -->
+    <script src="../../static/components/angles/angles.js"></script>
+    <script src="../../static/components/ngQuickDate/dist/ng-quick-date.min.js"></script>
+
+    <!-- App Definition -->
+    <script src="../../../build/js/routes/normal.js"></script>
+    <script src="../../../build/js/routes/admin.js"></script>
+
+    <!-- Root Controller -->
+    <script src="../../../build/js/controllers/AdefyRootController.js"></script>
+
+    <!-- Tutorial -->
+    <script src="../../../build/js/tutorial/dashboard.js"></script>
+    <script src="../../../build/js/tutorial/apps.js"></script>
+    <script src="../../../build/js/tutorial/appDetails.js"></script>
+    <script src="../../../build/js/tutorial/ads.js"></script>
+    <script src="../../../build/js/tutorial/adDetails.js"></script>
+    <script src="../../../build/js/tutorial/campaigns.js"></script>
+    <script src="../../../build/js/tutorial/campaignDetails.js"></script>
+    <script src="../../../build/js/tutorial/reports.js"></script>
+    <script src="../../../build/js/tutorial/funds.js"></script>
+
+    <!-- User Factory -->
+    <script src="../../../build/js/factories/AdefyUserFactory.js"></script>
+
+    <!-- Directives -->
+    <script src="../../../build/js/directives/AdefyDropdownDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyTabDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyModalFormDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyGraphDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyAnalyticsDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyToggleSwitchDirective.js"></script>
+    <script src="../../../build/js/directives/AdefyCreatorDirective.js"></script>
+
+    <!-- Services -->
+    <script src="../../../build/js/services/CampaignService.js"></script>
+    <script src="../../../build/js/services/AppService.js"></script>
+    <script src="../../../build/js/services/AdService.js"></script>
+    <script src="../../../build/js/services/UserService.js"></script>
+
+    <!-- Controllers -->
+    <script src="../../../build/js/pages/account/controllers/AdefyAccountFundsController.js"></script>
+    <script src="../../../build/js/pages/account/controllers/AdefyAccountSettingsController.js"></script>
+
+    <script src="../../../build/js/pages/ads/controllers/AdefyAdCreativeController.js"></script>
+    <script src="../../../build/js/pages/ads/controllers/AdefyAdDetailController.js"></script>
+    <script src="../../../build/js/pages/ads/controllers/AdefyAdIndexController.js"></script>
+    <script src="../../../build/js/pages/ads/controllers/AdefyAdMenuController.js"></script>
+    <script src="../../../build/js/pages/ads/controllers/AdefyAdReminderController.js"></script>
+    <script src="../../../build/js/pages/ads/factories/AdefyAdFactory.js"></script>
+
+    <script src="../../../build/js/pages/apps/controllers/AdefyAppsCreateController.js"></script>
+    <script src="../../../build/js/pages/apps/controllers/AdefyAppsDetailsController.js"></script>
+    <script src="../../../build/js/pages/apps/controllers/AdefyAppsEditController.js"></script>
+    <script src="../../../build/js/pages/apps/controllers/AdefyAppsIndexController.js"></script>
+    <script src="../../../build/js/pages/apps/controllers/AdefyAppsMenuController.js"></script>
+    <script src="../../../build/js/pages/apps/factories/AdefyAppFactory.js"></script>
+
+    <script src="../../../build/js/pages/campaigns/controllers/AdefyCampaignCreateController.js"></script>
+    <script src="../../../build/js/pages/campaigns/controllers/AdefyCampaignDetailsController.js"></script>
+    <script src="../../../build/js/pages/campaigns/controllers/AdefyCampaignEditController.js"></script>
+    <script src="../../../build/js/pages/campaigns/controllers/AdefyCampaignIndexController.js"></script>
+    <script src="../../../build/js/pages/campaigns/controllers/AdefyCampaignMenuController.js"></script>
+    <script src="../../../build/js/pages/campaigns/factories/AdefyCampaignFactory.js"></script>
+
+    <script src="../../../build/js/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js"></script>
+    <script src="../../../build/js/pages/dashboards/controllers/AdefyDashboardPublisherController.js"></script>
+
+    <script src="../../../build/js/pages/reports/controllers/AdefyReportsAdsController.js"></script>
+    <script src="../../../build/js/pages/reports/controllers/AdefyReportsAppsController.js"></script>
+    <script src="../../../build/js/pages/reports/controllers/AdefyReportsCampaignsController.js"></script>
+
+    <script src="../../../build/js/pages/admin/controllers/AdefyAdminIndexController.js"></script>
+    <script src="../../../build/js/pages/admin/controllers/AdefyAdminPublishersController.js"></script>
+    <script src="../../../build/js/pages/admin/controllers/AdefyAdminUsersController.js"></script>
+    <script src="../../../build/js/pages/admin/controllers/AdefyAdminMenuController.js"></script>
+    <script src="../../../build/js/pages/admin/controllers/AdefyAdminAdsController.js"></script>
+
+    <!-- Tests! -->
+    <script src="tests/controllers/AdefyRootController.js"></script>
+
+    <script>
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+    </script>
+  </body>
+</html>
