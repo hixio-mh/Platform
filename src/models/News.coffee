@@ -31,6 +31,7 @@ schema = new mongoose.Schema
   date: Date
   summary: String
   text: String
+  markupLanguage: { type: String, default: "markdown" }
 
 schema.methods.toAPI = ->
   ret = @toObject()
