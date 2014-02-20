@@ -32,15 +32,15 @@
 
   .w50(ng-if="graph24hStats")
     h6.block.tcenter 24h Clicks &amp; Impressions
-    div(analytics data="graph24hStats" width="340" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
+    div(analytics data="graph24hStats" width="340" height="150" type="line" legend="true" hover="hoverFormatter")
 
   .w50(ng-if="graph24hRevenue")
     h6.block.tcenter 24h Revenue
-    div(analytics data="graph24hRevenue" width="340" height="150" type="line" legend="true" hover="true" hover="hoverFormatter")
+    div(analytics data="graph24hRevenue" width="340" height="150" type="line" legend="true" hover="hoverFormatter")
 
   .block(ng-if="graphLifetimeMetrics")
     h6.block.tcenter Lifetime Metrics
-    div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="true" hover="hoverFormatter")
+    div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="hoverFormatter")
 
   .section Top Apps
   table.info(ng-table="appTableParams")

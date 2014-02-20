@@ -114,5 +114,3 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
         d
       else
         null
-
-  true

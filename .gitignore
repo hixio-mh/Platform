@@ -14,4 +14,7 @@ naught.log
 stderr.log
 stdout.log
 
+bower_components
+src/static/components
+
 testResults.xml
