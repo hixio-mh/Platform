@@ -146,7 +146,7 @@ gulp.task "test", ->
   options =
     reporter: "nyan"
     require: "coffee-script/register"
-  gulp.src("src/tests/*.coffee")
+  gulp.src("src/tests/selfTest.coffee")
   .pipe mocha(options)
 
 # Update all dependencies
