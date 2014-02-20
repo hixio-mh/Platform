@@ -1,5 +1,6 @@
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
+crypto = require "crypto"
 spew = require "spew"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
@@ -190,11 +191,8 @@ schema.methods.updateFunds = (cb) ->
 schema.methods.createAPIKey = ->
   if @hasAPIKey() then return
 
-  @apikey = ""
-  map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-  for i in [0...24]
-    @apikey += map.charAt Math.floor(Math.random() * map.length)
+  crypto.randomBytes 24, (ex, buf) ->
+    @apikey = buf.toString('hex')
 
 schema.methods.hasAPIKey = ->
   if @apikey and @apikey.length == 24
