@@ -1,4 +1,5 @@
 angular.module("AdefyApp").config ($routeProvider) ->
+
   $routeProvider.when "/admin/home",
     controller: "AdefyAdminIndexController"
     templateUrl: "/views/dashboard/admin:home"

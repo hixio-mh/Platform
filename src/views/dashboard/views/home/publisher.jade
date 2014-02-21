@@ -1,6 +1,6 @@
 .stats.dashboard(ng-cloak)
   .stat: .wrap
-    .amount.large $ {{ revenue24h | number:2 }}
+    .amount.large {{ revenue24h | currency:$ }}
     .desc Earned today
   .stat: .wrap
     .amount.large ▲ {{ impressions24h | number }}
@@ -9,7 +9,7 @@
     .amount.large ▲ {{ clicks24h | number }}
     .desc Clicks today
   .stat: .wrap
-    .amount.large $ {{ totalRevenue | number:2 }}
+    .amount.large {{ totalRevenue | currency:$ }}
     .desc Total revenue
 
 .index.dashboard
@@ -43,20 +43,19 @@
     div(analytics data="graphLifetimeMetrics" width="820" height="300" type="line" legend="true" hover="hoverFormatter")
 
   .section Top Apps
-  table.info(ng-cloak)
-    thead: tr
-      th
-      th Impressions
-      th Clicks
-      th CTR
-      th Earnings
-    tbody
-      tr(ng-repeat="app in apps | orderBy:'earnings':true | limitTo:10" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
-        td {{ app.name }}
-        td {{ app.stats.impressions | number }}
-        td {{ app.stats.clicks | number }}
-        td {{ app.stats.ctr | number:2 }}%
-        td $ {{ app.stats.earnings | number:2 }}
+  table.info(ng-cloak ng-table="appTableParams")
+    tr(ng-repeat="app in $data" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
+      td(data-title="'App Name'" sortable="'name'")
+        {{ app.name }}
+      td(data-title="'Impressions'" sortable="'stats.impressions'")
+        {{ app.stats.impressions | number }}
+      td(data-title="'Clicks'" sortable="'stats.clicks'")
+        {{ app.stats.clicks | number }}
+      td(data-title="'CTR'" sortable="'stats.ctr'")
+        {{ app.stats.ctr | number:2 }}%
+      td(data-title="'Earnings'" sortable="'stats.earnings'")
+        {{ app.stats.earnings | currency:$ }}
+
   div
     .section News
     ul.news
@@ -64,6 +63,6 @@
         span.title We are live!
         span.date January 31th, 2014
         p
-          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our 
-          a(href="https://developer.adefy.com" target="_blank") Developer Center. 
+          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
+          a(href="https://developer.adefy.com" target="_blank") Developer Center.
           | If you need any assistance we will gladly help!

@@ -9,7 +9,7 @@
     .amount.large {{ ctr24h | number:2 }}%
     .desc CTR today
   .stat: .wrap
-    .amount.large $ {{ spent24h | number:2 }}
+    .amount.large {{ spent24h | currency:$ }}
     .desc Spent today
 
 .index.dashboard
@@ -28,20 +28,19 @@
     div(analytics data="graphLifetimeMetrics" width="800" height="300" type="line" legend="true" hover="hoverFormatter")
 
   .section Top Campaigns
-  table.info(ng-cloak)
-    thead: tr
-      th
-      th Impressions
-      th Clicks
-      th CTR
-      th Spent
-    tbody
-      tr(ng-repeat="campaign in campaigns | orderBy:'stats.ctr':true | limitTo:10" ng-show="!campaign.tutorial")
-        td {{ campaign.name }}
-        td {{ campaign.stats.impressions | number }}
-        td {{ campaign.stats.clicks | number }}
-        td {{ campaign.stats.ctr | number:2 }}%
-        td {{ campaign.stats.spent | currency:$ }}
+  table.info(ng-cloak ng-table="campaignTableParams")
+    tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial")
+      td(data-title="'Campaign Name'" sortable="'name'")
+        {{ campaign.name }}
+      td(data-title="'Impressions'" sortable="'stats.impressions'")
+        {{ campaign.stats.impressions | number }}
+      td(data-title="'Clicks'" sortable="'stats.clicks'")
+        {{ campaign.stats.clicks | number }}
+      td(data-title="'CTR'" sortable="'stats.ctr'")
+        {{ campaign.stats.ctr | number:2 }}%
+      td(data-title="'Spent'" sortable="'stats.spent'")
+        {{ campaign.stats.spent | currency:$ }}
+
   div
     .section News
     ul.news
@@ -49,6 +48,6 @@
         span.title We are live!
         span.date January 31th, 2014
         p
-          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our 
-          a(href="https://developer.adefy.com" target="_blank") Developer Center. 
+          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
+          a(href="https://developer.adefy.com" target="_blank") Developer Center.
           | If you need any assistance we will gladly help!

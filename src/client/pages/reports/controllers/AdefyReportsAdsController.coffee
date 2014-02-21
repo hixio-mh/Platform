@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, $http) ->
+angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, $filter, ngTableParams, $http) ->
 
   ##
   ## Initial render settings and options
@@ -127,18 +127,24 @@ angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, 
 
     buildTableDataForAd = (ad) ->
       index = tableData.length
-      tableData.push name: ad.name, ctr: 0, tutorial: ad.tutorial
+      tableData.push
+        name: ad.name
+        ctr: 0
+        clicks: 0
+        impressions: 0
+        spent: 0
+        tutorial: ad.tutorial
 
       $http.get("#{prefix}/#{ad.id}/impressions#{suffix}").success (data) ->
-        tableData[index].impressions = data
+        if data not instanceof Array then tableData[index].impressions = data
         done -> finished()
 
       $http.get("#{prefix}/#{ad.id}/clicks#{suffix}").success (data) ->
-        tableData[index].clicks = data
+        if data not instanceof Array then tableData[index].clicks = data
         done -> finished()
 
       $http.get("#{prefix}/#{ad.id}/spent#{suffix}").success (data) ->
-        tableData[index].spent = data
+        if data not instanceof Array then tableData[index].spent = data
         done -> finished()
 
     finished = ->
@@ -148,6 +154,25 @@ angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, 
           tableData[i].ctr *= 100
 
       $scope.comparisonData = tableData
+
+      $scope.cmpTableParams = new ngTableParams
+        page: 1
+        count: 10
+        sorting: ctr: "asc"
+      ,
+        total: $scope.comparisonData.length
+        getData: ($defer, params) ->
+          orderedData = null
+          if params.sorting()
+            orderedData = $filter('orderBy')($scope.comparisonData, params.orderBy())
+          else
+            orderedData = $scope.comparisonData
+
+          pg = params.page()
+          prmcount = params.count()
+          $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
+
+      true
 
     buildTableDataForAd ad for ad in ads
 
