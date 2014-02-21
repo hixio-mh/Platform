@@ -29,6 +29,11 @@
     "/funds/confirm",
     "/funds/cancel",
 
+    "/news",
+    "/news/:id",
+    "/news/:id/edit",
+
+    "/admin",
     "/admin/ads",
     "/admin/home",
     "/admin/users",

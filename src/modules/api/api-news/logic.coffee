@@ -1,18 +1,4 @@
 ##
-## Copyright © 2013 Spectrum IT Solutions Gmbh
-##
-## Firmensitz: Wien
-## Firmenbuchgericht: Handelsgericht Wien
-## Firmenbuchnummer: 393588g
-##
-## All Rights Reserved.
-##
-## The use and / or modification of this file is subject to
-## Spectrum IT Solutions GmbH and may not be made without the explicit
-## permission of Spectrum IT Solutions GmbH
-##
-
-##
 ## News manipulation - /api/v1/news
 ##
 spew = require "spew"
@@ -59,6 +45,10 @@ setup = (options, imports, register) ->
         return res.json 200, newNews.toAnonAPI()
 
   ###
+  # GET /api/v1/news
+  #
+  # @example
+  #
   ###
   app.get "/api/v1/news", isLoggedInAPI, (req, res) ->
     db.model("News").find {}, (err, list) ->
@@ -72,6 +62,10 @@ setup = (options, imports, register) ->
       res.json 200, result
 
   ###
+  # GET /api/v1/news/:id
+  #
+  # @example
+  #
   ###
   app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     db.model("News")
@@ -86,6 +80,10 @@ setup = (options, imports, register) ->
       return res.json 200, news.toAnonAPI()
 
   ###
+  # POST /api/v1/news/:id
+  #
+  # @example
+  #
   ###
   app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
@@ -110,6 +108,10 @@ setup = (options, imports, register) ->
           res.json 200, news.toAnonAPI()
 
   ###
+  # DELETE /api/v1/news/:id
+  #
+  # @example
+  #
   ###
   app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
