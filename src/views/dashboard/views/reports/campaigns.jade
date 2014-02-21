@@ -26,22 +26,20 @@ include _menu
   h2.loading Loading comparison data...
 
 .contents.w920.center(ng-if="comparisonData != null")
-  .section Comparison
 
-  table.info(ng-cloak)
-    thead: tr
-      th Name
-      th Impressions
-      th Clicks
-      th CTR
-      th Spent
-    tbody
-      tr(ng-repeat="campaign in comparisonData | orderBy:'ctr':true" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.reports)")
-        td {{ campaign.name }}
-        td {{ campaign.impressions | number }}
-        td {{ campaign.clicks | number }}
-        td {{ campaign.ctr | number:2 }}%
-        td ${{ campaign.spent | number:2 }}
+  .section Comparison
+  table.info(ng-cloak ng-table="cmpTableParams")
+    tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.reports)")
+      td(data-title="'App Name'" sortable="'name'")
+        {{ campaign.name }}
+      td(data-title="'Impressions'" sortable="'impressions'")
+        {{ campaign.impressions | number }}
+      td(data-title="'Clicks'" sortable="'clicks'")
+        {{ campaign.clicks | number }}
+      td(data-title="'CTR'" sortable="'ctr'")
+        {{ campaign.ctr | number:2 }}%
+      td(data-title="'Spent'" sortable="'spent'")
+        {{ campaign.spent | currency:$ }}
 
 .contents.w920.center(ng-if="impressionsData == null || clicksData == null || spentData == null")
   h2.loading Loading performance data...

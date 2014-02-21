@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($scope, $http, $route, Campaign) ->
+angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($scope, $http, $filter, ngTableParams, Campaign) ->
 
   $scope.impressions24h = 0
   $scope.clicks24h = 0
@@ -18,6 +18,25 @@ angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($sc
 
     if $scope.impressions24h != 0
       $scope.ctr24h = ($scope.clicks24h / $scope.impressions24h) * 100
+
+    $scope.campaignTableParams = new ngTableParams
+      page: 1
+      count: 10
+      sorting: name: "asc"
+    ,
+      total: $scope.campaigns.length
+      getData: ($defer, params) ->
+        orderedData = null
+        if params.sorting()
+          orderedData = $filter('orderBy')($scope.campaigns, params.orderBy())
+        else
+          orderedData = $scope.campaigns
+
+        pg = params.page()
+        prmcount = params.count()
+        $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
+
+    true
 
   ##
   ## Setup graphs
