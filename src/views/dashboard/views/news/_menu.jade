@@ -1,0 +1,13 @@
+.titlebar.cf.full(ng-controller="AdefyNewsMenuController")
+  i.fa.fa.fa-inbox
+  .name News
+  .menu.full
+    a(ng-href="/news" tab)
+      i.fa.fa-fw.fa-home
+      | Home
+    a(ng-href="/news/{{latest.id}}" tab)
+      i.fa.fa-fw.fa-level-up
+      | Latest
+    a(ng-href="/news/{{oldest.id}}" tab)
+      i.fa.fa-fw.fa-level-down
+      | Oldest

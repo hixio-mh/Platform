@@ -1,12 +1,21 @@
-if user.admin
-  a.new-item(href="/news/new")
-    i.fa.fa-plus
-    | New News
+include _menu
 
-ul.news
-  a.item(ng-repeat="article in news" ng-href="/news/{{article.id}}")
-    li
-      span.title {{ article.title }}
-      span.date {{ article.date | date:'MMMM dd, yyyy' }}
-      span.time @ {{ article.date | date:'HH:mm:ss' }}
-      p {{ article.text | markdown }}
+.contents.w920.center
+  if user.admin
+    a.new-item(href="/news/new")
+      i.fa.fa-plus
+      | New News
+
+  ul.news
+    .item(ng-repeat="article in news" ng-href="/news/{{article.id}}")
+      li
+        a(href="/news/{{ article.id }}")
+          span.title {{ article.title }}
+        span.date {{ article.date | date:'MMMM dd, yyyy' }}
+        span.time @ {{ article.date | date:'HH:mm:ss' }}
+        if user.admin
+          a.edit(href="/news/{{ article.id }}/edit")
+            i.fa.fa-edit
+            | Edit
+            //- {{ article.id }}
+        p(ng-bind-html="article.markup")

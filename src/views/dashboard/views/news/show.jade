@@ -1,5 +1,13 @@
-.news
-  span.title {{ article.title }}
-  span.date {{ article.date | date:'MMMM dd, yyyy' }}
-  span.time @ {{ article.date | date:'HH:mm:ss' }}
-  p {{ article.text | markdown }}
+include _menu
+
+.contents.w920.center
+  .news
+    span.title {{ article.title }}
+    span.date {{ article.date | date:'MMMM dd, yyyy' }}
+    span.time @ {{ article.date | date:'HH:mm:ss' }}
+    if user.admin
+      a.edit(href="/news/{{ article.id }}/edit")
+        i.fa.fa-edit
+        | Edit
+        //- {{ article.id }}
+    p(ng-bind-html="article.markup")

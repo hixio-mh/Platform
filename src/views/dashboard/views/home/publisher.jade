@@ -60,8 +60,8 @@
     .section News
     ul.news
       li
-        span.title {{ article.title }}
+        a(href="/news/{{ article.id }}")
+          span.title {{ article.title }}
         span.date {{ article.date | date:'MMMM dd, yyyy' }}
         span.time @ {{ article.date | date:'HH:mm:ss' }}
-        p {{ article.text | markdown }}
-        a.see-more(href="/news/{{ article.id }}") Continue to Article
+        p(ng-bind-html="article.markup")

@@ -39,7 +39,6 @@
     "/admin/users",
     "/admin/invites",
     "/admin/publishers",
-    "/admin/rtbsim",
-    "/admin/news"
+    "/admin/rtbsim"
   ]
 }

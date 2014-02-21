@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $filter, ngTableParams, App, News, UserService) ->
+angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $sce, $filter, ngTableParams, App, News, UserService) ->
 
   window.showTutorial = -> guiders.show "dashboardGuider1"
 
@@ -12,9 +12,10 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
   ## Fetch latest news
   news = null
   News.query (n) ->
-    news = n[n.length-1]
-    if news
-      $scope.article = news
+    article = n[n.length-1]
+    if article
+      article.markup = $sce.trustAsHtml($filter("markdown")(article.text))
+      $scope.article = article
     else
       $scope.article = title: "<No News>", time: 0, date: 0, text: ""
 
