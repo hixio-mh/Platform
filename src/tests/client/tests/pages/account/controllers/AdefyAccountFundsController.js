@@ -1,13 +1,12 @@
 describe("AdefyAccountFundsController", function() {
   var scope = null;
-  var rootScope = null;
   var httpBackend = null;
 
-  beforeEach(function() { angular.mock.module("AdefyApp"); });
   beforeEach(function() {
+    angular.mock.module("AdefyApp");
+
     angular.mock.inject(function($rootScope, $controller, $injector) {
       scope = $rootScope.$new();
-      rootScope = $rootScope.$new();
       httpBackend = $injector.get("$httpBackend");
 
       UserServiceMock = {
@@ -44,7 +43,7 @@ describe("AdefyAccountFundsController", function() {
   });
 
   it("Should fetch user transaction list on load", function() {
-    httpBackend.expectGET("/api/v1/user/transactions");
+    httpBackend.expectGET("/api/v1/user/transactions").respond(200, []);
   });
 
   it("Provides a deposit method that POSTs /api/v1/user/deposit/:amount", function() {
