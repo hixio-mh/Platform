@@ -9,8 +9,9 @@ window.AdefyApp = angular.module "AdefyApp", [
   "ui.select2"
 ]
 
-angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider) ->
+angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider, $logProvider) ->
 
+  $logProvider.debugEnabled false
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
