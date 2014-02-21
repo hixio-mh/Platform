@@ -6,8 +6,10 @@ describe("AdefyRootController", function() {
     window.Intercom = undefined;
     window.showTutorial = undefined;
   });
-  beforeEach(function() { angular.mock.module("AdefyApp"); });
+
   beforeEach(function() {
+    angular.mock.module("AdefyApp");
+
     angular.mock.inject(function($rootScope, $controller) {
       scope = $rootScope.$new();
       rootScope = $rootScope.$new();
