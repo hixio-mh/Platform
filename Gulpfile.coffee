@@ -13,6 +13,7 @@ jade = require "gulp-jade"
 mocha = require "gulp-mocha"
 cache = require "gulp-cache"
 order = require "gulp-order"
+exec = require "gulp-exec"
 
 paths =
   angular: "src/client/**/*.coffee"
@@ -148,6 +149,12 @@ gulp.task "test", ->
   gulp.src("src/tests/*.coffee")
   .pipe mocha(options)
 
+# Update all dependencies
+gulp.task "update", ->
+  gulp.src ""
+  .pipe exec "npm install"
+  .pipe exec "bower install"
+
 # Spin-up a development server
 gulp.task "server", ->
   nodemon script: "src/adefy.coffee", options: "--watch src/"
@@ -156,7 +163,7 @@ gulp.task "server", ->
 gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js", "assets", "components"]
 
 # Run in development
-gulp.task "develop", ["build", "watch", "server"]
+gulp.task "develop", ["update", "build", "watch", "server"]
 
 # The default task (called when you run `gulp` from cli)
-gulp.task "default", ["build"]
+gulp.task "default", ["build", "update"]
