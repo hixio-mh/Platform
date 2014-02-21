@@ -1,5 +1,5 @@
 ---
-- hosts: vagrant
+- hosts: vagrant_api
   remote_user: vagrant
 
   vars:
@@ -9,4 +9,4 @@
     node_path: "/usr/local"
 
   roles:
-    - common
+    - api

@@ -9,8 +9,4 @@
   tags: [packages]
   with_items:
     - build-essential
-    - git
-    - mongodb
     - redis-server
-    - nginx
-    - python-pycurl # needed for apt_repo
