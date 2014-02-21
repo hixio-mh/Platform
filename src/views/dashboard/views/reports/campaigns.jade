@@ -29,7 +29,7 @@ include _menu
 
   .section Comparison
   table.info(ng-cloak ng-table="cmpTableParams")
-    tr(ng-repeat="campaign in comparisonData" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.reports)")
+    tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.reports)")
       td(data-title="'App Name'" sortable="'name'")
         {{ campaign.name }}
       td(data-title="'Impressions'" sortable="'impressions'")

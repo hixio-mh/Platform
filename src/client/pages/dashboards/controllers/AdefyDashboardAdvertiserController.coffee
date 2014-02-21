@@ -19,13 +19,11 @@ angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($sc
     if $scope.impressions24h != 0
       $scope.ctr24h = ($scope.clicks24h / $scope.impressions24h) * 100
 
-    h =
-      page: 1       # show first page
-      count: 10     # count per page
-      sorting:
-        name: "asc" # initial sorting
-
-    d =
+    $scope.campaignTableParams = new ngTableParams
+      page: 1
+      count: 10
+      sorting: name: "asc"
+    ,
       total: $scope.campaigns.length
       getData: ($defer, params) ->
         orderedData = null
@@ -38,7 +36,6 @@ angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($sc
         prmcount = params.count()
         $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
 
-    $scope.campaignTableParams = new ngTableParams h, d
     true
 
   ##

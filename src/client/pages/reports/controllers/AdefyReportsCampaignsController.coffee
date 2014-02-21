@@ -135,18 +135,24 @@ angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope
 
     buildTableDataForCampaign = (campaign) ->
       index = tableData.length
-      tableData.push name: campaign.name, ctr: 0, tutorial: campaign.tutorial
+      tableData.push
+        name: campaign.name
+        ctr: 0
+        clicks: 0
+        impressions: 0
+        spent: 0
+        tutorial: campaign.tutorial
 
       $http.get("#{prefix}/#{c.id}/impressions#{suffix}").success (data) ->
-        tableData[index].impressions = data
+        if data not instanceof Array then tableData[index].impressions = data
         done -> finished()
 
       $http.get("#{prefix}/#{c.id}/clicks#{suffix}").success (data) ->
-        tableData[index].clicks = data
+        if data not instanceof Array then tableData[index].clicks = data
         done -> finished()
 
       $http.get("#{prefix}/#{c.id}/spent#{suffix}").success (data) ->
-        tableData[index].spent = data
+        if data not instanceof Array then tableData[index].spent = data
         done -> finished()
 
     finished = ->
@@ -157,13 +163,11 @@ angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope
 
       $scope.comparisonData = tableData
 
-      h =
-        page: 1       # show first page
-        count: 10     # count per page
-        sorting:
-          ctr: "asc" # initial sorting
-
-      d =
+      $scope.cmpTableParams = new ngTableParams
+        page: 1
+        count: 10
+        sorting: ctr: "asc"
+      ,
         total: $scope.comparisonData.length
         getData: ($defer, params) ->
           orderedData = null
@@ -176,7 +180,6 @@ angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope
           prmcount = params.count()
           $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
 
-      $scope.cmpTableParams = new ngTableParams h, d
       true
 
     buildTableDataForCampaign c for c in campaigns

@@ -44,7 +44,7 @@
 
   .section Top Apps
   table.info(ng-cloak ng-table="appTableParams")
-    tr(ng-repeat="app in apps" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
+    tr(ng-repeat="app in $data" ng-show="!app.tutorial || (app.tutorial && me.tutorials.dashboard)")
       td(data-title="'App Name'" sortable="'name'")
         {{ app.name }}
       td(data-title="'Impressions'" sortable="'stats.impressions'")
