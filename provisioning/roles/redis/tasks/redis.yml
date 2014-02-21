@@ -1,0 +1,8 @@
+- name: copy main redis config
+  copy: src=main_23521.conf dest=/etc/nginx/23521.conf
+
+- name: copy autocomplete redis config
+  copy: src=autocomplete_23522.conf dest=/etc/nginx/23522.conf
+
+- name: start redis
+  service: name=redis-server state=started

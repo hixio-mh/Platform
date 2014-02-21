@@ -1,0 +1,4 @@
+---
+- include: packages.yml
+- include: mongo.yml
+  sudo: yes

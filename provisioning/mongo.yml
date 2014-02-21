@@ -1,0 +1,6 @@
+---
+- hosts: vagrant_mongo
+  remote_user: vagrant
+
+  roles:
+    - mongo
