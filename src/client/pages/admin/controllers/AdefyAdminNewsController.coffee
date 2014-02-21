@@ -14,19 +14,5 @@
 
 angular.module("AdefyApp").controller "AdefyAdminNewsController", ($scope, $location, $http, News) ->
 
-  $scope.news = {}
-  $scope.create = ->
-    article = new News $scope.news
-    article.$save().then ->
-      $scope.setNotification "News Article created successfully", "success"
-      $scope.closeForm()
-    , ->
-      $scope.setNotification "Creating News Article failed", "error"
-
-  $scope.get = ->
-
-  $scope.list = ->
-
-  $scope.save = ->
-
-  $scope.delete = ->
+  News.query (n) ->
+    $scope.news = n

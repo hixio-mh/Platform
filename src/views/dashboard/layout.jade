@@ -186,9 +186,10 @@ html(lang="en" ng-app="AdefyApp")
         //-- Services
         //--
 
-        script(src="/js/services/CampaignService.js")
-        script(src="/js/services/AppService.js")
         script(src="/js/services/AdService.js")
+        script(src="/js/services/AppService.js")
+        script(src="/js/services/CampaignService.js")
+        script(src="/js/services/NewsService.js")
         script(src="/js/services/UserService.js")
         script(src="/js/services/NewsService.js")
 
@@ -229,7 +230,11 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/pages/dashboards/controllers/AdefyDashboardPublisherController.js")
 
         //- News
-        script(src="/client/pages/news/factories/AdefyNewsFactory.js")
+        script(src="/js/pages/news/controllers/AdefyNewsCreateController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsDetailController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsEditController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsIndexController.js")
+        script(src="/js/pages/news/factories/AdefyNewsFactory.js")
 
         //- Reports
         script(src="/js/pages/reports/controllers/AdefyReportsAdsController.js")

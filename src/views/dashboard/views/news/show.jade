@@ -1,0 +1,5 @@
+.news
+  span.title {{ article.title }}
+  span.date {{ article.date | date:'MMMM dd, yyyy' }}
+  span.time @ {{ article.date | date:'HH:mm:ss' }}
+  p {{ article.text | markdown }}

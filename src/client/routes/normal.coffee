@@ -7,6 +7,7 @@ window.AdefyApp = angular.module "AdefyApp", [
   "localytics.directives"
   "ngQuickDate"
   "ui.select2"
+  "markdown"
 ]
 
 angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDateDefaultsProvider, $logProvider) ->
@@ -14,10 +15,6 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $logProvider.debugEnabled false
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
-
-  $routeProvider.when "/home/news",
-    controller: "AdefyDashboardNewsController"
-    templateUrl: "/views/dashboard/home:news"
 
   $routeProvider.when "/home/publisher",
     controller: "AdefyDashboardPublisherController"
@@ -102,6 +99,22 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $routeProvider.when "/funds/:action",
     controller: "AdefyAccountFundsController"
     templateUrl: "/views/dashboard/account:depositFinal"
+
+  $routeProvider.when "/news/new",
+    controller: "AdefyNewsCreateController"
+    templateUrl: "/views/dashboard/news:new"
+
+  $routeProvider.when "/news/:id",
+    controller: "AdefyNewsDetailController"
+    templateUrl: "/views/dashboard/news:show"
+
+  $routeProvider.when "/news/:id/edit",
+    controller: "AdefyNewsEditController"
+    templateUrl: "/views/dashboard/news:edit"
+
+  $routeProvider.when "/news",
+    controller: "AdefyNewsIndexController"
+    templateUrl: "/views/dashboard/news:index"
 
   $routeProvider.otherwise { redirectTo: "/home/publisher" }
 

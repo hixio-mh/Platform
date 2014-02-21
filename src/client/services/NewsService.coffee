@@ -1,8 +1,6 @@
 angular.module("AdefyApp").service "NewsService", [
-  "$http"
-  "$routeParams"
   "News"
-  ($http, $routeParams, News) ->
+  (News) ->
 
     # Cache ads by id
     cache = {}
@@ -12,7 +10,7 @@ angular.module("AdefyApp").service "NewsService", [
       else return new Date rawDate
 
     service =
-      getAllNews: (cb) ->
+      getAllArticles: (cb) ->
         News.query (list) ->
           ret = []
 
@@ -22,14 +20,14 @@ angular.module("AdefyApp").service "NewsService", [
 
           cb ret
 
-      getNews: (id, cb) ->
+      getArticle: (id, cb) ->
         if cache[id] != undefined then cb cache[id]
         else
           News.get id: id, (news) ->
             cache[id] = news
             cb cache[id]
 
-      updateCachedNews: (id, news) ->
+      updateCachedArticle: (id, news) ->
 
         # For some reason, the stats object gets lost
         stats = angular.copy cache[id].stats
