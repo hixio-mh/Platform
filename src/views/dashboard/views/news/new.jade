@@ -2,20 +2,20 @@
   dl.form.center
     dt
       label Title
-    dd: input(required ng-model="news.title" type="text")
+    dd: input(required ng-model="article.title" type="text")
 
     dt
       label Summary
       span Displayed on the User dashboard, instead of the entire news Text
-    dd: input(ng-model="news.summary" type="text" placeholder="Optional summary")
+    dd: input(ng-model="article.summary" type="text" placeholder="Optional summary")
 
     dt
       label Text
       span The body of this News Article
-    dd: textarea(required ng-model="news.text" style="width: 100%; height: 240px")
+    dd: textarea(required ng-model="article.text" style="width: 100%; height: 240px")
 
   fieldset: dl.form.center
     dl.form.center
-    dt: span You will now submit the news Article.
+    dt: span You will now submit the Article.
     dd: button.blue.save(ng-click="submit()") Save
-    //- dd: button.blue.cancel(ng-click="submit()") Cancel
+    dd: button.red.cancel(ng-click="cancel()") Cancel

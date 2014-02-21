@@ -9,13 +9,24 @@ angular.module("AdefyApp").controller "AdefyNewsEditController", ($scope, $http,
   NewsService.getArticle $routeParams.id, (article) ->
     $scope.article = article
 
-  $scope.delete = ->
-    if $scope.news.name == $scope.form.name
-      $scope.news.$delete().then(
-        -> # success
-          $location.path "/news"
-        -> #error
-          $scope.setNotification "There was an error with your form submission", "error"
-      )
+  $scope.submit = ->
+    $scope.article.$save().then(
+      ->
+        $scope.setNotification "News Article created successfully", "success"
+        $location.path "/news"
+      ->
+        $scope.setNotification "An error occurred while creating the Article", "error"
+    )
+
+  $scope.cancel = ->
+    $location.url "/news/#{$scope.article.id}"
+
+  $scope.destroy = ->
+    $scope.article.$delete().then(
+      -> # success
+        $location.path "/news"
+      -> #error
+        $scope.setNotification "There was an error with your form submission", "error"
+    )
 
     true
