@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope, Campaign, $http) ->
+angular.module("AdefyApp").controller "AdefyReportsCampaignsController", ($scope, Campaign, $filter, ngTableParams, $http) ->
 
   window.showTutorial = -> guiders.show "reportsGuider1"
 

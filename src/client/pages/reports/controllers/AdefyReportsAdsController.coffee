@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, $http) ->
+angular.module("AdefyApp").controller "AdefyReportsAdsController", ($scope, Ad, $filter, ngTableParams, $http) ->
 
   ##
   ## Initial render settings and options
