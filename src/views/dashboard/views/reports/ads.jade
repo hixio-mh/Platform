@@ -29,7 +29,7 @@ include _menu
 
   .section Comparison
   table.info(ng-cloak ng-table="cmpTableParams")
-    tr(ng-repeat="ad in comparisonData" ng-show="!ad.tutorial")
+    tr(ng-repeat="ad in $data" ng-show="!ad.tutorial")
       td(data-title="'Ad Name'" sortable="'name'")
         {{ ad.name }}
       td(data-title="'Impressions'" sortable="'impressions'")

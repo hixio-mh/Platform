@@ -29,13 +29,11 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
       if app.stats.ctr then app.stats.ctr *= 100
       if app.stats.ctr24h then app.stats.ctr24h *= 100
 
-    h =
-      page: 1       # show first page
-      count: 10     # count per page
-      sorting:
-        name: "asc" # initial sorting
-
-    d =
+    $scope.appTableParams = new ngTableParams
+      page: 1
+      count: 10
+      sorting: name: "asc"
+    ,
       total: $scope.apps.length
       getData: ($defer, params) ->
         orderedData = null
@@ -48,7 +46,6 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
         prmcount = params.count()
         $defer.resolve orderedData.slice((pg - 1) * prmcount, pg * prmcount)
 
-    $scope.appTableParams = new ngTableParams h, d
     true
 
   ##
