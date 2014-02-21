@@ -40,7 +40,7 @@ setup = (options, imports, register) ->
     newNews.save (err) ->
       if err
         spew.error "Error saving News [#{err}]"
-        return aem.send res, "400:save", error: err
+        return aem.send res, "400:validate", error: err
       else
         return res.json 200, newNews.toAnonAPI()
 
@@ -103,7 +103,7 @@ setup = (options, imports, register) ->
       news.save (err) ->
         if err
           spew.error "Error saving News [#{err}]"
-          aem.send res, "400:save", error: err
+          aem.send res, "400:validate", error: err
         else
           res.json 200, news.toAnonAPI()
 
