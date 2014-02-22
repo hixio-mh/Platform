@@ -1,5 +1,7 @@
 # This runs all of the other tests, while launching an instance of the platform
 # NOTE: This expects a full, clean testing build!
+process.env.NODE_ENV or= "testing"
+
 childProcess = require("child_process")
 config = require "#{__dirname}/../config"
 srcDir = "src/"
@@ -11,7 +13,7 @@ dbHost = "#{config('mongo').host}:#{config('mongo').port}"
 before (done) ->
   @timeout 0
 
-  dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}../../setup_db.js"
+  dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}/../../setup_db.js"
   dbSetup.on "close", ->
 
     adefy = childProcess.fork "#{__dirname}/../../#{srcDir}/adefy.coffee", [],

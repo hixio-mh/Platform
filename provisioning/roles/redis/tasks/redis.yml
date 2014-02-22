@@ -1,0 +1,16 @@
+- name: add redis repository
+  apt_repository: repo='ppa:rwky/redis' state=present
+
+- name: install redis-server
+  apt: update_cache=yes pkg=redis-server state=present
+
+- name: copy redis config
+  template: src={{ redis_config }} dest=/etc/redis/{{ redis_port }}.conf
+
+- name: install redis init script
+  template: src=init-redis.j2 dest=/etc/init.d/{{ redis_name }} mode=0755
+  sudo: yes
+
+- name: restart redis
+  command: /etc/init.d/{{ redis_name }} restart
+  sudo: yes

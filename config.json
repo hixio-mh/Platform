@@ -37,6 +37,46 @@
       "secretAccessKey": "5keiBQWUxpJZPtaNXxKu8WIKMSk8OoYeiVaU6iSi"
     }
   },
+
+  "vagrant": {
+    "domain": "localhost",
+    "port": 5000,
+    "loglevel": 10,
+    "adloglevel": 4,
+    "newrelic": false,
+    "trafficgen": true,
+    "mongo": {
+      "user": "adefy",
+      "pass": "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ",
+      "host": "192.168.100.12",
+      "port": 45452,
+      "db": "adefy_development"
+    },
+    "redis-main": {
+      "db": 0,
+      "host": "192.168.100.11",
+      "port": 6379
+    },
+    "redis-autocomplete": {
+      "db": 0,
+      "host": "192.168.100.11",
+      "port": 6379
+    },
+    "stats": {
+      "host": "stats1.adefy.com",
+      "port": 8125
+    },
+    "paypal": {
+      "host": "api.sandbox.paypal.com",
+      "client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+      "client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
+    },
+    "s3-config": {
+      "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
+      "secretAccessKey": "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"
+    }
+  },
+
   "staging": {
     "domain": "staging.adefy.com",
     "port": 10000,
@@ -131,6 +171,44 @@
     "redis-autocomplete": {
       "db": 1,
       "host": "127.0.0.1",
+      "port": 6379
+    },
+    "stats": {
+      "host": "stats1.adefy.com",
+      "port": 8125
+    },
+    "paypal": {
+      "host": "api.sandbox.paypal.com",
+      "client_id": "AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r",
+      "client_secret": "EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT"
+    },
+    "s3-config": {
+      "accessKeyId": "AKIAIJWEHDVZEFP65Q2Q",
+      "secretAccessKey": "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"
+    }
+  },
+  "vagrant-testing": {
+    "domain": "localhost",
+    "port": 11000,
+    "loglevel": 0,
+    "adloglevel": 0,
+    "newrelic": false,
+    "trafficgen": false,
+    "mongo": {
+      "user": "adefy",
+      "pass": "l3xzkDSBhGsAGhGpDWTqOX7NrQWyeNI3CXEfIiyMA2ckKbOn",
+      "host": "192.168.100.12",
+      "port": 45452,
+      "db": "adefy_testing"
+    },
+    "redis-main": {
+      "db": 1,
+      "host": "192.168.100.11",
+      "port": 6379
+    },
+    "redis-autocomplete": {
+      "db": 1,
+      "host": "192.168.100.11",
       "port": 6379
     },
     "stats": {

@@ -170,7 +170,7 @@ gulp.task "server", ->
 gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", "assets"]
 
 # Run in development
-gulp.task "develop", ["build", "watch", "server"]
+gulp.task "develop", ["update", "build", "watch", "server"]
 
 # The default task (called when you run `gulp` from cli)
 gulp.task "default", ["build", "update"]
