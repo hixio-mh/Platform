@@ -1,0 +1,28 @@
+- name: create SSH directory
+  file: state=directory path=~/.ssh
+
+- name: upload SSH private key
+  copy: src=deploy_key dest=~/.ssh/id_rsa mode=0600
+
+- name: upload SSH public key
+  copy: src=deploy_key.pub dest=~/.ssh/id_rsa.pub mode=0600
+
+- name: Install known_hosts file
+  copy: src=known_hosts dest=~/.ssh/known_hosts mode=0600
+
+- name: create source directory
+  file: state=directory path=/var/adefy mode=0777
+  sudo: yes
+
+- name: deploy platform
+  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy
+
+- name: install global npm dependencies
+  command: npm install -g gulp
+  sudo: yes
+
+- name: install dependencies
+  command: gulp update chdir=/var/adefy
+
+- name: run tests
+  command: npm test chdir=/var/adefy
