@@ -84,7 +84,7 @@
   },
   "scripts": {
     "test": "npm run test-server && npm run test-client",
-    "test-server": "NODE_ENV=testing mocha -R spec ./src/tests/selftest.coffee --compilers coffee:coffee-script/register",
+    "test-server": "mocha -R spec ./src/tests/selftest.coffee --compilers coffee:coffee-script/register",
     "test-client": "mocha-phantomjs ./src/tests/client/test.html"
   }
 }
