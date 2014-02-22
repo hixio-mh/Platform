@@ -31,7 +31,7 @@
   shell: 'cd /var/adefy && NODE_ENV=vagrant-testing npm test'
 
 - name: start platform
-  command: NODE_ENV=vagrant pm2 start src/adefy.coffee -i 4 chdir=/var/adefy
+  shell: 'cd /var/adefy && NODE_ENV=vagrant pm2 start src/adefy.coffee -i 4'
   register: start_result
   ignore_errors: true
 
