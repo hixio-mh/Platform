@@ -11,4 +11,5 @@
     - build-essential
     - git
     - nginx
+    - mongodb
     - python-pycurl # needed for apt_repo

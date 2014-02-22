@@ -3,7 +3,22 @@
   apt: pkg=mongodb state=present
 
 - name: setup /etc/mongodb.conf
-  copy: src=mongodb.conf dest=/etc/mongodb.conf
+  template: src=mongodb.conf.j2 dest=/etc/mongodb.conf
 
-- name: start mongodb
-  service: name=mongodb state=started
+- name: create data directory
+  file: state=directory path=/var/lib/mongodb mode=0755
+  sudo: yes
+
+- name: setup permissions for the data directroy
+  command: chown -R mongodb:mongodb /var/lib/mongodb
+  sudo: yes
+
+- name: restart mongodb
+  service: name=mongodb state=restarted
+
+- name: copy admin setup script
+  copy: src=setup_admin.js dest=/home/{{ ansible_user_id }}/setup_admin.js
+
+- name: run admin setup script
+  shell: mongo 127.0.0.1:45452 < /home/{{ ansible_user_id }}/setup_admin.js
+  ignore_errors: true
