@@ -40,9 +40,6 @@
     "coffee-script": "~1.7.1",
     "angular-mocks": "~1.2.13"
   },
-  "devDependencies": {
-    "mocha": "~1.17.1"
-  },
   "resolutions": {
     "chosen": "e-tag:face03d32",
     "angular": "=1.2.3"

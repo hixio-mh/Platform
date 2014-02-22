@@ -12,4 +12,5 @@
     - git
     - nginx
     - mongodb
-    - python-pycurl # needed for apt_repo
+    - python-pycurl # Needed for apt_repo
+    - fontconfig # Needed for PhantomJS
