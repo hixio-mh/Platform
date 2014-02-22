@@ -19,7 +19,7 @@
   sudo: yes
 
 - name: deploy platform
-  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=ansible-deploys
+  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=master
 
 - name: install dependencies
   command: gulp update chdir=/var/adefy
