@@ -55,21 +55,24 @@ paths =
 
 # Compile stylus
 gulp.task "stylus", ->
+  gulp.src "public/css/**/*", read: false
+  .pipe clean()
+
   gulp.src paths.styl
   .pipe stylus "include css": true
-  .pipe gulp.dest "build/css"
+  .pipe gulp.dest "public/css"
   .pipe rename suffix: ".min"
   .pipe minifycss()
-  .pipe gulp.dest "build/css"
+  .pipe gulp.dest "public/css"
 
 # Compile vendor css
 gulp.task "css", ->
   gulp.src paths.css
   .pipe concat "vendor.css"
-  .pipe gulp.dest "build/css"
+  .pipe gulp.dest "public/css"
   .pipe rename suffix: ".min"
   .pipe minifycss()
-  .pipe gulp.dest "build/css"
+  .pipe gulp.dest "public/css"
 
 # Compile clientside coffeescript
 gulp.task "coffee", ->
@@ -84,57 +87,61 @@ gulp.task "coffee", ->
     "**/*.coffee"
   ]
   .pipe coffee()
-  .pipe gulp.dest "build/js"
+  .pipe gulp.dest "public/js"
   .pipe concat "script.min.js"
   .pipe ngmin()
   .pipe uglify()
-  .pipe gulp.dest "build/js"
+  .pipe gulp.dest "public/js"
 
 # Compile vendor js
 gulp.task "js", ->
+  gulp.src "public/js/**/*", read: false
+  .pipe clean()
+
   gulp.src paths.js
-  .pipe gulp.dest "build/js"
+  .pipe gulp.dest "public/js"
 
   gulp.src paths.jsConcat
   .pipe concat "vendor.min.js"
-  .pipe gulp.dest "build/js"
+  .pipe gulp.dest "public/js"
 
 # Compile static jade files
 gulp.task "jade", ->
+  gulp.src "public/**/*.html", read: false
+  .pipe clean()
+
   gulp.src paths.jade
   .pipe jade()
-  .pipe gulp.dest "build"
+  .pipe gulp.dest "public"
 
 # Optimize images
 gulp.task "images", ->
+  gulp.src "public/img/**/*", read: false
+  .pipe clean()
+
   gulp.src paths.images
   #.pipe cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
-  .pipe gulp.dest "build/img"
+  .pipe gulp.dest "public/img"
 
 # Copy fonts
 gulp.task "fonts", ->
-  gulp.src paths.fonts
-  .pipe gulp.dest "build/fonts"
+  gulp.src "public/fonts/**/*", read: false
+  .pipe clean()
 
-# Copy bower components
-gulp.task "components", ->
-  gulp.src paths.components
-  .pipe gulp.dest "build/components"
+  gulp.src paths.fonts
+  .pipe gulp.dest "public/fonts"
 
 # Copy ad template assets
 gulp.task "assets", ->
-  gulp.src paths.assets
-  .pipe gulp.dest "build/assets"
-
-# Clean old build
-gulp.task "clean", ->
-  gulp.src "build/*", read: false
+  gulp.src "public/assets/**/*", read: false
   .pipe clean()
+
+  gulp.src paths.assets
+  .pipe gulp.dest "public/assets"
 
 # Rerun the task when a file changes
 gulp.task "watch", ->
   gulp.watch paths.js, ["js"]
-  gulp.watch paths.components, ["components"]
   gulp.watch paths.angular, ["coffee"]
   gulp.watch paths.images, ["images"]
   gulp.watch paths.images, ["fonts"]
@@ -160,7 +167,7 @@ gulp.task "server", ->
   nodemon script: "src/adefy.coffee", options: "--watch src/"
 
 # Build all of the assets
-gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "coffee", "js", "assets", "components"]
+gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", "assets"]
 
 # Run in development
 gulp.task "develop", ["build", "watch", "server"]

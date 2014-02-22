@@ -1,8 +1,8 @@
 build/
+public/
 
 node_modules/
-
-sftp-config.json
+npm-debug.log
 
 .vagrant
 .ssh/
