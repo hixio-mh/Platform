@@ -74,7 +74,8 @@ gulp.task "coffee", ->
   gulp.src paths.angular
   .pipe order [
     "tutorial/**/*.coffee"
-    "routes/**/*.coffee"
+    "routes/normal.coffee"
+    "routes/admin.coffee"
     "factories/**/*.coffee"
     "directives/**/*.coffee"
     "services/**/*.coffee"
