@@ -1,5 +1,7 @@
 # This runs all of the other tests, while launching an instance of the platform
 # NOTE: This expects a full, clean testing build!
+process.env.NODE_ENV or= "testing"
+
 childProcess = require("child_process")
 config = require "#{__dirname}/../config"
 srcDir = "src/"
