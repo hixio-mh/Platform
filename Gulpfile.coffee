@@ -42,11 +42,12 @@ paths =
     "src/static/components/angular-route/angular-route.min.js"
     "src/static/components/angular-ui-select2/src/select2.js"
     "src/static/components/angular-chosen-localytics/chosen.js"
-    "src/static/components/ngQuickDate/dist/ng-quick-date.min.js"
+    "src/static/components/ng-table/ng-table.js"
 
     "src/static/components/angles.js"
-    "src/static/components/moment/min/moment.min.js"
 
+    "src/static/components/ngQuickDate/dist/ng-quick-date.min.js"
+    "src/static/components/moment/min/moment.min.js"
     "src/static/components/d3/d3.min.js"
     "src/static/components/rickshaw/rickshaw.min.js"
   ]
