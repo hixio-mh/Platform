@@ -11,7 +11,7 @@ dbHost = "#{config('mongo').host}:#{config('mongo').port}"
 before (done) ->
   @timeout 0
 
-  dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}../../setup_db.js"
+  dbSetup = childProcess.exec "mongo #{dbHost} < #{__dirname}/../../setup_db.js"
   dbSetup.on "close", ->
 
     adefy = childProcess.fork "#{__dirname}/../../#{srcDir}/adefy.coffee", [],
