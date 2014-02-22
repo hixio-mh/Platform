@@ -143,11 +143,8 @@ gulp.task "watch", ->
 # Run tests
 gulp.task "test", ->
   process.env["NODE_ENV"] = process.env["NODE_ENV"] || "testing"
-  options =
-    reporter: "spec"
-    require: "coffee-script/register"
-  gulp.src("src/tests/*.coffee")
-  .pipe mocha(options)
+  gulp.src ""
+  .pipe exec "npm test"
 
 # Update all dependencies
 gulp.task "update", ->

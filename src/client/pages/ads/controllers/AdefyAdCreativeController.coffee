@@ -1,4 +1,5 @@
 angular.module("AdefyApp").controller "AdefyAdCreativeController", ($scope, AdService, $routeParams, $timeout) ->
+
   $scope.cycle = false
   $scope.creativeLoaded = false
   $scope.creativeData = null

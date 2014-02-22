@@ -38,6 +38,10 @@ setup = (options, imports, register) ->
           app.use connect.bodyParser()
           app.use expressValidator()
 
+          # Serve static files in for tests
+          if config("NODE_ENV").indexOf("test") != -1
+            app.use express.static "#{__dirname}/../../../static"
+
           # Hard-code to keep sessions after restart
           app.use express.cookieParser "rRd0udXZRb0HX5iqHUcSBFck4vNhuUkW"
 
