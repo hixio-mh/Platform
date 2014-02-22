@@ -1,4 +1,16 @@
 ---
 - include: packages.yml
+
 - include: redis.yml
   sudo: yes
+  vars:
+    redis_port: 23521
+    redis_name: redis-server-main
+    redis_config: main.conf.j2
+
+- include: redis.yml
+  sudo: yes
+  vars:
+    redis_port: 23522
+    redis_name: redis-server-autocomplete
+    redis_config: autocomplete.conf.j2

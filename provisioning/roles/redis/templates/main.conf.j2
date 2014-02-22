@@ -1,14 +1,14 @@
 daemonize yes
 
-pidfile /var/run/redis_23522.pid
-port 23522
-bind {{ ansible_all_ipv4_addresses }}
+pidfile /var/run/redis_{{ redis_port }}.pid
+port {{ redis_port }}
+bind {% for ip in ansible_all_ipv4_addresses %}{{ ip }} {% endfor %}
 
 timeout 0
 tcp-keepalive 0
 
 loglevel notice
-logfile "/var/log/redis/redis-server-autocomplete.log"
+logfile "/var/log/redis/{{ redis_port }}.log"
 
 databases 16
 
@@ -22,7 +22,7 @@ stop-writes-on-bgsave-error no
 
 rdbcompression yes
 rdbchecksum yes
-dbfilename dump-autocomplete.rdb
+dbfilename dump-main.rdb
 
 dir /var/lib/redis
 
@@ -33,7 +33,7 @@ rename-command FLUSHDB ""
 
 # Append-only mode (we don't use it, but just in case)
 appendonly no
-appendfilename "appendonly-autocomplete.aof"
+appendfilename "appendonly-main.aof"
 appendfsync everysec
 
 no-appendfsync-on-rewrite no

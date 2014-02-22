@@ -18,17 +18,23 @@
   git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=ansible-deploys
 
 - name: install global npm dependencies
-  command: npm install -g gulp pm2 coffee-script
+  command: npm install -g gulp pm2 coffee-script mocha
   sudo: yes
 
 - name: install dependencies
   command: gulp update chdir=/var/adefy
 
 - name: run tests
-  command: npm test chdir=/var/adefy
+  command: NODE_ENV=vagrant npm test chdir=/var/adefy
 
 - name: build platform
   command: gulp chdir=/var/adefy
 
 - name: start platform
   command: NODE_ENV=vagrant pm2 start src/adefy.coffee -i 4 chdir=/var/adefy
+  register: start_result
+  ignore_errors: true
+
+- name: reloading platform
+  command: pm2 reload all
+  when: start_result|failed
