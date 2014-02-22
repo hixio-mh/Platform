@@ -2,9 +2,6 @@
 - include: packages.yml
 - include: nodejs.yml
   sudo: yes
-- include: mongodb.yml
-  sudo: yes
-- include: redis.yml
-  sudo: yes
+- include: platform.yml
 - include: nginx.yml
   sudo: yes

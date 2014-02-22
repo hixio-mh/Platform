@@ -1,0 +1,15 @@
+---
+- name: upgrade packages
+  apt: upgrade=yes update_cache=yes
+  sudo: true
+
+- name: install userspace packages
+  sudo: yes
+  apt: pkg={{ item }} state=present
+  tags: [packages]
+  with_items:
+    - build-essential
+    - git
+    - nginx
+    - mongodb
+    - python-pycurl # needed for apt_repo

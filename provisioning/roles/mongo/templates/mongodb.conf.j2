@@ -1,0 +1,18 @@
+dbpath=/var/lib/mongodb
+
+logpath=/var/log/mongodb/mongodb.log
+logappend=true
+
+bind_ip = 127.0.0.1,{% for ip in ansible_all_ipv4_addresses %}{{ ip }}{% if not loop.last %},{% endif %}{% endfor %}
+
+port = 45452
+
+noauth = false
+auth = true
+
+# Enables periodic logging of CPU utilization and I/O wait
+cpu = true
+
+verbose = false
+objcheck = false
+quota = false
