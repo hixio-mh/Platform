@@ -15,10 +15,10 @@
   sudo: yes
 
 - name: deploy platform
-  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy
+  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=ansible-deploys
 
 - name: install global npm dependencies
-  command: npm install -g gulp
+  command: npm install -g gulp pm2 coffee-script
   sudo: yes
 
 - name: install dependencies
@@ -26,3 +26,9 @@
 
 - name: run tests
   command: npm test chdir=/var/adefy
+
+- name: build platform
+  command: gulp chdir=/var/adefy
+
+- name: start platform
+  command: NODE_ENV=vagrant pm2 start src/adefy.coffee -i 4 chdir=/var/adefy
