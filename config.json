@@ -39,7 +39,7 @@
   },
 
   "vagrant": {
-    "domain": "www.adefy.dev",
+    "domain": "localhost",
     "port": 5000,
     "loglevel": 10,
     "adloglevel": 4,
