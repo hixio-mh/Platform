@@ -42,10 +42,18 @@ module.exports = (user, admin) ->
     campaign.should.have.property "countriesExclude"
     campaign.should.have.property "tutorial"
 
+    campaign.should.not.have.property "devices"
+    campaign.should.not.have.property "countries"
+    campaign.should.not.have.property "owner"
+
     util.apiObjectIdSanitizationCheck campaign
 
   validateStatFormat = (stat) ->
     should.exist stat
+
+    for data in stat
+      data.should.have.property "x"
+      data.should.have.property "y"
 
   describe "Campaigns API", ->
 
@@ -94,9 +102,18 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          campaigns = res.body
-          for campaign in campaigns
+
+          found = [false, false]
+          for campaign in res.body
             validateCampaignFormat campaign
+
+            found[0] = true if campaign.id == testValidCampaignId
+            found[1] = true if campaign.id == testValidCampaignId2
+
+          expect(found[0]).to.equal true
+
+          # Created by admin
+          expect(found[1]).to.equal false
 
           done()
 
@@ -111,8 +128,9 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          campaign = res.body
-          validateCampaignFormat campaign
+          validateCampaignFormat res.body
+
+          expect(res.body.id).to.equal testValidCampaignId
 
           done()
 
@@ -134,8 +152,9 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          campaign = res.body
-          validateCampaignFormat campaign
+          validateCampaignFormat res.body
+
+          expect(res.body.id).to.equal testValidCampaignId
 
           done()
 
@@ -150,8 +169,7 @@ module.exports = (user, admin) ->
         req = util.userRequest "/api/v1/campaigns/stats/#{testValidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
-          for stat in res.body
-            validateStatFormat stat
+          validateStatFormat stat for stat in res.body
           done()
 
     # POST /api/v1/campaigns/:id/activate

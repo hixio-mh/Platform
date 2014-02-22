@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http) ->
+angular.module("AdefyApp").controller "AdefyAdDetailController", ($scope, $location, $routeParams, AdService, $http, UserService) ->
 
   window.showTutorial = -> guiders.show "adDetailsGuider1"
 
