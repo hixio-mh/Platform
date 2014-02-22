@@ -49,7 +49,7 @@
       "user": "adefy",
       "pass": "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ",
       "host": "192.168.100.12",
-      "port": 27017,
+      "port": 45452,
       "db": "adefy_development"
     },
     "redis-main": {
