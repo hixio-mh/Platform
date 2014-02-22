@@ -28,6 +28,7 @@ paths =
 
   jsConcat: [
     "src/static/components/jquery/dist/jquery.min.js"
+    "src/static/components/ace-builds/src-min/ace.js"
 
     "src/static/js/vendor/stackBlur.js"
     "src/static/js/vendor/guiders.js"
