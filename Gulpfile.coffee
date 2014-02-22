@@ -45,7 +45,7 @@ paths =
     "src/static/components/angular-chosen-localytics/chosen.js"
     "src/static/components/ng-table/ng-table.js"
 
-    "src/static/components/angles.js"
+    "src/static/components/angles/angles.js"
 
     "src/static/components/ngQuickDate/dist/ng-quick-date.min.js"
     "src/static/components/moment/min/moment.min.js"
