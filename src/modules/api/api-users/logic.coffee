@@ -105,25 +105,38 @@ setup = (options, imports, register) ->
 
   # Forgot password
   app.post "/api/v1/forgot", (req, res) ->
-    db.model("User").findOne email: res.param("email"), (err, user) ->
+    if not utility.param req.param("email"), res, "Email" then return
+
+    db.model("User").findOne email: req.param("email"), (err, user) ->
       if utility.dbError err, res, false then return
 
       if user
-        user.generateResetToken()
-        user.save ->
-          # send password reset email to user
-          powerdrill "reset-password"
-          .subject "Reset your Adefy password"
-          .to user.email, {token: user.forgotPasswordToken}, {user_id: user._id}
-          .send()
+        user.generateResetToken ->
+          user.save ->
 
-          aem.send res, "200", msg: "Email sent!"
+            # Send password reset email to user
+            message = powerdrill "reset-password"
+            message.subject "Reset your Adefy password"
+            .autoText()
+            .to user.email,
+              username: user.username
+              token: user.forgotPasswordToken
+            ,
+              user_id: user._id
+            .from "no-reply@adefy.com"
+            .send (err, mandrillRes) ->
+              if err then spew.error err
+              spew.info JSON.stringify mandrillRes
+
+              aem.send res, "200", msg: "Email sent!"
       else
         aem.send res, "401", error: "Email invalid"
 
   # Change password
   app.post "/api/v1/reset", (req, res) ->
-    db.model("User").findOne forgotPasswordToken: res.param("token"), (err, user) ->
+    if not utility.param req.param("token"), res, "Email" then return
+
+    db.model("User").findOne forgotPasswordToken: req.param("token"), (err, user) ->
       if utility.dbError err, res, false then return
 
       if user # and token from the last 24 hours
@@ -142,9 +155,8 @@ setup = (options, imports, register) ->
     db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res, false then return
 
-      if req.cookies.user.sess == user.session
-        aem.send res, "500", error: "You can't delete yourself!"
-        return
+      if "#{req.user.id}" == "#{user._id}"
+        return aem.send res, "500", error: "You can't delete yourself!"
 
       user.remove()
       aem.send res, "200", msg: "User removed successfully"

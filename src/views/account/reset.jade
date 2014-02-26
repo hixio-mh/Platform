@@ -47,7 +47,7 @@ html(lang="en" ng-app="AdefyReset")
         input(type="password" placeholder="Email" ng-model="password_confirmation" ng-keypress="enterSubmit($event)")
 
     .container.small
-      button#main-button(type="button" ng-click="login()")
+      button#main-button(type="button" ng-click="reset()")
         div#main-icon
         | Change password
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")

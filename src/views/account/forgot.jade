@@ -44,7 +44,7 @@ html(lang="en" ng-app="AdefyForgot")
         input(type="email" placeholder="Email" ng-model="email" ng-keypress="enterSubmit($event)")
 
     .container.small
-      button#main-button(type="button" ng-click="login()")
+      button#main-button(type="button" ng-click="forgot()")
         div#main-icon
         | Send email
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
