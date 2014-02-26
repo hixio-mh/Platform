@@ -7,6 +7,7 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config"
 adefyDomain = "http://#{config("domain")}"
 
+powerdrill = require("powerdrill")(config('mandrill_apikey'))
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
@@ -111,8 +112,12 @@ setup = (options, imports, register) ->
         user.generateResetToken()
         user.save ->
           # send password reset email to user
+          powerdrill "reset-password"
+          .subject "Reset your Adefy password"
+          .to user.email, {token: user.forgotPasswordToken}, {user_id: user._id}
+          .send()
+
           aem.send res, "200", msg: "Email sent!"
-          # redirect somewhere or render a success page?
       else
         aem.send res, "401", error: "Email invalid"
 
