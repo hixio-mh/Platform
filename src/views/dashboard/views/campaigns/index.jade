@@ -1,8 +1,19 @@
-a.new-item(href="/campaigns/new")
-  i.fa.fa-plus
-  | New campaign
+.grid-options
+  a.new-item(href="/campaigns/new")
+    i.fa.fa-plus
+    | New campaign
+
+  .sort
+    p Sort by:
+    a(ng-click="sort.direction = false" ng-if="sort.direction") &#9660;
+    a(ng-click="sort.direction = true" ng-if="!sort.direction") &#9650;
+    select(ui-select2 ng-model="sort.metric")
+      option(value="ctr") CTR
+      option(value="name") Name
+      option(value="impressions") Impressions
+
 .grid
-  a.item(ng-repeat="campaign in campaigns | orderBy:'ctr':true" ng-href="/campaigns/{{campaign.id}}" data-id="{{ campaign.id }}" ng-class="{ tutorial: campaign.tutorial }" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.campaigns)")
+  a.item(ng-repeat="campaign in campaigns | orderBy:sort.metric:sort.direction" ng-href="/campaigns/{{campaign.id}}" data-id="{{ campaign.id }}" ng-class="{ tutorial: campaign.tutorial }" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.campaigns)")
 
     div.icon.noimage(ng-if="campaign.ads.length == 0")
     img.icon(ng-if="campaign.ads.length == 1" ng-src="{{ campaign.ads[0].data.creative.image }}")
