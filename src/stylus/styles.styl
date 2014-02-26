@@ -651,18 +651,33 @@ fieldset
         text-align center
         display inline-block
 
-
-
-.new-item
-  line-height 1
-  display inline-block
-  margin 20px 40px 0
+.grid-options
+  margin 20px 40px
   color #aaa
   text-shadow 0 1px white
-  //background-color #333
-  //border-radius 7px
+  line-height 1
+  overflow hidden
+  .sort
+    p
+      float left
+      margin 0
+      margin-right 4px
+    > a, > i
+      line-height 1.4
+      margin-left 4px
+      padding-bottom 4px
+      color #333
+    .select2-container
+      margin 0 !important
+    float right
+    min-width 200px
+
+.new-item
+  float left
+  display inline-block
+  color inherit
   padding 5px
-  border-bottom 1px dashed transparent
+  border-bottom 1px dotted transparent
   &:hover
     color #999
     border-bottom 1px dotted
@@ -675,7 +690,7 @@ fieldset
 
 .new-ad
   display block
-  margin 0 auto
+  margin 20px auto
   max-width 720px
   margin-bottom 20px // needs margin
 

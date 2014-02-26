@@ -1,8 +1,18 @@
-a.new-item(href="/apps/new")
-  i.fa.fa-plus
-  | New app
+.grid-options
+  a.new-item(href="/apps/new")
+    i.fa.fa-plus
+    | New app
+
+  .sort(ng-if="apps.length > 2")
+    p Sorting
+    i.fa.fa-caret-down(ng-click="sort.direction = false" ng-if="sort.direction")
+    i.fa.fa-caret-up(ng-click="sort.direction = true" ng-if="!sort.direction")
+    select(ui-select2 ng-model="sort.metric")
+      option(value="stats.earnings") Earnings
+      option(value="name") Name
+      option(value="stats.impressions") Impressions
 .grid
-  a.item(ng-repeat="app in apps | orderBy:'stats.earnings':true" ng-href="/apps/{{ app.id }}" data-id="{{ app.id }}" ng-class="{ tutorial: app.tutorial }" ng-show="!app.tutorial || (app.tutorial && me.tutorials.apps)")
+  a.item(ng-repeat="app in apps | orderBy:sort.metric:sort.direction" ng-href="/apps/{{ app.id }}" data-id="{{ app.id }}" ng-class="{ tutorial: app.tutorial }" ng-show="!app.tutorial || (app.tutorial && me.tutorials.apps)")
     img.icon(ng-src="{{ app.thumbURL }}")
     .name(ng-bind="app.name")
     .label.orange(ng-if="app.tutorial") Tutorial

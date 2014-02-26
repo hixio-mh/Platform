@@ -1,5 +1,9 @@
 angular.module("AdefyApp").controller "AdefyAppsIndexController", ($scope, $location, AppService, $http) ->
 
+  $scope.sort =
+    metric: "stats.earnings"
+    direction: false
+
   window.showTutorial = -> guiders.show "appsGuider1"
 
   if window.location.href.indexOf("#guider=") == -1
