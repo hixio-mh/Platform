@@ -1,7 +1,7 @@
 angular.module("AdefyApp").controller "AdefyCampaignIndexController", ($scope, CampaignService, $http) ->
 
   $scope.sort =
-    metric: "ctr"
+    metric: "stats.ctr"
     direction: false
 
   window.showTutorial = -> guiders.show "campaignsGuider1"
