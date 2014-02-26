@@ -1,7 +1,7 @@
 angular.module("AdefyApp").controller "AdefyAppsIndexController", ($scope, $location, AppService, $http) ->
 
   $scope.sort =
-    metric: "earnings"
+    metric: "stats.earnings"
     direction: false
 
   window.showTutorial = -> guiders.show "appsGuider1"

@@ -5,14 +5,14 @@
     i.fa.fa-plus
     | New ad
 
-  .sort
-    p Sort by:
-    a(ng-click="sort.direction = false" ng-if="sort.direction") &#9660;
-    a(ng-click="sort.direction = true" ng-if="!sort.direction") &#9650;
+  .sort(ng-if="ads.length > 2")
+    p Sorting
+    i.fa.fa-caret-down(ng-click="sort.direction = false" ng-if="sort.direction")
+    i.fa.fa-caret-up(ng-click="sort.direction = true" ng-if="!sort.direction")
     select(ui-select2 ng-model="sort.metric")
-      option(value="ctr") CTR
+      option(value="stats.ctr") CTR
       option(value="name") Name
-      option(value="impressions") Impressions
+      option(value="stats.impressions") Impressions
 
 ul.list.ad-list(ng-if="ads")
   li(ng-repeat="ad in ads | orderBy:sort.metric:sort.direction" ng-if="!ad.tutorial || (ad.tutorial && me.tutorials.ads)")
