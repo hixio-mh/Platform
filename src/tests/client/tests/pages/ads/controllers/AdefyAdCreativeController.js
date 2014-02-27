@@ -1,6 +1,5 @@
 describe("AdefyAdCreativeController", function() {
   var scope = null;
-  var httpBackend = null;
   var AdServiceMock = {};
 
   RouteParams = {};
@@ -17,7 +16,6 @@ describe("AdefyAdCreativeController", function() {
 
     angular.mock.inject(function($rootScope, $controller, $injector) {
       scope = $rootScope.$new();
-      httpBackend = $injector.get("$httpBackend");
 
       $controller("AdefyAdCreativeController", {
         $scope: scope,

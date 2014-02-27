@@ -1,7 +1,7 @@
 describe("AdefyAdIndexController", function() {
   var scope = null;
   var AdServiceMock = null;
-  var AdModelMock = null
+  var AdModelMock = null;
 
   beforeEach(function() {
     AdServiceMock = { getAllAds: function() {} };
