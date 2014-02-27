@@ -1,7 +1,7 @@
 Adefy Platform
 =====================================
 
-![Codeship Status](https://www.codeship.io/projects/ec357c30-4889-0131-4674-7e85db4b14b8/status)
+![Codeship Status](https://www.codeship.io/projects/7d3fc170-81bc-0131-6f94-7eb72c4f83ea/status)
 
 Cloud interface and customer backend for Adefy. This repo contains the site as
 a whole, but pulls in dependencies from a few others. The backend will allow for
