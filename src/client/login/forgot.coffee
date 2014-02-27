@@ -3,11 +3,9 @@ window.AdefyForgot.controller "AdefyForgotController", ($scope, $http) ->
   $scope.error = null
 
   $scope.forgot = ->
-    username = "username=#{$scope.username}"
-    password = "password=#{$scope.password}"
-    $http.post("/api/v1/forgot?#{username}&#{password}")
-    .success(-> window.location.href = "/")
-    .error (res) -> $scope.error = "Wrong credentials"
+    $http.post("/api/v1/forgot?email=#{$scope.email}")
+    # .success(-> window.location.href = "/")
+    .error (res) -> $scope.error = "We don't know that email ;("
 
   $scope.enterSubmit = (e) ->
     if e.which == 10 or e.which == 13 then $scope.forgot()
