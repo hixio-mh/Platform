@@ -12,8 +12,9 @@ angular.module("AdefyApp").controller "AdefyAdMenuController", ($scope, $locatio
     if $scope.ad.name == $scope.form.name
       $scope.ad.$delete().then(
         -> # success
-          $location.path("/ads")
+          $location.path "/ads"
         -> #error
-          $scope.setNotification("There was an error with your form submission", "error")
+          $scope.setNotification "There was an error with your form submission", "error"
       )
-    return true
+
+    true
