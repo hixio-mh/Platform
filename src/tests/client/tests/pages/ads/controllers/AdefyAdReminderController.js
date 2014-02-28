@@ -1,6 +1,5 @@
 describe("AdefyAdReminderController", function() {
   var scope = null;
-  var httpBackend = null;
 
   beforeEach(function() {
     window.filepicker = { pickAndStore: function() {} };
@@ -8,7 +7,6 @@ describe("AdefyAdReminderController", function() {
 
     angular.mock.inject(function($rootScope, $controller, $injector) {
       scope = $rootScope.$new();
-      httpBackend = $injector.get("$httpBackend");
 
       $controller("AdefyAdReminderController", { $scope: scope });
     });
