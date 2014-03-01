@@ -21,9 +21,10 @@
     "accounting": "~0.3.2",
     "angles": "*",
     "angular-chosen": "*",
-    "angular-latest": "~1.2.13",
-    "angular-route": "~1.2.13",
-    "angular-resource": "~1.2.13",
+    "angular-latest": "=1.2.13",
+    "angular-route": "=1.2.13",
+    "angular-resource": "=1.2.13",
+    "angular-mocks": "=1.2.13",
     "angular-ui-select2": "~0.0.5",
     "chosen": "https://github.com/harvesthq/chosen/releases/download/v1.1.0/chosen_v1.1.0.zip",
     "d3": "~3.4.2",
@@ -37,11 +38,10 @@
     "angular-chosen-localytics": "~1.0.4",
     "mocha": "~1.17.1",
     "chai": "~1.9.0",
-    "coffee-script": "~1.7.1",
-    "angular-mocks": "~1.2.13"
+    "coffee-script": "~1.7.1"
   },
   "resolutions": {
     "chosen": "e-tag:face03d32",
-    "angular": "=1.2.3"
+    "angular": "1.2.13"
   }
 }
