@@ -53,7 +53,7 @@ describe("AdefyAppsEditController", function() {
       scope.should.have.property("submit");
     });
     
-    it('Updates scope ad model', function (done) {
+    it('Updates scope app model', function (done) {
       scope.app = {
         id: 123,
         $save: function() { done(); return { then: function() {} }; }
