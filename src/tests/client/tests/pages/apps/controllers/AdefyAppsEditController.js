@@ -1,6 +1,13 @@
 describe("AdefyAppsEditController", function() {
   var scope = null;
   var httpBackend = null;
+  var AppServiceMock = {
+    getApp: function(cb) {
+      if(cb !== undefined) { cb(this.app); }
+    },
+    app: {},
+    updateCachedApp: function() {}
+  };
 
   beforeEach(function() {
     angular.mock.module("AdefyApp");
@@ -9,8 +16,14 @@ describe("AdefyAppsEditController", function() {
       scope = $rootScope.$new();
       httpBackend = $injector.get("$httpBackend");
 
-      $controller("AdefyAppsEditController", { $scope: scope });
+      $controller("AdefyAppsEditController", {
+        $scope: scope,
+        AppService: AppServiceMock
+      });
     });
+
+    // Reset app
+    AppServiceMock.app = {};
   });
 
   it('Exposes a category listing on the scope', function () {
@@ -31,13 +44,8 @@ describe("AdefyAppsEditController", function() {
       if(scope.pricingModels[i] == "CPM") { found++; }
     }
 
-    expect(pricingModels.length).to.equal(3);
+    expect(scope.pricingModels.length).to.equal(3);
     expect(found).to.equal(3);
-  });
-
-  it('Fetches categories on init', function () {
-    httpBackend.expectGET("/api/v1/filters/categories").respond(200, []);
-    httpBackend.flush();
   });
 
   describe('Submit method', function () {
@@ -48,7 +56,7 @@ describe("AdefyAppsEditController", function() {
     it('Updates scope ad model', function (done) {
       scope.app = {
         id: 123,
-        $save: function() { done(); }
+        $save: function() { done(); return { then: function() {} }; }
       };
 
       scope.submit();
@@ -64,7 +72,7 @@ describe("AdefyAppsEditController", function() {
       var modified = false;
 
       scope.app = {
-        name: "abc"
+        name: "abc",
         $delete: function() {
           modified = true;
           finish();
@@ -84,8 +92,8 @@ describe("AdefyAppsEditController", function() {
 
     it('Calls $delete() on the app model if the provided name matches', function (done) {
       scope.app = {
-        name: "abc"
-        $delete: function() { done(); }
+        name: "abc",
+        $delete: function() { done(); return { then: function() {} }; }
       };
 
       scope.form.name = "abc";

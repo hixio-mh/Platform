@@ -47,9 +47,4 @@ describe("AdefyAppsIndexController", function() {
     window.showTutorial();
     window.guiders.show = window.guiders._show;
   });
-
-  it('Loads list of owned publishers on init', function () {
-    httpBackend.expectGET("/api/v1/publishers").respond(200, []);
-    httpBackend.flush();
-  });
 });

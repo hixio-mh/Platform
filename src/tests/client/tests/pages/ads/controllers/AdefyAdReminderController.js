@@ -20,7 +20,7 @@ describe("AdefyAdReminderController", function() {
     it('Calls $save() on the ad model when called', function (done) {
       scope.ad = {
         id: 123,
-        $save: function() { done(); }
+        $save: function() { done(); return { then: function() {} }; }
       }
 
       scope.save();
