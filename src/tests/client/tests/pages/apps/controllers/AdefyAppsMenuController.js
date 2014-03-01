@@ -14,14 +14,15 @@ describe("AdefyAppsMenuController", function() {
   });
 
   describe('Approval request method', function () {
-    it("Exists", function(done) {
+    it("Exists", function() {
       scope.should.have.property("requestApproval");
     });
 
-    it("Works and updates scope publisher status", function() {
+    it("Works and updates scope publisher status", function () {
       httpBackend.expectPOST("/api/v1/publishers/123/approve").respond(200);
 
       scope.app = { id: 123 };
+      scope.setNotification = function() {};
       scope.requestApproval();
 
       httpBackend.flush();
@@ -35,7 +36,7 @@ describe("AdefyAppsMenuController", function() {
 
     it('POSTS to .../activate when app is inactive', function () {
       scope.app = {
-        id: 123
+        id: 123,
         active: false
       };
 
@@ -46,11 +47,11 @@ describe("AdefyAppsMenuController", function() {
 
     it('POSTS to .../deactivate when app is active', function () {
       scope.app = {
-        id: 123
+        id: 123,
         active: true
       };
 
-      httpBackend.expectPOST("/api/v1/publishers/123/activate").respond(200);
+      httpBackend.expectPOST("/api/v1/publishers/123/deactivate").respond(200);
       scope.activeToggled();
       httpBackend.flush();
     });

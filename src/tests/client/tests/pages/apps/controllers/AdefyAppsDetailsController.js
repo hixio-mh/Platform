@@ -3,7 +3,7 @@ describe("AdefyAppsDetailsController", function() {
 
   AppServiceMock = {
     getApp: function(cb) {
-      cb(this.app);
+      if(cb !== undefined) { cb(this.app); }
     },
     app: {}
   };

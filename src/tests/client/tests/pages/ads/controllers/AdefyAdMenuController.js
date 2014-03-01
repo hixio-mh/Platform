@@ -14,18 +14,19 @@ describe("AdefyAdMenuController", function() {
   });
 
   describe('Approval request method', function () {
-    it("Exists", function(done) {
+    it("Exists", function() {
       scope.should.have.property("requestApproval");
     });
 
     it("Works and updates scope ad status", function() {
       httpBackend.expectPOST("/api/v1/ads/123/approve").respond(200);
 
-      scope.ad = { status: 0 };
+      scope.ad = { status: 0, id: 123 };
+      scope.setNotification = function() {};
       scope.requestApproval();
 
-      expect(scope.ad.status).to.equal(2);
       httpBackend.flush();
+      expect(scope.ad.status).to.equal(2);
     });
   });
 
@@ -38,18 +39,17 @@ describe("AdefyAdMenuController", function() {
       scope.form = { name: "abc" };
       scope.ad = {
         name: "123",
-        $delete: function() {}
+        $delete: function() { return { then: function() {} }; }
       };
 
       scope.delete();
-      httpBackend.flush();
     });
 
     it('Calls $delete on the scope ad if name is correct', function (done) {
       scope.form = { name: "abc" };
       scope.ad = {
         name: "abc",
-        $delete: function() { done(); }
+        $delete: function() { done(); return { then: function() {} }; }
       };
 
       scope.delete();

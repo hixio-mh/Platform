@@ -17,7 +17,7 @@ describe("AdefyAppsCreateController", function() {
     scope.should.have.property("categories");
 
     for(var i = 0; i < scope.categories.length; i++) {
-      expect(scope[i]).to.be.a("string");
+      expect(scope.categories[i]).to.be.a("string");
     }
   });
 
@@ -31,7 +31,7 @@ describe("AdefyAppsCreateController", function() {
       if(scope.pricingModels[i] == "CPM") { found++; }
     }
 
-    expect(pricingModels.length).to.equal(3);
+    expect(scope.pricingModels.length).to.equal(3);
     expect(found).to.equal(3);
   });
 
@@ -45,9 +45,10 @@ describe("AdefyAppsCreateController", function() {
     });
     
     it('POSTS to /api/v1/publisher', function () {
+      scope.setNotification = function() {};
 
       // Respond with an error to prevent redirect
-      httpBackend.expectPOST("/api/v1/publisher").respond(403);
+      httpBackend.expectPOST("/api/v1/publishers").respond(403);
 
       scope.submit();
       httpBackend.flush();
