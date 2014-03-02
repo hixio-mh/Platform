@@ -55,6 +55,7 @@ responses400 = [
 ]
 
 responses400save = responses400
+responses400validate = responses400
 
 responses401 = [
   "Check your privilege"
@@ -194,11 +195,11 @@ module.exports =
         msg = "Malformed request"
         code = 400
       when "400:validate"
-        resp = @sample responses500ad_save
+        resp = @sample responses400validate
         msg = "Validation has failed"
-        code = 500
+        code = 400
       when "400:save"
-        resp = @sample(responses400save)
+        resp = @sample responses400save
         msg = "An error occurred while saving the resource"
         code = 400
       when "401"
