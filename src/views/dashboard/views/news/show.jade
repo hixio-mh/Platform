@@ -7,7 +7,7 @@ include _menu
     span.time @ {{ article.date | date:'HH:mm:ss' }}
     if user.admin
       a.edit(href="/news/{{ article.id }}/edit")
-        i.fa.fa-edit
+        i.fa.fa-fw.fa-edit
         | Edit
         //- {{ article.id }}
     p(ng-bind-html="article.markup")

@@ -22,11 +22,12 @@ angular.module("AdefyApp").controller "AdefyNewsEditController", ($scope, $http,
     $location.url "/news/#{$scope.article.id}"
 
   $scope.destroy = ->
-    $scope.article.$delete().then(
-      -> # success
-        $location.path "/news"
-      -> #error
-        $scope.setNotification "There was an error with your form submission", "error"
-    )
+    if confirm "Are you sure?"
+      $scope.article.$delete().then(
+        -> # success
+          $location.path "/news"
+        -> #error
+          $scope.setNotification "There was an error with your form submission", "error"
+      )
 
     true

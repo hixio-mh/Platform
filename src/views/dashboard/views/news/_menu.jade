@@ -1,13 +1,15 @@
 .titlebar.cf.full(ng-controller="AdefyNewsMenuController")
-  i.fa.fa.fa-inbox
+  i.fa.fa-fw.fa-inbox
   .name News
   .menu.full
     a(ng-href="/news" tab)
       i.fa.fa-fw.fa-home
       | Home
     a(ng-href="/news/{{latest.id}}" tab)
-      i.fa.fa-fw.fa-level-up
+      i.fa.fa-fw.fa-bell
       | Latest
-    a(ng-href="/news/{{oldest.id}}" tab)
+
+    //- Not sure this is really useful
+    //- a(ng-href="/news/{{oldest.id}}" tab)
       i.fa.fa-fw.fa-level-down
       | Oldest

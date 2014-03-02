@@ -1,11 +1,14 @@
 include _menu
 
-.contents.w920.center
-  if user.admin
-    a.new-item(href="/news/new")
-      i.fa.fa-plus
-      | New News
+if user.admin
+  .contents.w920.center
+    .grid-options
+      a.new-item(href="/news/new")
+        i.fa.fa-fw.fa-plus
+        | New News
+      br
 
+.contents.w920.center
   ul.news
     .item(ng-repeat="article in news" ng-href="/news/{{article.id}}")
       li
@@ -15,7 +18,7 @@ include _menu
         span.time @ {{ article.date | date:'HH:mm:ss' }}
         if user.admin
           a.edit(href="/news/{{ article.id }}/edit")
-            i.fa.fa-edit
+            i.fa.fa-fw.fa-edit
             | Edit
             //- {{ article.id }}
         p(ng-bind-html="article.markup")
