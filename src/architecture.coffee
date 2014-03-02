@@ -22,6 +22,7 @@ module.exports = [
   "./modules/api/api-serve",
   "./modules/api/api-creator",
 
+  "./modules/api/api-news",
   "./modules/api/api-ads",
   "./modules/api/api-campaigns",
   "./modules/api/api-publishers",

@@ -1,0 +1,24 @@
+include _menu
+
+if user.admin
+  .contents.w920.center
+    .grid-options
+      a.new-item(href="/news/new")
+        i.fa.fa-fw.fa-plus
+        | New News
+      br
+
+.contents.w920.center
+  ul.news
+    .item(ng-repeat="article in news" ng-href="/news/{{article.id}}")
+      li
+        a(href="/news/{{ article.id }}")
+          span.title {{ article.title }}
+        span.date {{ article.date | date:'MMMM dd, yyyy' }}
+        //- span.time @ {{ article.date | date:'HH:mm:ss' }}
+        if user.admin
+          a.edit(href="/news/{{ article.id }}/edit")
+            i.fa.fa-fw.fa-edit
+            | Edit
+            //- {{ article.id }}
+        p(ng-bind-html="article.markup")

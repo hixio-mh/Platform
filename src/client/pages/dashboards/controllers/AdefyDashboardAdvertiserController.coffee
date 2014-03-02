@@ -1,4 +1,13 @@
-angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($scope, $http, $filter, ngTableParams, Campaign) ->
+angular.module("AdefyApp").controller "AdefyDashboardAdvertiserController", ($scope, $http, $filter, ngTableParams, News, $sce, Campaign) ->
+
+  ##
+  ## Fetch latest news
+  ##
+  News.query (articles) ->
+    for article in articles
+      article.markup = $sce.trustAsHtml $filter("markdown")(article.text)
+
+    $scope.articles = articles
 
   $scope.impressions24h = 0
   $scope.clicks24h = 0

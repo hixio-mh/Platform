@@ -54,6 +54,9 @@ responses400 = [
   "Not quite what we where expecting"
 ]
 
+responses400save = responses400
+responses400validate = responses400
+
 responses401 = [
   "Check your privilege"
   "Go back and get your VIP card"
@@ -92,6 +95,11 @@ responses404 = [
 
 responses404ad = responses404
 
+responses409 = [
+  "Looks like you already have something",
+  "No you can't, because the system would explode"
+]
+
 responses500 = [
   "ERMAGAWD ERROR!!!"
   "He's dead Jim!"
@@ -115,9 +123,6 @@ responses500db = [
   "The database has exploded! Don't worry, your data is safe. (probably)"
   "The database has exploded! NOOOOOOOOOOOooooooooooo....."
 ]
-
-responses500save = responses500
-responses500ad_save = responses500
 
 responses500unexpected = [
   "Wow, some mojo went down"
@@ -145,7 +150,8 @@ module.exports =
   ###
   make: (exp, opt) ->
     # 3 ways to declare the same thing
-    usrmsg = opt && (opt["error"] || opt["message"] || opt["msg"])
+    errmsg = opt && (opt["error"])
+    usrmsg = opt && (opt["message"] || opt["msg"])
     msg = ""
     resp = ""
 
@@ -189,9 +195,13 @@ module.exports =
         msg = "Malformed request"
         code = 400
       when "400:validate"
-        resp = @sample responses500ad_save
+        resp = @sample responses400validate
         msg = "Validation has failed"
-        code = 500
+        code = 400
+      when "400:save"
+        resp = @sample responses400save
+        msg = "An error occurred while saving the resource"
+        code = 400
       when "401"
         resp = @sample responses401
         msg = "Unauthorized access!"
@@ -216,6 +226,10 @@ module.exports =
         resp = @sample responses404ad
         msg = "Ad could not be found"
         code = 404
+      when "409"
+        resp = @sample(responses409)
+        msg = "Conflict!"
+        code = 409
       when "500"
         resp = @sample responses500
         msg = "An internal error occurred"
@@ -242,9 +256,9 @@ module.exports =
         msg = "An unexpected internal error occurred"
         code = 500
 
-    is_error = code >= 400
+    is_error = (not not errmsg) || code >= 400
 
-    msg = usrmsg if usrmsg != undefined
+    msg = errmsg || usrmsg || msg
 
     obj = {}
     obj.status = code

@@ -136,6 +136,9 @@ module.exports = (user, admin) ->
       req = util.userRequest "/api/v1/ads?#{userApiKey}"
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
+
+        expect(res).property("body").to.exist
+
         validateAdFormat ad for ad in res.body
 
         found = [false, false, false]

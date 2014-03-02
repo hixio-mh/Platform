@@ -56,13 +56,12 @@
       td(data-title="'Earnings'" sortable="'stats.earnings'")
         {{ app.stats.earnings | currency:$ }}
 
-  div
+  div(ng-if="articles.length > 0")
     .section News
     ul.news
-      li
-        span.title We are live!
-        span.date January 31th, 2014
-        p
-          | Adefy is now live and ready to serve you. Look around, get familiar with the platform and our
-          a(href="https://developer.adefy.com" target="_blank") Developer Center.
-          | If you need any assistance we will gladly help!
+      li(ng-repeat="article in articles | orderBy:'date':true")
+        a(href="/news/{{ article.id }}")
+          span.title {{ article.title }}
+        span.date {{ article.date | date:'MMMM dd, yyyy' }}
+        //- span.time @ {{ article.date | date:'HH:mm:ss' }}
+        p(ng-bind-html="article.markup")

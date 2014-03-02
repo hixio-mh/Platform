@@ -24,7 +24,7 @@ setup = (options, imports, register) ->
 
     newAd.validate (err) ->
       if err
-        spew.error "Error saving new ad [#{err}]"
+        spew.error "Error validating new ad [#{err}]"
         aem.send res, "400:validate", error: err
       else
         newAd.save()

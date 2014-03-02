@@ -37,13 +37,13 @@ angular.module("AdefyApp").controller "AdefyAdminIndexController", ($scope, $htt
     graphs: [{ name: "Ads", stat: "Ad", y: "counts" }]
 
   $scope.setUserCount = (data) ->
-    $scope.userCount = data.dynamic[0].length
+    $scope.userCount = (data && data.dynamic[0].length) || 0
   $scope.setPublisherCount = (data) ->
-    $scope.pubCount = data.dynamic[0].length
+    $scope.pubCount = (data && data.dynamic[0].length) || 0
   $scope.setCampaignCount = (data) ->
-    $scope.campaignCount = data.dynamic[0].length
+    $scope.campaignCount = (data && data.dynamic[0].length) || 0
   $scope.setAdCount = (data) ->
-    $scope.adCount = data.dynamic[0].length
+    $scope.adCount = (data && data.dynamic[0].length) || 0
 
   apiPrefix = "/api/v1/analytics/totals"
 

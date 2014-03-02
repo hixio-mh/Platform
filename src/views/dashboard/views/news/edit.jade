@@ -1,0 +1,25 @@
+include _menu
+
+.inner: form(novalidate ng-class="{ submitted: submitted }")
+  dl.form.center
+    dt
+      label Title
+    dd: input(required ng-model="article.title" type="text")
+
+    dt
+      label Summary
+      span Displayed on the User dashboard, instead of the entire news Text
+    dd: input(ng-model="article.summary" type="text" placeholder="Optional summary")
+
+    dt
+      label Text
+      span The body of this News Article
+    dd: textarea(required ng-model="article.text" style="width: 100%; height: 240px")
+
+  fieldset: dl.form.center
+    dl.form.center
+    dt: span You will now complete editing the news Article.
+    dd
+      button.blue.save(ng-click="submit()") Save
+      button.green.cancel(ng-click="cancel()") Cancel
+      button.red.delete(ng-click="destroy()") Delete
