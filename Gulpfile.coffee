@@ -44,6 +44,7 @@ paths =
     "src/static/components/angular-ui-select2/src/select2.js"
     "src/static/components/angular-chosen-localytics/chosen.js"
     "src/static/components/ng-table/ng-table.js"
+    "src/static/components/angular-markdown-filter/markdown.js"
 
     "src/static/components/angles/angles.js"
 
