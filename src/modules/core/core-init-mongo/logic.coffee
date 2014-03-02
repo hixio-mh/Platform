@@ -13,10 +13,11 @@ initializers =
   "Publisher": require "./collections/publishers"
   "Ad": require "./collections/ads"
   "Campaign": require "./collections/campaigns"
+  "News": require "./collections/news"
 
 setup = (options, imports, register) ->
 
-  models = ["User", "Publisher", "Ad", "Campaign"]
+  models = ["User", "Publisher", "Ad", "Campaign", "News"]
 
   # Initialize each collection and register once they finish
   async.each models, (model, cb) ->
