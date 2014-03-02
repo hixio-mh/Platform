@@ -41,10 +41,10 @@
       td(data-title="'Spent'" sortable="'stats.spent'")
         {{ campaign.stats.spent | currency:$ }}
 
-  div
+  div(ng-if="articles.length > 0")
     .section News
     ul.news
-      li
+      li(ng-repeat="article in articles | orderBy:'date':true")
         a(href="/news/{{ article.id }}")
           span.title {{ article.title }}
         span.date {{ article.date | date:'MMMM dd, yyyy' }}
