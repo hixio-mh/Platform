@@ -83,7 +83,7 @@ setup = (options, imports, register) ->
       pub.save (err) ->
         if err
           spew.error err
-          aem.send res, "500:save"
+          aem.send res, "400:save"
         else
           res.json 200, pub.toAnonAPI()
 

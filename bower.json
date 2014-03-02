@@ -38,7 +38,9 @@
     "angular-chosen-localytics": "~1.0.4",
     "mocha": "~1.17.1",
     "chai": "~1.9.0",
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "showdown": "~0.3.1",
+    "angular-markdown-filter": "*"
   },
   "resolutions": {
     "chosen": "e-tag:face03d32",

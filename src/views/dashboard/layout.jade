@@ -59,7 +59,8 @@ html(lang="en" ng-app="AdefyApp")
 
   body(ng-controller="AdefyRootController" ng-class="{withNotification: notification}").tk-proxima-nova
     header.navbar.cf
-      #logo Adefy
+      a(href="/")
+        #logo Adefy
       .menu.left.full
         a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
           i.fa.fa-fw.fa-home
@@ -119,11 +120,13 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/components/jquery/dist/jquery.min.js")
         script(src="/components/ace-builds/src-min/ace.js")
         //- Modified libs
+
         script(src="/js/vendor/stackBlur.min.js")
         script(src="/js/vendor/guiders.js")
 
         script(src="/components/accounting/accounting.min.js")
         script(src="/components/select2/select2.min.js")
+        script(src="/components/showdown/src/showdown.js")
 
         script(src="/components/chosen/chosen.jquery.min.js")
 
@@ -133,6 +136,7 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/components/angular-ui-select2/src/select2.js")
         script(src="/components/angular-chosen-localytics/chosen.js")
         script(src="/components/ng-table/ng-table.js")
+        script(src="/components/angular-markdown-filter/markdown.js")
 
         script(src="/components/angles/angles.js")
 
@@ -182,10 +186,12 @@ html(lang="en" ng-app="AdefyApp")
         //-- Services
         //--
 
-        script(src="/js/services/CampaignService.js")
-        script(src="/js/services/AppService.js")
         script(src="/js/services/AdService.js")
+        script(src="/js/services/AppService.js")
+        script(src="/js/services/CampaignService.js")
+        script(src="/js/services/NewsService.js")
         script(src="/js/services/UserService.js")
+        script(src="/js/services/NewsService.js")
 
         //--
         //-- Pages (controllers, factories, directives, and services)
@@ -222,6 +228,14 @@ html(lang="en" ng-app="AdefyApp")
         //- Dashboards
         script(src="/js/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js")
         script(src="/js/pages/dashboards/controllers/AdefyDashboardPublisherController.js")
+
+        //- News
+        script(src="/js/pages/news/controllers/AdefyNewsCreateController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsDetailController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsEditController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsIndexController.js")
+        script(src="/js/pages/news/controllers/AdefyNewsMenuController.js")
+        script(src="/js/pages/news/factories/AdefyNewsFactory.js")
 
         //- Reports
         script(src="/js/pages/reports/controllers/AdefyReportsAdsController.js")

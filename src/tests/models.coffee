@@ -34,5 +34,6 @@ before (done) ->
 require "./models/ad"
 require "./models/campaign"
 require "./models/export"
+require "./models/news"
 require "./models/publisher"
 require "./models/user"

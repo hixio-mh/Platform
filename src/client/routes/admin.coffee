@@ -19,3 +19,6 @@ angular.module("AdefyApp").config ($routeProvider) ->
   $routeProvider.when "/admin/rtbsim",
     controller: "AdefyAdminRTBSimController"
     templateUrl: "/views/dashboard/admin:rtbsim"
+
+  $routeProvider.when "/admin",
+    redirectTo: "/admin/home"

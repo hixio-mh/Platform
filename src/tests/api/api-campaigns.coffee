@@ -99,6 +99,8 @@ module.exports = (user, admin) ->
 
       it "Should return a list of Campaigns", (done) ->
 
+        @timeout 15000
+
         req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
@@ -165,6 +167,8 @@ module.exports = (user, admin) ->
         util.expect404User "/api/v1/campaigns/stats/#{testInvalidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", done, "get"
 
       it "Should retrieve existing Campaign stats", (done) ->
+
+        @timeout 15000
 
         req = util.userRequest "/api/v1/campaigns/stats/#{testValidCampaignId}/earnings/from=-24h&until=-12h?#{userApiKey}", "get"
         req.expect(200).end (err, res) ->

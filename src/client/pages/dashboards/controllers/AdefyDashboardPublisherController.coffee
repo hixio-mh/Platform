@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $filter, ngTableParams, App, UserService) ->
+angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($scope, $http, $sce, $filter, ngTableParams, App, News, UserService) ->
 
   window.showTutorial = -> guiders.show "dashboardGuider1"
 
@@ -8,6 +8,16 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
     UserService.getUser (user) ->
       if user.tutorials.dashboard then window.showTutorial()
 
+  ##
+  ## Fetch latest news
+  ##
+  News.query (articles) ->
+    for article in articles
+      article.markup = $sce.trustAsHtml $filter("markdown")(article.text)
+
+    $scope.articles = articles
+
+  ##
   ##
   ## Fetch app table data
   ##
