@@ -10,14 +10,12 @@ angular.module("AdefyApp").controller "AdefyDashboardPublisherController", ($sco
 
   ##
   ## Fetch latest news
-  news = null
-  News.query (n) ->
-    article = n[n.length-1]
-    if article
-      article.markup = $sce.trustAsHtml($filter("markdown")(article.text))
-      $scope.article = article
-    else
-      $scope.article = title: "<No News>", time: 0, date: 0, text: ""
+  ##
+  News.query (articles) ->
+    for article in articles
+      article.markup = $sce.trustAsHtml $filter("markdown")(article.text)
+
+    $scope.articles = articles
 
   ##
   ##
