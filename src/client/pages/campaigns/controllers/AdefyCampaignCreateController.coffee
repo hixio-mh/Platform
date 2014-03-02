@@ -4,7 +4,7 @@ angular.module("AdefyApp").controller "AdefyCampaignCreateController", ($scope, 
   $scope.bidSysOptions = ["Automatic", "Manual"]
 
   $scope.categories = []
-  $scope.min = budget: 10
+  $scope.minDailyBudget = 10
   $scope.campaign =
     pricing: "CPM"
     bidSystem: "Automatic"
