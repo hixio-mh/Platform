@@ -4,7 +4,7 @@ include _menu
   .news
     span.title {{ article.title }}
     span.date {{ article.date | date:'MMMM dd, yyyy' }}
-    span.time @ {{ article.date | date:'HH:mm:ss' }}
+    //- span.time @ {{ article.date | date:'HH:mm:ss' }}
     if user.admin
       a.edit(href="/news/{{ article.id }}/edit")
         i.fa.fa-fw.fa-edit
