@@ -16,8 +16,7 @@ describe("AdefyAdDetailController", function() {
 
       $controller("AdefyAdDetailController", {
         $scope: scope,
-        AdService: AdServiceMock,
-        $routeParams: RouteParams
+        AdService: AdServiceMock
       });
     });
 
