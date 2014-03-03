@@ -1,10 +1,10 @@
 doctype html
-html(lang="en" ng-app="AdefyLogin")
+html(lang="en" ng-app="AdefyReset")
   head
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
 
-    title Login
+    title Reset password
 
     meta(name="description" content="")
     meta(name="author" content="Spectrum IT")
@@ -19,15 +19,15 @@ html(lang="en" ng-app="AdefyLogin")
     link(rel="stylesheet" href="/css/styles.min.css")
     link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Oleo+Script|Source+Sans+Pro:300,400")
 
-  body.account-page(ng-controller="AdefyLoginController")
+  body.account-page(ng-controller="AdefyResetController")
     .main
       header.absolute
         #logo Adefy
 
     .container
-      #subtitle.block.tcenter Login
-      #teaser.block.tcenter(ng-bind="teaser")
-      #description.block.tcenter Enter your credentials to continue
+      #subtitle.block.tcenter Change password
+      #teaser.block.tcenter Almost there!
+      #description.block.tcenter Enter your new password
 
     .container.small
       form
@@ -40,22 +40,22 @@ html(lang="en" ng-app="AdefyLogin")
 
         br
 
-        label Username
-        input(type="text" placeholder="Username" ng-model="username")
-
         label Password
-        input(type="password" placeholder="Password" ng-model="password" ng-keypress="enterSubmit($event)")
+        input(required type="password" placeholder="Password" ng-model="password" ng-keypress="enterSubmit($event)")
+
+        label Password Confirmation
+        input(required type="password" placeholder="Confirm password" ng-model="password_confirmation" ng-keypress="enterSubmit($event)")
 
     .container.small
-      button#main-button(type="button" ng-click="login()")
+      button#main-button(type="button" ng-click="reset()")
         div#main-icon
-        | Login
+        | Change password
+
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
 
     #bottom-action
-      a(href="/forgot") Forgot Password?
       a(href="/register") Need to Register?
 
     footer
       script(src="/components/angular/angular.min.js")
-      script(src="/js/login/login.js")
+      script(src="/js/login/reset.js")

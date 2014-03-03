@@ -876,10 +876,6 @@ fieldset
       margin: 4px 0 -32px 4px
       word-wrap break-word
       text-align left
-    .error
-      color #e03535
-    .info
-      color #919191
   input
     width 100%
 
@@ -1245,6 +1241,9 @@ graph
 .error
   color #e03535
 
+.info
+  color #919191
+
 .account-page
   padding 96px 0 192px 0
   font-weight 300
@@ -1385,10 +1384,11 @@ graph
     font-size 48px
     color #444
 
-  .error
+  .error, .info
     margin-top 16px
     font-size 24px
-    float left
+    width 100%
+    display inline-block
 
   #bottom-action
    position relative
@@ -1400,7 +1400,8 @@ graph
 
    > *
     color #444
-    font-size 32px
+    font-size 28px
+    display block
 
 .reports-header
   margin-left 0

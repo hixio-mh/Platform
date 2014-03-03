@@ -1,5 +1,6 @@
 mongoose = require "mongoose"
 bcrypt = require "bcrypt"
+crypto = require "crypto"
 spew = require "spew"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
@@ -9,6 +10,9 @@ schema = new mongoose.Schema
   email: String
   password: String
   apikey: String
+
+  forgotPasswordToken: String
+  forgotPasswordTimestamp: Date
 
   fname: { type: String, default: "" }
   lname: { type: String, default: "" }
@@ -180,6 +184,16 @@ schema.methods.updateFunds = (cb) ->
       if needsFundsRecreation then @createRedisStruture()
       if cb then cb()
 
+schema.methods.generateResetToken = (cb) ->
+  crypto.randomBytes 24, (ex, buf) =>
+    @forgotPasswordToken = buf.toString "hex"
+    @forgotPasswordTimestamp = Date.now()
+
+    if cb then cb()
+
+schema.methods.resetTokenValid = ->
+  Date.now() - @forgotPasswordTimestamp <= 1000 * 60 * 30
+
 ##
 ## API Key handling
 ##
@@ -187,11 +201,8 @@ schema.methods.updateFunds = (cb) ->
 schema.methods.createAPIKey = ->
   if @hasAPIKey() then return
 
-  @apikey = ""
-  map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-  for i in [0...24]
-    @apikey += map.charAt Math.floor(Math.random() * map.length)
+  crypto.randomBytes 24, (ex, buf) ->
+    @apikey = buf.toString('hex')
 
 schema.methods.hasAPIKey = ->
   if @apikey and @apikey.length == 24

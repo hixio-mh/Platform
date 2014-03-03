@@ -7,6 +7,7 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config"
 adefyDomain = "http://#{config("domain")}"
 
+powerdrill = require("powerdrill")(config('mandrill_apikey'))
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
@@ -46,6 +47,20 @@ setup = (options, imports, register) ->
       res.redirect "/home/publisher"
     else
       res.render "account/register.jade"
+
+  # Forgot password
+  app.get "/forgot", (req, res) ->
+    if req.user != undefined and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/forgot.jade"
+
+  # Reset password
+  app.get "/reset", (req, res) ->
+    if req.user != undefined and req.user.id != undefined
+      res.redirect "/home/publisher"
+    else
+      res.render "account/reset.jade"
 
   # Logout
   app.get "/logout", (req, res) ->
@@ -88,6 +103,66 @@ setup = (options, imports, register) ->
             else
               aem.send res, "200", msg: "Registered successfully"
 
+  # Forgot password
+  app.post "/api/v1/forgot", (req, res) ->
+    if not utility.param req.param("email"), res, "Email" then return
+
+    db.model("User").findOne email: req.param("email"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      if user
+
+        if user.resetTokenValid()
+          return aem.send res, "400", msg: "Email already sent! Try again in 30 minutes"
+
+        user.generateResetToken ->
+          user.save ->
+
+            # Send password reset email to user
+            message = powerdrill "reset-password"
+            message.subject "Reset your Adefy password"
+            .autoText()
+            .to user.email,
+              username: user.username
+              token: user.forgotPasswordToken
+            ,
+              user_id: user._id
+            .from "no-reply@adefy.com"
+            .send (err, mandrillRes) ->
+              if err then spew.error err
+              spew.info JSON.stringify mandrillRes
+
+              aem.send res, "200", msg: "Email sent!"
+      else
+        aem.send res, "401", error: "Email invalid"
+
+  # Change password
+  app.post "/api/v1/reset", (req, res) ->
+    if not utility.param req.param("token"), res, "Token" then return
+    if not utility.param req.param("password"), res, "Password" then return
+
+    if "#{req.param("password")}".trim().length == 0
+      return aem.send res, "400", error: "No password provided"
+
+    db.model("User").findOne forgotPasswordToken: req.param("token"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      if user
+        if not user.resetTokenValid()
+          return aem.send res, "400", msg: "Token expired"
+
+        user.password = req.param("password")
+
+        # Generate new token
+        user.generateResetToken ->
+          user.save (err) ->
+            if err
+              aem.send res, "500", msg: "Error saving password"
+            else
+              aem.send res, "200", msg: "Password changed successfully"
+      else
+        aem.send res, "401", error: "Token invalid or expired"
+
   # Delete user
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
@@ -96,8 +171,8 @@ setup = (options, imports, register) ->
     db.model("User").findById req.param("id"), (err, user) ->
       if utility.dbError err, res, false then return
 
-      if req.user.session == user.session
-        return aem.send res, "409", error: "You can't delete yourself!"
+      if "#{req.user.id}" == "#{user._id}"
+        return aem.send res, "500", error: "You can't delete yourself!"
 
       user.remove()
       aem.send res, "200", msg: "User removed successfully"
