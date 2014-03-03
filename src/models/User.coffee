@@ -191,6 +191,9 @@ schema.methods.generateResetToken = (cb) ->
 
     if cb then cb()
 
+schema.methods.resetTokenValid = ->
+  Date.now() - @forgotPasswordTimestamp <= 1000 * 60 * 30
+
 ##
 ## API Key handling
 ##

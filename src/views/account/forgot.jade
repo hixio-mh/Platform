@@ -4,7 +4,7 @@ html(lang="en" ng-app="AdefyForgot")
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
 
-    title Login
+    title Forgot password
 
     meta(name="description" content="")
     meta(name="author" content="Spectrum IT")
@@ -41,17 +41,19 @@ html(lang="en" ng-app="AdefyForgot")
         br
 
         label Email
-        input(type="email" placeholder="Email" ng-model="email" ng-keypress="enterSubmit($event)")
+        input(type="email" placeholder="Email" ng-model="email" ng-keypress="enterSubmit($event)" ng-disabled="emailSent")
 
     .container.small
-      button#main-button(type="button" ng-click="forgot()")
+      button#main-button(type="button" ng-click="forgot()" ng-if="!emailSent")
         div#main-icon
         | Send email
+
       div(ng-if="error != null" ng-class="{ error: error != null }" ng-bind="error")
+      div.tcenter(ng-if="emailSent" ng-class="{ info: emailSent }") Email sent!
 
     #bottom-action
       a(href="/register") Need to Register?
 
     footer
-      script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js")
+      script(src="/components/angular/angular.min.js")
       script(src="/js/login/forgot.js")
