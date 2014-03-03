@@ -1,7 +1,6 @@
 angular.module("AdefyApp").controller "AdefyNewsCreateController", ($scope, $http, $location, News) ->
 
   $scope.article = {}
-
   $scope.submit = ->
     article = new News $scope.article
     article.$save().then(
@@ -12,6 +11,4 @@ angular.module("AdefyApp").controller "AdefyNewsCreateController", ($scope, $htt
         $scope.setNotification "An error occurred while creating the Article", "error"
     )
 
-  $scope.cancel = ->
-
-    $location.path "/news"
+  $scope.cancel = -> $location.path "/news"

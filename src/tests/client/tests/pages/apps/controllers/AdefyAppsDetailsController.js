@@ -16,8 +16,7 @@ describe("AdefyAppsDetailsController", function() {
 
       $controller("AdefyAppsDetailsController", {
         $scope: scope,
-        AppService: AppServiceMock,
-        $routeParams: RouteParams
+        AppService: AppServiceMock
       });
     });
 
