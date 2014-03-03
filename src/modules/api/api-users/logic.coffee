@@ -111,6 +111,10 @@ setup = (options, imports, register) ->
       if utility.dbError err, res, false then return
 
       if user
+
+        if user.resetTokenValid()
+          return aem.send res, "400", msg: "Email already sent! Try again in 30 minutes"
+
         user.generateResetToken ->
           user.save ->
 
@@ -134,16 +138,28 @@ setup = (options, imports, register) ->
 
   # Change password
   app.post "/api/v1/reset", (req, res) ->
-    if not utility.param req.param("token"), res, "Email" then return
+    if not utility.param req.param("token"), res, "Token" then return
+    if not utility.param req.param("password"), res, "Password" then return
+
+    if "#{req.param("password")}".trim().length == 0
+      return aem.send res, "400", error: "No password provided"
 
     db.model("User").findOne forgotPasswordToken: req.param("token"), (err, user) ->
       if utility.dbError err, res, false then return
 
-      if user # and token from the last 24 hours
+      if user
+        if not user.resetTokenValid()
+          return aem.send res, "400", msg: "Token expired"
+
         user.password = req.param("password")
-        user.save ->
-          aem.send res, "200", msg: "Password changed successfully"
-          # redirect somewhere or render a success page?
+
+        # Generate new token
+        user.generateResetToken ->
+          user.save (err) ->
+            if err
+              aem.send res, "500", msg: "Error saving password"
+            else
+              aem.send res, "200", msg: "Password changed successfully"
       else
         aem.send res, "401", error: "Token invalid or expired"
 
