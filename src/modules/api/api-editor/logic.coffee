@@ -16,6 +16,15 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
   staticDir = "#{__dirname}/../../../static"
 
+  ###
+  # GET /api/v1/editor/:ad
+  #   Returns the editor page for :ad
+  # @param [ID] ad
+  # @response [HTML] editor
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/editor/7AboeHJAcrKNeeQFUYvInYVB"
+  ###
   app.get "/api/v1/editor/:ad", isLoggedInAPI, (req, res) ->
     if not utility.param req.params.ad, res, "Ad" then return
 
@@ -26,7 +35,16 @@ setup = (options, imports, register) ->
       else
         res.send html
 
-  # Exports
+  ###
+  # GET /api/v1/editor/exports/:folder/:file
+  #   ???
+  # @param [String] folder
+  # @param [String] file
+  # @response [HTML] ???
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/editor/exports/textures/cookies.png"
+  ###
   app.get "/api/v1/editor/exports/:folder/:file", (req, res) ->
 
     # TODO: Validation?
@@ -56,6 +74,17 @@ setup = (options, imports, register) ->
         res.send fs.readFileSync path
       else res.send fs.rea
 
+  ###
+  # GET /api/v1/editor
+  #   ???
+  # @qparam [ID] id
+  # @response [Object] ad_data
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/editor"
+  #          data:
+  #            id: "2rWLv0Txs3g3LUX1ZrQ4HNwa"
+  ###
   app.get "/api/v1/editor", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
 
@@ -68,6 +97,19 @@ setup = (options, imports, register) ->
 
       res.json ad: ad.data
 
+  ###
+  # POST /api/v1/editor
+  #   ???
+  # @qparam [ID] id
+  # @qparam [JSONString] data
+  # @response [Object] ad
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/editor"
+  #          data:
+  #            id: "slZTN6DLd1UbjbvkFwKwfWJL"
+  #            data: "{\"minblur\":16}"
+  ###
   app.post "/api/v1/editor", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return
@@ -87,6 +129,19 @@ setup = (options, imports, register) ->
           ad.save()
           res.json 200, ad.toAnonAPI()
 
+  ###
+  # POST /api/v1/editor/export
+  #   ???
+  # @qparam [ID] id
+  # @qparam [JSONString] data
+  # @response [Object] link_data
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/editor/export"
+  #          data:
+  #            id: "YATqPkB7fT5tvosqjqhSqWmk"
+  #            data: "{\"minblur\":16}"
+  ###
   app.post "/api/v1/editor/export", isLoggedInAPI, (req, res) ->
     if not utility.param req.query.id, res, "Id" then return
     if not utility.param req.query.data, res, "Data" then return

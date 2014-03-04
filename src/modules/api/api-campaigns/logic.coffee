@@ -12,7 +12,27 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
   engineFilters = require "#{__dirname}/../../../helpers/filters"
 
-  # Create new campaign
+  ###
+  # POST /api/v1/campaigns
+  #   Create a Campaign
+  # @qparam [String] name
+  # @qparam [String] catergory
+  # @qparam [String] pricing
+  # @qparam [String] dailyBudget
+  # @qparam [String] bidSystem
+  # @qparam [String] bid
+  # @response [Object] Campaign returns a new Campaign object
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/campaigns",
+  #          data:
+  #            name: "MyCampaign"
+  #            catergory: "games"
+  #            pricing: ""
+  #            dailyBudget: ""
+  #            bidSystem: ""
+  #            bid: ""
+  ###
   app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Campaign name" then return
     if not utility.param req.param("category"), res, "Category" then return
@@ -55,7 +75,15 @@ setup = (options, imports, register) ->
         newCampaign.save()
         res.json newCampaign.toAnonAPI()
 
-  # Fetch owned camaigns
+  ###
+  # GET /api/v1/campaigns
+  #   Returns a list of owned campaigns
+  # @param [ID] id
+  # @response [Array<Object>] Campaigns campaign list
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/campaigns",
+  ###
   app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .find owner: req.user.id
@@ -74,7 +102,15 @@ setup = (options, imports, register) ->
           ret.push self
           done()
 
-  # Finds a single Campaign by ID
+  ###
+  # GET /api/v1/campaigns/:id
+  #   Returns a Campaign by :id
+  # @param [ID] id
+  # @response [Object] Campaign
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/campaigns/gt8hfuquiNfzdJac3YYeWmgE"
+  ###
   app.get "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById req.param "id"
@@ -89,8 +125,18 @@ setup = (options, imports, register) ->
 
       campaign.populateSelfAllStats (self) -> res.json self
 
-  # Saves the campaign, and creates campaign references where needed. User must
-  # either be admin or own the campaign in question!
+  ###
+  # POST /api/v1/campaigns/:id
+  #   Saves the campaign, and creates campaign references where needed. User must
+  #   either be admin or own the campaign in question!
+  # @param [ID] id
+  # @response [Object] Campaign
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/campaigns/GwOqeuETAht3r47K2MX1omRx",
+  #          data:
+  #            --campaign-update-data--
+  ###
   app.post "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
@@ -302,8 +348,17 @@ setup = (options, imports, register) ->
 
           res.json campaign.toAnonAPI()
 
-  # Delete the campaign identified by req.param("id")
-  # If we are not the administrator, we must own the campaign!
+  ###
+  # DELETE /api/v1/campaigns/:id
+  #   Delete the campaign identified by req.param("id")
+  #   If we are not the administrator, we must own the campaign!
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/campaigns/olzXtI1Giw25zZ9hDlvBgFIK",
+  #          data:
+  #            --campaign-update-data--
+  ###
   app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
 
@@ -318,7 +373,16 @@ setup = (options, imports, register) ->
       campaign.remove()
       aem.send res, "200:delete"
 
-  # Fetch campaign stats over a specific period of time
+  ###
+  # GET /api/v1/campaigns/:id/:stat/:range
+  #   Retrieves custom :stat from the Campaign based on :range by :id
+  # @param [ID] id
+  # @param [String] stat
+  # @param [Range] range
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/campaigns/xGIX51EP6ABK12Kg4XDT5f1J/clicks/from=-24h&to=-1h"
+  ###
   app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Campaign id" then return
     if not utility.param req.param("range"), res, "Temporal range" then return
@@ -334,7 +398,14 @@ setup = (options, imports, register) ->
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
         res.json data
 
-  # Activates the campaign
+  ###
+  # POST /api/v1/campaigns/activate
+  #   Activates a Campaign
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/campaigns/U1FyJtQHy8S5nfZvmfyjDPt3/activate"
+  ###
   app.post "/api/v1/campaigns/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param("id"))
@@ -350,7 +421,14 @@ setup = (options, imports, register) ->
       if not campaign.active then campaign.activate -> campaign.save()
       res.json 200, campaign.toAnonAPI
 
-  # De-activates the campaign
+  ###
+  # POST /api/v1/campaigns/deactivate
+  #   De-activates a Campaign
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/campaigns/WThH9UVp1V41Tw7qwOuR8PVm/deactivate"
+  ###
   app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param("id"))

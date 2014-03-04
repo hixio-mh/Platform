@@ -12,7 +12,17 @@ setup = (options, imports, register) ->
   app = imports["core-express"].server
   utility = imports["logic-utility"]
 
-  # Create an ad, expects "name" in url and req.cookies.user to be valid
+  ###
+  # POST /api/v1/ads
+  #   Create an ad, expects "name" in url and req.cookies.user to be valid
+  # @qparam [String] name
+  # @response [Object] Ad returns a new Ad object
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads",
+  #          data:
+  #            name: "AwesomeAd"
+  ###
   app.post "/api/v1/ads", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Ad name" then return
 
@@ -30,7 +40,18 @@ setup = (options, imports, register) ->
         newAd.save()
         res.json 200, newAd.toAnonAPI()
 
-  # Save ad edits
+  ###
+  # POST /api/v1/ads/:id
+  #   Updates an existing Ad by :id
+  # @param [ID] id
+  # @qparam [String] name
+  # @response [Object] Ad returns an updated Ad object
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads/DbVXoSZygP7RtxDjqVupTdI8",
+  #          data:
+  #            name: "AwesomeAdMkII"
+  ###
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById req.param("id")
@@ -96,8 +117,14 @@ setup = (options, imports, register) ->
             adData.stats = stats
             res.json 200, adData
 
-
-  # Delete an ad, expects "id" in url and req.cookies.user to be valid
+  ###
+  # POST /api/v1/ads/:id
+  #   Deletes an existing Ad by :id
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/ads/fCf3hGpvM3rVIoDNi09bvMYo"
+  ###
   app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById(req.param("id"))
@@ -116,7 +143,14 @@ setup = (options, imports, register) ->
         ad.remove()
         aem.send res, "200:delete"
 
-  # Fetches owned ads
+  ###
+  # GET /api/v1/ads
+  #   Returns a list of all owned Ads
+  # @response [Array<Object>] Ads a list of Ads
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/ads"
+  ###
   app.get "/api/v1/ads", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .find owner: req.user.id
@@ -176,7 +210,15 @@ setup = (options, imports, register) ->
 
         fetchStatsforAd ad for ad in ads
 
-  # Fetches all ads. Admin privileges required
+  ###
+  # GET /api/v1/ads/all
+  #   Returns a every available Ad
+  # @admin
+  # @response [Array<Object>] Ads a list of Ads
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/ads/all"
+  ###
   app.get "/api/v1/ads/all", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "401"
 
@@ -205,7 +247,15 @@ setup = (options, imports, register) ->
       for ad in ads
         fetchAd ad, res
 
-  # Finds a single ad by ID
+  ###
+  # GET /api/v1/ads/:id
+  #   Returns an existing Ad by :id
+  # @param [ID] id
+  # @response [Object] Ad
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/ads/l46Wyehf72ovf1tkDa5Y3ddA"
+  ###
   app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById req.param "id"
@@ -222,10 +272,16 @@ setup = (options, imports, register) ->
         advertisement.stats = stats
         res.json 200, advertisement
 
-  # Updates ad status if applicable
-  #
-  # If we are not an administator, an admin approval is requested. Otherwise,
-  # the ad is approved directly.
+  ###
+  # POST /api/v1/ads/:id/approve
+  #   If an Admin posts this request, the target Ad will be approved
+  #   If a regular user posts this request, the target Ad will be pushed for
+  #   approval
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads/WaeE4dObsK7ObS2ifntxqrGh/approve"
+  ###
   app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
       if utility.dbError err, res, false then return
@@ -248,7 +304,15 @@ setup = (options, imports, register) ->
       ad.save()
       res.json dat.status, dat
 
-  # Disapproves the ad
+  ###
+  # POST /api/v1/ads/:id/disaprove
+  #   Dissaproves an existing Ad
+  # @admin
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads/V8graeQTXklkx6AzODYDsDQR/disaprove"
+  ###
   app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403:ad"
 

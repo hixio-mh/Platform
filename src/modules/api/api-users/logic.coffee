@@ -12,7 +12,7 @@ passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-paypalCredentials = 
+paypalCredentials =
 
 if config("paypal_client_id") == undefined or config("paypal_client_secret") == undefined
   throw new Error "Paypal credentials missing on config!"
@@ -67,12 +67,29 @@ setup = (options, imports, register) ->
     req.logout()
     res.redirect "/login"
 
-  # Login
+  ###
+  # POST /api/v1/login
+  #   Logs in
+  # @qparam [String] username
+  # @qparam [String] password
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/login?username=Dragme&password=awesomesauce"
+  ###
   app.post "/api/v1/login", passport.authenticate("local", failureFlash: true)
   , (req, res) ->
     aem.send res, "200:login"
 
-  # Register
+  ###
+  # POST /api/v1/register
+  #   Registers a new User
+  # @qparam [String] email
+  # @qparam [String] username
+  # @qparam [String] password
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/register?username=Dragme&password=awesomesauce&email=cookies@cream.com"
+  ###
   app.post "/api/v1/register", (req, res) ->
     if not utility.param req.param("username"), res, "Username" then return
     if not utility.param req.param("email"), res, "Email" then return
@@ -103,7 +120,14 @@ setup = (options, imports, register) ->
             else
               aem.send res, "200", msg: "Registered successfully"
 
-  # Forgot password
+  ###
+  # POST /api/v1/forgot
+  #   Sends a password reset email
+  # @qparam [String] email
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/forgot?email=cookies@cream.com"
+  ###
   app.post "/api/v1/forgot", (req, res) ->
     if not utility.param req.param("email"), res, "Email" then return
 
@@ -136,7 +160,15 @@ setup = (options, imports, register) ->
       else
         aem.send res, "401", error: "Email invalid"
 
-  # Change password
+  ###
+  # POST /api/v1/reset
+  #   Resets a user account password
+  # @qparam [String] token
+  # @qparam [String] password
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/reset?token=fmGMpRPXdoekAdVPAwJZJBnC&password=mypass"
+  ###
   app.post "/api/v1/reset", (req, res) ->
     if not utility.param req.param("token"), res, "Token" then return
     if not utility.param req.param("password"), res, "Password" then return
@@ -163,7 +195,14 @@ setup = (options, imports, register) ->
       else
         aem.send res, "401", error: "Token invalid or expired"
 
-  # Delete user
+  ###
+  # DELETE /api/v1/user/delete
+  #   Removes user account by id
+  # @qparam [ID] id
+  # @example
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/user/delete?id=yDhBQrwvJIshcchTBTAmW3qJ"
+  ###
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Id" then return
     if not req.user.admin then return aem.send res, "403"
@@ -177,7 +216,14 @@ setup = (options, imports, register) ->
       user.remove()
       aem.send res, "200", msg: "User removed successfully"
 
-  # Retrieve user, expects {filter}
+  ###
+  # GET /api/v1/user/get
+  #   Returns user based on given filter
+  # @qparam [String] filter
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/user/get?filter=username&username=Dragme"
+  ###
   app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("filter"), res, "Filter" then return
     if not req.user.admin then return aem.send res, "403"
@@ -213,9 +259,15 @@ setup = (options, imports, register) ->
       else
         findOne req.params.username, res
 
-  # Retrieve the user represented by the cookies on the request. Used on
-  # the backend account page, and for rendering advertising credit and
-  # publisher balance
+  ###
+  # GET /api/v1/user
+  #   Retrieves the user represented by the cookies on the request. Used on
+  #   the backend account page, and for rendering advertising credit and
+  #   publisher balance
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/user"
+  ###
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res, false then return
@@ -224,7 +276,30 @@ setup = (options, imports, register) ->
       user.updateFunds ->
         res.json user.toAPI()
 
-  # Update the user account. Users can only save themselves!
+  ###
+  # POST /api/v1/user
+  #   Update the user account. Users can only save themselves!
+  # @qparam [String] fname
+  # @qparam [String] lname
+  # @qparam [String] company
+  # @qparam [String] address
+  # @qparam [String] city
+  # @qparam [String] state
+  # @qparam [String] postalCode
+  # @qparam [String] country
+  # @qparam [String] phone
+  # @qparam [String] vat
+  # @qparam [String] newPass
+  #   Used for changing the current password, must have currentPass
+  # @qparam [String] newPassRepeat
+  # @qparam [String] curerentPass
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/user",
+  #          data:
+  #            fname: "That",
+  #            lname: "Guy"
+  ###
   app.post "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res, false then return
@@ -266,7 +341,27 @@ setup = (options, imports, register) ->
         user.save()
         res.send 200
 
-  # Returns a list of transactions: deposits, withdrawals, reserves
+  ###
+  # GET /api/v1/user/transactions
+  #   Returns a list of transactions: deposits, withdrawals, reserves
+  # @qparam [String] fname
+  # @qparam [String] lname
+  # @qparam [String] company
+  # @qparam [String] address
+  # @qparam [String] city
+  # @qparam [String] state
+  # @qparam [String] postalCode
+  # @qparam [String] country
+  # @qparam [String] phone
+  # @qparam [String] vat
+  # @qparam [String] newPass
+  #   Used for changing the current password, must have currentPass
+  # @qparam [String] newPassRepeat
+  # @qparam [String] curerentPass
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/user/transactions"
+  ###
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res, false then return
@@ -274,10 +369,18 @@ setup = (options, imports, register) ->
 
       res.json user.transactions
 
-  # Update tutorial visibility status. Section may also be "all"
+  ###
+  # POST /api/v1/user/tutorial/:section/:status
+  #   Update tutorial visibility status. Section may also be "all"
+  # @param [String] section
+  # @param [String] status
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/user/tutorial/all/enable"
+  ###
   app.post "/api/v1/user/tutorial/:section/:status", (req, res) ->
     section = req.param "section"
-    
+
     if req.param("status") == "enable"
       status = true
     else if req.param("status") == "disable"
@@ -303,7 +406,14 @@ setup = (options, imports, register) ->
 
       res.json user.toAPI()
 
-  # Deposit creation
+  ###
+  # POST /api/v1/user/deposit/:amount
+  #   Deposit creation
+  # @param [Number] amount
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/user/deposit/600"
+  ###
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
     if isNaN req.param "amount"
       return aem.send res, "400", error: "Amount not a number"
@@ -359,7 +469,13 @@ setup = (options, imports, register) ->
         user.save ->
           res.json approval_url: paymentLinks.approval_url
 
-  # Deposit confirmation/cancellation
+  ###
+  # POST /api/v1/user/deposit/:token/:action
+  #   Deposit confirmation/cancellation
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/user/deposit/RvZsYer3pDMRgaMZQNGripnt/cancel"
+  ###
   app.post "/api/v1/user/deposit/:token/:action", isLoggedInAPI, (req, res) ->
     action = req.param "action"
     token = req.param "token"

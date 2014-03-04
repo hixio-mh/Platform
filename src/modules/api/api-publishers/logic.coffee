@@ -16,7 +16,28 @@ setup = (options, imports, register) ->
   error404 = (res, id) ->
     aem.send res, "404", error: "Publisher(#{id}) could not be found"
 
-  # Create new publisher on identified user
+  ###
+  # POST /api/v1/publishers
+  #   Creates a new Publisher
+  # @qparam [String] name
+  #   @required
+  # @qparam [Number] type
+  #   @required
+  # @qparam [URL] url
+  # @qparam [String] catergory
+  #   @required
+  # @qparam [String] description
+  # @qparam [String] preferredPricing
+  # @qparam [Number] minimumCPM
+  # @qparam [Number] minimumCPC
+  # @response [Object] publisher
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/click/li4K8tsxmi6deeW4bhXSkqbx"
+  #          data:
+  #            name: "NewPublisherName2"
+  #            catergory: "Games"
+  ###
   app.post "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("name"), res, "Application name" then return
 
@@ -49,8 +70,24 @@ setup = (options, imports, register) ->
         newPublisher.generateThumbnailUrl -> newPublisher.save()
         res.json 200, newPublisher.toAnonAPI()
 
-  # Save edits to existing publisher, user must either own the publisher or be
-  # an admin
+  ###
+  # POST /api/v1/publishers/:id
+  #   Updates an existing Publisher by :id
+  # @param [ID] id
+  # @qparam [String] name
+  # @qparam [URL] url
+  # @qparam [String] catergory
+  # @qparam [String] description
+  # @qparam [String] preferredPricing
+  # @qparam [Number] minimumCPM
+  # @qparam [Number] minimumCPC
+  # @response [Object] publisher
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/publishers/0xvfxIityLkyePM2caVE41X6"
+  #          data:
+  #            name: "NewPublisherName2"
+  ###
   app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -87,7 +124,14 @@ setup = (options, imports, register) ->
         else
           res.json 200, pub.toAnonAPI()
 
-  # Delete publisher, user must either own the publisher or be an admin,
+  ###
+  # DELETE /api/v1/publishers/:id
+  #   Deletes an existing Publisher by :id
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/publishers/DX2m3kWwm3TN48AMM5LDsgEG"
+  ###
   app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -99,7 +143,14 @@ setup = (options, imports, register) ->
       pub.remove()
       res.send 200
 
-  # Fetches owned publisher list.
+  ###
+  # GET /api/v1/publishers
+  #   Returns a list of all owned Publishers
+  # @response [Array<Object>] publishers
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/publishers"
+  ###
   app.get "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     db.model("Publisher").find owner: req.user.id, (err, publishers) ->
       if utility.dbError err, res, false then return
@@ -122,7 +173,14 @@ setup = (options, imports, register) ->
       for p in publishers
         fetchPublisher p, res
 
-  # Fetches all publishers. Admin privileges required
+  ###
+  # GET /api/v1/publishers/all
+  #   Returns a list of ALL Publishers
+  # @response [Array<Object>] publishers
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/publishers/all"
+  ###
   app.get "/api/v1/publishers/all", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
 
@@ -150,7 +208,15 @@ setup = (options, imports, register) ->
       for p in publishers
         fetchPublisher p, res
 
-  # Finds a single publisher by ID
+  ###
+  # GET /api/v1/publishers/:id
+  #   Returns a Publisher by :id
+  # @param [ID] id
+  # @response [Array<Object>] publishers
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/publishers/xZTzWhVV9BJyoeWHaV4BzPln"
+  ###
   app.get "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -164,10 +230,14 @@ setup = (options, imports, register) ->
         publisher.stats = stats
         res.json publisher
 
-  # Updates publisher status if applicable
-  #
-  # If we are not an administator, an admin approval is requested. Otherwise,
-  # the publisher is approved directly.
+  ###
+  # POST /api/v1/publishers/:id/approve
+  #   Approves (Admin) or pushes a Publisher for approval (User)
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/publishers/vz69jRnMUaHs6HHfKgS4YpRk/approve"
+  ###
   app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -186,7 +256,15 @@ setup = (options, imports, register) ->
       pub.save()
       res.send 200
 
-  # Disapproves the publisher
+  ###
+  # POST /api/v1/publishers/:id/approve
+  #   Disapproves a Publisher
+  # @admin
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/publishers/IvaJDAKMXfpYFoOdhMtXyeIh/disaprove"
+  ###
   app.post "/api/v1/publishers/:id/disaprove", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
 
@@ -200,7 +278,14 @@ setup = (options, imports, register) ->
       pub.save()
       return aem.send res, "200:disapprove"
 
-  # Activates the publisher
+  ###
+  # POST /api/v1/publishers/:id/activate
+  #   Activates a Publisher
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/publishers/yZP2A5gjhhpueKOfQ2k7pAVC/activate"
+  ###
   app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -214,7 +299,14 @@ setup = (options, imports, register) ->
       pub.save()
       res.send 200
 
-  # De-activates the publisher
+  ###
+  # POST /api/v1/publishers/:id/deactivate
+  #   Deactivates a Publisher
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/publishers/Y2AOyPQfWk6Eg12sq71NpfZq/deactivate"
+  ###
   app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
       if utility.dbError err, res, false then return
@@ -228,7 +320,16 @@ setup = (options, imports, register) ->
       pub.save()
       res.send 200
 
-  # Fetch publisher stats over a specific period of time
+  ###
+  # GET /api/v1/publishers/:id/:stat/:range
+  #   Returns a Publisher :stat using a :range by :id
+  # @param [ID] id
+  # @param [String] stat
+  # @param [Range] range
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/publishers/Z7e4r1sPSeevjV5HTS9yhyXy/impressions/from=-24h&to=-1h"
+  ###
   app.get "/api/v1/publishers/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
     if not utility.param req.param("id"), res, "Publisher id" then return
     if not utility.param req.param("range"), res, "Temporal range" then return

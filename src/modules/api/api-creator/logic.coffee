@@ -35,6 +35,15 @@ setup = (options, imports, register) ->
 
   app.get "/creator", (req, res) -> res.render "creator/public.jade"
 
+  ###
+  # GET /api/v1/creator/image/:image
+  #   Gets a creator Image
+  # @param [URL] image
+  # @response [Image] image_binary
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/creator/image/---image-url---"
+  ###
   app.get "/api/v1/creator/image/:image", (req, res) ->
     image = req.param "image"
     if not validImage image then return aem.send res, "404", error: "Invalid image url #{image}"
@@ -53,7 +62,16 @@ setup = (options, imports, register) ->
       res.setHeader "Content-Type", response.headers["content-type"]
       res.end body, "binary"
 
-  # Fetch top paid games list from google
+  ###
+  # GET /api/v1/creator/suggestions
+  #   Fetch top paid games list from google
+  # @response [Array<Object>] suggestions
+  #   @key [URL] url
+  #   @key [URL] cover
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/creator/suggestions"
+  ###
   app.get "/api/v1/creator/suggestions", (req, res) ->
     request "https://play.google.com/store/apps/category/GAME/collection/topselling_paid", (err, response, body) ->
       if err
@@ -70,6 +88,29 @@ setup = (options, imports, register) ->
 
       res.json apps
 
+  ###
+  # GET /api/v1/creator/:url
+  #   ???
+  # @param [URL] url
+  # @response [Object] app
+  #   @key [URL] image
+  #   @key [String] title
+  #   @key [String] author
+  #   @key [String] catergory
+  #   @key [Date] date
+  #   @key [Number] rating
+  #   @key [Number] ratingCount
+  #   @key [String] description
+  #   @key [String] updated
+  #   @key [String] size
+  #   @key [String] installs
+  #   @key [String] version
+  #   @key [String] contentRating
+  #   @key [Number] price
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/creator/--app-url--"
+  ###
   app.get "/api/v1/creator/:url", (req, res) ->
     urlObj = url.parse req.param "url"
     if not validURL urlObj then return aem.send res, "400", error: "Invalid Creator url #{req.param("url")}"
