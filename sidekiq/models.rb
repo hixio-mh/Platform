@@ -1,9 +1,8 @@
 module AdefyPlatform
 
-  @@config = YAML.load_file("config/#{ENV["NODE_ENV"]}.yaml")
-  @@client = Mongo::MongoClient.new(@@config['mongo_host'], @@config['mongo_port'])
-
-  Database = @@client.db(@@config['mongo_db'])
+  Config = YAML.load_file("config/#{ENV["NODE_ENV"]}.yaml")
+  Client = Mongo::MongoClient.new(Config['mongo_host'], Config['mongo_port'])
+  Database = Client.db(Config['mongo_db'])
 
 end
 
