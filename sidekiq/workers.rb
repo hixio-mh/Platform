@@ -7,6 +7,7 @@ require "json"
 require "bson"
 require "yaml"
 require "sidekiq"
+require "ruby-paypal"
 
 config = YAML.load_file("config/#{ENV["NODE_ENV"]}.yaml")
 
