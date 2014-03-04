@@ -11,16 +11,14 @@ api = supertest "http://#{config("domain")}:#{config("port")}"
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 
-mongoCfg = config("mongo")
-
-con = "mongodb://#{mongoCfg.user}:#{mongoCfg.pass}"
-con += "@#{mongoCfg.host}:#{mongoCfg.port}"
-con += "/#{mongoCfg.db}"
+con = "mongodb://#{config("mongo_user")}:#{config("mongo_pass")}"
+con += "@#{config("mongo_host")}:#{config("mongo_port")}"
+con += "/#{config("mongo_db")}"
 
 before (done) ->
   mongoose.connect con, (err) ->
     if err then spew.critical "Error connecting to database [#{err}]"
-    else spew.init "Connected to MongoDB [#{mongoCfg.db}]"
+    else spew.init "Connected to MongoDB [#{config("mongo_db")}]"
 
     # Setup db models
     modelPath = "#{__dirname}/../models"

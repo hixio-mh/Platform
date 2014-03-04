@@ -7,21 +7,21 @@ paypalSDK = require "paypal-rest-sdk"
 config = require "../../../config"
 adefyDomain = "http://#{config("domain")}"
 
-powerdrill = require("powerdrill")(config('mandrill_apikey'))
+powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-paypalCredentials = config("paypal")
+paypalCredentials = 
 
-if paypalCredentials.client_id == undefined or paypalCredentials.client_secret == undefined
+if config("paypal_client_id") == undefined or config("paypal_client_secret") == undefined
   throw new Error "Paypal credentials missing on config!"
 
 paypalSDK.configure
-  host: paypalCredentials.host
+  host: config "paypal_host"
   port: ""
-  client_id: paypalCredentials.client_id
-  client_secret: paypalCredentials.client_secret
+  client_id: config "paypal_client_id"
+  client_secret: config "paypal_client_secret"
 
 setup = (options, imports, register) ->
 

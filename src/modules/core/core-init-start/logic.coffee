@@ -107,11 +107,9 @@ setup = (options, imports, register) ->
   ##
   ## Connect to MongoDB
   ##
-
-  mongoCfg = config("mongo")
-  con = "mongodb://#{mongoCfg.user}:#{mongoCfg.pass}"
-  con += "@#{mongoCfg.host}:#{mongoCfg.port}"
-  con += "/#{mongoCfg.db}"
+  con = "mongodb://#{config("mongo_user")}:#{config("mongo_pass")}"
+  con += "@#{config("mongo_host")}:#{config("mongo_port")}"
+  con += "/#{config("mongo_db")}"
 
   dbConnection = mongoose.connect con, (err) ->
     if err
