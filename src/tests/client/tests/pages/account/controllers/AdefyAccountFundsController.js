@@ -53,6 +53,7 @@ describe("AdefyAccountFundsController", function() {
     scope.paymentInfo.amount = 123;
 
     httpBackend.expectGET("/api/v1/user/transactions").respond(200, []);
+    httpBackend.expectGET("/api/v1/user/pendingwithdrawals").respond(200, []);
 
     // Respond with error to prevent redirect
     httpBackend.expectPOST("/api/v1/user/deposit/123").respond(403);
