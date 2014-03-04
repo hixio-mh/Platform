@@ -1,8 +1,12 @@
 # Adefy Platform sidekiq workers
 #
 # Setup sidekiq with NODE_ENV=.. sidekiq -r ./sidekiq/workers.rb
-require "sidekiq"
+# Entry point, require all the necessary modules from here
+require "mongo"
+require "json"
+require "bson"
 require "yaml"
+require "sidekiq"
 
 config = YAML.load_file("config/#{ENV["NODE_ENV"]}.yaml")
 
@@ -17,4 +21,5 @@ Sidekiq.configure_server do |config|
   }
 end
 
-require_relative "jobs/withdrawal.rb"
+require_relative "models"
+require_relative "jobs/withdrawal"
