@@ -6,9 +6,13 @@ mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
 async = require "async"
+config = require "../config"
 
 AWS = require "aws-sdk"
-AWS.config.update require("../config")("s3-config")
+AWS.config.update
+  accessKeyId: config "s3_config_accessKeyId"
+  secretAccessKey: config "s3_config_secretAccessKey"
+
 s3 = new AWS.S3()
 
 ##
