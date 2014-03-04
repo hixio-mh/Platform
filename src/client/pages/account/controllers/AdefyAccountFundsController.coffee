@@ -35,29 +35,36 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
         $scope.action = "unknown"
         scheduleRedirect()
 
-  $scope.paymentInfo = disabled: false
+  $scope.paymentInfo = disabled: false, availableFunds: 0
+  $scope.paymentInfo.fundModelChanged = ->
 
-  $scope.fundModelChanged = ->
     if $scope.paymentInfo.model == "ad"
-      $scope.paymentInfo.availableFunds = me.adFunds
+      $scope.paymentInfo.availableFunds = $scope.me.adFunds
     else if $scope.paymentInfo.model == "pub"
-      $scope.paymentInfo.availableFunds = me.pubFunds
+      $scope.paymentInfo.availableFunds = $scope.me.pubFunds
     else
       $scope.paymentInfo.availableFunds = 0
       $scope.paymentInfo.errorMessage = "Please select a Fund to withdraw from"
-    alert "RAAAAR"
+
+  triggerError = (message) ->
+    $scope.paymentInfo.disabled = false
+    $scope.paymentInfo.infoMessage = ""
+    $scope.paymentInfo.errorMessage = message
+    false
 
   $scope.withdraw = ->
     amount = $scope.paymentInfo.amount
     model = $scope.paymentInfo.model
     email = $scope.paymentInfo.alt_email
-    if model == "ad"
-    else if model == "pub"
-    else
-      $scope.paymentInfo.disabled = false
-      $scope.paymentInfo.infoMessage = ""
-      $scope.paymentInfo.errorMessage = "Please select a Fund to withdraw from"
-      return
+
+    if model != "ad" and model != "pub"
+      return triggerError "Please select a fund to withdraw from"
+
+    if amount < 100
+      return triggerError "Amount must be at least $100"
+
+    if amount > $scope.paymentInfo.availableFunds
+      return triggerError "Insufficient funds!"
 
     $scope.paymentInfo.disabled = true
     $scope.paymentInfo.infoMessage = "Please wait"
@@ -68,9 +75,9 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
       $scope.paymentInfo.disabled = false
       $scope.paymentInfo.infoMessage = "Your request has been sent."
     .error (err) ->
-      $scope.paymentInfo.disabled = false
-      $scope.paymentInfo.infoMessage = ""
-      $scope.paymentInfo.errorMessage = err
+      triggerError err
+
+    false
 
   $scope.deposit = ->
     amount = $scope.paymentInfo.amount

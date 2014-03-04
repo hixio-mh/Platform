@@ -219,7 +219,7 @@ setup = (options, imports, register) ->
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res, false then return
-      if not user then return res.send 404
+      if not user then return aem.send res, "404"
 
       user.updateFunds ->
         res.json user.toAPI()
@@ -270,14 +270,14 @@ setup = (options, imports, register) ->
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return aem.send res, "500", error: "User(#{req.user.id}) not found"
+      if not user then return aem.send res, "500", error: "User not found"
 
       res.json user.transactions
 
   app.get "/api/v1/user/pendingwithdrawals", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return aem.send res, "500", error: "User(#{req.user.id}) not found"
+      if not user then return aem.send res, "500", error: "User not found"
 
       res.json user.pendingWithdrawals
 
@@ -314,7 +314,7 @@ setup = (options, imports, register) ->
   app.post "/api/v1/user/withdraw/:model", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
       if utility.dbError err, res then return
-      if not user then return aem.send res, "404", error: "User(req.user.id) not found"
+      if not user then return aem.send res, "404", error: "User not found"
 
       if isNaN req.param "amount"
         return aem.send res, "400", error: "Amount not a number"
@@ -325,23 +325,18 @@ setup = (options, imports, register) ->
 
       if amount < 100
         return aem.send res, "400", error: "Amount below minimum: $100"
-
-      if model == "ad"
-        if amount > user.adFunds
-          return aem.send res, "400", error: "Amount exceeds available Ad funds"
-        user.pushWithdrawalRequest("ad", amount, email)
-      else if model == "pub"
-        if amount > user.pubFunds
-          return aem.send res, "400", error: "Amount exceeds available Pub funds"
-        user.pushWithdrawalRequest("pub", amount, email)
-      else
+      else if model != "ad" and model != "pub"
         return aem.send res, "400", error: "Invalid model: #{model}"
 
-      user.save (err) ->
-        if (err)
-          return aem.send res, "400", error: err
+      userFunds = user["#{model}Funds"]
 
-      aem.send res, "200"
+      if amount > userFunds
+        return aem.send res, "400", error: "Amount exceeds available funds"
+
+      user.pushWithdrawalRequest model, amount, email
+      user.save (err) ->
+        if err then aem.send res, "400", error: err
+        else aem.send res, "200"
 
   # Deposit creation
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
