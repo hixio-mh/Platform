@@ -6,9 +6,9 @@ cluster = require "cluster"
 # If we are in development mode, then the autocomplete DB is the same as the
 # main DB. Meaning, we only rebuild if the main DB rebuilds
 if config('NODE_ENV') == "development"
-  rebuild = config("redis-main").rebuild
+  rebuild = config "redis_main_rebuild"
 else
-  rebuild = config("redis-autocomplete").rebuild
+  rebuild = config "redis_autocomplete_rebuild"
 
 # NOTE: Filter sets are set up in a version namespace!
 AUTOCOMPLETE_VERSION = filters.getAutocompleteVersion()

@@ -8,7 +8,7 @@ srcDir = "src/"
 
 adefy = null
 
-dbHost = "#{config('mongo').host}:#{config('mongo').port}"
+dbHost = "#{config("mongo_host")}:#{config("mongo_port")}"
 
 before (done) ->
   @timeout 0

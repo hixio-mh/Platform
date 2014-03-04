@@ -2,16 +2,15 @@
 config = require "../config"
 cluster = require "cluster"
 spew = require "spew"
-
-mainConfig = config("redis-main")
-autocompleteConfig = config("redis-autocomplete")
 redisLib = require "redis"
 
-redisMain = redisLib.createClient mainConfig.port, mainConfig.host
-redisMain.select mainConfig.db
+createRedisConnection = (prefix) ->
+  db = redisLib.createClient config("#{prefix}_port"), config("#{prefix}_host")
+  db.select config "#{prefix}_db"
+  db
 
-redisAutocomplete = redisLib.createClient autocompleteConfig.port, autocompleteConfig.host
-redisAutocomplete.select autocompleteConfig.db
+redisMain = createRedisConnection "redis_main"
+redisAutocomplete = createRedisConnection "redis_autocomplete"
 
 redisMain.on "error", (err) -> spew.error "Redis main: #{err}"
 redisAutocomplete.on "error", (err) -> spew.error "Redis autocomplete: #{err}"
@@ -19,6 +18,7 @@ redisAutocomplete.on "error", (err) -> spew.error "Redis autocomplete: #{err}"
 module.exports =
   main: redisMain
   autocomplete: redisAutocomplete
+  createRedisConnection: createRedisConnection
 
 process.on "disconnect", ->
   spew.info "W#{cluster.worker.id - 1} killing redis connections..."

@@ -7,8 +7,8 @@ setup = (options, imports, register) ->
 
   SDC = require("statsd-client")
   statsd = new SDC
-    host: config("stats").host
-    port: config("stats").port
+    host: config "stats_host"
+    port: config "stats_port"
     prefix: "#{config("NODE_ENV")}."
 
   GLOBAL.statsd = statsd
