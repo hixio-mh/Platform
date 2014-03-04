@@ -251,12 +251,11 @@ schema.methods.withdrawFunds = (type, amount) ->
   true
 
 schema.methods.pushWithdrawalRequest = (source, amount, email) ->
-
   @pendingWithdrawals.push
-    source: (String source)
-    amount: (Number amount)
+    source: String source
+    amount: Number amount
     time: new Date().getTime()
-    email: (String email)
+    email: String email
 
   true
 

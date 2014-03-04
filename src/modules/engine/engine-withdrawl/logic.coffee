@@ -43,11 +43,12 @@ setup = (options, imports, register) ->
   calcWithdrawalAmount = (user) ->
     ad_amount = 0
     pub_amount = 0
-    for w in user.pendingWithdrawals
-      if w.source == "ad"
-        ad_amount += w.amount
-      else if w.source == "pub"
-        pub_amount += w.amount
+
+    for withdrawl in user.pendingWithdrawals
+      if withdrawl.source == "ad"
+        ad_amount += withdrawl.amount
+      else if withdrawl.source == "pub"
+        pub_amount += withdrawl.amount
 
     ad_amount = 0 if ad_amount < 0
     ad_amount = user.adFunds if ad_amount > user.adFunds
@@ -72,32 +73,31 @@ setup = (options, imports, register) ->
       CURRENCYCODE: "USD"
       RECEIVERTYPE: "EmailAddress"
 
-    users = db.model("User").find()
-    index = 0
-    result = {}
-
-    _.extend(result, head)
-    for user in users
-      amnt = calcWithdrawalAmount user
-      d = {}
-      d["L_EMAIL#{index}"] = user.email
-      d["L_AMT#{index}"] = amnt
-      d["L_UNIQUEID#{index}"] = user.id
-      _.extend(result, d)
-      index++
-
-    request_head =
-      headers: { 'content-type': 'application/x-www-form-urlencoded' }
-      url: "#{paypalCredentials.host}/nvp"
-      body: qs.stringify(result)
-
-    request.post request_head, (err, res, body) ->
+    db.model("User").find {}, (err, users) ->
       if err then return spew.error err
-      ## TODO. Iterate each error key
-      ## For users who don't show up in the errors,
-      ## clear their pendingWithdrawals
-      ## Otherwise send an email/message to the user
-      spew.info res
+
+      requestBody = _.copy head
+
+      for user, i in users
+        userData = {}
+        userData["L_EMAIL#{i}"] = user.email
+        userData["L_AMT#{i}"] = calcWithdrawalAmount user
+        userData["L_UNIQUEID#{i}"] = user.id
+
+        _.extend requestBody, userData
+
+      requestHead =
+        headers: "content-type": "application/x-www-form-urlencoded"
+        url: "#{paypalCredentials.host}/nvp"
+        body: qs.stringify requestBody
+
+      request.post requestHead, (err, res, body) ->
+        if err then return spew.error err
+        ## TODO. Iterate each error key
+        ## For users who don't show up in the errors,
+        ## clear their pendingWithdrawals
+        ## Otherwise send an email/message to the user
+        spew.info res
 
   register null, {}
 
