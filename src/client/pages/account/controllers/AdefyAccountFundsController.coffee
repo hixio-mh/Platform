@@ -75,7 +75,7 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
       $scope.paymentInfo.disabled = false
       $scope.paymentInfo.infoMessage = "Your request has been sent."
     .error (err) ->
-      triggerError err
+      triggerError err.error
 
     false
 

@@ -333,7 +333,11 @@ setup = (options, imports, register) ->
       if amount > userFunds
         return aem.send res, "400", error: "Amount exceeds available funds"
 
-      user.pushWithdrawalRequest model, amount, email
+      # Really primitive email checking
+      if email == undefined or email.length == 0 or email.indexOf("@") == -1
+        return aem.send res, "400", error: "Invalid email"
+
+      user.createWithdrawalRequest model, amount, email
       user.save (err) ->
         if err then aem.send res, "400", error: err
         else aem.send res, "200"

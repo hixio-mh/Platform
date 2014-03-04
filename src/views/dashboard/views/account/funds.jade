@@ -25,3 +25,15 @@
           td.from Paypal
           td.time {{ t.time | date:'yyyy-MM-dd' }}
           td.number + ${{ t.amount | number:2 }}
+
+    div(ng-if="pendingWithdrawals.length > 0")
+      br
+      br
+      h2.block.tcenter Pending Withdrawals
+      table.transactions
+        tbody(ng-repeat="t in pendingWithdrawals")
+          tr.withdraw
+            td.desc Amount ${{ t.amount | number:2 }}
+            td.from {{ t.type }}
+            td.time {{ t.time | date:'yyyy-MM-dd' }}
+            td.number - ${{ t.amount | number:2 }}
