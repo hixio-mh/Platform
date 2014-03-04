@@ -160,7 +160,7 @@ module.exports =
 
     @_buildQuery = ->
       auth = "ferno:q94vY92GxMCK4nXHZJuKAHly"
-      query = "http://#{auth}@#{config("stats").host}/render?"
+      query = "http://#{auth}@#{config("stats_host")}/render?"
 
       for target, i in @_targets
 

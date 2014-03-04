@@ -1,5 +1,6 @@
-cfg = require "../config.json"
-process.env['NODE_ENV'] = process.env['NODE_ENV'] || 'development'
+process.env["NODE_ENV"] = process.env["NODE_ENV"] || "development"
 
-module.exports = (key) ->
-  process.env[key] || cfg[process.env['NODE_ENV']][key]
+YAML = require "yamljs"
+cfg = YAML.load "#{__dirname}/../config/#{process.env["NODE_ENV"]}.yaml"
+
+module.exports = (key) -> process.env[key] || cfg[key]
