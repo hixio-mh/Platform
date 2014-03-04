@@ -5,6 +5,9 @@ spew = require "spew"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
 
+SidekiqLib = require "sidekiq"
+sidekiq = new SidekiqLib redis, "sidekiq_#{process.env["NODE_ENV"]}"
+
 schema = new mongoose.Schema
   username: String
   email: String
@@ -250,12 +253,15 @@ schema.methods.withdrawFunds = (type, amount) ->
 
   true
 
-schema.methods.pushWithdrawalRequest = (source, amount, email) ->
+schema.methods.createWithdrawalRequest = (source, amount, email) ->
   @pendingWithdrawals.push
     source: String source
     amount: Number amount
     time: new Date().getTime()
     email: String email
+
+  sidekiq.enqueue "AdefyPlatform::Jobs::Withdrawal", ["#{@_id}"],
+    at: new Date()
 
   true
 
