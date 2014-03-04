@@ -16,6 +16,13 @@ setup = (options, imports, register) ->
   ###
   # POST /api/v1/news
   #   Creates a new News article and returns it
+  # @param [String] title
+  #   This is the title of the News article
+  # @param [String] summary
+  #   This is optional and replaces the text when displayed on the front page
+  # @param [String] text
+  #   This is the body of the News article
+  # @response [Object] News returns a newly create News object
   # @example
   #   $.ajax method: "POST",
   #          url: "/api/v1/news",
@@ -46,9 +53,11 @@ setup = (options, imports, register) ->
 
   ###
   # GET /api/v1/news
-  #
+  #   Retrieves all News objects
+  # @response [Array<Object>] News
   # @example
-  #
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/news"
   ###
   app.get "/api/v1/news", isLoggedInAPI, (req, res) ->
     db.model("News").find {}, (err, list) ->
@@ -63,9 +72,12 @@ setup = (options, imports, register) ->
 
   ###
   # GET /api/v1/news/:id
-  #
+  #   Retreives a News article by :id
+  # @param [ID] id
+  # @response [Object] News returns requested News article
   # @example
-  #
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/news/J5VLjLsiPC2xO2VBlhjeMlBL"
   ###
   app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     db.model("News")
@@ -81,9 +93,19 @@ setup = (options, imports, register) ->
 
   ###
   # POST /api/v1/news/:id
-  #
+  #   Updates an existing News article by :id
+  # @param [ID] id
+  # @response [Object] News returns the updated News article
   # @example
-  #
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/news/iewTKw5y8bQO3FXQZxn3zlgT",
+  #          data:
+  #            title: "We are having an Ad Storm [EDIT]"
+  #            summary: "Today we had a huge update!"
+  #            text: """
+  #              So much has changed, we'd like to thank blah, dee, dah
+  #              EDIT: foobar
+  #            """
   ###
   app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
@@ -109,9 +131,11 @@ setup = (options, imports, register) ->
 
   ###
   # DELETE /api/v1/news/:id
-  #
+  #   Deletes a News article by :id
+  # @param [ID] id
   # @example
-  #
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/news/tmHWeHKicu4xINCnhZH7mUDd"
   ###
   app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"

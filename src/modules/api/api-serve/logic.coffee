@@ -20,13 +20,30 @@ setup = (options, imports, register) ->
   utility = imports["logic-utility"]
   adEngine = imports["engine-ads"]
 
-  # Fetch a test ad (unidentified request)
+  ###
+  # GET /api/v1/serve
+  #   Returns a Test Ad
+  # @response [Object] test_ad
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/serve"
+  ###
   app.get "/api/v1/serve", (req, res) ->
 
     # If type is undefined, fetchTest() uses "test"
     adEngine.fetchTest req, res, null, req.param "type"
 
-  # Try to fetch a real ad
+  ###
+  # GET /api/v1/serve/:apikey
+  #   Returns a real Ad
+  # @param [APIKEY] apikey
+  # @response [Object] ad_data
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/serve"
+  #          data:
+  #            apikey: "a0QgH4w6VYm7GYlCO9fTO09K"
+  ###
   app.get "/api/v1/serve/:apikey", (req, res) ->
     startTimestamp = new Date().getTime()
     ref = "pub:#{req.param "apikey"}"
@@ -76,7 +93,14 @@ setup = (options, imports, register) ->
       else
         adEngine.fetchTest req, res, pubData
 
-  # Register impressions
+  ###
+  # GET /api/v1/impression/:id
+  #   Register impressions for Ad by :id
+  # @param [ID] id An Ad id
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/impression/reBNFoQwhCEx8UAVttC8PolT"
+  ###
   app.get "/api/v1/impression/:id", (req, res) ->
     actionId = req.param "id"
     cacheKey = "#{actionId}:impression"
@@ -152,8 +176,15 @@ setup = (options, imports, register) ->
               guardCache.del cacheKey
               aem.send res, "200"
 
-  # Register clicks, in charge of deleting the redis key, since clicks assume
-  # impressions (we check otherwise)
+  ###
+  # GET /api/v1/click/:id
+  #   Register clicks, in charge of deleting the redis key, since clicks assume
+  #   impressions (we check otherwise)
+  # @param [ID] id An Ad id
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/click/li4K8tsxmi6deeW4bhXSkqbx"
+  ###
   app.get "/api/v1/click/:id", (req, res) ->
     actionId = req.param "id"
     cacheKey = "#{actionId}:click"

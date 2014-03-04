@@ -52,6 +52,28 @@ setup = (options, imports, register) ->
       options.multipleSeries = adRefs
       graphiteInterface.makeAnalyticsQuery options, (data) -> res.json data
 
+
+  ###
+  # GET /api/v1/analytics/campaigns/:id/:stat
+  #   Retrieves stats for Campaign by :id
+  # @param [ID] id
+  # @param [String] stat
+  # @qparam [String] start time query string
+  # @qparam [String] end time query string
+  # @qparam [String] interval time query string
+  # @qparam [Boolean] sum
+  # @qparam [Number] total
+  # @response [Stats]
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/analytics/campaigns/:id/:stat",
+  #          data:
+  #            start: "-24h"
+  #            end: "-1h"
+  #            interval: "30minutes"
+  #            sum: false
+  #            total: 20
+  ###
   app.get "/api/v1/analytics/campaigns/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Campaign")
     .findById(req.param "id")
@@ -65,6 +87,25 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       campaign.fetchStatGraphData options, (data) -> res.json data
 
+  ###
+  # GET /api/v1/analytics/ads/:id/:stat
+  #   Retrieves stats for Ad by :id
+  # @param [ID] id
+  # @param [String] stat
+  # @qparam [String] start time query string
+  # @qparam [String] end time query string
+  # @qparam [String] interval time query string
+  # @qparam [Boolean] sum
+  # @qparam [Number] total
+  # @response [Stats]
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/analytics/ads/:id/:stat",
+  #          data:
+  #            start: "-48h"
+  #            interval: "30minutes"
+  #            sum: true
+  ###
   app.get "/api/v1/analytics/ads/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Ad")
     .findById(req.param "id")
@@ -78,6 +119,25 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       ad.fetchStatGraphData options, (data) -> res.json data
 
+  ###
+  # GET /api/v1/analytics/publishers/:id/:stat
+  #   Retrieves stats for Publisher by :id
+  # @param [ID] id
+  # @param [String] stat
+  # @qparam [String] start time query string
+  # @qparam [String] end time query string
+  # @qparam [String] interval time query string
+  # @qparam [Boolean] sum
+  # @qparam [Number] total
+  # @response [Stats]
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/analytics/publishers/:id/:stat",
+  #          data:
+  #            start: "-48h"
+  #            interval: "30minutes"
+  #            sum: true
+  ###
   app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res, false then return
@@ -88,6 +148,15 @@ setup = (options, imports, register) ->
       options = buildOptionsFromQuery req
       publisher.fetchStatGraphData options, (data) -> res.json data
 
+  ###
+  # GET /api/v1/analytics/totals/:stat
+  #   Retrieves the totals for :stat
+  # @param [String] stat
+  # @response [Stats]
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/analytics/totals/:stat"
+  ###
   app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) ->
     stat = req.param "stat"
     options = buildOptionsFromQuery req
@@ -131,10 +200,17 @@ setup = (options, imports, register) ->
     else
       aem.send res, "400", error: "Unknown stat: #{stat}"
 
-  ##
-  ## Admin-only
-  ##
-
+  ###
+  # GET /api/v1/analytics/counts/:model
+  #   Returns analytical data for :model, this data represents the number
+  #   of models have been created ever
+  # @admin
+  # @param [String] model
+  # @response [Stats]
+  # @example
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/analytics/counts/User"
+  ###
   app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
 
