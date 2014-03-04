@@ -41,7 +41,14 @@ schema = new mongoose.Schema
   pubFunds: { type: Number, default: 0 }
 
   transactions: [{ action: String, amount: Number, time: Number }]
-  pendingWithdrawals: [{ source: String, amount: Number, time: Number, email: String }]
+
+  pendingWithdrawals: [
+    id: String
+    source: String
+    amount: Number
+    time: Number
+    email: String
+  ]
 
   # Used to store intermediate transaction information. String is of the
   # format id|token
@@ -254,14 +261,19 @@ schema.methods.withdrawFunds = (type, amount) ->
   true
 
 schema.methods.createWithdrawalRequest = (source, amount, email) ->
+  paymentID = "#{Date.now()}-#{Math.round(Math.random() * 1000)}"
+
   @pendingWithdrawals.push
     source: String source
     amount: Number amount
     time: new Date().getTime()
     email: String email
+    id: paymentID
 
-  sidekiq.enqueue "AdefyPlatform::Jobs::Withdrawal", ["#{@_id}"],
-    at: new Date()
+  sidekiq.enqueue "AdefyPlatform::Jobs::Withdrawal", [
+    "#{@_id}"
+    paymentID
+  ], at: new Date()
 
   true
 
