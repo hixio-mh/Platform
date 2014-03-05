@@ -46,7 +46,7 @@
     <script src="../../../public/js/routes/admin.js"></script>
 
     <!-- Root Controller -->
-    <script src="../../../public/js/controllers/AdefyRootController.js"></script>
+    <script src="../../../public/js/controllers/root.js"></script>
 
     <!-- Tutorial -->
     <script src="../../../public/js/tutorial/dashboard.js"></script>
@@ -60,101 +60,102 @@
     <script src="../../../public/js/tutorial/funds.js"></script>
 
     <!-- User Factory -->
-    <script src="../../../public/js/factories/AdefyUserFactory.js"></script>
+    <script src="../../../public/js/factories/user.js"></script>
 
     <!-- Directives -->
-    <script src="../../../public/js/directives/AdefyDropdownDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyTabDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyModalFormDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyGraphDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyAnalyticsDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyToggleSwitchDirective.js"></script>
-    <script src="../../../public/js/directives/AdefyCreatorDirective.js"></script>
+    <script src="../../../public/js/directives/dropdown.js"></script>
+    <script src="../../../public/js/directives/tab.js"></script>
+    <script src="../../../public/js/directives/form_modal.js"></script>
+    <script src="../../../public/js/directives/graph.js"></script>
+    <script src="../../../public/js/directives/analytics.js"></script>
+    <script src="../../../public/js/directives/toggle_switch.js"></script>
+    <script src="../../../public/js/directives/creator.js"></script>
 
     <!-- Services -->
-    <script src="../../../public/js/services/CampaignService.js"></script>
-    <script src="../../../public/js/services/AppService.js"></script>
-    <script src="../../../public/js/services/AdService.js"></script>
-    <script src="../../../public/js/services/UserService.js"></script>
-    <script src="../../../public/js/services/NewsService.js"></script>
+    <script src="../../../public/js/services/campaign.js"></script>
+    <script src="../../../public/js/services/app.js"></script>
+    <script src="../../../public/js/services/ad.js"></script>
+    <script src="../../../public/js/services/user.js"></script>
+    <script src="../../../public/js/services/news.js"></script>
 
     <!-- Controllers -->
-    <script src="../../../public/js/pages/account/controllers/AdefyAccountFundsController.js"></script>
-    <script src="../../../public/js/pages/account/controllers/AdefyAccountSettingsController.js"></script>
+    <script src="../../../public/js/controllers/account/funds.js"></script>
+    <script src="../../../public/js/controllers/account/settings.js"></script>
 
-    <script src="../../../public/js/pages/ads/controllers/AdefyAdCreativeController.js"></script>
-    <script src="../../../public/js/pages/ads/controllers/AdefyAdDetailController.js"></script>
-    <script src="../../../public/js/pages/ads/controllers/AdefyAdIndexController.js"></script>
-    <script src="../../../public/js/pages/ads/controllers/AdefyAdMenuController.js"></script>
-    <script src="../../../public/js/pages/ads/controllers/AdefyAdReminderController.js"></script>
-    <script src="../../../public/js/pages/ads/factories/AdefyAdFactory.js"></script>
+    <script src="../../../public/js/controllers/ads/creative.js"></script>
+    <script src="../../../public/js/controllers/ads/detail.js"></script>
+    <script src="../../../public/js/controllers/ads/index.js"></script>
+    <script src="../../../public/js/controllers/ads/menu.js"></script>
+    <script src="../../../public/js/controllers/ads/reminder.js"></script>
+    <script src="../../../public/js/factories/ad.js"></script>
 
-    <script src="../../../public/js/pages/apps/controllers/AdefyAppsCreateController.js"></script>
-    <script src="../../../public/js/pages/apps/controllers/AdefyAppsDetailsController.js"></script>
-    <script src="../../../public/js/pages/apps/controllers/AdefyAppsEditController.js"></script>
-    <script src="../../../public/js/pages/apps/controllers/AdefyAppsIndexController.js"></script>
-    <script src="../../../public/js/pages/apps/controllers/AdefyAppsMenuController.js"></script>
-    <script src="../../../public/js/pages/apps/factories/AdefyAppFactory.js"></script>
+    <script src="../../../public/js/controllers/apps/create.js"></script>
+    <script src="../../../public/js/controllers/apps/details.js"></script>
+    <script src="../../../public/js/controllers/apps/edit.js"></script>
+    <script src="../../../public/js/controllers/apps/index.js"></script>
+    <script src="../../../public/js/controllers/apps/menu.js"></script>
+    <script src="../../../public/js/factories/app.js"></script>
 
-    <script src="../../../public/js/pages/campaigns/controllers/AdefyCampaignCreateController.js"></script>
-    <script src="../../../public/js/pages/campaigns/controllers/AdefyCampaignDetailsController.js"></script>
-    <script src="../../../public/js/pages/campaigns/controllers/AdefyCampaignEditController.js"></script>
-    <script src="../../../public/js/pages/campaigns/controllers/AdefyCampaignIndexController.js"></script>
-    <script src="../../../public/js/pages/campaigns/controllers/AdefyCampaignMenuController.js"></script>
-    <script src="../../../public/js/pages/campaigns/factories/AdefyCampaignFactory.js"></script>
+    <script src="../../../public/js/controllers/campaigns/create.js"></script>
+    <script src="../../../public/js/controllers/campaigns/details.js"></script>
+    <script src="../../../public/js/controllers/campaigns/edit.js"></script>
+    <script src="../../../public/js/controllers/campaigns/index.js"></script>
+    <script src="../../../public/js/controllers/campaigns/menu.js"></script>
+    <script src="../../../public/js/factories/campaign.js"></script>
 
-    <script src="../../../public/js/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js"></script>
-    <script src="../../../public/js/pages/dashboards/controllers/AdefyDashboardPublisherController.js"></script>
+    <script src="../../../public/js/controllers/dashboards/advertiser.js"></script>
+    <script src="../../../public/js/controllers/dashboards/publisher.js"></script>
 
-    <script src="../../../public/js/pages/reports/controllers/AdefyReportsAdsController.js"></script>
-    <script src="../../../public/js/pages/reports/controllers/AdefyReportsAppsController.js"></script>
-    <script src="../../../public/js/pages/reports/controllers/AdefyReportsCampaignsController.js"></script>
+    <script src="../../../public/js/controllers/reports/ads.js"></script>
+    <script src="../../../public/js/controllers/reports/apps.js"></script>
+    <script src="../../../public/js/controllers/reports/campaigns.js"></script>
 
-    <script src="../../../public/js/pages/admin/controllers/AdefyAdminIndexController.js"></script>
-    <script src="../../../public/js/pages/admin/controllers/AdefyAdminPublishersController.js"></script>
-    <script src="../../../public/js/pages/admin/controllers/AdefyAdminUsersController.js"></script>
-    <script src="../../../public/js/pages/admin/controllers/AdefyAdminMenuController.js"></script>
-    <script src="../../../public/js/pages/admin/controllers/AdefyAdminAdsController.js"></script>
+    <script src="../../../public/js/controllers/admin/index.js"></script>
+    <script src="../../../public/js/controllers/admin/publishers.js"></script>
+    <script src="../../../public/js/controllers/admin/users.js"></script>
+    <script src="../../../public/js/controllers/admin/menu.js"></script>
+    <script src="../../../public/js/controllers/admin/ads.js"></script>
 
-    <script src="../../../public/js/pages/news/controllers/AdefyNewsCreateController.js"></script>
-    <script src="../../../public/js/pages/news/controllers/AdefyNewsDetailController.js"></script>
-    <script src="../../../public/js/pages/news/controllers/AdefyNewsEditController.js"></script>
-    <script src="../../../public/js/pages/news/controllers/AdefyNewsIndexController.js"></script>
-    <script src="../../../public/js/pages/news/controllers/AdefyNewsMenuController.js"></script>
-    <script src="../../../public/js/pages/news/factories/AdefyNewsFactory.js"></script>
+    <script src="../../../public/js/controllers/news/create.js"></script>
+    <script src="../../../public/js/controllers/news/details.js"></script>
+    <script src="../../../public/js/controllers/news/edit.js"></script>
+    <script src="../../../public/js/controllers/news/index.js"></script>
+    <script src="../../../public/js/controllers/news/menu.js"></script>
+    <script src="../../../public/js/factories/news.js"></script>
 
     <!-- Tests! -->
-    <script src="tests/controllers/AdefyRootController.js"></script>
-    <script src="tests/pages/account/controllers/AdefyAccountFundsController.js"></script>
-    <script src="tests/pages/account/controllers/AdefyAccountSettingsController.js"></script>
-    <script src="tests/pages/ads/controllers/AdefyAdCreativeController.js"></script>
-    <script src="tests/pages/ads/controllers/AdefyAdDetailController.js"></script>
-    <script src="tests/pages/ads/controllers/AdefyAdIndexController.js"></script>
-    <script src="tests/pages/ads/controllers/AdefyAdMenuController.js"></script>
-    <script src="tests/pages/ads/controllers/AdefyAdReminderController.js"></script>
+    <script src="tests/root.js"></script>
+    <script src="tests/controllers/account/funds.js"></script>
+    <script src="tests/controllers/account/settings.js"></script>
 
-    <script src="tests/pages/apps/controllers/AdefyAppsCreateController.js"></script>
-    <script src="tests/pages/apps/controllers/AdefyAppsDetailsController.js"></script>
-    <script src="tests/pages/apps/controllers/AdefyAppsEditController.js"></script>
-    <script src="tests/pages/apps/controllers/AdefyAppsIndexController.js"></script>
-    <script src="tests/pages/apps/controllers/AdefyAppsMenuController.js"></script>
+    <script src="tests/controllers/ads/creative.js"></script>
+    <script src="tests/controllers/ads/details.js"></script>
+    <script src="tests/controllers/ads/index.js"></script>
+    <script src="tests/controllers/ads/menu.js"></script>
+    <script src="tests/controllers/ads/reminder.js"></script>
 
-    <script src="tests/pages/campaigns/controllers/AdefyCampaignCreateController.js"></script>
-    <script src="tests/pages/campaigns/controllers/AdefyCampaignDetailsController.js"></script>
-    <script src="tests/pages/campaigns/controllers/AdefyCampaignEditController.js"></script>
-    <script src="tests/pages/campaigns/controllers/AdefyCampaignIndexController.js"></script>
-    <script src="tests/pages/campaigns/controllers/AdefyCampaignMenuController.js"></script>
+    <script src="tests/controllers/apps/create.js"></script>
+    <script src="tests/controllers/apps/details.js"></script>
+    <script src="tests/controllers/apps/edit.js"></script>
+    <script src="tests/controllers/apps/index.js"></script>
+    <script src="tests/controllers/apps/menu.js"></script>
 
-    <script src="tests/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js"></script>
-    <script src="tests/pages/dashboards/controllers/AdefyDashboardPublisherController.js"></script>
+    <script src="tests/controllers/campaigns/create.js"></script>
+    <script src="tests/controllers/campaigns/details.js"></script>
+    <script src="tests/controllers/campaigns/edit.js"></script>
+    <script src="tests/controllers/campaigns/index.js"></script>
+    <script src="tests/controllers/campaigns/menu.js"></script>
 
-    <script src="tests/pages/reports/controllers/AdefyReportsCampaignsController.js"></script>
-    <script src="tests/pages/reports/controllers/AdefyReportsAppsController.js"></script>
-    <script src="tests/pages/reports/controllers/AdefyReportsAdsController.js"></script>
+    <script src="tests/controllers/dashboards/advertiser.js"></script>
+    <script src="tests/controllers/dashboards/publisher.js"></script>
 
-    <script src="tests/pages/news/controllers/AdefyNewsCreateController.js"></script>
-    <script src="tests/pages/news/controllers/AdefyNewsDetailController.js"></script>
-    <script src="tests/pages/news/controllers/AdefyNewsEditController.js"></script>
+    <script src="tests/controllers/reports/campaigns.js"></script>
+    <script src="tests/controllers/reports/apps.js"></script>
+    <script src="tests/controllers/reports/ads.js"></script>
+
+    <script src="tests/controllers/news/create.js"></script>
+    <script src="tests/controllers/news/details.js"></script>
+    <script src="tests/controllers/news/edit.js"></script>
 
     <script>
       if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
