@@ -12,6 +12,9 @@
       option(value="name") Name
       option(value="stats.impressions") Impressions
 
+.contents.w920.center(ng-if="campaigns == null || campaigns.length == 0")
+  h2.loading Loading Campaigns
+
 .grid
   a.item(ng-repeat="campaign in campaigns | orderBy:sort.metric:sort.direction" ng-href="/campaigns/{{campaign.id}}" data-id="{{ campaign.id }}" ng-class="{ tutorial: campaign.tutorial }" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.campaigns)")
 
@@ -22,6 +25,7 @@
         img(ng-src="{{ ad.data.creative.image }}")
 
     .name(ng-bind="campaign.name")
+    .label.active(ng-class="campaign.active?'blue':'red'") {{ campaign.active ? "Active" : "Disabled" }}
     .label.blue(ng-if="campaign.tutorial") Example
 
     .metrics(ng-if="campaign.graphData")
