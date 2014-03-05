@@ -80,6 +80,7 @@ setup = (options, imports, register) ->
     .populate("ads")
     .exec (err, campaign) ->
       if utility.dbError err, res, false then return
+      unless campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -112,6 +113,7 @@ setup = (options, imports, register) ->
     .populate("campaigns.campaign")
     .exec (err, ad) ->
       if utility.dbError err, res, false then return
+      unless ad then return aem.send res, "404"
 
       if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -141,6 +143,7 @@ setup = (options, imports, register) ->
   app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
       if utility.dbError err, res, false then return
+      unless publisher then return aem.send res, "404"
 
       if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
         return aem.send res, "401"
@@ -160,45 +163,41 @@ setup = (options, imports, register) ->
   app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) ->
     stat = req.param "stat"
     options = buildOptionsFromQuery req
-
-    ##
-    ## Todo: Why pass stat instead of "earnings" or "spent"?
-    ##
-
     # Publishers
-    if stat == "earnings"
-      queryPublishers { owner: req.user.id }, options, stat, res
-    else if stat == "impressions:publisher"
-      queryPublishers { owner: req.user.id }, options, "impressions", res
-    else if stat == "clicks:publisher"
-      queryPublishers { owner: req.user.id }, options, "clicks", res
-    else if stat == "requests"
-      queryPublishers { owner: req.user.id }, options, "requests", res
+    switch stat
+      when "earnings"
+        queryPublishers { owner: req.user.id }, options, stat, res
+      when "impressions:publisher"
+        queryPublishers { owner: req.user.id }, options, "impressions", res
+      when "clicks:publisher"
+        queryPublishers { owner: req.user.id }, options, "clicks", res
+      when "requests"
+        queryPublishers { owner: req.user.id }, options, "requests", res
 
-    # Campaigns
-    else if stat == "spent"
-      queryCampaigns { owner: req.user.id }, options, stat, res
-    else if stat == "impressions:ad" or stat == "impressions:campaign"
-      queryCampaigns { owner: req.user.id }, options, "impressions", res
-    else if stat == "clicks:ad" or stat == "clicks:campaign"
-      queryCampaigns { owner: req.user.id }, options, "clicks", res
+    #   Campaigns
+      when "spent"
+        queryCampaigns { owner: req.user.id }, options, stat, res
+      when "impressions:ad" or stat == "impressions:campaign"
+        queryCampaigns { owner: req.user.id }, options, "impressions", res
+      when "clicks:ad" or stat == "clicks:campaign"
+        queryCampaigns { owner: req.user.id }, options, "clicks", res
 
-    # Admin (network totals)
-    else if stat == "spent:admin"
-      if not req.user.admin then return aem.send res, "403"
-      queryCampaigns {}, options, "spent", res
-    else if stat == "impressions:admin"
-      if not req.user.admin then return aem.send res, "403"
-      queryCampaigns {}, options, "impressions", res
-    else if stat == "clicks:admin"
-      if not req.user.admin then return aem.send res, "403"
-      queryCampaigns {}, options, "clicks", res
-    else if stat == "earnings:admin"
-      if not req.user.admin then return aem.send res, "403"
-      queryPublishers {}, options, "earnings", res
+    #   Admin (network totals)
+      when "spent:admin"
+        if not req.user.admin then return aem.send res, "403"
+        queryCampaigns {}, options, "spent", res
+      when "impressions:admin"
+        if not req.user.admin then return aem.send res, "403"
+        queryCampaigns {}, options, "impressions", res
+      when "clicks:admin"
+        if not req.user.admin then return aem.send res, "403"
+        queryCampaigns {}, options, "clicks", res
+      when "earnings:admin"
+        if not req.user.admin then return aem.send res, "403"
+        queryPublishers {}, options, "earnings", res
 
-    else
-      aem.send res, "400", error: "Unknown stat: #{stat}"
+      else
+        aem.send res, "400", error: "Unknown stat: #{stat}"
 
   ###
   # GET /api/v1/analytics/counts/:model
