@@ -163,6 +163,7 @@ setup = (options, imports, register) ->
   app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) ->
     stat = req.param "stat"
     options = buildOptionsFromQuery req
+
     # Publishers
     switch stat
       when "earnings"
@@ -174,15 +175,15 @@ setup = (options, imports, register) ->
       when "requests"
         queryPublishers { owner: req.user.id }, options, "requests", res
 
-    #   Campaigns
+    # Campaigns
       when "spent"
         queryCampaigns { owner: req.user.id }, options, stat, res
-      when "impressions:ad" or stat == "impressions:campaign"
+      when "impressions:ad", "impressions:campaign"
         queryCampaigns { owner: req.user.id }, options, "impressions", res
-      when "clicks:ad" or stat == "clicks:campaign"
+      when "clicks:ad", "clicks:campaign"
         queryCampaigns { owner: req.user.id }, options, "clicks", res
 
-    #   Admin (network totals)
+    # Admin (network totals)
       when "spent:admin"
         if not req.user.admin then return aem.send res, "403"
         queryCampaigns {}, options, "spent", res
