@@ -79,8 +79,8 @@ html(lang="en" ng-app="AdefyApp")
           | Apps
 
       .menu.right
-        a(href="/funds" tab ng-cloak) Advertiser $ {{ me.adFunds | number:2 }}
-        a(href="/funds" tab ng-cloak) Publisher $ {{ me.pubFunds | number:2 }}
+        a(href="/funds" tab ng-cloak) Advertiser {{ me.adFunds | currency:$ }}
+        a(href="/funds" tab ng-cloak) Publisher {{ me.pubFunds | currency:$ }}
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
@@ -150,104 +150,102 @@ html(lang="en" ng-app="AdefyApp")
         if user.admin
           script(src="/js/routes/admin.js")
 
-        script(src="/js/controllers/AdefyRootController.js")
+        script(src="/js/controllers/root.js")
 
         //-
         //- Tutorial
         //-
         script(src="/js/tutorial/dashboard.js")
         script(src="/js/tutorial/apps.js")
-        script(src="/js/tutorial/appDetails.js")
+        script(src="/js/tutorial/app_details.js")
         script(src="/js/tutorial/ads.js")
-        script(src="/js/tutorial/adDetails.js")
+        script(src="/js/tutorial/ad_details.js")
         script(src="/js/tutorial/campaigns.js")
-        script(src="/js/tutorial/campaignDetails.js")
+        script(src="/js/tutorial/campaign_details.js")
         script(src="/js/tutorial/reports.js")
         script(src="/js/tutorial/funds.js")
-
-        //--
-        //-- User factory
-        //--
-        script(src="/js/factories/AdefyUserFactory.js")
 
         //--
         //-- Root directives
         //--
 
-        script(src="/js/directives/AdefyDropdownDirective.js")
-        script(src="/js/directives/AdefyTabDirective.js")
-        script(src="/js/directives/AdefyModalFormDirective.js")
-        script(src="/js/directives/AdefyGraphDirective.js")
-        script(src="/js/directives/AdefyAnalyticsDirective.js")
-        script(src="/js/directives/AdefyToggleSwitchDirective.js")
-        script(src="/js/directives/AdefyCreatorDirective.js")
+        script(src="/js/directives/dropdown.js")
+        script(src="/js/directives/tab.js")
+        script(src="/js/directives/form_modal.js")
+        script(src="/js/directives/graph.js")
+        script(src="/js/directives/analytics.js")
+        script(src="/js/directives/toggle_switch.js")
+        script(src="/js/directives/creator.js")
 
         //--
         //-- Services
         //--
 
-        script(src="/js/services/AdService.js")
-        script(src="/js/services/AppService.js")
-        script(src="/js/services/CampaignService.js")
-        script(src="/js/services/NewsService.js")
-        script(src="/js/services/UserService.js")
-        script(src="/js/services/NewsService.js")
+        script(src="/js/services/ad.js")
+        script(src="/js/services/app.js")
+        script(src="/js/services/campaign.js")
+        script(src="/js/services/news.js")
+        script(src="/js/services/user.js")
 
         //--
         //-- Pages (controllers, factories, directives, and services)
         //--
 
+        //-- Factories
+        script(src="/js/factories/ad.js")
+        script(src="/js/factories/app.js")
+        script(src="/js/factories/campaign.js")
+        script(src="/js/factories/news.js")
+        script(src="/js/factories/user.js")
+
+        //-- Controllers
         //- Accounts
-        script(src="/js/pages/account/controllers/AdefyAccountFundsController.js")
-        script(src="/js/pages/account/controllers/AdefyAccountSettingsController.js")
+        script(src="/js/controllers/account/funds.js")
+        script(src="/js/controllers/account/settings.js")
 
         //- Ads
-        script(src="/js/pages/ads/controllers/AdefyAdCreativeController.js")
-        script(src="/js/pages/ads/controllers/AdefyAdDetailController.js")
-        script(src="/js/pages/ads/controllers/AdefyAdIndexController.js")
-        script(src="/js/pages/ads/controllers/AdefyAdMenuController.js")
-        script(src="/js/pages/ads/controllers/AdefyAdReminderController.js")
-        script(src="/js/pages/ads/factories/AdefyAdFactory.js")
+        script(src="/js/controllers/ads/creative.js")
+        script(src="/js/controllers/ads/detail.js")
+        script(src="/js/controllers/ads/index.js")
+        script(src="/js/controllers/ads/menu.js")
+        script(src="/js/controllers/ads/reminder.js")
 
         //- Apps
-        script(src="/js/pages/apps/controllers/AdefyAppsCreateController.js")
-        script(src="/js/pages/apps/controllers/AdefyAppsDetailsController.js")
-        script(src="/js/pages/apps/controllers/AdefyAppsEditController.js")
-        script(src="/js/pages/apps/controllers/AdefyAppsIndexController.js")
-        script(src="/js/pages/apps/controllers/AdefyAppsMenuController.js")
-        script(src="/js/pages/apps/factories/AdefyAppFactory.js")
+        script(src="/js/controllers/apps/create.js")
+        script(src="/js/controllers/apps/details.js")
+        script(src="/js/controllers/apps/edit.js")
+        script(src="/js/controllers/apps/index.js")
+        script(src="/js/controllers/apps/menu.js")
 
         //- Campaigns
-        script(src="/js/pages/campaigns/controllers/AdefyCampaignCreateController.js")
-        script(src="/js/pages/campaigns/controllers/AdefyCampaignDetailsController.js")
-        script(src="/js/pages/campaigns/controllers/AdefyCampaignEditController.js")
-        script(src="/js/pages/campaigns/controllers/AdefyCampaignIndexController.js")
-        script(src="/js/pages/campaigns/controllers/AdefyCampaignMenuController.js")
-        script(src="/js/pages/campaigns/factories/AdefyCampaignFactory.js")
+        script(src="/js/controllers/campaigns/create.js")
+        script(src="/js/controllers/campaigns/details.js")
+        script(src="/js/controllers/campaigns/edit.js")
+        script(src="/js/controllers/campaigns/index.js")
+        script(src="/js/controllers/campaigns/menu.js")
 
         //- Dashboards
-        script(src="/js/pages/dashboards/controllers/AdefyDashboardAdvertiserController.js")
-        script(src="/js/pages/dashboards/controllers/AdefyDashboardPublisherController.js")
+        script(src="/js/controllers/dashboards/advertiser.js")
+        script(src="/js/controllers/dashboards/publisher.js")
 
         //- News
-        script(src="/js/pages/news/controllers/AdefyNewsCreateController.js")
-        script(src="/js/pages/news/controllers/AdefyNewsDetailController.js")
-        script(src="/js/pages/news/controllers/AdefyNewsEditController.js")
-        script(src="/js/pages/news/controllers/AdefyNewsIndexController.js")
-        script(src="/js/pages/news/controllers/AdefyNewsMenuController.js")
-        script(src="/js/pages/news/factories/AdefyNewsFactory.js")
+        script(src="/js/controllers/news/create.js")
+        script(src="/js/controllers/news/detail.js")
+        script(src="/js/controllers/news/edit.js")
+        script(src="/js/controllers/news/index.js")
+        script(src="/js/controllers/news/menu.js")
 
         //- Reports
-        script(src="/js/pages/reports/controllers/AdefyReportsAdsController.js")
-        script(src="/js/pages/reports/controllers/AdefyReportsAppsController.js")
-        script(src="/js/pages/reports/controllers/AdefyReportsCampaignsController.js")
+        script(src="/js/controllers/reports/ads.js")
+        script(src="/js/controllers/reports/apps.js")
+        script(src="/js/controllers/reports/campaigns.js")
 
         if user.admin
-          script(src="/js/pages/admin/controllers/AdefyAdminIndexController.js")
-          script(src="/js/pages/admin/controllers/AdefyAdminPublishersController.js")
-          script(src="/js/pages/admin/controllers/AdefyAdminUsersController.js")
-          script(src="/js/pages/admin/controllers/AdefyAdminMenuController.js")
-          script(src="/js/pages/admin/controllers/AdefyAdminAdsController.js")
+          script(src="/js/controllers/admin/index.js")
+          script(src="/js/controllers/admin/publishers.js")
+          script(src="/js/controllers/admin/users.js")
+          script(src="/js/controllers/admin/menu.js")
+          script(src="/js/controllers/admin/ads.js")
 
       script(src="//use.typekit.net/udl8vci.js")
       script.

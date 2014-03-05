@@ -85,6 +85,7 @@ gulp.task "coffee", ->
     "factories/**/*.coffee"
     "directives/**/*.coffee"
     "services/**/*.coffee"
+    "controllers/**/*.coffee"
     "**/*.coffee"
   ]
   .pipe coffee()
