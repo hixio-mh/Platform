@@ -31,7 +31,7 @@
   command: gulp chdir=/var/adefy
 
 - name: start platform
-  shell: 'cd /var/adefy && NODE_ENV=production pm2 start src/adefy.coffee -i 4'
+  shell: 'cd /var/adefy && . /var/adefy/env_vars.sh && NODE_ENV=production pm2 start src/adefy.coffee -i 4'
   register: start_result
   ignore_errors: true
 

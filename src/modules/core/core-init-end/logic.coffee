@@ -1,9 +1,3 @@
-# Core-init-end is called last, after line, core-init-start, and all of our
-# modules. It finishes the bootstrapping process, and essentially passes control
-# onto the handlers registered by our modules.
-#
-# End of the initialiation process; we initialize final routes and socket
-# listeners, then start socket.io and express.
 spew = require "spew"
 
 setup = (options, imports, register) ->

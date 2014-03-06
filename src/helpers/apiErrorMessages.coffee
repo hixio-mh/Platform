@@ -1,5 +1,4 @@
 # AEM - ApiErrorMessage Helper Object (with humor!)
-
 spew = require "spew"
 
 ##

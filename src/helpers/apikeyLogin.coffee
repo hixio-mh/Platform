@@ -2,7 +2,7 @@ spew = require "spew"
 
 # Route middleware to make sure a user is logged in
 module.exports = (passport, aem) ->
-  return (req, res, next) ->
+  (req, res, next) ->
     if req.isAuthenticated() then next()
     else
       passport.authenticate("localapikey", { session: false }, (err, user, info) ->
