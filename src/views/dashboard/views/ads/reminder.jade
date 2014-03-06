@@ -40,8 +40,8 @@ include _menu
       label Preview
     .preview
       .icon
-        img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}")
-        img(ng-if="ad.pushIcon && !ad.pushIcon.url" ng-src="{{ ad.pushIcon }}")
+        img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}" width="64")
+        img(ng-if="ad.pushIcon && !ad.pushIcon.url" ng-src="{{ ad.pushIcon }}" width="64")
       .info
         //-.title Test Title For Now
         //-.time {{ new Date() | date:'HH:mm' }}
