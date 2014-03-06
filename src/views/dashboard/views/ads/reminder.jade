@@ -41,14 +41,9 @@ include _menu
     .preview
       .icon
         img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}" width="64")
-        img(ng-if="ad.pushIcon && !ad.pushIcon.url" ng-src="{{ ad.pushIcon }}" width="64")
+        img(ng-if="!ad.pushIcon.url && ad.pushIcon" ng-src="{{ ad.pushIcon }}" width="64")
+        img(ng-if="!ad.pushIcon.url && !ad.pushIcon" src="/img/no_image_icon.png" width="64")
       .info
-        //-.title Test Title For Now
-        //-.time {{ new Date() | date:'HH:mm' }}
-        //-.description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         a.title(ng-href="{{ ad.url }}") {{ ad.pushTitle }}
         .time {{ dateNow | date:'HH:mm' }}
         .description {{ ad.pushDesc }}
-        //-.small-icon
-        //-img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}")
-        //-img(ng-if="ad.pushIcon && !ad.pushIcon.url" ng-src="{{ ad.pushIcon }}")
