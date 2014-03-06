@@ -2,4 +2,4 @@
   copy: src=nginx.conf dest=/etc/nginx/nginx.conf
 
 - name: start nginx
-  service: name=nginx state=started
+  service: name=nginx state=restarted

@@ -11,3 +11,4 @@
     - build-essential
     - python-pycurl # needed for apt_repo
     - fish
+    - dtrx
