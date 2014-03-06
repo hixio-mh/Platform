@@ -1,6 +1,9 @@
 angular.module("AdefyApp").controller "AdefyAdReminderController", ($scope, AdService, $routeParams) ->
 
-  AdService.getAd $routeParams.id, (ad) -> $scope.ad = ad
+  AdService.getAd $routeParams.id, (ad) ->
+    $scope.ad = ad
+
+  $scope.dateNow = Date.now()
   $scope.submitted = false
   $scope.saving = false
 
