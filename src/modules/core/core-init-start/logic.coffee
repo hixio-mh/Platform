@@ -1,8 +1,3 @@
-# Core-init-start is loaded before any other module, but after line.
-# It connects us to the database, and sets up the top-level server middleware.
-#
-# Core-init-end completes the bootstraping by registering all queued routes,
-# socket listeners, and then starting the socket IO and express servers.
 config = require "../../../config"
 spew = require "spew"
 mongoose = require "mongoose"
@@ -10,8 +5,6 @@ fs = require "fs"
 passport = require "passport"
 passportLocalStrategy = require("passport-local").Strategy
 passportAPIKeyStrategy = require("passport-localapikey").Strategy
-redisInterface = require "../../../helpers/redisInterface"
-redis = redisInterface.main
 
 setup = (options, imports, register) ->
 
@@ -19,38 +12,6 @@ setup = (options, imports, register) ->
   redis = imports["core-redis"].main
 
   spew.init "Starting Initialization"
-
-  ##
-  ## Authentication
-  ##
-
-  publicPages = [
-    "/login"
-    "/register"
-    "/signup"
-    "/recover"
-
-    "/creator"
-    "/views/creator/creator"
-    "/api/v1/creator"
-    "/api/v1/creator/"
-
-    "/api/v1/login"
-    "/api/v1/register"
-    "/api/v1/invite/add"
-
-    "/api/v1/serve"
-    "/api/v1/serve/"
-    "/api/v1/impression/"
-    "/api/v1/click/"
-  ]
-
-  hotPaths = [
-    "/api/v1/serve"
-    "/api/v1/serve/"
-    "/api/v1/impression/"
-    "/api/v1/click/"
-  ]
 
   ##
   ## Passport setup
