@@ -9,13 +9,5 @@
   tags: [packages]
   with_items:
     - build-essential
-    - git
-    - nginx
-    - mongodb
-    - python-pycurl # Needed for apt_repo
-    - fontconfig # Needed for PhantomJS
-    - ruby
-
-- name: install bundler
-  sudo: yes
-  gem: name=bundler state=present
+    - python-pycurl # needed for apt_repo
+    - fish

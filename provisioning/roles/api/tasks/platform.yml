@@ -1,5 +1,5 @@
 - name: install global npm dependencies
-  command: npm install -g gulp pm2 coffee-script mocha mocha-phantomjs phantomjs
+  command: npm install -g gulp pm2 coffee-script mocha mocha-phantomjs phantomjs bower
   sudo: yes
 
 - name: create SSH directory
@@ -21,17 +21,17 @@
 - name: deploy platform
   git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=master
 
-- name: install dependencies
-  command: gulp update chdir=/var/adefy
+- name: install node dependencies
+  command: npm install chdir=/var/adefy
+
+- name: install bower dependencies
+  command: bower install --allow-root chdir=/var/adefy
 
 - name: build platform
   command: gulp chdir=/var/adefy
 
-- name: run tests
-  shell: 'cd /var/adefy && NODE_ENV=vagrant-testing npm test'
-
 - name: start platform
-  shell: 'cd /var/adefy && NODE_ENV=vagrant pm2 start src/adefy.coffee -i 4'
+  shell: 'cd /var/adefy && NODE_ENV=production pm2 start src/adefy.coffee -i 4'
   register: start_result
   ignore_errors: true
 
