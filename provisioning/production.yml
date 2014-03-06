@@ -10,7 +10,7 @@
     adefy_password: "$1$ladksfnljkybekbad$1I4bsHQqfSp2"
 
   roles:
-    - api
+    - production
     - mongo
     - redis
-    - production
+    - api

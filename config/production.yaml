@@ -1,6 +1,6 @@
 ---
 domain: app.adefy.com
-port: 10000
+port: 5000
 loglevel: 0
 adloglevel: 0
 newrelic: true

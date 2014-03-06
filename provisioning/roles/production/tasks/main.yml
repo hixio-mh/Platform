@@ -3,3 +3,10 @@
   action: user name=adefy password={{adefy_password}}
 
 - include: packages.yml
+
+- name: copy env var setup script
+  copy: src=env_vars.sh dest=/var/adefy/env_vars.sh
+
+- name: run env var setup script
+  shell: . /var/adefy/env_vars.sh
+  ignore_errors: true
