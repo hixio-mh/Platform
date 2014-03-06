@@ -27,31 +27,31 @@ paths =
   assets: "src/modules/engine/engine-templates/templates/*Assets/**/*"
 
   jsConcat: [
-    "src/static/components/jquery/dist/jquery.min.js"
-    "src/static/components/ace-builds/src-min/ace.js"
+    "public/components/jquery/dist/jquery.min.js"
+    "public/components/ace-builds/src-min/ace.js"
 
-    "src/static/js/vendor/stackBlur.js"
-    "src/static/js/vendor/guiders.js"
+    "public/js/vendor/stackBlur.js"
+    "public/js/vendor/guiders.js"
 
-    "src/static/components/accounting/accounting.min.js"
-    "src/static/components/select2/select2.min.js"
+    "public/components/accounting/accounting.min.js"
+    "public/components/select2/select2.min.js"
 
-    "src/static/components/chosen/chosen.jquery.min.js"
+    "public/components/chosen/chosen.jquery.min.js"
 
-    "src/static/components/angular/angular.min.js"
-    "src/static/components/angular-resource/angular-resource.min.js"
-    "src/static/components/angular-route/angular-route.min.js"
-    "src/static/components/angular-ui-select2/src/select2.js"
-    "src/static/components/angular-chosen-localytics/chosen.js"
-    "src/static/components/ng-table/ng-table.js"
-    "src/static/components/angular-markdown-filter/markdown.js"
+    "public/components/angular/angular.min.js"
+    "public/components/angular-resource/angular-resource.min.js"
+    "public/components/angular-route/angular-route.min.js"
+    "public/components/angular-ui-select2/src/select2.js"
+    "public/components/angular-chosen-localytics/chosen.js"
+    "public/components/ng-table/ng-table.js"
+    "public/components/angular-markdown-filter/markdown.js"
 
-    "src/static/components/angles/angles.js"
+    "public/components/angles/angles.js"
 
-    "src/static/components/ngQuickDate/dist/ng-quick-date.min.js"
-    "src/static/components/moment/min/moment.min.js"
-    "src/static/components/d3/d3.min.js"
-    "src/static/components/rickshaw/rickshaw.min.js"
+    "public/components/ngQuickDate/dist/ng-quick-date.min.js"
+    "public/components/moment/min/moment.min.js"
+    "public/components/d3/d3.min.js"
+    "public/components/rickshaw/rickshaw.min.js"
   ]
 
 # Compile stylus
