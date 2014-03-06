@@ -35,6 +35,7 @@ paths =
 
     "public/components/accounting/accounting.min.js"
     "public/components/select2/select2.min.js"
+    "public/components/showdown/src/showdown.js"
 
     "public/components/chosen/chosen.jquery.min.js"
 
