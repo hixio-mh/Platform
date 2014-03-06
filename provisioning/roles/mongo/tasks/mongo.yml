@@ -17,8 +17,15 @@
   service: name=mongodb state=restarted
 
 - name: copy admin setup script
-  copy: src=setup_admin.js dest=/home/{{ ansible_user_id }}/setup_admin.js
+  copy: src=setup_admin.js dest=/var/adefy/setup_admin.js
+
+- name: copy adefy user setup script
+  copy: src=setup_adefy.js dest=/var/adefy/setup_adefy.js
 
 - name: run admin setup script
-  shell: mongo 127.0.0.1:45452 < /home/{{ ansible_user_id }}/setup_admin.js
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_admin.js
+  ignore_errors: true
+
+- name: run adefy user setup script
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_adefy.js
   ignore_errors: true

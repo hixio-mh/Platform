@@ -2,7 +2,7 @@ daemonize yes
 
 pidfile /var/run/redis_{{ redis_port }}.pid
 port {{ redis_port }}
-bind {% for ip in ansible_all_ipv4_addresses %}{{ ip }} {% endfor %}
+bind 127.0.0.1 {% for ip in ansible_all_ipv4_addresses %}{{ ip }} {% endfor %}
 
 timeout 0
 tcp-keepalive 0
