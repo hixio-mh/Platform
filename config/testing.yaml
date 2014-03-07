@@ -5,6 +5,7 @@ loglevel: 0
 adloglevel: 0
 newrelic: false
 trafficgen: false
+allow_ad_json: true
 
 mandrill_apikey: qNnTW7jFhEn40lmizXKDLQ
 
