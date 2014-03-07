@@ -171,7 +171,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/users", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
-    if not utility.param req.param("filter"), res, "Filter" then return
+    if not aem.param req.param("filter"), res, "Filter" then return
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
@@ -197,7 +197,7 @@ setup = (options, imports, register) ->
         user.updateFunds -> res.json user.toAPI()
 
     if req.param("username")
-      if not utility.param req.params.username, res, "Username"
+      if not aem.param req.params.username, res, "Username"
         return
       else
         findOne req.params.username, res
@@ -218,7 +218,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return aem.send res, "403"
 
     db.model("User").findById req.param("id"), (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       res.json user.toAPI()
 
@@ -234,7 +234,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return aem.send res, "403"
 
     db.model("User").findById req.param("id"), (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       if "#{req.user.id}" == "#{user._id}"
         return aem.send res, "500", error: "You can't delete yourself!"
