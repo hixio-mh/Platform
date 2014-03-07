@@ -19,11 +19,14 @@
     a(ng-href="/ads/{{ad.id}}" tab partial="false")
       i.fa.fa-fw.fa-signal
       | Metrics
+    a(ng-href="/ads/{{ad.id}}/native" tab)
+      i.fa.fa-fw.fa-pencil
+      | Native Creative
     a(ng-href="/ads/{{ad.id}}/creative" tab)
       i.fa.fa-fw.fa-pencil
-      | Creative
+      | Organic Creative
     a(ng-href="/ads/{{ad.id}}/reminder" tab)
-      i.fa.fa-fw.fa-pencil
+      i.fa.fa-fw.fa-exclamation-triangle
       | Push Notification
     //- a(ng-ref="/editor/{{ad.id}}" target="_self")
     //-   i.fa.fa-fw.fa-pencil

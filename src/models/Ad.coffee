@@ -30,6 +30,15 @@ schema = new mongoose.Schema
   pushDesc: { type: String, default: "" }
   pushIcon: { type: String, default: "" }
 
+  native:
+    title: { type: String, default: "" }
+    description: { type: String, default: "" }
+    storeURL: { type: String, default: "" }
+    clickURL: { type: String, default: "" }
+
+    iconURL: { type: String, default: "" }
+    featureURL: { type: String, default: "" }
+
   # Texture array for creative
   assets: [
     name: String    # Asset name (texture handle)
