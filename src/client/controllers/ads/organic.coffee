@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyAdCreativeController", ($scope, AdService, $routeParams, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scope, AdService, $routeParams, $timeout) ->
 
   $scope.cycle = false
   $scope.creativeLoaded = false
@@ -13,12 +13,6 @@ angular.module("AdefyApp").controller "AdefyAdCreativeController", ($scope, AdSe
 
       $scope.cycle = false
       $timeout -> $scope.$apply -> $scope.cycle = true
-
-  AdService.getAd $routeParams.id, (ad) ->
-    $scope.ad = ad
-
-    if ad.data != undefined and ad.data.url != undefined
-      $scope.commitURL ad.data.url
 
   $scope.invalidURL = ->
     $scope.isInvalidURL = true
@@ -42,3 +36,9 @@ angular.module("AdefyApp").controller "AdefyAdCreativeController", ($scope, AdSe
       $scope.ad.data.creative
     else
       null
+
+  AdService.getAd $routeParams.id, (ad) ->
+    $scope.ad = ad
+
+    if ad.data != undefined and ad.data.url != undefined
+      $scope.commitURL ad.data.url

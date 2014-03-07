@@ -1,0 +1,46 @@
+include _menu
+
+.inner
+  form(novalidate ng-class="{ submitted: submitted }")
+    fieldset: dl.form.center
+      legend
+        | Native Creative
+        .label.red.right(style="margin-top:16px") Missing data
+
+      p Prepare your ad for native, contextual delivery by filling out the fields below. Our publishers will then render your content alongside their own, providing a rich and non-intrusive experience for users.
+
+      br
+
+      dt: label Title
+      dd: input(required ng-model="ad.pushTitle" type="text" placeholder="Enter a catchy title")
+
+      dt: label Description
+      dd: input(required ng-model="ad.pushDesc" type="text" placeholder="Enter a short description")
+
+      dt
+        label Click URL
+        span To link to a play store entry, use a URL of the form market://details?id=com....
+      dd: input(required ng-model="ad.url" type="text" placeholder="http://.... or market://details?id=com....")
+
+      dt
+        label Google/Apple store URL
+        span Optional, provide a URL here if you'd like us to include ratings, download counts, and other info in the data we send to publishers.
+      dd: input(required ng-model="ad.url" type="text" placeholder="https://itunes.apple.com/... or https://play.google.com/...")
+
+      dt: label Icon
+      dd.creative-image
+        img(ng-if="ad.native.iconURL" ng-src="{{ ad.native.iconURL }}" width="64" style="margin: 8px 16px 8px 8px")
+        button(ng-click="pickIcon()" ng-class="{ preview: ad.native.featureURL.length > 0 }") Upload an Icon
+
+      dt: label Feature Image
+      dd.creative-image
+        img(ng-if="ad.native.featureURL" ng-src="{{ ad.native.featureURL }}" width="256" style="margin: 8px 16px 8px 8px")
+        button(ng-click="pickFeature()" ng-class="{ preview: ad.native.featureURL.length > 0 }") Upload a feature image
+
+      br
+      br
+
+      dt
+      dd
+        button.save.blue(ng-show="!saving" ng-click="save()") Save creative
+        button.save(ng-show="saving" disabled="disabled") Saving...
