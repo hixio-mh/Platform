@@ -48,16 +48,6 @@ module.exports = (user, admin) ->
   # Note sure, why we are even testing this...
   describe "Creator API", ->
 
-    # GET /creator"
-    describe "Creator Page", ->
-
-      it "Should retrieve the creator page", (done) ->
-
-        req = util.userRequest "/creator", "get"
-        req.expect(200).end (err, res) ->
-          return if handleError(err, res, done)
-          done()
-
     # GET /api/v1/creator/image/:image
     describe "Images", ->
 

@@ -32,8 +32,6 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
 
-  app.get "/creator", (req, res) -> res.render "creator/public.jade"
-
   ###
   # GET /api/v1/creator/image/:image
   #   Gets a creator Image
