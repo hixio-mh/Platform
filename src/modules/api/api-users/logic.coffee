@@ -171,7 +171,6 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/users", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
-    if not aem.param req.param("filter"), res, "Filter" then return
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
