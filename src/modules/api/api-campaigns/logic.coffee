@@ -9,7 +9,6 @@ isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
   engineFilters = require "#{__dirname}/../../../helpers/filters"
 
   ###
@@ -34,12 +33,12 @@ setup = (options, imports, register) ->
   #            bid: ""
   ###
   app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("name"), res, "Campaign name" then return
-    if not utility.param req.param("category"), res, "Category" then return
-    if not utility.param req.param("pricing"), res, "Pricing" then return
-    if not utility.param req.param("dailyBudget"), res, "Daily budget" then return
-    if not utility.param req.param("bidSystem"), res, "Bid system" then return
-    if not utility.param req.param("bid"), res, "Bid" then return
+    if not aem.param req.param("name"), res, "Campaign name" then return
+    if not aem.param req.param("category"), res, "Category" then return
+    if not aem.param req.param("pricing"), res, "Pricing" then return
+    if not aem.param req.param("dailyBudget"), res, "Daily budget" then return
+    if not aem.param req.param("bidSystem"), res, "Bid system" then return
+    if not aem.param req.param("bid"), res, "Bid" then return
 
     # Create new campaign
     newCampaign = db.model("Campaign")
@@ -89,7 +88,7 @@ setup = (options, imports, register) ->
     .find owner: req.user.id
     .populate "ads"
     .exec (err, campaigns) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if campaigns.length == 0 then res.json 200, []
 
       ret = []
@@ -116,7 +115,7 @@ setup = (options, imports, register) ->
     .findById req.param "id"
     .populate "ads"
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       # Check if authorized
@@ -138,14 +137,14 @@ setup = (options, imports, register) ->
   #            --campaign-update-data--
   ###
   app.post "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("id"), res, "Id" then return
+    if not aem.param req.param("id"), res, "Id" then return
 
     # Fetch campaign
     db.model("Campaign")
     .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       # Permission check
@@ -204,7 +203,7 @@ setup = (options, imports, register) ->
 
           for adId in adsToRemove
             db.model("Ad").findById adId, (err, ad) ->
-              if utility.dbError err, res then return
+              if aem.dbError err, res then return
               if not ad
                 spew.error "Tried to remove ad from campaign, ad not found"
                 spew.error "Ad id: #{adId}"
@@ -222,7 +221,7 @@ setup = (options, imports, register) ->
 
           for adId in adsToAdd
             db.model("Ad").findById adId, (err, ad) ->
-              if utility.dbError err, res then return
+              if aem.dbError err, res then return
               if not ad
                 spew.error "Tried to add ad to campaign, ad not found"
                 spew.error "Ad id: #{adId}"
@@ -360,11 +359,11 @@ setup = (options, imports, register) ->
   #            --campaign-update-data--
   ###
   app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("id"), res, "Id" then return
+    if not aem.param req.param("id"), res, "Id" then return
 
     # Don't populate ads! We do so explicitly in the model
     db.model("Campaign").findById req.param("id"), (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404", error: "Campaign not found"
 
       if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
@@ -384,15 +383,15 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/campaigns/xGIX51EP6ABK12Kg4XDT5f1J/clicks/from=-24h&to=-1h"
   ###
   app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("id"), res, "Campaign id" then return
-    if not utility.param req.param("range"), res, "Temporal range" then return
-    if not utility.param req.param("stat"), res, "Stat" then return
+    if not aem.param req.param("id"), res, "Campaign id" then return
+    if not aem.param req.param("range"), res, "Temporal range" then return
+    if not aem.param req.param("stat"), res, "Stat" then return
 
     db.model("Campaign")
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
 
       campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
@@ -411,7 +410,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
       if campaign.tutorial == true then return aem.send res, "401"
 
@@ -434,7 +433,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not campaign then return aem.send res, "404"
       if campaign.tutorial == true then return aem.send res, "404"
 

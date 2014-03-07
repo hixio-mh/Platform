@@ -1,10 +1,12 @@
+# Route middleware to make sure a user is logged in
 spew = require "spew"
 routes = require "../../../angularDashboardViews.json"
 config = require "../../../config"
 crypto = require "crypto"
 passport = require "passport"
+#aem = require "../../../helpers/apiErrorMessages"
+#isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-# Route middleware to make sure a user is logged in
 isLoggedIn = (req, res, next) ->
   if req.isAuthenticated() then next()
   else res.redirect "/login"
@@ -12,7 +14,6 @@ isLoggedIn = (req, res, next) ->
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   # Serve layout to each path
   for p in routes.views

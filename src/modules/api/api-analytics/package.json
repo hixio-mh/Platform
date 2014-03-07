@@ -5,8 +5,7 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "core-express",
-      "logic-utility"
+      "core-express"
     ],
     "provides": []
   }

@@ -8,6 +8,8 @@ model = mongoose.model "Campaign"
 
 describe "Campaign Model", ->
 
+  @timeout 5000
+
   it "Should strip away identification with toAPI method", (done) ->
     camp = model()
 

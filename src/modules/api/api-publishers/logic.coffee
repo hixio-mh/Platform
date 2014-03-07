@@ -11,7 +11,6 @@ isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   error404 = (res, id) ->
     aem.send res, "404", error: "Publisher(#{id}) could not be found"
@@ -39,7 +38,7 @@ setup = (options, imports, register) ->
   #            catergory: "Games"
   ###
   app.post "/api/v1/publishers", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("name"), res, "Application name" then return
+    if not aem.param req.param("name"), res, "Application name" then return
 
     # Validate type
     if Number req.param("type") == undefined then type = 0
@@ -90,7 +89,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
@@ -134,7 +133,7 @@ setup = (options, imports, register) ->
   ###
   app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
 
       if not req.user.admin and not pub.owner.equals req.user.id
@@ -153,7 +152,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/publishers", isLoggedInAPI, (req, res) ->
     db.model("Publisher").find owner: req.user.id, (err, publishers) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       pubCount = publishers.length
       ret = []
@@ -188,7 +187,7 @@ setup = (options, imports, register) ->
     .find tutorial: false
     .populate("owner")
     .exec (err, publishers) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       pubCount = publishers.length
       ret = []
@@ -219,7 +218,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/publishers/:id", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
 
       if not req.user.admin and "#{req.user.id}" != "#{pub.owner}"
@@ -240,7 +239,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
       if pub.tutorial == true then return aem.send res, "401"
 
@@ -269,7 +268,7 @@ setup = (options, imports, register) ->
     if not req.user.admin then return aem.send res, "403"
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
       if pub.tutorial == true then return aem.send res, "401"
 
@@ -288,7 +287,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
       if pub.tutorial == true then return aem.send res, "401"
 
@@ -309,7 +308,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
       if pub.tutorial == true then return aem.send res, "401"
 
@@ -331,12 +330,12 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/publishers/Z7e4r1sPSeevjV5HTS9yhyXy/impressions/from=-24h&to=-1h"
   ###
   app.get "/api/v1/publishers/stats/:id/:stat/:range", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("id"), res, "Publisher id" then return
-    if not utility.param req.param("range"), res, "Temporal range" then return
-    if not utility.param req.param("stat"), res, "Stat" then return
+    if not aem.param req.param("id"), res, "Publisher id" then return
+    if not aem.param req.param("range"), res, "Temporal range" then return
+    if not aem.param req.param("stat"), res, "Stat" then return
 
     db.model("Publisher").findById req.param("id"), (err, pub) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not pub then return error404 res, req.param "id"
 
       pub.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
