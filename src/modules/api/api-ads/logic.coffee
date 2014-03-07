@@ -53,6 +53,15 @@ setup = (options, imports, register) ->
   #            name: "AwesomeAdMkII"
   ###
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
+
+    # TODO: Test this somehow
+    generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
+    getS3Key = (object) ->
+      if object.key != undefined
+        object.key
+      else
+        object.split("//#{s3Host}/")[1]
+
     db.model("Ad")
     .findById req.param("id")
     .populate "campaigns.campaign"
@@ -80,19 +89,31 @@ setup = (options, imports, register) ->
       ad.data = data
 
       ##
+      ## Native ad stuff
+      ##
+
+      if req.param "native"
+        ad.native.title or= req.param("native").title
+        ad.native.description or= req.param("native").description
+        ad.native.storeURL or= req.param("native").storeURL
+        ad.native.clickURL or= req.param("native").clickURL
+
+        if req.param("native").iconURL
+          ad.native.iconURL = generateS3Url req.param("native").iconURL
+
+        if req.param("native").featureURL
+          ad.native.featureURL = generateS3Url req.param("native").featureURL
+
+      ##
       ## Notification stuff
       ##
 
-      ad.url = req.param "url"
-      ad.pushTitle = req.param "pushTitle"
-      ad.pushDesc = req.param "pushDesc"
+      ad.url or= req.param "url"
+      ad.pushTitle or= req.param "pushTitle"
+      ad.pushDesc or= req.param "pushDesc"
 
-      if req.param("pushIcon").key != undefined
-        iconKey = req.param("pushIcon").key
-      else
-        iconKey = req.param("pushIcon").split("//#{s3Host}/")[1]
-
-      ad.pushIcon = "//#{s3Host}/#{iconKey}"
+      if req.param "pushIcon"
+        ad.pushIcon = generateS3Url req.param "pushIcon"
 
       ##
       ## Todo: Fill in assets as needed!
@@ -104,7 +125,7 @@ setup = (options, imports, register) ->
       ad.assets.push
         name: "push-icon"
         buffer: ""
-        key: iconKey
+        key: getS3Key ad.pushIcon
 
       ad.validate (err) ->
         if err
