@@ -11,7 +11,6 @@ isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   ###
   # POST /api/v1/news
@@ -61,7 +60,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/news", isLoggedInAPI, (req, res) ->
     db.model("News").find {}, (err, list) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
 
       result = []
 
@@ -83,7 +82,7 @@ setup = (options, imports, register) ->
     db.model("News")
     .find(_id: req.param "id")
     .exec (err, list) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
       if list.length == 0
         return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
 
@@ -113,7 +112,7 @@ setup = (options, imports, register) ->
     db.model("News")
     .find(_id: req.param "id")
     .exec (err, list) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
       if list.length == 0
         return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
 
@@ -143,7 +142,7 @@ setup = (options, imports, register) ->
     db.model("News")
     .find(_id: req.param "id")
     .exec (err, list) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
       if list.length == 0
         return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
 

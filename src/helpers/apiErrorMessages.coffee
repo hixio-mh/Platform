@@ -1,5 +1,6 @@
 # AEM - ApiErrorMessage Helper Object (with humor!)
 spew = require "spew"
+randomize = require "./randomize"
 
 ##
 # TODO: Move these to a JSON file possibly
@@ -135,12 +136,7 @@ module.exports =
   humor: true
 
   ###
-  # @param [Array] array
-  ###
-  sample: (array) ->
-    array[Math.floor(Math.random() * array.length)]
-
-  ###
+  # Generates a message object
   # @param [String] ex expected message type
   # @param [Option] opt
   #   @option [String] message
@@ -158,100 +154,100 @@ module.exports =
 
     switch exp
       when "200"
-        resp = @sample responses200
+        resp = randomize.sample responses200
         msg = "OK"
         code = 200
       when "200:login"
-        resp = @sample responses200login
+        resp = randomize.sample responses200login
         msg = "Login successful"
         code = 200
       when "200:nofunds"
-        resp = @sample responses200nofunds
+        resp = randomize.sample responses200nofunds
         msg = "OK"
         code = 200
       when "200:delete"
-        resp = @sample responses200delete
+        resp = randomize.sample responses200delete
         msg = "Request received"
         code = 200
       when "200:disapprove"
-        resp = @sample responses200disapprove
+        resp = randomize.sample responses200disapprove
         msg = "Object has been Disapproved"
         code = 200
       when "200:approve"
-        resp = @sample responses200approve
+        resp = randomize.sample responses200approve
         msg = "Object has been approved"
         code = 200
       when "200:approve_pending"
-        resp = @sample responses200approve_pending
+        resp = randomize.sample responses200approve_pending
         msg = "Request received"
         code = 200
       when "302"
-        resp = @sample responses302
+        resp = randomize.sample responses302
         msg = "Redirecting"
         code = 302
       when "400"
-        resp = @sample responses400
+        resp = randomize.sample responses400
         msg = "Malformed request"
         code = 400
       when "400:validate"
-        resp = @sample responses400validate
+        resp = randomize.sample responses400validate
         msg = "Validation has failed"
         code = 400
       when "400:save"
-        resp = @sample responses400save
+        resp = randomize.sample responses400save
         msg = "An error occurred while saving the resource"
         code = 400
       when "401"
-        resp = @sample responses401
+        resp = randomize.sample responses401
         msg = "Unauthorized access!"
         code = 401
       when "403"
-        resp = @sample responses403
+        resp = randomize.sample responses403
         msg = "Forbidden"
         code = 403
       when "403:ad"
-        resp = @sample responses403ad
+        resp = randomize.sample responses403ad
         msg = "Attempted to access protected Ad"
         code = 403
       when "403:apikey"
-        resp = @sample responses403apikey
+        resp = randomize.sample responses403apikey
         msg = "Apikey authentication failed, forbidden to continue"
         code = 403
       when "404"
-        resp = @sample responses404
+        resp = randomize.sample responses404
         msg = "Could not find requested resource"
         code = 404
       when "404:ad"
-        resp = @sample responses404ad
+        resp = randomize.sample responses404ad
         msg = "Ad could not be found"
         code = 404
       when "409"
-        resp = @sample(responses409)
+        resp = randomize.sample(responses409)
         msg = "Conflict!"
         code = 409
       when "500"
-        resp = @sample responses500
+        resp = randomize.sample responses500
         msg = "An internal error occurred"
         code = 500
       # When an error occurred because of a missing internal reference
       when "500:404"
-        resp = @sample responses404
+        resp = randomize.sample responses404
         msg = "An internal error occurred"
         code = 500
       when "500:delete"
-        resp = @sample responses500delete
+        resp = randomize.sample responses500delete
         msg = "Error occurred while removing object"
         code = 500
       when "500:db"
-        resp = @sample responses500db
+        resp = randomize.sample responses500db
         msg = "A database error occurred"
         code = 500
       when "500:save"
-        resp = @sample responses500save
+        resp = randomize.sample responses500save
         msg = "An error occurred while saving the resource"
         code = 500
       when "500:unexpected"
-        resp = @sample responses500unexpected
+        resp = randomize.sample responses500unexpected
         msg = "An unexpected internal error occurred"
         code = 500
 
@@ -267,7 +263,8 @@ module.exports =
     obj
 
   ###
-  # @param [ResultObject] res result object
+  # Generates and sends a message object using the response Object
+  # @param [ResultObject] res response object
   # @param [String] ex expected message type
   # @param [Options] opt
   ###
@@ -277,3 +274,40 @@ module.exports =
 
     # optionally we could drop the "status" from the Hash
     res.json dat.status, dat
+
+  ###
+  # Check for missing param, return a JSON error if needed
+  #
+  # @param [Object] res response object
+  # @param [Object] param param to check for
+  # @param [String] label param name
+  #
+  # @return [Boolean] valid true if the param is defined
+  ###
+  param: (param, res, label) ->
+    if param == undefined
+      if res and label
+        @send res, "400", error: label
+      return false
+    true
+
+  ###
+  # Log db error and send appropriate response
+  #
+  # @param [Object] res response object
+  # @param [Object] err mongoose error object
+  # @param [Boolean] passive if false or undefined, issues a res.JSON error
+  #
+  # @return [Boolean] wasError false if error was undefined or null
+  ###
+  dbError: (err, res, passive) ->
+    if err
+      # Just treat cast errors as 404s
+      unless passive
+        if err.name == "CastError"
+          @send res, "404"
+        else
+          spew.error err
+          @send res, "500:db"
+      return true
+    false

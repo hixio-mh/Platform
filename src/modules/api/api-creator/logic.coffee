@@ -31,7 +31,6 @@ imageBuffer = {}
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   app.get "/creator", (req, res) -> res.render "creator/public.jade"
 

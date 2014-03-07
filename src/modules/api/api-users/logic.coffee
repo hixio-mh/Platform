@@ -26,7 +26,6 @@ paypalSDK.configure
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   # Login and Register views, redirect if user is already logged in
   app.get "/login", (req, res) ->
@@ -91,13 +90,13 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/register?username=Dragme&password=awesomesauce&email=cookies@cream.com"
   ###
   app.post "/api/v1/register", (req, res) ->
-    if not utility.param req.param("username"), res, "Username" then return
-    if not utility.param req.param("email"), res, "Email" then return
-    if not utility.param req.param("password"), res, "Password" then return
+    if not aem.param req.param("username"), res, "Username" then return
+    if not aem.param req.param("email"), res, "Email" then return
+    if not aem.param req.param("password"), res, "Password" then return
 
     # Ensure username is not taken (don't trust client-side check)
     db.model("User").findOne username: req.param("username"), (err, user) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
       if user then return aem.send res, "409", error: "Username already taken"
 
       # Create user
@@ -129,10 +128,10 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/forgot?email=cookies@cream.com"
   ###
   app.post "/api/v1/forgot", (req, res) ->
-    if not utility.param req.param("email"), res, "Email" then return
+    if not aem.param req.param("email"), res, "Email" then return
 
     db.model("User").findOne email: req.param("email"), (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       if user
 
@@ -170,14 +169,14 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/reset?token=fmGMpRPXdoekAdVPAwJZJBnC&password=mypass"
   ###
   app.post "/api/v1/reset", (req, res) ->
-    if not utility.param req.param("token"), res, "Token" then return
-    if not utility.param req.param("password"), res, "Password" then return
+    if not aem.param req.param("token"), res, "Token" then return
+    if not aem.param req.param("password"), res, "Password" then return
 
     if "#{req.param("password")}".trim().length == 0
       return aem.send res, "400", error: "No password provided"
 
     db.model("User").findOne forgotPasswordToken: req.param("token"), (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       if user
         if not user.resetTokenValid()
@@ -204,11 +203,11 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/user/delete?id=yDhBQrwvJIshcchTBTAmW3qJ"
   ###
   app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("id"), res, "Id" then return
+    if not aem.param req.param("id"), res, "Id" then return
     if not req.user.admin then return aem.send res, "403"
 
     db.model("User").findById req.param("id"), (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       if "#{req.user.id}" == "#{user._id}"
         return aem.send res, "500", error: "You can't delete yourself!"
@@ -225,12 +224,12 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/user/get?filter=username&username=Dragme"
   ###
   app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("filter"), res, "Filter" then return
+    if not aem.param req.param("filter"), res, "Filter" then return
     if not req.user.admin then return aem.send res, "403"
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
-        if utility.dbError err, res, false then return
+        if aem.dbError err, res, false then return
         if users.length == 0 then return res.json []
 
         doneCount = users.length
@@ -246,7 +245,7 @@ setup = (options, imports, register) ->
 
     findOne = (username, res) ->
       db.model("User").findOne { username: username }, (err, user) ->
-        if utility.dbError err, res, false then return
+        if aem.dbError err, res, false then return
         if not user then return aem.send res, "404", error: "User(#{username}) could not be found"
 
         user.updateFunds -> res.json user.toAPI()
@@ -254,7 +253,7 @@ setup = (options, imports, register) ->
     if req.param("filter") == "all"
       findAll res
     else if req.param("filter") == "username"
-      if not utility.param req.params.username, res, "Username"
+      if not aem.param req.params.username, res, "Username"
         return
       else
         findOne req.params.username, res
@@ -270,7 +269,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return res.send 404
 
       user.updateFunds ->
@@ -302,7 +301,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       req.onValidationError (msg) -> aem.send res, "400", error: msg.path
 
@@ -364,7 +363,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User(#{req.user.id}) not found"
 
       res.json user.transactions
@@ -389,7 +388,7 @@ setup = (options, imports, register) ->
       return res.send 400
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return res.json 500, error: "User not found"
 
       if section == "all" or section == "dashboard" then user.tutorials.dashboard = status
@@ -448,7 +447,7 @@ setup = (options, imports, register) ->
       ]
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User(req.user.id) not found"
 
       paypalSDK.payment.create paymentJSON, (err, payment) ->
@@ -487,7 +486,7 @@ setup = (options, imports, register) ->
       return aem.send res, "400", error: "No payer id"
 
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User not found"
 
       pendingDeposit = user.pendingDeposit.split "|"

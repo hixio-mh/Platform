@@ -10,9 +10,6 @@ module.exports = [
   "./modules/core/core-init-redis",
   "./modules/core/core-init-autocomplete",
 
-  # Utility helper
-  "./modules/logic/utility",
-
   # Engine logic (not tied to any one route)
   "./modules/engine/engine-templates",
   "./modules/engine/engine-ads",
@@ -30,9 +27,8 @@ module.exports = [
   "./modules/api/api-analytics",
   "./modules/api/api-editor",
   "./modules/api/api-filters",
-
   # Angular route definitions
-  "./modules/logic/routes",
+  "./modules/api/api-views",
 
   # End of initialization, starts servers
   "./modules/core/core-init-end"

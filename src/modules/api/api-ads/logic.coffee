@@ -10,7 +10,6 @@ s3Host = "adefyplatformmain.s3.amazonaws.com"
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   ###
   # POST /api/v1/ads
@@ -24,7 +23,7 @@ setup = (options, imports, register) ->
   #            name: "AwesomeAd"
   ###
   app.post "/api/v1/ads", isLoggedInAPI, (req, res) ->
-    if not utility.param req.param("name"), res, "Ad name" then return
+    if not aem.param req.param("name"), res, "Ad name" then return
 
     # Create new ad entry
     newAd = db.model("Ad")
@@ -57,7 +56,7 @@ setup = (options, imports, register) ->
     .findById req.param("id")
     .populate "campaigns.campaign"
     .exec (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
@@ -130,7 +129,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
@@ -156,7 +155,7 @@ setup = (options, imports, register) ->
     .find owner: req.user.id
     .populate "campaigns.campaign"
     .exec (err, ads) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       # This is a tad ugly, as we need to fetch stats both for all ads, and
       # for all campagins within the ads.
@@ -226,7 +225,7 @@ setup = (options, imports, register) ->
     .find tutorial: false
     .populate("owner")
     .exec (err, ads) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       adCount = ads.length
       ret = []
@@ -261,7 +260,7 @@ setup = (options, imports, register) ->
     .findById req.param "id"
     .populate "campaigns.campaign"
     .exec (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
@@ -284,7 +283,7 @@ setup = (options, imports, register) ->
   ###
   app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) ->
     db.model("Ad").findById req.param("id"), (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
       if ad.tutorial == true then return aem.send res, "401"
 
@@ -320,7 +319,7 @@ setup = (options, imports, register) ->
     .findById(req.param("id"))
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
       if ad.tutorial == true then return aem.send res, "401"
 

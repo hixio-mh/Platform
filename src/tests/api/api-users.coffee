@@ -19,67 +19,22 @@ module.exports = (user, admin) ->
   describe "Users API", ->
 
     # GET /login
-    #it "---", (done) ->
-    #
-    # done()
-
     # GET /register
-    #it "---", (done) ->
-    #
-    #  done()
-
     # GET /signup
-    #it "---", (done) ->
-    #
-    #  done()
-
+    # GET /forgot
+    # GET /reset
     # GET /logout
-    #it "---", (done) ->
-    #
-    #  done()
-
-    # POST /api/v1/login
-    #it "---", (done) ->
-    #
-    #  done()
-
+    # POST /api/v1/login", passport.authenticate("local
     # POST /api/v1/register
-    #it "---", (done) ->
-    #
-    #  done()
-
+    # POST /api/v1/forgot
+    # POST /api/v1/reset
     # DELETE /api/v1/user/delete
-    #it "---", (done) ->
-    #
-    #  done()
-
     # GET /api/v1/user/get
-    #it "---", (done) ->
-    #
-    #  done()
-
     # GET /api/v1/user
-    #it "---", (done) ->
-    #
-    #  done()
-
-    # PUT /api/v1/user
-    #it "---", (done) ->
-    #
-    #  done()
-
+    # POST /api/v1/user
     # GET /api/v1/user/transactions
-    #it "---", (done) ->
-    #
-    #  done()
-
+    # POST /api/v1/user/tutorial/:section/:status
     # POST /api/v1/user/deposit/:amount
-    #it "---", (done) ->
-    #
-    #  done()
+    # POST /api/v1/user/deposit/:token/:action
 
-    # PUT /api/v1/user/deposit/:token/:action
-    #it "---", (done) ->
-    #
-    #  done()
 

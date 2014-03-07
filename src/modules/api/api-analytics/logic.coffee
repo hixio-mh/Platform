@@ -13,7 +13,6 @@ isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
 
   buildOptionsFromQuery = (req) ->
     options =
@@ -26,7 +25,7 @@ setup = (options, imports, register) ->
 
   queryPublishers = (query, options, stat, res) ->
     db.model("Publisher").find query, (err, publishers) ->
-      if utility.dbError err, res then return
+      if aem.dbError err, res then return
 
       pubRefs = []
       for publisher in publishers
@@ -41,7 +40,7 @@ setup = (options, imports, register) ->
     .find(query)
     .populate("ads")
     .exec (err, campaigns) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
 
       adRefs = []
       for campaign in campaigns
@@ -79,7 +78,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("ads")
     .exec (err, campaign) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       unless campaign then return aem.send res, "404"
 
       if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
@@ -112,7 +111,7 @@ setup = (options, imports, register) ->
     .findById(req.param "id")
     .populate("campaigns.campaign")
     .exec (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       unless ad then return aem.send res, "404"
 
       if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
@@ -142,7 +141,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) ->
     db.model("Publisher").findById req.param("id"), (err, publisher) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       unless publisher then return aem.send res, "404"
 
       if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"

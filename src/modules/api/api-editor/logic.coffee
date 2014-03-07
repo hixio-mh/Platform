@@ -5,6 +5,7 @@ http = require "http"
 
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
+randomize = require "../../../helpers/randomize"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 ##
@@ -13,7 +14,6 @@ isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
   staticDir = "#{__dirname}/../../../static"
 
   ###
@@ -26,7 +26,7 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/editor/7AboeHJAcrKNeeQFUYvInYVB"
   ###
   app.get "/api/v1/editor/:ad", isLoggedInAPI, (req, res) ->
-    if not utility.param req.params.ad, res, "Ad" then return
+    if not aem.param req.params.ad, res, "Ad" then return
 
     res.render "editor.jade", ad: req.params.ad, (err, html) ->
       if err
@@ -52,7 +52,7 @@ setup = (options, imports, register) ->
     file = req.params.file
 
     db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ex then return aem.send res, "404"
 
       if not req.user.admin and not ex.owner.equals req.user.id
@@ -86,10 +86,10 @@ setup = (options, imports, register) ->
   #            id: "2rWLv0Txs3g3LUX1ZrQ4HNwa"
   ###
   app.get "/api/v1/editor", isLoggedInAPI, (req, res) ->
-    if not utility.param req.query.id, res, "Id" then return
+    if not aem.param req.query.id, res, "Id" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
@@ -111,11 +111,11 @@ setup = (options, imports, register) ->
   #            data: "{\"minblur\":16}"
   ###
   app.post "/api/v1/editor", isLoggedInAPI, (req, res) ->
-    if not utility.param req.query.id, res, "Id" then return
-    if not utility.param req.query.data, res, "Data" then return
+    if not aem.param req.query.id, res, "Id" then return
+    if not aem.param req.query.data, res, "Data" then return
 
     db.model("Ad").findById req.query.id, (err, ad) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and not ad.owner.equals req.user.id
@@ -143,8 +143,8 @@ setup = (options, imports, register) ->
   #            data: "{\"minblur\":16}"
   ###
   app.post "/api/v1/editor/export", isLoggedInAPI, (req, res) ->
-    if not utility.param req.query.id, res, "Id" then return
-    if not utility.param req.query.data, res, "Data" then return
+    if not aem.param req.query.id, res, "Id" then return
+    if not aem.param req.query.data, res, "Data" then return
 
     # Takes a full AWGL source and AJS min
     buildExport = (awgl, ajs) ->
@@ -175,8 +175,8 @@ setup = (options, imports, register) ->
 
       # Make a folder within /exports specific for us, then ship the data
       # as a new html file in that folder. Both get randomized names
-      folder = utility.randomString 16
-      file = "#{utility.randomString 8}.html"
+      folder = randomize.randomString 16
+      file = "#{randomize.randomString 8}.html"
 
       # Create an export entry for it
       #
