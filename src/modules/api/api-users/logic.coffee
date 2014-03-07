@@ -27,45 +27,6 @@ setup = (options, imports, register) ->
 
   app = imports["core-express"].server
 
-  # Login and Register views, redirect if user is already logged in
-  app.get "/login", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/login.jade"
-
-  app.get "/register", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/register.jade"
-
-  # Alias for /register
-  app.get "/signup", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/register.jade"
-
-  # Forgot password
-  app.get "/forgot", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/forgot.jade"
-
-  # Reset password
-  app.get "/reset", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/reset.jade"
-
-  # Logout
-  app.get "/logout", (req, res) ->
-    req.logout()
-    res.redirect "/login"
-
   ###
   # POST /api/v1/login
   #   Logs in

@@ -18,5 +18,25 @@ module.exports = (user, admin) ->
 
   describe "Views API", ->
 
+    # GET /creator"
+    describe "creator", ->
+
+      it "Should retrieve the creator page", (done) ->
+
+        req = util.userRequest "/creator", "get"
+        req.expect(200).end (err, res) ->
+          return if handleError(err, res, done)
+          done()
+
+    # GET /login
+    # GET /register
+    # GET /signup
+    # GET /forgot
+    # GET /reset
+    # GET /logout
+
     # GET /views/dashboard/:view
+    describe "dashboard", ->
+
     # GET /views/creator/:view
+    describe "creator", ->
