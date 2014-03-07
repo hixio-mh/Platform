@@ -52,6 +52,8 @@ setup = (options, imports, register) ->
 
   passport.deserializeUser (id, done) ->
     mongoose.model("User").findById id, (err, user) ->
+      if err then return done err
+      if not user then return done null, false, message: "User(#{id}) was not found"
       signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
       admin = user.permissions == 0
       user = user.toAPI()
