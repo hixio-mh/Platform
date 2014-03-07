@@ -195,37 +195,22 @@ setup = (options, imports, register) ->
         aem.send res, "401", error: "Token invalid or expired"
 
   ###
-  # DELETE /api/v1/user/delete
-  #   Removes user account by id
-  # @qparam [ID] id
-  # @example
-  #   $.ajax method: "DELETE",
-  #          url: "/api/v1/user/delete?id=yDhBQrwvJIshcchTBTAmW3qJ"
-  ###
-  app.delete "/api/v1/user/delete", isLoggedInAPI, (req, res) ->
-    if not aem.param req.param("id"), res, "Id" then return
-    if not req.user.admin then return aem.send res, "403"
-
-    db.model("User").findById req.param("id"), (err, user) ->
-      if aem.dbError err, res, false then return
-
-      if "#{req.user.id}" == "#{user._id}"
-        return aem.send res, "500", error: "You can't delete yourself!"
-
-      user.remove()
-      aem.send res, "200", msg: "User removed successfully"
-
-  ###
-  # GET /api/v1/user/get
+  # GET /api/v1/users
+  # GET /api/v1/users?username=*
   #   Returns user based on given filter
+  # @admin
   # @qparam [String] filter
-  # @example
+  # @response [Array<Object>] users
+  # @example1 Returns all users
   #   $.ajax method: "GET",
-  #          url: "/api/v1/user/get?filter=username&username=Dragme"
+  #          url: "/api/v1/users"
+  # @example2 Returns all users whose username equal "Dragme"
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/users?username=Dragme"
   ###
-  app.get "/api/v1/user/get", isLoggedInAPI, (req, res) ->
-    if not aem.param req.param("filter"), res, "Filter" then return
+  app.get "/api/v1/users", isLoggedInAPI, (req, res) ->
     if not req.user.admin then return aem.send res, "403"
+    if not utility.param req.param("filter"), res, "Filter" then return
 
     findAll = (res) ->
       db.model("User").find {}, (err, users) ->
@@ -250,13 +235,51 @@ setup = (options, imports, register) ->
 
         user.updateFunds -> res.json user.toAPI()
 
-    if req.param("filter") == "all"
-      findAll res
-    else if req.param("filter") == "username"
-      if not aem.param req.params.username, res, "Username"
+    if req.param("username")
+      if not utility.param req.params.username, res, "Username"
         return
       else
         findOne req.params.username, res
+    else
+      findAll res
+
+  ###
+  # GET /api/v1/users/:id
+  #   Returns User by :id
+  # @admin
+  # @param [ID] id
+  # @response [Object] user
+  # @example User 9keTBEYUbgvU0GNteBChBVBY
+  #   $.ajax method: "GET",
+  #          url: "/api/v1/users/9keTBEYUbgvU0GNteBChBVBY"
+  ###
+  app.get "/api/v1/users/:id", isLoggedInAPI, (req, res) ->
+    if not req.user.admin then return aem.send res, "403"
+
+    db.model("User").findById req.param("id"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      res.json user.toAPI()
+
+  ###
+  # DELETE /api/v1/users/:id
+  #   Removes user account by :id
+  # @param [ID] id
+  # @example
+  #   $.ajax method: "DELETE",
+  #          url: "/api/v1/users/yDhBQrwvJIshcchTBTAmW3qJ"
+  ###
+  app.delete "/api/v1/users/:id", isLoggedInAPI, (req, res) ->
+    if not req.user.admin then return aem.send res, "403"
+
+    db.model("User").findById req.param("id"), (err, user) ->
+      if utility.dbError err, res, false then return
+
+      if "#{req.user.id}" == "#{user._id}"
+        return aem.send res, "500", error: "You can't delete yourself!"
+
+      user.remove()
+      aem.send res, "200", msg: "User removed successfully"
 
   ###
   # GET /api/v1/user
