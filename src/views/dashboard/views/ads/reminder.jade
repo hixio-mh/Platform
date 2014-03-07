@@ -20,11 +20,12 @@ include _menu
       dd: input(required ng-model="ad.pushDesc" type="text" placeholder="Enter a short description")
 
       dt: label Icon
-      dd
-        button(ng-click="pickIcon()") Upload an Icon
-        br
+      dd.creative-image
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
         img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}" width="64" style="margin:8px")
         img(ng-if="ad.pushIcon && !ad.pushIcon.url" ng-src="{{ ad.pushIcon }}" width="64" style="margin:8px")
+        button(ng-click="pickIcon()" ng-class="{ preview: ad.pushIcon.url || (ad.pushIcon && !ad.pushIcon.url) }") Upload an Icon
 
       br
       br
@@ -40,8 +41,11 @@ include _menu
       label Preview
     .preview
       .icon
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
         img(ng-if="ad.pushIcon.url" ng-src="{{ ad.pushIcon.url }}" width="64")
         img(ng-if="!ad.pushIcon.url && ad.pushIcon" ng-src="{{ ad.pushIcon }}" width="64")
+
         img(ng-if="!ad.pushIcon.url && !ad.pushIcon" src="/img/no_image_icon.png" width="64")
       .info
         a.title(ng-href="{{ ad.url }}") {{ ad.pushTitle }}

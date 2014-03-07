@@ -29,13 +29,21 @@ include _menu
 
       dt: label Icon
       dd.creative-image
-        img(ng-if="ad.native.iconURL" ng-src="{{ ad.native.iconURL }}" width="64" style="margin: 8px 16px 8px 8px")
-        button(ng-click="pickIcon()" ng-class="{ preview: ad.native.featureURL.length > 0 }") Upload an Icon
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
+        img(ng-if="ad.native.iconURL.url" ng-src="{{ ad.native.iconURL.url }}" width="64")
+        img(ng-if="ad.native.iconURL && !ad.native.iconURL.url" ng-src="{{ ad.native.iconURL }}" width="64")
+
+        button(ng-click="pickIcon()" ng-class="{ preview: ad.native.iconURL.url || (ad.native.iconURL && !ad.native.iconURL.url) }") Upload an Icon
 
       dt: label Feature Image
       dd.creative-image
-        img(ng-if="ad.native.featureURL" ng-src="{{ ad.native.featureURL }}" width="256" style="margin: 8px 16px 8px 8px")
-        button(ng-click="pickFeature()" ng-class="{ preview: ad.native.featureURL.length > 0 }") Upload a feature image
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
+        img(ng-if="ad.native.featureURL.url" ng-src="{{ ad.native.featureURL.url }}" width="256")
+        img(ng-if="ad.native.featureURL && !ad.native.featureURL.url" ng-src="{{ ad.native.featureURL }}" width="256")
+
+        button(ng-click="pickFeature()" ng-class="{ preview: ad.native.featureURL.url || (ad.native.featureURL && !ad.native.featureURL.url) }") Upload a feature image
 
       br
       br
