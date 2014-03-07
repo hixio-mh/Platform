@@ -10,7 +10,7 @@ angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope
       location: "S3"
       path: "/ads/assets/"
     , (blob) ->
-      $scope.$apply -> $scope.native.iconURL = blob[0]
+      $scope.$apply -> $scope.ad.native.iconURL = blob[0]
 
   $scope.pickFeature = ->
     filepicker.pickAndStore
@@ -19,4 +19,4 @@ angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope
       location: "S3"
       path: "/ads/assets/"
     , (blob) ->
-      $scope.$apply -> $scope.native.featureURL = blob[0]
+      $scope.$apply -> $scope.ad.native.featureURL = blob[0]
