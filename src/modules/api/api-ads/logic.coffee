@@ -93,10 +93,10 @@ setup = (options, imports, register) ->
       ##
 
       if req.param "native"
-        ad.native.title or= req.param("native").title
-        ad.native.description or= req.param("native").description
-        ad.native.storeURL or= req.param("native").storeURL
-        ad.native.clickURL or= req.param("native").clickURL
+        ad.native.title = req.param("native").title || ""
+        ad.native.description = req.param("native").description || ""
+        ad.native.storeURL = req.param("native").storeURL || ""
+        ad.native.clickURL = req.param("native").clickURL || ""
 
         if req.param("native").iconURL
           ad.native.iconURL = generateS3Url req.param("native").iconURL
@@ -108,9 +108,9 @@ setup = (options, imports, register) ->
       ## Notification stuff
       ##
 
-      ad.url or= req.param "url"
-      ad.pushTitle or= req.param "pushTitle"
-      ad.pushDesc or= req.param "pushDesc"
+      ad.url = req.param("url") || ""
+      ad.pushTitle = req.param("pushTitle") || ""
+      ad.pushDesc = req.param("pushDesc") || ""
 
       if req.param "pushIcon"
         ad.pushIcon = generateS3Url req.param "pushIcon"
