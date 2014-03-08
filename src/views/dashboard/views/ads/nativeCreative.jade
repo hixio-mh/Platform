@@ -5,7 +5,13 @@ include _menu
     fieldset: dl.form.center
       legend
         | Native Creative
-        .label.red.right(style="margin-top:16px") Missing data
+
+        .toggle-wrap.right(style="margin: 2px 0 0 32px" ng-if="dataStatus() == 'incomplete' || dataStatus() == 'complete'")
+          toggle-switch(method="activeToggled()" model="ad.native.active")
+
+        .label.red.right(style="margin-top:16px" ng-if="dataStatus() == 'missing'") No content provided
+        .label.orange.right(style="margin-top:16px" ng-if="dataStatus() == 'incomplete'") Incomplete content
+        .label.green.right(style="margin-top:16px" ng-if="dataStatus() == 'complete'") Everything looks good!
 
       p Prepare your ad for native, contextual delivery by filling out the fields below. Our publishers will then render your content alongside their own, providing a rich and non-intrusive experience for users.
 
@@ -25,7 +31,7 @@ include _menu
       dt
         label Google/Apple store URL
         span Optional, provide a URL here if you'd like us to include ratings, download counts, and other info in the data we send to publishers.
-      dd: input(required ng-model="ad.native.storeURL" type="text" placeholder="https://itunes.apple.com/... or https://play.google.com/...")
+      dd: input(ng-model="ad.native.storeURL" type="text" placeholder="https://itunes.apple.com/... or https://play.google.com/...")
 
       dt: label Icon
       dd.creative-image
