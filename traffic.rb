@@ -24,6 +24,30 @@ lyrics = %w[
   they trying
   they trying
 ]
+
+click_stack = []
+impressions_stack = []
+
+Thread.abort_on_exception = true
+
+def stack_thread(arra)
+  Thread.new do
+    loop do
+      lnk = arra.shift
+      begin
+        Excon.get(lnk) if lnk
+        sleep 0.20
+      rescue Excon::Errors::BadGateway
+        puts "Clicks/Impressions Server appears to be down, waiting a few seconds"
+        sleep 3.0
+      end
+    end
+  end
+end
+
+stack_thread(click_stack)
+stack_thread(impressions_stack)
+
 loop do
   sleep 0.20
   pub = pubs.sample
@@ -31,10 +55,13 @@ loop do
     hsh = agent_u.serve.serve(id: pub["apikey"], width: 400, height: 400, json: true)
     imprs = hsh["impression"]
     click = hsh["click"]
-    Excon.get(imprs) if imprs && rand < 0.7
-    Excon.get(click) if imprs && rand < 0.5
+    impressions_stack << imprs if imprs && rand < 0.7
+    click_stack << click if click && rand < 0.5
+  rescue Excon::Errors::BadGateway
+    puts "Server appears to be down, waiting a few seconds"
+    sleep 3.0
   rescue Excon::Errors::NotFound
-    #
+    sleep 0.02
   end
   print line_clear
   print "Generating Traffic Like a Baws #{loader[i % loader.size]} : #{lyrics[(i / 5) % lyrics.size]}"
