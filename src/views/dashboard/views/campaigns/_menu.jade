@@ -9,7 +9,7 @@
     .amount.large {{ campaign.stats.ctr | number:2 }} %
     .desc Total CTR
   .stat: .wrap
-    .amount.large $ {{ campaign.stats.spent | number:2 }}
+    .amount.large {{ campaign.stats.spent | currency:$ }}
     .desc Total Spent
 
 .titlebar.cf.full.campaign(ng-controller="AdefyCampaignMenuController" data-id="{{ campaign.id }}")
