@@ -15,6 +15,13 @@ AWS.config.update
 
 s3 = new AWS.S3()
 
+generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
+getS3Key = (object) ->
+  if object.key != undefined
+    object.key
+  else
+    object.split("//#{s3Host}/")[1]
+
 ##
 ## Ad schema
 ##
@@ -24,11 +31,6 @@ schema = new mongoose.Schema
   # Generic per-ad information
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
-  data: { type: String, default: "" }
-  url: { type: String, default: "" }
-  pushTitle: { type: String, default: "" }
-  pushDesc: { type: String, default: "" }
-  pushIcon: { type: String, default: "" }
 
   native:
     title: { type: String, default: "" }
@@ -39,6 +41,19 @@ schema = new mongoose.Schema
     iconURL: { type: String, default: "" }
     featureURL: { type: String, default: "" }
 
+    active: { type: Boolean, default: false }
+
+  organic:
+    jsSource: { type: String, default: "" }
+
+    notification:
+      clickURL: { type: String, default: "" }
+      title: { type: String, default: "" }
+      description: { type: String, default: "" }
+      icon: { type: String, default: "" }
+
+    active: { type: Boolean, default: false }
+
   # Texture array for creative
   assets: [
     name: String    # Asset name (texture handle)
@@ -46,7 +61,7 @@ schema = new mongoose.Schema
     key: String     # S3 asset key
   ]
 
-  version: { type: Number, default: 1 }
+  version: { type: Number, default: 2 }
 
   # 0 - Pending
   # 1 - Rejected
@@ -84,6 +99,19 @@ schema = new mongoose.Schema
     # example items should not be allowed to get used
     tutorial: { type: Boolean, default: false }
   ]
+
+  ##
+  ## LEGACY FIELDS
+  ## Keep these on untill all databases are migrated
+  ##
+  data: { type: String, default: "" }
+  url: { type: String, default: "" }
+  pushTitle: { type: String, default: "" }
+  pushDesc: { type: String, default: "" }
+  pushIcon: { type: String, default: "" }
+  ##
+  ##
+  ##
 
 ##
 ## ID and handle generation
@@ -140,6 +168,30 @@ schema.methods.clearApproval = -> @status = 0
 schema.methods.disaprove = (cb) ->
   @status = 1
   @removeFromCampaigns -> if cb then cb()
+
+##
+## Creative status
+##
+schema.methods.isCreativeActive = (creative) ->
+  if creative == "native"
+    @native.active
+  else if creative == "oAd"
+    @organic.active
+  else
+    throw new Error "[Ad isCreativeActive] Unknown creative type: creative"
+
+schema.methods.setCreativeActive = (creative, active) ->
+  if creative == "native"
+    @native.active = active
+  else if creative == "oAd"
+    @organic.active = active
+  else
+    throw new Error "[Ad isCreativeActive] Unknown creative type: creative"
+
+schema.methods.activateNativeCreative = -> @setCreativeActive "native", true
+schema.methods.deactivateNativeCreative = -> @setCreativeActive "native", false
+schema.methods.activateOrganicCreative = -> @setCreativeActive "organic", true
+schema.methods.deactivateOrganicCreative = -> @setCreativeActive "organic", false
 
 ##
 ## Stat fetching
@@ -321,6 +373,84 @@ schema.statics.getCampaigns = (adId, cb) ->
     else cb ad.campaigns
 
 ##
+## Saving/update utility methods
+##
+
+# Helper to prepare organic JS object source for shipping. Returns null if src
+# is not stringifiable
+#
+# @param [Object] src raw JS object source
+# @return [String] JSON stringified source
+schema.methods.prepareOrganicSource = (src) ->
+  if src.type == undefined then src.type = "flat_template"
+  JSON = null
+
+  try
+    JSON = JSON.stringify src
+
+  JSON
+
+# Update organic ad notification
+#
+# @param [Object] data
+schema.methods.updateOrganicNotification = (data) ->
+  if data.clickURL != undefined
+    @organic.notification.clickURL = data.clickURL
+
+  if data.title != undefined
+    @organic.notification.title = data.title
+
+  if data.description != undefined
+    @organic.notification.description = data.description
+
+  # Generate new icon url, and only update if it is new
+  if data.icon != undefined
+    newIconURL = generateS3Url data.icon
+
+    if newIconURL != @organic.notification.icon
+      @organic.notification.icon = newIconURL
+      @updateAsset "push-icon", "", getS3Key newIconURL
+
+# Update asset entry; if it doesn't already exist, a new entry is created
+#
+# @param [String] name
+# @param [String] buffer
+# @param [String] key
+schema.methods.updateAsset = (name, buffer, key) ->
+  asset = name: name, buffer: buffer, key: key
+
+  for a, i in @assets
+    if a.name == name
+      @assets[i] = asset
+      return
+
+  @assets.push asset
+
+# Update organic creative with raw data (handles icon asset managment)
+#
+# @param [Object] data
+schema.methods.updateOrganic = (data) ->
+  if data.jsSource
+    @organic.jsSource = @prepareOrganicSource data.jsSource
+
+  if data.notification then @updateOrganicNotification data.notification
+
+# Update native creative with raw data
+schema.methods.updateNative = (data) ->
+
+  if data.title != undefined then @native.title = data.title
+  if data.description != undefined then @native.description = data.description
+  if data.storeURL != undefined then @native.storeURL = data.storeURL
+  if data.clickURL != undefined then @native.clickURL = data.clickURL
+
+  # S3 assets
+  if data.iconURL != undefined
+    @native.iconURL = generateS3Url data.iconURL
+
+  if data.featureURL != undefined
+    @native.featureURL = generateS3Url data.featureURL
+
+##
 ##
 ## Redis reference management
 ##
@@ -479,12 +609,9 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
 
 schema.methods.createRedisStruture = (cb) ->
   performRedisRefresh = =>
-    adData =
-      creative: @data
-      url: @url
-      pushTitle: @pushTitle
-      pushDesc: @pushDesc
-      assets: @assets
+
+    # Store ad formats
+    adData = organic: @organic, native: @native
 
     redis.set @getRedisRef(), JSON.stringify(adData), (err) ->
       if err then spew.error err

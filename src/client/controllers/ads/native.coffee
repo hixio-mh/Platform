@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope, AdService, $routeParams, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope, AdService, $routeParams, $timeout, $http) ->
 
   updateDataStatus = ->
     data = $scope.ad.native
@@ -36,7 +36,18 @@ angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope
       $scope.$apply -> $scope.ad.native.featureURL = blob[0]
 
   # Ad status is artificial (put on the model by us) and set on load/save
-  $scope.dataStatus = -> $scope.ad.native.status
+  $scope.dataStatus = ->
+    if $scope.ad
+      $scope.ad.native.status
+    else
+      false
+
+  $scope.activeToggled = ->
+    if $scope.ad.native.active
+      $http.post "/api/v1/ads/#{$scope.ad.id}/native/deactivate"
+    else
+      $http.post "/api/v1/ads/#{$scope.ad.id}/native/activate"
+
 
   $scope.save = ->
     $scope.submitted = true

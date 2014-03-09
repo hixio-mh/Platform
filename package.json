@@ -57,7 +57,8 @@
     "bson": "~0.2.6",
     "gulp-exec": "~1.0.4",
     "powerdrill": "git://github.com/Mirceam94/powerdrill.git#master",
-    "yamljs": "~0.1.4"
+    "yamljs": "~0.1.4",
+    "create-error": "~0.3.1"
   },
   "devDependencies": {
     "supertest": "~0.9.0",
