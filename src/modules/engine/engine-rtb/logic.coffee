@@ -56,7 +56,7 @@ setup = (options, imports, register) ->
         keysToFetch = []
 
         # First go through and fetch pacing spend data for campaigns
-        for key, ad of structuredAds
+        for key, ad of ads
 
           # Add key to fetch list
           if campaignPaceData[ad.campaignId] == undefined
@@ -72,7 +72,7 @@ setup = (options, imports, register) ->
         redis.mget keysToFetch, (err, data) ->
           if err
             spew.error err
-            throw new Error "Failed to fetch pace data: #{err}"
+            throw new NoAd "Failed to fetch pace data: #{err}"
 
           # Pack data appropriately
           for key, i in keysToFetch
@@ -90,7 +90,7 @@ setup = (options, imports, register) ->
       ###
       keepPace: (paceData, redisRef, timestamp) ->
 
-        if nowTimestamp - paceData.timestamp >= PACE_UPDATE_TIMESPAN
+        if timestamp - paceData.timestamp >= PACE_UPDATE_TIMESPAN
 
           if paceData.spent > 0
             paceData.pace = paceData.target / paceData.spent
@@ -100,7 +100,7 @@ setup = (options, imports, register) ->
           paceData.pace *= PACE_DAMPING
 
           redis.set "#{redisRef}:pace", paceData.pace
-          redis.set "#{redisRef}:timestamp", nowTimestamp
+          redis.set "#{redisRef}:timestamp", timestamp
           redis.set "#{redisRef}:spent", 0
 
       ###
@@ -226,7 +226,7 @@ setup = (options, imports, register) ->
         @fetchPaceData ads, (campaignPaceData) =>
 
           # Go through and generate bids
-          for key, ad of structuredAds
+          for key, ad of ads
             paceData = campaignPaceData[ad.campaignId]
             paceRef = "campaign:#{ad.campaignId}:pacing"
 

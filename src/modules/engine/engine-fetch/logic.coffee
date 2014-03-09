@@ -283,7 +283,9 @@ setup = (options, imports, register) ->
       # @param [Method] cb callback, accepts array of ad objects
       ###
       fetchTargetedAdEntries: (targetingKey, req, res, cb) ->
-        redis.smembers targetingKey, (err, adKeys) ->
+
+        redis.smembers targetingKey, (err, adKeys) =>
+
           if err
             spew.error err
             throw new NoAd "Failed to fetch targeted ad keys: #{err}"
@@ -295,7 +297,7 @@ setup = (options, imports, register) ->
           doneCount = adKeys.length
           done = => doneCount--; if doneCount == 0 then cb structuredAds
 
-          fetchAdKeys = (key) ->
+          fetchAdKeys = (key) =>
             campaignUserRef = key.split(":")[3]
             adId = key.split(":")[2]
 
@@ -309,8 +311,11 @@ setup = (options, imports, register) ->
               "#{key}:bid"
               "user:#{campaignUserRef}:adFunds"
               "ads:#{adId}"
-            ], (err, data) ->
-              if err then spew.error err; return fetchEmpty req, res
+            ], (err, data) =>
+
+              if err
+                spew.error err
+                throw new NoAd "Error fetching structured ad data: #{err}"
 
               structuredAds[key] =
                 pricing: data[0]
@@ -320,9 +325,9 @@ setup = (options, imports, register) ->
                 spent: Number data[4]
                 clicks: Number data[5]
                 targetBid: Number data[6]
-                campaignId: getCampaignFromAdKey key
-                adId: getAdFromAdKey key
-                ownerRedisId: getUserFromAdKey key
+                campaignId: @getCampaignFromAdKey key
+                adId: @getAdFromAdKey key
+                ownerRedisId: @getUserFromAdKey key
                 userFunds: Number data[7]
 
               try
@@ -377,8 +382,8 @@ setup = (options, imports, register) ->
       # @param [Method] callback
       ###
       fetch: (req, res, publisher, startTimestamp, cb) ->
-        error = validateRequest req
-        return fetchEmpty req, res if error != null
+        error = @validateRequest req
+        throw new NoAd error if error != null
 
         # Log request
         redis.incr "#{publisher.ref}:requests"
@@ -391,16 +396,18 @@ setup = (options, imports, register) ->
           @performBaseTargeting publisher, req, (targetingKey, err, adCount) =>
 
             if err or adCount == 0
-              if err then spew.error err
               redis.del targetingKey
-              return fetchEmpty req, res
+
+              if err
+                spew.error err
+                throw new NoAd err
 
             # Todo: Add more steps to this if needed
             if country == "None" then country = null
 
             @performCountryTargeting targetingKey, country, res, (finalKey) =>
               @fetchTargetedAdEntries finalKey, req, res, (ads) =>
-                rtbEngine.auction ads, publisher, req, res, (ad) ->
+                rtbEngine.auction ads, publisher, req, res, (ad) =>
 
                   # If ad is null, that means we couldn't find a suitable one
                   # Either the floor limit is too high, nothing was targeted,
@@ -444,7 +451,10 @@ setup = (options, imports, register) ->
         # Wrap call in a domain to catch errors
         d = domain.create()
         d.on "error", (e) =>
-          @fetchEmpty req, res if e instanceof NoAd
+          if e instanceof NoAd
+            @fetchEmpty req, res 
+          else
+            spew.error e.stack
 
         d.add req
         d.add res
@@ -468,7 +478,10 @@ setup = (options, imports, register) ->
         # Wrap call in a domain to catch errors
         d = domain.create()
         d.on "error", (e) =>
-          @fetchEmpty req, res if e instanceof NoAd
+          if e instanceof NoAd
+            @fetchEmpty req, res 
+          else
+            spew.error e.stack
 
         d.add req
         d.add res
