@@ -6,7 +6,7 @@ include _menu
       legend
         | Native Creative
 
-        .toggle-wrap.right(style="margin: 2px 0 0 32px" ng-if="dataStatus() == 'incomplete' || dataStatus() == 'complete'")
+        .toggle-wrap.right(style="margin: 2px 0 0 32px" ng-if="ad.status == 2 && (dataStatus() == 'incomplete' || dataStatus() == 'complete')")
           toggle-switch(method="activeToggled()" model="ad.native.active")
 
         .label.red.right(style="margin-top:16px" ng-if="dataStatus() == 'missing'") No content provided
@@ -22,6 +22,9 @@ include _menu
 
       dt: label Description
       dd: input(required ng-model="ad.native.description" type="text" placeholder="Enter a short description")
+
+      dt: label Content
+      dd: textarea(ng-model="ad.native.content" placeholder="Optional text-only content")
 
       dt
         label Click URL

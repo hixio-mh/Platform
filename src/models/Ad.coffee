@@ -36,6 +36,7 @@ schema = new mongoose.Schema
   native:
     title: { type: String, default: "" }
     description: { type: String, default: "" }
+    content: { type: String, default: "" }
     storeURL: { type: String, default: "" }
     clickURL: { type: String, default: "" }
 
@@ -46,6 +47,7 @@ schema = new mongoose.Schema
 
   organic:
     jsSource: { type: String, default: "" }
+    googleStoreURL: { type: String, default: "" }
 
     notification:
       clickURL: { type: String, default: "" }
@@ -384,12 +386,12 @@ schema.statics.getCampaigns = (adId, cb) ->
 # @return [String] JSON stringified source
 schema.methods.prepareOrganicSource = (src) ->
   if src.type == undefined then src.type = "flat_template"
-  JSON = null
+  jsSource = null
 
   try
-    JSON = JSON.stringify src
+    jsSource = JSON.stringify src
 
-  JSON
+  jsSource
 
 # Update organic ad notification
 #
@@ -434,6 +436,9 @@ schema.methods.updateOrganic = (data) ->
   if data.jsSource
     @organic.jsSource = @prepareOrganicSource data.jsSource
 
+    if data.googleStoreURL != undefined
+      @organic.googleStoreURL = data.googleStoreURL
+
   if data.notification then @updateOrganicNotification data.notification
 
 # Update native creative with raw data
@@ -441,6 +446,7 @@ schema.methods.updateNative = (data) ->
 
   if data.title != undefined then @native.title = data.title
   if data.description != undefined then @native.description = data.description
+  if data.content != undefined then @native.content = data.content
   if data.storeURL != undefined then @native.storeURL = data.storeURL
   if data.clickURL != undefined then @native.clickURL = data.clickURL
 
@@ -608,22 +614,25 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
 
   if cb then cb()
 
+schema.methods.refreshRedisData = (cb) ->
+  if @tutorial
+    if cb then cb()
+    return
+
+  adData = organic: @organic, native: @native
+
+  redis.set @getRedisRef(), JSON.stringify(adData), (err) =>
+    if err then spew.error err
+    if cb then cb()
+
 schema.methods.createRedisStruture = (cb) ->
-  performRedisRefresh = =>
-
-    # Store ad formats
-    adData = organic: @organic, native: @native
-
-    redis.set @getRedisRef(), JSON.stringify(adData), (err) ->
-      if err then spew.error err
-      if cb then cb()
 
   # Go through and renew assets if needed, otherwise perform a normal refresh
   for asset in @assets
     if asset.buffer.length == 0
-      return @fetchAssetsFromS3 => performRedisRefresh -> cb()
+      return @fetchAssetsFromS3 => @refreshRedisData -> cb()
 
-  performRedisRefresh -> cb()
+  @refreshRedisData -> cb()
 
 schema.methods.fetchAssetsFromS3 = (finalCb) ->
   if @assets.length == 0 then return finalCb()
@@ -644,8 +653,10 @@ schema.methods.fetchAssetsFromS3 = (finalCb) ->
       cb()
   , -> finalCb()
 
-# Rebuild our redis structures
+# Rebuild our redis structures if we are a legitimate ad
 schema.pre "save", (next) ->
+  if @tutorial then return next()
+
   @fetchAssetsFromS3 =>
     @createRedisStruture ->
       next()

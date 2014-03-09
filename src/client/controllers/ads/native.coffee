@@ -1,18 +1,8 @@
 angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope, AdService, $routeParams, $timeout, $http) ->
 
-  updateDataStatus = ->
-    data = $scope.ad.native
-
-    if !data.title.length or !data.description or !data.clickURL
-      $scope.ad.native.status = "missing"
-    else if !data.storeURL or !data.featureURL or !data.iconURL
-      $scope.ad.native.status = "incomplete"
-    else
-      $scope.ad.native.status = "complete"
-
   AdService.getAd $routeParams.id, (ad) ->
     $scope.ad = ad
-    updateDataStatus()
+    $scope.ad.getNativeStatus()
 
   $scope.submitted = false
   $scope.saving = false
@@ -48,7 +38,6 @@ angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope
     else
       $http.post "/api/v1/ads/#{$scope.ad.id}/native/activate"
 
-
   $scope.save = ->
     $scope.submitted = true
     $scope.saving = true
@@ -57,8 +46,8 @@ angular.module("AdefyApp").controller "AdefyAdNativeCreativeController", ($scope
       $scope.setNotification "Saved!", "success"
       $scope.ad = ad
       $scope.saving = false
-      updateDataStatus()
+      $scope.ad.getNativeStatus()
     , ->
       $scope.saving = false
       $scope.setNotification "There was an error with your submission", "error"
-      updateDataStatus()
+      $scope.ad.getNativeStatus()

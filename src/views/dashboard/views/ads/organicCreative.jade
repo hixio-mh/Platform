@@ -5,7 +5,7 @@ include _menu
   .section Google Play Creative
     .w50.right.header-controls.creative-controls
       .w75.contents-right
-        input.w100(type="text" placeholder="Enter URL" ng-model="ad.data.url")
+        input.w100(type="text" placeholder="Enter URL" ng-model="ad.organic.googleStoreURL")
       .w25.contents-left
         button(ng-click="commitURL()" ng-class="{ blue: !renderURL }") Generate
         button.blue(ng-disabled="!renderURL || !creativeLoaded" ng-click="save()") Save

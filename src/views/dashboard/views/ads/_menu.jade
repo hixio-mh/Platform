@@ -42,8 +42,10 @@
   .right
     .label.blue(ng-if="ad.tutorial") Example
 
-    span(ng-switch="ad.status" ng-if="ad.data.creative")
+    span(ng-switch="ad.status" ng-if="!ad.tutorial")
       .label.gray(ng-switch-when="0") Pending Approval
       .label.red(ng-switch-when="1") Rejected
 
-    .label.orange(ng-if="ad.status != 2 && (!ad.data || !ad.data.creative)") No Creative
+    div(ng-if="!ad.tutorial && ad.status == 2")
+      .label.green(ng-if="ad.getNativeStatus() != 'missing'") Native Creative
+      .label.green(ng-if="ad.getOrganicStatus() != 'missing'") Organic Creative

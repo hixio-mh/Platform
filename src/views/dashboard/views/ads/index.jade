@@ -26,11 +26,9 @@ ul.list.ad-list(ng-if="ads")
       .name(ng-bind="ad.name")
       .label.blue(ng-if="ad.tutorial") Example
 
-      span(ng-switch="ad.status" ng-if="ad.data.creative")
+      span(ng-switch="ad.status" ng-if="!ad.tutorial")
         .label.gray(ng-switch-when="0") Pending Approval
         .label.red(ng-switch-when="1") Rejected
-
-      .label.orange(ng-if="ad.status != 2 && (!ad.data || !ad.data.creative)") No Creative
 
       .edit: i.fa.fa-wrench
 
