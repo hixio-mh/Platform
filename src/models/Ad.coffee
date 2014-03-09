@@ -650,12 +650,11 @@ schema.pre "save", (next) ->
     @createRedisStruture ->
       next()
 
-schema.path("data").validate (value) ->
+schema.path("organic.jsSource").validate (value) ->
   try
-    if (value)
+    if value
       hash = JSON.parse(value)
-      if hash.min < 16
-        return false
+      if hash.min < 16 then return false
     return true
   catch e
     spew.error e
