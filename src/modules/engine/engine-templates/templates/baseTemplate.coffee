@@ -220,9 +220,9 @@ class AdefyBaseAdTemplate
     # Build manifest
     manifest.click = options.click
     manifest.impression = options.impression
-    manifest.pushTitle = options.pushTitle
-    manifest.pushDesc = options.pushDesc
-    manifest.pushURL = options.pushURL
+    manifest.pushTitle = options.organic.notification.title
+    manifest.pushDesc = options.organic.notification.description
+    manifest.pushURL = options.organic.notification.clickURL
     manifest.pushIcon = "push-icon"
 
     # Append assets

@@ -1,5 +1,5 @@
 {
-  "name": "api-serve",
+  "name": "engine-rtb",
   "version": "0.0.1",
   "main": "logic.coffee",
   "private": true,
@@ -7,8 +7,8 @@
     "consumes": [
       "core-express",
       "logic-utility",
-      "engine-fetch"
+      "core-redis"
     ],
-    "provides": []
+    "provides": ["engine-rtb"]
   }
 }
