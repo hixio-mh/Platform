@@ -18,6 +18,32 @@ angular.module("AdefyApp").service "AdService", [
           if c.stats.ctr then c.stats.ctr *= 100
           if c.stats.ctr24h then c.stats.ctr24h *= 100
 
+      # Attach methods to provide status info
+      ad.getNativeStatus = ->
+        data = @native
+
+        if !data.title.length or !data.description or !data.clickURL
+          @native.status = "missing"
+        else if !data.storeURL or !data.featureURL or !data.iconURL
+          @native.status = "incomplete"
+        else
+          @native.status = "complete"
+
+        @native.status
+
+      ad.getOrganicStatus = ->
+        data = @organic
+        notification = @organic.notification
+
+        if data.jsSource == undefined or data.jsSource.length == 0
+          @organic.status = "missing"
+        else if !notification.title or !notification.clickURL
+          @organic.status = "incomplete"
+        else
+          @organic.status = "complete"
+
+        @organic.status
+
       ad
 
     service =

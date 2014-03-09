@@ -6,10 +6,9 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
 
   $scope.commitURL = ->
     $scope.creativeLoaded = false
-    if $scope.ad.data == undefined then $scope.ad.data = {}
 
-    if $scope.ad.data.url.length > 0
-      $scope.renderURL = $scope.ad.data.url
+    if $scope.ad.organic.googleStoreURL.length > 0
+      $scope.renderURL = $scope.ad.organic.googleStoreURL
 
       $scope.cycle = false
       $timeout -> $scope.$apply -> $scope.cycle = true
@@ -24,7 +23,9 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
     $scope.creativeData = d
 
   $scope.save = ->
-    $scope.ad.data.creative = $scope.creativeData
+    $scope.ad.organic.jsSource = $scope.creativeData
+    $scope.ad.organic.googleStoreURL = $scope.renderURL
+
     AdService.save $scope.ad, (ad) ->
       $scope.setNotification "Saved!", "success"
       $scope.ad = ad
@@ -32,13 +33,13 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
       $scope.setNotification "There was an error with your submission", "error"
 
   $scope.getSavedData = (url) ->
-    if $scope.ad.data.url == url
-      $scope.ad.data.creative
+    if $scope.ad.organic.googleStoreURL == url
+      $scope.ad.organic.jsSource
     else
       null
 
   AdService.getAd $routeParams.id, (ad) ->
     $scope.ad = ad
 
-    if ad.data != undefined and ad.data.url != undefined
-      $scope.commitURL ad.data.url
+    if ad.organic.googleStoreURL != undefined
+      $scope.commitURL ad.organic.googleStoreURL

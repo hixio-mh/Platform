@@ -63,6 +63,9 @@ setup = (options, imports, register) ->
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
         return aem.send res, "401"
 
+      if ad.status != 2
+        return aem.send res, "401", error: "Ad un-approved"
+
       ad.setCreativeActive req.param("creative"), true
       ad.save()
 
