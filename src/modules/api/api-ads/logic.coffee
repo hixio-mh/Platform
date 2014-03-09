@@ -100,7 +100,8 @@ setup = (options, imports, register) ->
   # POST /api/v1/ads/:id
   #   Updates an existing Ad by :id
   # @param [ID] id
-  # @qparam [String] name
+  # @qparam [Object] native
+  # @qparam [Object] organic
   # @response [Object] Ad returns an updated Ad object
   # @example
   #   $.ajax method: "POST",
@@ -127,8 +128,6 @@ setup = (options, imports, register) ->
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
         return aem.send res, "401"
-
-      ad.name = req.param("name") | ""
 
       if req.param("native") then ad.updateNative req.param "native"
       if req.param("organic") then ad.updateOrganic req.param "organic"
