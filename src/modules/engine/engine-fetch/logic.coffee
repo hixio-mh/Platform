@@ -4,6 +4,7 @@ config = require "../../../config"
 adefyDomain = "http://#{config("domain")}"
 filters = require "../../../helpers/filters"
 aem = require "../../../helpers/apiErrorMessages"
+_ = require "underscore"
 
 ##
 ## Handles ad packaging and fetching
@@ -331,9 +332,12 @@ setup = (options, imports, register) ->
                 userFunds: Number data[7]
 
               try
+
                 data = JSON.parse data[8]
+
                 structuredAds[key].organic = data.organic
                 structuredAds[key].native = data.native
+
               catch
                 spew.error "Couldn't parse ad data #{data[8]}"
                 return fetchEmpty req, res
@@ -367,23 +371,37 @@ setup = (options, imports, register) ->
       getUserFromAdKey: (adKey) -> adKey.split(":")[3]
 
       ###
+      # Return only subset of ads matching type from the provided entry list
+      #
+      # @param [Object] adEntries
+      # @return [Object] filteredAdEntries
+      ###
+      filterEntriesByType: (ads, type) ->
+        for id, ad of ads
+          if not ad[type].active then delete ads[id]
+
+      ###
       # Standard ad fetch call. Assumes publisher is active and approved!
       # Does targeting, bidding, and returns the winning ad if possible.
       #
       # WILL throw NoAd if an error occurs or no ad could be targeted
       #
-      # Note: This method has to be FAST. This is the bottleneck, all ad requests
-      #       pass through here.
+      # Note: This method has to be FAST. This is the bottleneck, all ad
+      #       requests pass through here.
       #
       # @param [Object] req request
       # @param [Object] res response
       # @param [Object] publisher publisher data set (fetched from redis)
       # @param [Number] startTimestamp
+      # @param [String] type ad type, native or organic
       # @param [Method] callback
       ###
-      fetch: (req, res, publisher, startTimestamp, cb) ->
+      fetch: (req, res, publisher, startTimestamp, type, cb) ->
         error = @validateRequest req
         throw new NoAd error if error != null
+
+        if type != "native" and type != "organic"
+          throw new NoAd "Invalid type: #{type}"
 
         # Log request
         redis.incr "#{publisher.ref}:requests"
@@ -404,9 +422,12 @@ setup = (options, imports, register) ->
 
             # Todo: Add more steps to this if needed
             if country == "None" then country = null
-
             @performCountryTargeting targetingKey, country, res, (finalKey) =>
               @fetchTargetedAdEntries finalKey, req, res, (ads) =>
+
+                @filterEntriesByType ads, type
+                throw new NoAd "No ads of that type" if _.size(ads) == 0
+
                 rtbEngine.auction ads, publisher, req, res, (ad) =>
 
                   # If ad is null, that means we couldn't find a suitable one
@@ -455,14 +476,17 @@ setup = (options, imports, register) ->
             @fetchEmpty req, res 
           else
             spew.error e.stack
+            res.send 500
 
         d.add req
         d.add res
         d.add publisher
 
         d.run =>
-          @fetch req, res, publisher, startTimestamp, (data) ->
-            res.json message: "Got native response", data: data
+          @fetch req, res, publisher, startTimestamp, "native", (data) ->
+            delete data.native.active
+
+            res.json data.native
 
       ###
       # Fetch an organic ad. Wraps around our generic fetch() method for most
@@ -482,13 +506,16 @@ setup = (options, imports, register) ->
             @fetchEmpty req, res 
           else
             spew.error e.stack
+            res.send 500
 
         d.add req
         d.add res
         d.add publisher
 
         d.run =>
-          @fetch req, res, publisher, startTimestamp, (data) ->
-            res.json message: "Got organic response", data: data
+          @fetch req, res, publisher, startTimestamp, "organic", (data) ->
+            delete data.organic.active
+
+            res.json data.organic
 
 module.exports = setup

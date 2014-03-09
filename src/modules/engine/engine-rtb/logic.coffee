@@ -206,7 +206,7 @@ setup = (options, imports, register) ->
       # @param [ObjectId] campaignId
       ###
       increasePaceSpending: (campaignId, amount) ->
-        redis.incrbyfloat "campaign:#{campaignId}:pacing:spent", maxBid
+        redis.incrbyfloat "campaign:#{campaignId}:pacing:spent", amount
 
       ###
       # Run RTB auction and return winning ad in callback
@@ -252,12 +252,10 @@ setup = (options, imports, register) ->
             maxBidAd.impressionURL = @getImpressionURL actionId
             maxBidAd.clickURL = @getClickURL actionId
 
-          # Send ad early (squeeze out performance)
-          cb maxBidAd
-
-          if maxBidAd != null
             @increasePaceSpending maxBidAd.campaignId, maxBid
-            @createRedisActionKey maxBidAd, publisher if maxBidAd != null
+            @createRedisActionKey maxBidAd, actionId, publisher
+
+          cb maxBidAd
 
           ##
           ## This would be the place to store some metrics for internal use...
