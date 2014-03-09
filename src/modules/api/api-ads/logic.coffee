@@ -64,6 +64,7 @@ setup = (options, imports, register) ->
         return aem.send res, "401"
 
       ad.setCreativeActive req.param("creative"), true
+      ad.save()
 
       res.json 200, ad.toAnonAPI()
 
@@ -91,6 +92,7 @@ setup = (options, imports, register) ->
         return aem.send res, "401"
 
       ad.setCreativeActive req.param("creative"), false
+      ad.save()
 
       res.json 200, ad.toAnonAPI()
 

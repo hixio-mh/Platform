@@ -14,6 +14,7 @@ AWS.config.update
   secretAccessKey: config "s3_config_secretAccessKey"
 
 s3 = new AWS.S3()
+s3Host = "adefyplatformmain.s3.amazonaws.com"
 
 generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
 getS3Key = (object) ->
