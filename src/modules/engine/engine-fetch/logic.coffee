@@ -14,7 +14,6 @@ setup = (options, imports, register) ->
   redis = imports["core-redis"].main
   autocompleteRedis = imports["core-redis"].autocomplete
   server = imports["core-express"]
-  utility = imports["logic-utility"]
   templates = imports["engine-templates"]
   rtbEngine = imports["engine-rtb"]
 

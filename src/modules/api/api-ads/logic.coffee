@@ -55,14 +55,9 @@ setup = (options, imports, register) ->
     db.model("Ad")
     .findById(req.param("id"))
     .exec (err, ad) ->
-<<<<<<< HEAD
-      if aem.dbError err, res, false then return
-      if not ad then return aem.send res, "404:ad"
-=======
       if utility.dbError err, res, false then return
-      if not ad then return aem.send res, "404"
+      if not ad then return aem.send res, "404:ad"
       if ad.tutorial == true then return aem.send res, "401"
->>>>>>> native-format
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
         return aem.send res, "401"
