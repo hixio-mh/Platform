@@ -108,6 +108,7 @@ setup = (options, imports, register) ->
             title: "Test ad"
             description: "Test ad description"
             clickURL: "http://www.adefy.com"
+            impressionURL: "http://www.adefy.com"
             iconURL: "http://www.adefy.com/favicon.png"
 
       ###
