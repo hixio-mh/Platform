@@ -115,14 +115,15 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", "$locati
         else
           scope.data.subtitle = "Enter a subtitle"
           scope.data.description = data.description[0...200]
+          scope.data.background = data.screenshots[0]
 
-        scope.data.image = data.image
+        scope.data.icon = data.icon
         scope.data.title = data.title
         scope.data.developer = data.author
         scope.data.screenshots = data.screenshots
         scope.data.rating = data.rating
         scope.data.price = data.price
-        scope.data.currentBG = data.screenshots[0]
+
         scope.loading = false
         scope.data.loaded = true
 
@@ -134,7 +135,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", "$locati
         bgImage = new Image()
         bgImage.onload = ->
           stackBlurImageElement bgImage, "device-bg", scope.data.blur, 344, 613
-        bgImage.src = "/api/v1/creator/image/#{encodeURIComponent scope.data.currentBG}"
+        bgImage.src = "/api/v1/creator/image/#{encodeURIComponent scope.data.background}"
 
         # Start animation
         $timeout ->
@@ -164,7 +165,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", "$locati
       if bgImage != null
         stackBlurImageElement bgImage, "device-bg", blur, 344, 613
 
-    scope.$watch "data.currentBG", (bg) ->
+    scope.$watch "data.background", (bg) ->
       if bg == undefined then return
 
       bgImage = new Image()
@@ -173,7 +174,7 @@ angular.module("AdefyApp").directive "adCreator", ["$http", "$timeout", "$locati
       bgImage.src = "/api/v1/creator/image/#{encodeURIComponent bg}"
 
     scope.update = -> scope.updateTemplateURL()
-    scope.setScreenshotBG = (screenie) -> scope.data.currentBG = screenie
+    scope.setScreenshotBG = (screenie) -> scope.data.background = screenie
 
     if scope.showsuggestions == true or scope.showsuggestions == "true"
       $http.get("/api/v1/creator/suggestions").success (data) ->

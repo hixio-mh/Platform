@@ -17,20 +17,33 @@ guardCache = new NodeCache stdTTL: 1
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  adEngine = imports["engine-ads"]
+  utility = imports["logic-utility"]
+  adEngine = imports["engine-fetch"]
 
   ###
   # GET /api/v1/serve
-  #   Returns a Test Ad
+  #   Returns a test ad; type defaults to native
   # @response [Object] test_ad
+  # @qparam [Number] width
+  # @qparam [Number] height
+  # @qparam [String] ua
+  # @qparam [String] ip
+  # @qparam [String] type
   # @example
   #   $.ajax method: "GET",
   #          url: "/api/v1/serve"
   ###
   app.get "/api/v1/serve", (req, res) ->
+    type = req.param("type") || "native"
 
-    # If type is undefined, fetchTest() uses "test"
-    adEngine.fetchTest req, res, null, req.param "type"
+    if type != "organic" and type != "native"
+      aem.send res, "500", error: "Invalid ad type"
+
+    # If template is undefined, fetchTest() uses "test"
+    if type == "organic"
+      adEngine.fetchTest req, res, null, "organic", req.param "template"
+    else if type == "native"
+      adEngine.fetchTest req, res, null, "native"
 
   ###
   # GET /api/v1/serve/:apikey
@@ -45,7 +58,12 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/serve/:apikey", (req, res) ->
     startTimestamp = new Date().getTime()
+
     ref = "pub:#{req.param "apikey"}"
+    type = req.param("type") || "native"
+
+    if type != "organic" and type != "native"
+      aem.send res, "500", error: "Invalid ad type"
 
     ##
     ## Todo: Optimize this to use sets with SORT nosort!
@@ -88,9 +106,12 @@ setup = (options, imports, register) ->
         pubData.ctr = 0
 
       if pubData.active == "true"
-        adEngine.fetch req, res, pubData, startTimestamp
+        if type == "native"
+          adEngine.fetchNative req, res, pubData, startTimestamp
+        else if type == "organic"
+          adEngine.fetchOrganic req, res, pubData, startTimestamp
       else
-        adEngine.fetchTest req, res, pubData
+        adEngine.fetchTest req, res, pubData, type
 
   ###
   # GET /api/v1/impression/:id

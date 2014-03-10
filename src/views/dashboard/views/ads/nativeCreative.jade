@@ -1,0 +1,63 @@
+include _menu
+
+.inner
+  form(novalidate ng-class="{ submitted: submitted }")
+    fieldset: dl.form.center
+      legend
+        | Native Creative
+
+        .toggle-wrap.right.header-toggle-switch(ng-if="ad.status == 2 && dataStatus() != 'missing'")
+          toggle-switch(method="activeToggled()" model="ad.native.active")
+
+        .label.red.right(ng-if="dataStatus() == 'missing'") No content provided
+        .label.orange.right(ng-if="dataStatus() == 'incomplete'") Incomplete content
+        .label.green.right(ng-if="dataStatus() == 'complete'") Everything looks good!
+
+      p Prepare your ad for native, contextual delivery by filling out the fields below. Our publishers will then render your content alongside their own, providing a rich and non-intrusive experience for users.
+
+      br
+
+      dt: label Title
+      dd: input(required ng-model="ad.native.title" type="text" placeholder="Enter a catchy title")
+
+      dt: label Description
+      dd: input(required ng-model="ad.native.description" type="text" placeholder="Enter a short description")
+
+      dt: label Content
+      dd: textarea(ng-model="ad.native.content" placeholder="Optional text-only content")
+
+      dt
+        label Click URL
+        span To link to a play store entry, use a URL of the form market://details?id=com....
+      dd: input(required ng-model="ad.native.clickURL" type="text" placeholder="http://.... or market://details?id=com....")
+
+      dt
+        label Google/Apple store URL
+        span Optional, provide a URL here if you'd like us to include ratings, download counts, and other info in the data we send to publishers.
+      dd: input(ng-model="ad.native.storeURL" type="text" placeholder="https://itunes.apple.com/... or https://play.google.com/...")
+
+      dt: label Icon
+      dd.creative-image
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
+        img(ng-if="ad.native.iconURL.url" ng-src="{{ ad.native.iconURL.url }}" width="64")
+        img(ng-if="ad.native.iconURL && !ad.native.iconURL.url" ng-src="{{ ad.native.iconURL }}" width="64")
+
+        button(ng-click="pickIcon()" ng-class="{ preview: ad.native.iconURL.url || (ad.native.iconURL && !ad.native.iconURL.url) }") Upload an Icon
+
+      dt: label Feature Image
+      dd.creative-image
+        //- We need two image types since the format differs depending on if it
+        //- was *just* uploaded, or loaded from our server
+        img(ng-if="ad.native.featureURL.url" ng-src="{{ ad.native.featureURL.url }}" width="256")
+        img(ng-if="ad.native.featureURL && !ad.native.featureURL.url" ng-src="{{ ad.native.featureURL }}" width="256")
+
+        button(ng-click="pickFeature()" ng-class="{ preview: ad.native.featureURL.url || (ad.native.featureURL && !ad.native.featureURL.url) }") Upload a feature image
+
+      br
+      br
+
+      dt
+      dd
+        button.save.blue(ng-show="!saving" ng-click="save()") Save creative
+        button.save(ng-show="saving" disabled="disabled") Saving...

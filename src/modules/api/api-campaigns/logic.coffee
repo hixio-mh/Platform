@@ -398,7 +398,7 @@ setup = (options, imports, register) ->
         res.json data
 
   ###
-  # POST /api/v1/campaigns/activate
+  # POST /api/v1/campaigns/:id/activate
   #   Activates a Campaign
   # @param [ID] id
   # @example
@@ -418,10 +418,10 @@ setup = (options, imports, register) ->
         return aem.send res, "401"
 
       if not campaign.active then campaign.activate -> campaign.save()
-      res.json 200, campaign.toAnonAPI
+      res.json 200, campaign.toAnonAPI()
 
   ###
-  # POST /api/v1/campaigns/deactivate
+  # POST /api/v1/campaigns/:id/deactivate
   #   De-activates a Campaign
   # @param [ID] id
   # @example
@@ -441,7 +441,7 @@ setup = (options, imports, register) ->
         return aem.send res, "401"
 
       if campaign.active then campaign.deactivate -> campaign.save()
-      res.json 200, campaign.toAnonAPI
+      res.json 200, campaign.toAnonAPI()
 
   register null, {}
 

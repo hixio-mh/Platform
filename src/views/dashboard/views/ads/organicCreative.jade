@@ -1,0 +1,32 @@
+include _menu
+
+.contents.w760.center
+  .section
+    | Organic Creative
+
+    .right
+      .label.red(ng-if="dataStatus() == 'missing'") No content provided
+      .label.orange(ng-if="dataStatus() == 'incomplete'") Incomplete content
+      .label.green(ng-if="dataStatus() == 'complete'") Everything looks good!
+
+      toggle-switch(method="activeToggled()" model="ad.organic.active" ng-if="ad.status == 2 && dataStatus() != 'missing'")
+
+  div#organic-creative-controls
+    input#organic-store-url(type="text" placeholder="Enter URL" ng-model="ad.organic.googleStoreURL")
+
+    button(ng-click="commitURL()" ng-class="{ blue: !renderURL }") Generate
+
+    button(ng-if="saving" disabled="disabled") Saving...
+    button.blue(ng-if="!saving" ng-disabled="!renderURL || !creativeLoaded" ng-click="save()") Save
+
+br
+br
+br
+br
+
+h3.tcenter(ng-if="!creativeLoaded && renderURL") Loading...
+h3.tcenter(ng-if="!renderURL") Enter your play store URL
+h3.tcenter(ng-if="!renderURL && isInvalidURL") Invalid URL
+
+#ad-creative(ng-if="cycle == true")
+  ad-creator(controls="false" messages="false" url="{{ renderURL }}" loaded="doneLoading" error="invalidURL" getdata="getSavedData" panels="true")

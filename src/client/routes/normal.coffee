@@ -65,8 +65,12 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     templateUrl: "/views/dashboard/ads:show"
 
   $routeProvider.when "/ads/:id/creative",
-    controller: "AdefyAdCreativeController"
-    templateUrl: "/views/dashboard/ads:creative"
+    controller: "AdefyAdOrganicCreativeController"
+    templateUrl: "/views/dashboard/ads:organicCreative"
+
+  $routeProvider.when "/ads/:id/native",
+    controller: "AdefyAdNativeCreativeController"
+    templateUrl: "/views/dashboard/ads:nativeCreative"
 
   $routeProvider.when "/ads/:id/reminder",
     controller: "AdefyAdReminderController"

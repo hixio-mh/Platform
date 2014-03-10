@@ -50,7 +50,7 @@ responses200approve_pending = [
 responses400 = [
   "And what was I supposed to do with that?"
   "You're not doing it right"
-  "Bummer, looks like your missed something"
+  "Bummer, looks like you missed something"
   "Not quite what we where expecting"
 ]
 

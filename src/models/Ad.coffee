@@ -14,6 +14,14 @@ AWS.config.update
   secretAccessKey: config "s3_config_secretAccessKey"
 
 s3 = new AWS.S3()
+s3Host = "adefyplatformmain.s3.amazonaws.com"
+
+generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
+getS3Key = (object) ->
+  if object.key != undefined
+    object.key
+  else
+    object.split("//#{s3Host}/")[1]
 
 ##
 ## Ad schema
@@ -24,11 +32,56 @@ schema = new mongoose.Schema
   # Generic per-ad information
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   name: String
-  data: { type: String, default: "" }
-  url: { type: String, default: "" }
-  pushTitle: { type: String, default: "" }
-  pushDesc: { type: String, default: "" }
-  pushIcon: { type: String, default: "" }
+
+  native:
+    active: { type: Boolean, default: false }
+
+    title: { type: String, default: "" }
+    description: { type: String, default: "" }
+    content: { type: String, default: "" }
+    storeURL: { type: String, default: "" }
+    clickURL: { type: String, default: "" }
+
+    iconURL: { type: String, default: "" }
+    featureURL: { type: String, default: "" }
+
+  organic:
+    googleStoreURL: { type: String, default: "" }
+    active: { type: Boolean, default: false }
+
+    data:
+      title: { type: String, default: "" }
+      subtitle: { type: String, default: "" }
+      description: { type: String, default: "" }
+      developer: { type: String, default: "" }
+      price: { type: String, default: "" }
+      rating: { type: String, default: "" }
+
+      icon: { type: String, default: "" }
+      background: { type: String, default: "" }
+      screenshots: [{ type: String, default: "" }]
+
+      blur: { type: Number, default: 32, min: 16 }
+      type: { type: String, default: "flat_template" }
+
+      styleClass: { type: String, default: "palette-green" }
+      buttonStyleClass: { type: String, default: "button-round" }
+      bgOverlayClass: { type: String, default: "overlay-dark4" }
+
+      loadingColorClass: { type: String, default: "loading-white" }
+      loadingStyleClass: { type: String, default: "loading-style-round" }
+
+    notification:
+      clickURL: { type: String, default: "" }
+      title: { type: String, default: "" }
+      description: { type: String, default: "" }
+      icon: { type: String, default: "" }
+
+    ##
+    ## LEGACY FIELDS v3
+    ## Keep these on untill all databases are migrated
+    ##
+    jsSource: String
 
   # Texture array for creative
   assets: [
@@ -37,7 +90,7 @@ schema = new mongoose.Schema
     key: String     # S3 asset key
   ]
 
-  version: { type: Number, default: 1 }
+  version: { type: Number, default: 4 }
 
   # 0 - Pending
   # 1 - Rejected
@@ -76,6 +129,16 @@ schema = new mongoose.Schema
     tutorial: { type: Boolean, default: false }
   ]
 
+  ##
+  ## LEGACY FIELDS v1
+  ## Keep these on untill all databases are migrated
+  ##
+  data: String
+  url: String
+  pushTitle: String
+  pushDesc: String
+  pushIcon: String
+
 ##
 ## ID and handle generation
 ##
@@ -87,10 +150,6 @@ schema.methods.getGraphiteCampaignId = (campaignId) ->
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
-
-  if ret.data != undefined and ret.data.length > 0
-    try
-      ret.data = JSON.parse ret.data
 
   for i in [0...ret.campaigns.length]
     if ret.campaigns[i].campaign != null
@@ -131,6 +190,30 @@ schema.methods.clearApproval = -> @status = 0
 schema.methods.disaprove = (cb) ->
   @status = 1
   @removeFromCampaigns -> if cb then cb()
+
+##
+## Creative status
+##
+schema.methods.isCreativeActive = (creative) ->
+  if creative == "native"
+    @native.active
+  else if creative == "organic"
+    @organic.active
+  else
+    throw new Error "[Ad isCreativeActive] Unknown creative type: #{creative}"
+
+schema.methods.setCreativeActive = (creative, active) ->
+  if creative == "native"
+    @native.active = active
+  else if creative == "organic"
+    @organic.active = active
+  else
+    throw new Error "[Ad isCreativeActive] Unknown creative type: creative"
+
+schema.methods.activateNativeCreative = -> @setCreativeActive "native", true
+schema.methods.deactivateNativeCreative = -> @setCreativeActive "native", false
+schema.methods.activateOrganicCreative = -> @setCreativeActive "organic", true
+schema.methods.deactivateOrganicCreative = -> @setCreativeActive "organic", false
 
 ##
 ## Stat fetching
@@ -312,6 +395,75 @@ schema.statics.getCampaigns = (adId, cb) ->
     else cb ad.campaigns
 
 ##
+## Saving/update utility methods
+##
+
+# Update organic ad notification
+#
+# @param [Object] data
+schema.methods.updateOrganicNotification = (data) ->
+  if data.clickURL != undefined
+    @organic.notification.clickURL = data.clickURL
+
+  if data.title != undefined
+    @organic.notification.title = data.title
+
+  if data.description != undefined
+    @organic.notification.description = data.description
+
+  # Generate new icon url, and only update if it is new
+  if data.icon != undefined
+    newIconURL = generateS3Url data.icon
+
+    if newIconURL != @organic.notification.icon
+      @organic.notification.icon = newIconURL
+      @updateAsset "push-icon", "", getS3Key newIconURL
+
+# Update asset entry; if it doesn't already exist, a new entry is created
+#
+# @param [String] name
+# @param [String] buffer
+# @param [String] key
+schema.methods.updateAsset = (name, buffer, key) ->
+  asset = name: name, buffer: buffer, key: key
+
+  for a, i in @assets
+    if a.name == name
+      @assets[i] = asset
+      return
+
+  @assets.push asset
+
+# Update organic creative with raw data (handles icon asset managment)
+#
+# @param [Object] organicData
+schema.methods.updateOrganic = (organicData) ->
+  if organicData.data
+    @organic.data = organicData.data
+
+    if organicData.googleStoreURL != undefined
+      @organic.googleStoreURL = organicData.googleStoreURL
+
+  if organicData.notification
+    @updateOrganicNotification organicData.notification
+
+# Update native creative with raw data
+schema.methods.updateNative = (data) ->
+
+  if data.title != undefined then @native.title = data.title
+  if data.description != undefined then @native.description = data.description
+  if data.content != undefined then @native.content = data.content
+  if data.storeURL != undefined then @native.storeURL = data.storeURL
+  if data.clickURL != undefined then @native.clickURL = data.clickURL
+
+  # S3 assets
+  if data.iconURL != undefined
+    @native.iconURL = generateS3Url data.iconURL
+
+  if data.featureURL != undefined
+    @native.featureURL = generateS3Url data.featureURL
+
+##
 ##
 ## Redis reference management
 ##
@@ -468,25 +620,25 @@ schema.methods.createRedisFilters = (data, ref, cb) ->
 
   if cb then cb()
 
-schema.methods.createRedisStruture = (cb) ->
-  performRedisRefresh = =>
-    adData =
-      creative: @data
-      url: @url
-      pushTitle: @pushTitle
-      pushDesc: @pushDesc
-      assets: @assets
+schema.methods.refreshRedisData = (cb) ->
+  if @tutorial
+    if cb then cb()
+    return
 
-    redis.set @getRedisRef(), JSON.stringify(adData), (err) ->
-      if err then spew.error err
-      if cb then cb()
+  adData = organic: @organic, native: @native
+
+  redis.set @getRedisRef(), JSON.stringify(adData), (err) =>
+    if err then spew.error err
+    if cb then cb()
+
+schema.methods.createRedisStruture = (cb) ->
 
   # Go through and renew assets if needed, otherwise perform a normal refresh
   for asset in @assets
     if asset.buffer.length == 0
-      return @fetchAssetsFromS3 => performRedisRefresh -> cb()
+      return @fetchAssetsFromS3 => @refreshRedisData -> cb()
 
-  performRedisRefresh -> cb()
+  @refreshRedisData -> cb()
 
 schema.methods.fetchAssetsFromS3 = (finalCb) ->
   if @assets.length == 0 then return finalCb()
@@ -507,21 +659,12 @@ schema.methods.fetchAssetsFromS3 = (finalCb) ->
       cb()
   , -> finalCb()
 
-# Rebuild our redis structures
+# Rebuild our redis structures if we are a legitimate ad
 schema.pre "save", (next) ->
+  if @tutorial then return next()
+
   @fetchAssetsFromS3 =>
     @createRedisStruture ->
       next()
-
-schema.path("data").validate (value) ->
-  try
-    if (value)
-      hash = JSON.parse(value)
-      if hash.min < 16
-        return false
-    return true
-  catch e
-    spew.error e
-    false
 
 mongoose.model "Ad", schema
