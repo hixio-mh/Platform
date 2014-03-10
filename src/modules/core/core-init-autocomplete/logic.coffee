@@ -25,7 +25,12 @@ setup = (options, imports, register) ->
 
   redis = imports["core-redis"].autocomplete
 
+  ###
   # Set up a filter set in redis.
+  #
+  # @param [String] setName
+  # @param [Array<String>] filters
+  ###
   initializeFilterSet = (name, filters) ->
     for filter, id in filters
 

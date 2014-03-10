@@ -10,6 +10,11 @@ async = require "async"
 
 handleError = (err) -> if err then spew.error err
 
+###
+# Update user funds and re-create redis structures
+#
+# @param [Method] callback
+###
 updateUserRedisEntries = (cb) ->
   db.model("User").find {}, (err, users) ->
 
@@ -26,6 +31,11 @@ updateUserRedisEntries = (cb) ->
           cb()
     , -> cb()
 
+###
+# Re-create redis structure for all ads
+#
+# @param [Method] callback
+###
 updateAdRedisEntries = (cb) ->
   db.model("Ad").find {}, (err, ads) ->
     if err then return spew.error err

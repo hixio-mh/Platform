@@ -62,8 +62,25 @@ schema = new mongoose.Schema
 ## ID and handle generation
 ##
 
+###
+# Get graphite key prefix
+#
+# @return [String] prefix
+###
 schema.methods.getGraphiteId = -> "campaigns.#{@_id}"
+
+###
+# Get redis key prefix
+#
+# @return [String] prefix
+###
 schema.methods.getRedisId = -> "campaign:#{@_id}"
+
+###
+# Convert model to API-safe object
+#
+# @return [Object] apiObject
+###
 schema.methods.toAPI = ->
   ret = @toObject()
   # ret.devices = @compileDevicesList()
@@ -75,6 +92,11 @@ schema.methods.toAPI = ->
   delete ret.countries
   ret
 
+###
+# Return an API-safe object with ownership information stripped
+#
+# @return [Object] anonAPIObject
+###
 schema.methods.toAnonAPI = ->
 
   for ad, i in @ads
@@ -89,18 +111,41 @@ schema.methods.toAnonAPI = ->
 ## List compilation
 ##
 
+###
+# Build properly formatted filter list from individual include and exclude lists
+#
+# @param [Array<String>] includes
+# @param [Array<String>] excludes
+# @return [Array<Object>] filters
+###
 _compileList = (includes, excludes) ->
   list = []
   list.push { name: item, type: "include" } for item in includes
   list.push { name: item, type: "exclude" } for item in excludes
   list
 
+###
+# Compile a device filter list from our individual filter arrays
+#
+# @return [Array<Object>]
+###
 schema.methods.compileDevicesList = ->
   _compileList @devicesInclude, @devicesExclude
 
+###
+# Compile a country filter list from our individual filter arrays
+#
+# @return [Array<Object>]
+###
 schema.methods.compileCountriesList = ->
   _compileList @countriesInclude, @countriesExclude
 
+###
+# Fetch lifetime totals from redis for a specific ad
+#
+# @param [Object] ad valid member ad model
+# @param [Method] callback
+###
 schema.methods.fetchTotalStatsForAd = (ad, cb) ->
   ref = ad.getRedisRefForCampaign @
 
@@ -132,7 +177,11 @@ schema.methods.fetchTotalStatsForAd = (ad, cb) ->
 
     cb stats
 
-# Fetch compiled lifetime stats
+###
+# Fetch lifetime totals from redis summed up from all of our ads
+#
+# @param [Method] callback
+###
 schema.methods.fetchTotalStats = (cb) ->
   stats =
     impressions: 0
@@ -162,7 +211,11 @@ schema.methods.fetchTotalStats = (cb) ->
 
       done()
 
-# Fetch compiled 24h stat sums
+###
+# Fetch 24hour stats summed up from all of our ads
+#
+# @param [Method] callback
+###
 schema.methods.fetch24hStats = (cb) ->
   remoteStats =
     impressions24h: 0
@@ -200,7 +253,12 @@ schema.methods.fetch24hStats = (cb) ->
 
     cb remoteStats
 
-# Fetch verbose stat data
+###
+# Fetch analytics graph data for a specific stat
+#
+# @param [Object] options options including stat, range, and interval
+# @param [Method] callback
+###
 schema.methods.fetchStatGraphData = (options, cb) ->
   matches = []
 
@@ -215,24 +273,40 @@ schema.methods.fetchStatGraphData = (options, cb) ->
   options.multipleSeries = matches
   graphiteInterface.makeAnalyticsQuery options, cb
 
-# Stat helpers
+###
+# Fetch total stats and save them on ourselves
+#
+# @param [Method] callback
+###
 schema.methods.populateSelfTotalStats = (cb) ->
   @fetchTotalStats (stats) =>
     cb _.extend @toAnonAPI(), stats: stats
 
+###
+# Fetch 24h stats and save them on ourselves
+#
+# @param [Method] callback
+###
 schema.methods.populateSelf24hStats = (cb) ->
   @fetch24hStats (stats) =>
     cb _.extend @toAnonAPI(), stats: stats
 
+###
+# Fetch all stats and save them on ourselves
+#
+# @param [Method] callback
+###
 schema.methods.populateSelfAllStats = (cb) ->
   @fetchOverviewStats (stats) =>
     cb _.extend @toAnonAPI(), stats: stats
 
+###
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
 # method assumes the ads field has been populated!
 #
 # @param [Method] cb
 # @return [Object] metrics
+###
 schema.methods.fetchOverviewStats = (cb) ->
   statCacheKey = "24hStats:#{@getRedisId()}"
 
@@ -240,7 +314,14 @@ schema.methods.fetchOverviewStats = (cb) ->
     @fetch24hStats (remoteStats) ->
       cb _.extend localStats, remoteStats
 
-# (stat is spent, clicks, impressions, or ctr)
+###
+# Fetch stats db datapoints for a specific stat over a specific range
+# Stat is 'spent', 'clicks', 'impressions', or 'ctr'
+#
+# @param [String] range
+# @param [String] stat
+# @param [Method] callback
+###
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
   query = graphiteInterface.query()
@@ -269,23 +350,31 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
 
-getIdFromArgument = (arg) ->
-  if typeof arg == "object"
-    if arg.id != undefined then arg = arg.id
-    else if arg._id != undefined then arg = adId._id
-    else arg = null
-  arg
-
+###
+# Activate campaign, does nothing if we are a tutorial object
+#
+# @param [Method] callback
+###
 schema.methods.activate = (cb) ->
   if @tutorial then return cb()
   @active = true
   @refreshAdRefs => cb()
 
+###
+# Deactivate campaign, does nothing if we are a tutorial object
+#
+# @param [Method] callback
+###
 schema.methods.deactivate = (cb) ->
   if @tutorial then return cb()
   @active = false
   @clearAdReferences => cb()
 
+###
+# Clear all redis references for our child ads (does NOT remove the ads!)
+#
+# @param [Method] callback
+###
 schema.methods.clearAdReferences = (cb) ->
   count = @ads.length
   if count == 0 then cb()
@@ -297,10 +386,12 @@ schema.methods.clearAdReferences = (cb) ->
       ad.save()
       doneCb -> cb()
 
-# Remove specific ad
+###
+# Remove specific ad, also clears references and ownership on the ad model
 #
-# @param [Ad] ad
-# @param [Method] cb
+# @param [Object] ad ad model
+# @param [Method] callback
+###
 schema.methods.removeAd = (ad, cb) ->
 
   adId = ad._id or ad.id or ad
@@ -330,10 +421,14 @@ schema.methods.removeAd = (ad, cb) ->
 
   if not foundAd and cb then cb()
 
+###
 # Refresh all ad refs. This must be done whenever our targeting information
 # is modified.
 #
 # This requires that our ad field be populated!
+#
+# @param [Method] callback
+###
 schema.methods.refreshAdRefs = (cb) ->
   if @ads.length == 0 and cb then cb()
 
@@ -354,11 +449,16 @@ schema.methods.refreshAdRefs = (cb) ->
   for ad in @ads
     refreshRefsForAd ad, @, -> doneCb()
 
-# Pacing data is stored in two places:
+###
+# Update redis pace information
+#
 #   - "redisID:pacing:spent" (Number)
 #   - "redisID:pacing:target" (Number)
 #   - "redisID:pacing:pace" (Number)
 #   - "redisID:pacing:timestamp" (Number)
+#
+# @param [Method] callback
+###
 schema.methods.updatePaceData = (cb) ->
   ref = "#{@getRedisId()}:pacing"
 
@@ -378,6 +478,11 @@ schema.methods.updatePaceData = (cb) ->
 
     if cb then cb()
 
+###
+# Setup redis information (pace data and ad references)
+#
+# @param [Method] callback
+###
 schema.methods.createRedisStruture = (cb) ->
   @updatePaceData =>
     @populate "ads", =>
@@ -399,11 +504,13 @@ schema.pre "remove", (next) ->
 schema.pre "save", (next) ->
   @updatePaceData -> next()
 
+###
 # Return array of ad documents belonging to a campaign
 #
 # @param [String, Campaign] campaignId
 # @param [Method] callback
-# @return [Array<Ad>]
+# @return [Array<Ad>] ads
+###
 schema.statics.getAds = (cId, cb) ->
 
   # Get campaign id if needed

@@ -25,10 +25,18 @@ setup = (options, imports, register) ->
   register null,
     "core-express":
 
+      ###
+      # Register server middleware (actually, register it for registration)
+      #
+      # @param [Method] rule
+      ###
       registerRule: (rule) ->
         if not hasSetup then rules.push rule
         else spew.warning "Can't register rule after setup has been called"
 
+      ###
+      # Setup express server; middleware and whatnot
+      ###
       setup: ->
 
         app.configure ->
@@ -63,9 +71,11 @@ setup = (options, imports, register) ->
 
       server: app
 
+      ###
       # Initialize last routes
       #
       # Called as part of the init procedure, a call to setup must precede
+      ###
       initLastRoutes: ->
         if hasSetup
 
@@ -79,9 +89,11 @@ setup = (options, imports, register) ->
 
         else spew.error "Can't perform server initialization without setup!"
 
+      ###
       # Start server
       #
       # Called as part of init procedure, a call to setup must precede
+      ###
       beginListen: ->
 
         if hasSetup

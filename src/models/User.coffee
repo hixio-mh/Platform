@@ -56,7 +56,18 @@ schema = new mongoose.Schema
     adDetails: { type: Boolean, default: true }
     campaignDetails: { type: Boolean, default: true }
 
+###
+# Get redis key prefix
+#
+# @return [String] prefix
+###
 schema.methods.getRedisId = -> "user:#{@_id}"
+
+###
+# Convert model to API-safe object
+#
+# @return [Object] apiObject
+###
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
@@ -68,7 +79,11 @@ schema.methods.toAPI = ->
   delete ret.password
   ret
 
+###
 # Tutorial object initialization. Only works if they don't already exist!
+#
+# @param [Method] callback
+###
 schema.methods.createTutorialObjects = (cb) ->
 
   tutorialPublisher = mongoose.model("Publisher")
@@ -153,7 +168,12 @@ schema.methods.createTutorialObjects = (cb) ->
 
   createPublisher -> createAd -> createCampaign -> cb()
 
-# NOTE: This overwrites the fund count stored in redis!
+###
+# Create redis user structure (funds and login data)
+# This overwrites the fund count stored in redis!
+#
+# @param [Method] callback
+###
 schema.methods.createRedisStruture = (cb) ->
   signedup = new Date(Date.parse(@_id.getTimestamp())).getTime() / 1000
   data = @toAPI()
@@ -168,6 +188,11 @@ schema.methods.createRedisStruture = (cb) ->
         if err then spew.error err
         if cb then cb()
 
+###
+# Update MongoDB fund values from those stored in redis
+#
+# @param [Method] callback
+###
 schema.methods.updateFunds = (cb) ->
   redis.get "#{@getRedisId()}:adFunds", (err, adFunds) =>
     if err then spew.error err
@@ -184,6 +209,11 @@ schema.methods.updateFunds = (cb) ->
       if needsFundsRecreation then @createRedisStruture()
       if cb then cb()
 
+###
+# Generate 24 character reset token
+#
+# @param [Method] callback
+###
 schema.methods.generateResetToken = (cb) ->
   crypto.randomBytes 24, (ex, buf) =>
     @forgotPasswordToken = buf.toString "hex"
@@ -191,6 +221,11 @@ schema.methods.generateResetToken = (cb) ->
 
     if cb then cb()
 
+###
+# Check if reset token is valid
+#
+# @return [Boolean] valid
+###
 schema.methods.resetTokenValid = ->
   Date.now() - @forgotPasswordTimestamp <= 1000 * 60 * 30
 
@@ -198,12 +233,19 @@ schema.methods.resetTokenValid = ->
 ## API Key handling
 ##
 
+###
+# Create 24 character api key
+###
 schema.methods.createAPIKey = ->
   if @hasAPIKey() then return
 
-  crypto.randomBytes 24, (ex, buf) ->
-    @apikey = buf.toString('hex')
+  crypto.randomBytes 24, (ex, buf) => @apikey = buf.toString "hex"
 
+###
+# Check if we have an API key
+#
+# @return [Boolean] hasKey
+###
 schema.methods.hasAPIKey = ->
   if @apikey and @apikey.length == 24
     true
@@ -227,6 +269,12 @@ schema.pre "save", (next) ->
       @password = hash
       next()
 
+###
+# Compare provided password against our own (encrypted)
+#
+# @param [String] password
+# @param [Method] callback
+###
 schema.methods.comparePassword = (candidatePassword, cb) ->
   bcrypt.compare candidatePassword, @password, (err, isMatch) ->
     if err
@@ -235,6 +283,11 @@ schema.methods.comparePassword = (candidatePassword, cb) ->
 
     cb null, isMatch
 
+###
+# Perform a deposit
+#
+# @param [Number] amount
+###
 schema.methods.addFunds = (amount) ->
   @adFunds += Number amount
   redis.incrbyfloat "#{@getRedisId()}:adFunds", amount
@@ -246,8 +299,14 @@ schema.methods.addFunds = (amount) ->
 
   true
 
-schema.methods.withdrawFunds = (type, amount) ->
-  if type == "pub"
+###
+# Perform a withdrawl from one of our balances
+#
+# @param [String] balance 'pub' or 'ad'
+# @param [Number] amount
+###
+schema.methods.withdrawFunds = (balance, amount) ->
+  if balance == "pub"
     @pubFunds -= Number amount
     redis.incrbyfloat "#{@getRedisId()}:pubFunds", -amount
 
@@ -255,7 +314,7 @@ schema.methods.withdrawFunds = (type, amount) ->
       action: "withdraw"
       amount: amount
       time: new Date().getTime()
-  else if type == "ad"
+  else if balance == "ad"
     @adFunds -= Number amount
     redis.incrbyfloat "#{@getRedisId()}:adFunds", -amount
 
