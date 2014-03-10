@@ -56,8 +56,25 @@ schema = new mongoose.Schema
 ## ID and handle generation
 ##
 
+###
+# Get graphite key prefix
+#
+# @return [String] prefix
+###
 schema.methods.getGraphiteId = -> "publishers.#{@_id}"
+
+###
+# Get redis key prefix
+#
+# @return [String] prefix
+###
 schema.methods.getRedisId = -> "pub:#{@apikey}"
+
+###
+# Convert model to API-safe object
+#
+# @return [Object] apiObject
+###
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
@@ -66,6 +83,11 @@ schema.methods.toAPI = ->
   delete ret._previouslyGeneratedUrl
   ret
 
+###
+# Return an API-safe object with ownership information stripped
+#
+# @return [Object] anonAPIObject
+###
 schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
@@ -75,11 +97,33 @@ schema.methods.toAnonAPI = ->
 ## Approval and status info
 ##
 
+###
+# Check if we are approved
+#
+# @return [Boolean] approved
+###
 schema.methods.isApproved = -> @status == 2
+
+###
+# Approve the publisher
+###
 schema.methods.approve = -> @status = 2
+
+###
+# Clear publisher approval (sets to pending)
+###
 schema.methods.clearApproval = -> @status = 0
+
+###
+# Disaprove the publisher
+###
 schema.methods.disaprove = -> @status = 1
 
+###
+# Activate the publisher, does nothing if we are a tutorial publisher
+#
+# @param [Method] callback
+###
 schema.methods.activate = (cb) ->
   if @active or @tutorial
     if cb then return cb()
@@ -89,6 +133,11 @@ schema.methods.activate = (cb) ->
   redis.set "#{@getRedisId()}:active", @active
   if cb then cb()
 
+###
+# Deactivate the publisher, does nothing if we are a tutorial publisher
+#
+# @param [Method] callback
+###
 schema.methods.deactivate = (cb) ->
   if not @active or @tutorial
     if cb then return cb()
@@ -98,37 +147,63 @@ schema.methods.deactivate = (cb) ->
   redis.set "#{@getRedisId()}:active", @active
   if cb then cb()
 
+###
+# Check if we are active
+#
+# @return [Boolean] active
+###
 schema.methods.isActive = -> @active
 
 ##
 ## Thumbnail handling
 ##
 
+###
+# Generate a URL for our play store thumbnail (uses our android app ID)
+#
+# @param [Method] callback
+###
 schema.methods.generateThumbnailUrl = (cb) ->
   @_previouslyGeneratedUrl = @url
 
   playstorePrefix = "https://play.google.com/store/apps/details?id="
 
-  if @type != 0 or @url.length == 0 then @_generateDefaultThumbnailUrl cb
+  if @type != 0 or @url.length == 0 then @generateDefaultThumbnailUrl cb
   else
     if @url.indexOf("play.google.com") > 0
-      @_generateAppstoreThumbnailUrl @url, cb
+      @generateAppstoreThumbnailUrl @url, cb
     else
-      @_generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", cb
+      @generateAppstoreThumbnailUrl "#{playstorePrefix}#{@url}", cb
 
+###
+# Check if we need a new thumbnail
+#
+# @return [Boolean] needsThumbnail
+###
 schema.methods.needsNewThumbnail = ->
   @_previouslyGeneratedUrl != @url or @thumbURL.length == 0
 
-schema.methods._generateDefaultThumbnailUrl = (cb) ->
+###
+# Generate a thumbnail url to show when we don't have an actual thumbnail
+#
+# @param [Method] callback
+###
+schema.methods.generateDefaultThumbnailUrl = (cb) ->
   @thumbURL = "/img/default_icon.png"
   if cb then cb @thumbURL
 
-schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
+###
+# Generate a legit android appstore thumbnail url
+#
+# @param [String] storeURL
+# @param [Method] callback
+###
+schema.methods.generateAppstoreThumbnailUrl = (storeURL, cb) ->
 
-  request url, (err, res, body) =>
-    if err then @_generateDefaultThumbnailUrl cb
+  request storeURL, (err, res, body) =>
+    if err then @generateDefaultThumbnailUrl cb
     else
-      if res.statusCode != 200 then @_generateDefaultThumbnailUrl cb
+      if res.statusCode != 200 then @generateDefaultThumbnailUrl cb
       else
         $ = cheerio.load res.body
         src = $("img.cover-image").attr "src"
@@ -136,12 +211,17 @@ schema.methods._generateAppstoreThumbnailUrl = (url, cb) ->
         if src and src.length > 0
           @thumbURL = src
           if cb then cb src
-        else @_generateDefaultThumbnailUrl cb
+        else @generateDefaultThumbnailUrl cb
 
 ##
 ## API Key handling
 ##
 
+###
+# Generate a 24-char API key
+#
+# @return [String] apikey
+###
 schema.methods.createAPIKey = ->
   if @hasAPIKey() then return
 
@@ -151,6 +231,11 @@ schema.methods.createAPIKey = ->
   for i in [0...24]
     @apikey += map.charAt Math.floor(Math.random() * map.length)
 
+###
+# Check if we have a valid api key
+#
+# @return [Boolean] hasKey
+###
 schema.methods.hasAPIKey = ->
   if @apikey and @apikey.length == 24
     true
@@ -161,8 +246,12 @@ schema.methods.hasAPIKey = ->
 ## Bundled stats fetching (Redis and StatsD)
 ##
 
+###
 # Fetches Earnings, Clicks, Impressions and CTR for the past 24 hours, and
 # lifetime (both sums)
+#
+# @param [Method] callback
+###
 schema.methods.fetchOverviewStats = (cb) ->
   statCacheKey = "24hStats:#{@getRedisId()}"
 
@@ -241,7 +330,13 @@ schema.methods.fetchOverviewStats = (cb) ->
             else
               cb _.extend localStats, data[statCacheKey]
 
+###
 # Fetches a single stat over a specific period of time
+#
+# @param [String] range
+# @param [String] stat
+# @param [Method] callback
+###
 schema.methods.fetchCustomStat = (range, stat, cb) ->
 
   query = graphiteInterface.query()
@@ -265,7 +360,12 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
     else if data[0].datapoints == undefined then cb []
     else cb data[0].datapoints
 
+###
 # Fetch verbose stat data
+#
+# @param [Object] options
+# @param [Method] callback
+###
 schema.methods.fetchStatGraphData = (options, cb) ->
   options.stat = "#{@getGraphiteId()}.#{options.stat}"
   graphiteInterface.makeAnalyticsQuery options, cb
@@ -274,9 +374,26 @@ schema.methods.fetchStatGraphData = (options, cb) ->
 ## Simple stat logging
 ##
 
+###
+# Increment click count
+###
 schema.methods.logClick = -> @logStatIncrement "clicks"
+
+###
+# Increment impression count
+###
 schema.methods.logImpression = -> @logStatIncrement "impressions"
+
+###
+# Increment request count
+###
 schema.methods.logRequest = -> @logStatIncrement "requests"
+
+###
+# Increment stat count
+#
+# @param [String] stat
+###
 schema.methods.logStatIncrement = (stat) ->
   statsd.increment "#{@getGraphiteId()}.#{stat}"
   redis.incr "#{@getRedisId()}:#{stat}"
@@ -285,7 +402,11 @@ schema.methods.logStatIncrement = (stat) ->
 ## Redis handling
 ##
 
-# Initialization
+###
+# Write the redis data that is read-only during ad serves
+#
+# @param [Method] callback
+###
 schema.methods.updateColdRedisData = (cb) ->
   if not @active then return cb()
 
@@ -297,6 +418,11 @@ schema.methods.updateColdRedisData = (cb) ->
           redis.set "#{ref}:category", @category, =>
             cb()
 
+###
+# Set all of our redis values
+#
+# @param [Method] callback
+###
 schema.methods.createRedisStruture = (cb) ->
 
   # We don't specify an owner id in some tests
@@ -323,6 +449,9 @@ schema.methods.createRedisStruture = (cb) ->
 
   if cb then cb()
 
+###
+# Delete all of our redis keys
+###
 schema.methods.clearRedisStructure = ->
   ref = @getRedisId()
   redis.del "#{ref}:impressions"
@@ -337,22 +466,48 @@ schema.methods.clearRedisStructure = ->
   redis.del "#{ref}:minCPM"
   redis.del "#{ref}:category"
 
-# Basic stat fetching
+##
+## Basic stat fetching
+##
+
+###
+# Fetch impression count from redis
+#
+# @param [Method] callback
+###
 schema.methods.fetchImpressions = (cb) ->
   redis.get "#{@getRedisId()}:impressions", (err, result) ->
     if err then spew.error err
     cb Number result
 
+
+###
+# Fetch click count from redis
+#
+# @param [Method] callback
+###
 schema.methods.fetchClicks = (cb) ->
   redis.get "#{@getRedisId()}:clicks", (err, result) ->
     if err then spew.error err
     cb Number result
 
+
+###
+# Fetch request count from redis
+#
+# @param [Method] callback
+###
 schema.methods.fetchRequests = (cb) ->
   redis.get "#{@getRedisId()}:requests", (err, result) ->
     if err then spew.error err
     cb Number result
 
+
+###
+# Fetch CTR from redis
+#
+# @param [Method] callback
+###
 schema.methods.fetchCTR = (cb) ->
   @fetchClicks (clicks) =>
     @fetchImpressions (impressions) =>
@@ -364,11 +519,24 @@ schema.methods.fetchCTR = (cb) ->
 
       cb ctr, impressions, clicks
 
+
+###
+# Fetch earnings from redis
+#
+# @param [Method] callback
+###
 schema.methods.fetchEarnings = (cb) ->
   redis.get "#{@getRedisId()}:earnings", (err, result) ->
     if err then spew.error err
     cb Number result
 
+
+###
+# Fetch pricing info from redis
+#
+# @todo Refactor the pricing info storage
+# @param [Method] callback
+###
 schema.methods.fetchPricingInfo = (cb) ->
   redis.get @getRedisId(), (err, result) ->
     if err then spew.error err

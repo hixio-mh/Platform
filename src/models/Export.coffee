@@ -6,6 +6,11 @@ schema = new mongoose.Schema
   expiration: Date
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 
+###
+# Convert model to API-safe object
+#
+# @return [Object] apiObject
+###
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
@@ -13,6 +18,11 @@ schema.methods.toAPI = ->
   delete ret.__v
   ret
 
+###
+# Return an API-safe object with ownership information stripped
+#
+# @return [Object] anonAPIObject
+###
 schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
