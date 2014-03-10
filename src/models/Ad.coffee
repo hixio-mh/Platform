@@ -34,6 +34,8 @@ schema = new mongoose.Schema
   name: String
 
   native:
+    active: { type: Boolean, default: false }
+
     title: { type: String, default: "" }
     description: { type: String, default: "" }
     content: { type: String, default: "" }
@@ -43,10 +45,9 @@ schema = new mongoose.Schema
     iconURL: { type: String, default: "" }
     featureURL: { type: String, default: "" }
 
-    active: { type: Boolean, default: false }
-
   organic:
     googleStoreURL: { type: String, default: "" }
+    active: { type: Boolean, default: false }
 
     data:
       title: { type: String, default: "" }
@@ -76,7 +77,6 @@ schema = new mongoose.Schema
       description: { type: String, default: "" }
       icon: { type: String, default: "" }
 
-    active: { type: Boolean, default: false }
 
   # Texture array for creative
   assets: [
@@ -192,15 +192,15 @@ schema.methods.disaprove = (cb) ->
 schema.methods.isCreativeActive = (creative) ->
   if creative == "native"
     @native.active
-  else if creative == "oAd"
+  else if creative == "organic"
     @organic.active
   else
-    throw new Error "[Ad isCreativeActive] Unknown creative type: creative"
+    throw new Error "[Ad isCreativeActive] Unknown creative type: #{creative}"
 
 schema.methods.setCreativeActive = (creative, active) ->
   if creative == "native"
     @native.active = active
-  else if creative == "oAd"
+  else if creative == "organic"
     @organic.active = active
   else
     throw new Error "[Ad isCreativeActive] Unknown creative type: creative"

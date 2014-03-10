@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scope, AdService, $routeParams, $timeout) ->
+angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scope, AdService, $routeParams, $timeout, $http) ->
 
   $scope.cycle = false
   $scope.creativeLoaded = false
@@ -18,6 +18,18 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
     $scope.isInvalidURL = true
     $scope.cycle = false
     $scope.renderURL = ""
+
+  $scope.dataStatus = ->
+    if $scope.ad and $scope.ad.organic.googleStoreURL
+      "complete"
+    else
+      "missing"
+
+  $scope.activeToggled = ->
+    if $scope.ad.organic.active
+      $http.post "/api/v1/ads/#{$scope.ad.id}/organic/deactivate"
+    else
+      $http.post "/api/v1/ads/#{$scope.ad.id}/organic/activate"
 
   $scope.doneLoading = (d) ->
     $scope.creativeLoaded = true
