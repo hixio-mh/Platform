@@ -24,13 +24,16 @@ setup = (options, imports, register) ->
       # Validate request format, make sure mandatory fields are valid
       #
       # @param [Object] request
+      # @param [String] type ad type
       # @return [String] error
       ###
-      validateRequest: (req) ->
+      validateRequest: (req, type) ->
         if req.query.ip != undefined
           if not validIP req.query.ip then return "Invalid IP"
-        else if isNaN req.param("width") then return "Invalid width"
-        else if isNaN req.param("height") then return "Invalid height"
+
+        if type == "organic"
+          if isNaN req.param("width") then return "Invalid width"
+          if isNaN req.param("height") then return "Invalid height"
 
         null
 
@@ -85,7 +88,7 @@ setup = (options, imports, register) ->
       # @param [String] template optional template type, defaults to test
       ###
       fetchTest: (req, res, publisher, type, template) ->
-        error = @validateRequest req
+        error = @validateRequest req, type
         return aem.send res, "400", error: error if error != null
 
         if type != "organic" and type != "native"
@@ -397,7 +400,7 @@ setup = (options, imports, register) ->
       # @param [Method] callback
       ###
       fetch: (req, res, publisher, startTimestamp, type, cb) ->
-        error = @validateRequest req
+        error = @validateRequest req, type
         throw new NoAd error if error != null
 
         if type != "native" and type != "organic"
