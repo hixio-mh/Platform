@@ -38,7 +38,7 @@ def stack_thread(arra)
         Excon.get(lnk) if lnk
         sleep 0.20
       rescue Excon::Errors::BadGateway
-        puts "Clicks/Impressions Server appears to be down, waiting a few seconds"
+        STDERR.puts "Clicks/Impressions Server appears to be down, waiting a few seconds"
         sleep 3.0
       end
     end
@@ -49,7 +49,7 @@ stack_thread(click_stack)
 stack_thread(impressions_stack)
 
 loop do
-  sleep 0.20
+  print line_clear
   pub = pubs.sample
   begin
     hsh = agent_u.serve.serve(id: pub["apikey"], width: 400, height: 400, json: true)
@@ -58,12 +58,12 @@ loop do
     impressions_stack << imprs if imprs && rand < 0.7
     click_stack << click if click && rand < 0.5
   rescue Excon::Errors::BadGateway
-    puts "Server appears to be down, waiting a few seconds"
+    STDERR.puts "Server appears to be down, waiting a few seconds"
     sleep 3.0
   rescue Excon::Errors::NotFound
     sleep 0.02
   end
-  print line_clear
   print "Generating Traffic Like a Baws #{loader[i % loader.size]} : #{lyrics[(i / 5) % lyrics.size]}"
   i += 1
+  sleep 0.20
 end
