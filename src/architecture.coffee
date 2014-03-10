@@ -14,7 +14,6 @@ module.exports = [
   "./modules/engine/engine-templates",
   "./modules/engine/engine-rtb",
   "./modules/engine/engine-fetch",
-  "./modules/engine/engine-traffic-generator",
 
   # APIs
   "./modules/api/api-serve",
