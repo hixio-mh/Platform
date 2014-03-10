@@ -32,10 +32,10 @@ angular.module("AdefyApp").service "AdService", [
         @native.status
 
       ad.getOrganicStatus = ->
-        data = @organic
+        data = @organic.data
         notification = @organic.notification
 
-        if data.jsSource == undefined or data.jsSource.length == 0
+        if !data.title or !data.subtitle or !data.background
           @organic.status = "missing"
         else if !notification.title or !notification.clickURL
           @organic.status = "incomplete"

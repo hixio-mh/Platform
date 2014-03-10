@@ -8,7 +8,9 @@ include _menu
         input.w100(type="text" placeholder="Enter URL" ng-model="ad.organic.googleStoreURL")
       .w25.contents-left
         button(ng-click="commitURL()" ng-class="{ blue: !renderURL }") Generate
-        button.blue(ng-disabled="!renderURL || !creativeLoaded" ng-click="save()") Save
+
+        button(ng-if="saving" disabled="disabled") Saving...
+        button.blue(ng-if="!saving" ng-disabled="!renderURL || !creativeLoaded" ng-click="save()") Save
   br
 
 h3.tcenter(ng-if="!creativeLoaded && renderURL") Loading...

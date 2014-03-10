@@ -3,6 +3,7 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
   $scope.cycle = false
   $scope.creativeLoaded = false
   $scope.creativeData = null
+  $scope.saving = false
 
   $scope.commitURL = ->
     $scope.creativeLoaded = false
@@ -23,18 +24,21 @@ angular.module("AdefyApp").controller "AdefyAdOrganicCreativeController", ($scop
     $scope.creativeData = d
 
   $scope.save = ->
-    $scope.ad.organic.jsSource = $scope.creativeData
+    $scope.saving = true
+    $scope.ad.organic.data = $scope.creativeData
     $scope.ad.organic.googleStoreURL = $scope.renderURL
 
     AdService.save $scope.ad, (ad) ->
       $scope.setNotification "Saved!", "success"
       $scope.ad = ad
+      $scope.saving = false
     , ->
       $scope.setNotification "There was an error with your submission", "error"
+      $scope.saving = false
 
   $scope.getSavedData = (url) ->
     if $scope.ad.organic.googleStoreURL == url
-      $scope.ad.organic.jsSource
+      $scope.ad.organic.data
     else
       null
 
