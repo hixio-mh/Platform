@@ -59,5 +59,23 @@ module.exports =
 
       , -> done ads
 
+    ###
+    # Delete jsSource, we stopped using it in V3
+    ###
+    migrateToV4 = (ads, done) ->
+      async.each ads, (ad, adDoneCb) ->
+        if ad.version >= 4 then return adDoneCb()
+
+        spew.info "Migrating ad to v4..."
+
+        ad.organic.jsSource = undefined
+        ad.version = 4
+        ad.save (err) ->
+          if err then spew.error err
+          adDoneCb()
+
+      , -> done ads
+
     migrateToV2 ads, (ads) ->
-      migrateToV3 ads, -> cb()
+      migrateToV3 ads, (ads) ->
+        migrateToV4 ads, -> cb()

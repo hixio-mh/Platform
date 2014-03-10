@@ -77,6 +77,11 @@ schema = new mongoose.Schema
       description: { type: String, default: "" }
       icon: { type: String, default: "" }
 
+    ##
+    ## LEGACY FIELDS v3
+    ## Keep these on untill all databases are migrated
+    ##
+    jsSource: String
 
   # Texture array for creative
   assets: [
@@ -85,7 +90,7 @@ schema = new mongoose.Schema
     key: String     # S3 asset key
   ]
 
-  version: { type: Number, default: 3 }
+  version: { type: Number, default: 4 }
 
   # 0 - Pending
   # 1 - Rejected
@@ -128,11 +133,11 @@ schema = new mongoose.Schema
   ## LEGACY FIELDS v1
   ## Keep these on untill all databases are migrated
   ##
-  data: { type: String, default: "" }
-  url: { type: String, default: "" }
-  pushTitle: { type: String, default: "" }
-  pushDesc: { type: String, default: "" }
-  pushIcon: { type: String, default: "" }
+  data: String
+  url: String
+  pushTitle: String
+  pushDesc: String
+  pushIcon: String
 
 ##
 ## ID and handle generation
