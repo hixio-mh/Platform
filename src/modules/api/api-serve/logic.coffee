@@ -136,29 +136,27 @@ setup = (options, imports, register) ->
             guardCache.del cacheKey
             return aem.send res, "404"
 
-          data = data.split "|"
+          data = JSON.parse data
 
           # If we've already logged an impression, return with HTTP 400
           # If, however, this is a legit impression, end the request early and
           # continue logging it
-          if Number(data[0]) == 1
+          if data.impression == 1
             guardCache.del cacheKey
-            return aem.send res, "400"
+            return aem.send res, "400", error: "Impression already spent"
           else
             res.send 200
 
           # Update impression count
-          data[0] = 1
-          redis.set "actions:#{actionId}", data.join "|"
+          data.impression = 1
+          redis.set "actions:#{actionId}", JSON.stringify data
 
-          data[3] = Number data[3]
-
-          campaignRef = "campaignAd:#{data[4]}:#{data[5]}:#{data[9]}"
-          publisherRef = data[6]
-          publisherGraphiteId = data[7]
-          campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"
-          campaignUserRef = data[8]
-          pubUserRef = data[9]
+          campaignRef = "campaignAd:#{data.campaign}:#{data.ad}:#{data.pubUser}"
+          publisherRef = data.pubRedis
+          publisherGraphiteId = data.pubGraph
+          campaignGraphiteId = "campaigns.#{data.campaign}.ads.#{data.ad}"
+          campaignUserRef = data.adUser
+          pubUserRef = data.pubUser
 
           # Ensure we can actually charge the advertiser
           redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
@@ -169,7 +167,7 @@ setup = (options, imports, register) ->
 
             # Bail early if the advertiser doesn't have enough money
             # Sux to be broke
-            if funds < data[3] then return aem.send res, "200:nofunds"
+            if funds < data.bid then return aem.send res, "200:nofunds"
 
             # Track action
             redis.incr "#{campaignRef}:impressions"
@@ -178,20 +176,20 @@ setup = (options, imports, register) ->
             statsd.increment "#{publisherGraphiteId}.impressions"
 
             # Return after logging request if it isn't a CPC bid
-            if data[2] != "CPM"
+            if data.pricing != "CPM"
               guardCache.del cacheKey
               return aem.send res, "200"
 
             # Charge advertiser and credit publisher. Continue after
             # advertiser charge goes through
-            statsd.increment "#{campaignGraphiteId}.spent", data[3]
-            statsd.increment "#{publisherGraphiteId}.earnings", data[3]
+            statsd.increment "#{campaignGraphiteId}.spent", data.bid
+            statsd.increment "#{publisherGraphiteId}.earnings", data.bid
 
-            redis.incrbyfloat "#{campaignRef}:spent", data[3]
-            redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-            redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+            redis.incrbyfloat "#{campaignRef}:spent", data.bid
+            redis.incrbyfloat "#{publisherRef}:earnings", data.bid
+            redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data.bid
 
-            redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
+            redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data.bid, ->
               guardCache.del cacheKey
               aem.send res, "200"
 
@@ -220,11 +218,10 @@ setup = (options, imports, register) ->
             guardCache.del cacheKey
             return aem.send res, "404"
 
-          data = data.split "|"
-          data[3] = Number data[3]
+          data = JSON.parse data
 
           # Should never happen, signals click without impression
-          if Number(data[0]) == 0
+          if data.impression == 0
             guardCache.del cacheKey
             return aem.send res, "400"
 
@@ -232,12 +229,12 @@ setup = (options, imports, register) ->
           redis.del "actions:#{actionId}", (err) ->
             if err then spew.error err
 
-            campaignRef = "campaignAd:#{data[4]}:#{data[5]}:#{data[9]}"
-            publisherRef = data[6]
-            publisherGraphiteId = data[7]
-            campaignGraphiteId = "campaigns.#{data[4]}.ads.#{data[5]}"
-            campaignUserRef = data[8]
-            pubUserRef = data[9]
+            campaignRef = "campaignAd:#{data.campaign}:#{data.ad}:#{data.pubUser}"
+            publisherRef = data.pubRedis
+            publisherGraphiteId = data.pubGraph
+            campaignGraphiteId = "campaigns.#{data.campaign}.ads.#{data.ad}"
+            campaignUserRef = data.adUser
+            pubUserRef = data.pubUser
 
             # Ensure we can actually charge the advertiser
             redis.get "user:#{campaignUserRef}:adFunds", (err, funds) ->
@@ -248,7 +245,7 @@ setup = (options, imports, register) ->
 
               # Bail early if the advertiser doesn't have enough money
               # Sux to be broke
-              if funds < data[3] then return aem.send res, "200:nofunds"
+              if funds < data.bid then return aem.send res, "200:nofunds"
 
               # Track action
               redis.incr "#{campaignRef}:clicks"
@@ -257,20 +254,20 @@ setup = (options, imports, register) ->
               statsd.increment "#{publisherGraphiteId}.clicks"
 
               # Return after logging request if it isn't a CPC bid
-              if data[2] != "CPC"
+              if data.pricing != "CPC"
                 guardCache.del cacheKey
                 return aem.send res, "200"
 
               # Charge advertiser and credit publisher. Continue after
               # advertiser charge goes through
-              statsd.increment "#{publisherGraphiteId}.earnings", data[3]
-              statsd.increment "#{campaignGraphiteId}.spent", data[3]
+              statsd.increment "#{publisherGraphiteId}.earnings", data.bid
+              statsd.increment "#{campaignGraphiteId}.spent", data.bid
 
-              redis.incrbyfloat "#{campaignRef}:spent", data[3]
-              redis.incrbyfloat "#{publisherRef}:earnings", data[3]
-              redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data[3]
+              redis.incrbyfloat "#{campaignRef}:spent", data.bid
+              redis.incrbyfloat "#{publisherRef}:earnings", data.bid
+              redis.incrbyfloat "user:#{pubUserRef}:pubFunds", data.bid
 
-              redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data[3], ->
+              redis.incrbyfloat "user:#{campaignUserRef}:adFunds", -data.bid, ->
                 guardCache.del cacheKey
                 aem.send res, "200"
 

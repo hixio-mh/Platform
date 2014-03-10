@@ -164,7 +164,7 @@ setup = (options, imports, register) ->
           click: 0
 
           pricing: ad.pricing
-          bd: ad.bid
+          bid: ad.bid
           campaign: ad.campaignId
           ad: ad.adId
           adUser: ad.ownerRedisId
@@ -252,7 +252,7 @@ setup = (options, imports, register) ->
             maxBidAd.clickURL = @getClickURL actionId
 
             @increasePaceSpending maxBidAd.campaignId, maxBid
-            @createRedisActionKey maxBidAd, actionId, publisher
+            @createRedisActionKey actionId, maxBidAd, publisher
 
           cb maxBidAd
 
