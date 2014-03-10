@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'adefy'
 
-agent = Adefy::Agent.new host: "http://www.adefy.dev/",
-                         apikey: "ytIicfVCHOSn9bp5kKvbEb6m"
+agent = Adefy::Agent.new host: "http://www.adefy.dev/"
+
 ## admin
-agent.users.login username: "Dragme", password: "adefydev"
+agent.users.login username: "admin", password: "sachercake"
 pubs = agent.publishers.all
 
 ## create a visitor agent
