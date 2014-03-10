@@ -26,12 +26,9 @@ module.exports = (user, admin) ->
     expect(ad).to.exist
 
     ad.should.have.property "name"
-    ad.should.have.property "data"
+    ad.should.have.property "organic"
+    ad.should.have.property "native"
     ad.should.have.property "id"
-    ad.should.have.property "url"
-    ad.should.have.property "pushTitle"
-    ad.should.have.property "pushDesc"
-    ad.should.have.property "pushIcon"
     ad.should.have.property "assets"
     ad.should.have.property "status"
     ad.should.have.property "tutorial"
