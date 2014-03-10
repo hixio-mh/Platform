@@ -33,15 +33,13 @@ describe "Ad Model", ->
   it "Should offer sane defaults", (done) ->
     ad = model()
 
-    expect(ad.data).to.equal ""
-    expect(ad.url).to.equal ""
-    expect(ad.pushTitle).to.equal ""
-    expect(ad.pushDesc).to.equal ""
-    expect(ad.pushIcon).to.equal ""
     expect(ad.status).to.equal 0
     expect(ad.campaigns).to.exist
     expect(ad.tutorial).to.be.false
     expect(ad.assets.length).to.equal 0
+
+    ad.should.have.property "organic"
+    ad.should.have.property "native"
 
     expect(ad.name).to.not.exist
 
@@ -114,6 +112,39 @@ describe "Ad Model", ->
       expect(stats.spent24h).to.equal 0
 
       done()
+
+  it "Should allow one to update the native creative with a method", ->
+    ad = model()
+
+    nativeData =
+      title: "test-title"
+      description: "test-description"
+      content: "test-content"
+      storeURL: "test-storeURL"
+      clickURL: "test-clickURL"
+
+    ad.updateNative nativeData
+
+    expect(ad.native.title).to.equal "test-title"
+    expect(ad.native.description).to.equal "test-description"
+    expect(ad.native.content).to.equal "test-content"
+    expect(ad.native.storeURL).to.equal "test-storeURL"
+    expect(ad.native.clickURL).to.equal "test-clickURL"
+
+  it "Should allow one to update the organic creative with a method", ->
+    ad = model()
+
+    organicData =
+      notification:
+        clickURL: "test-clickURL"
+        title: "test-title"
+        description: "test-description"
+
+    ad.updateOrganic organicData
+
+    expect(ad.organic.notification.title).to.equal "test-title"
+    expect(ad.organic.notification.clickURL).to.equal "test-clickURL"
+    expect(ad.organic.notification.description).to.equal "test-description"
 
   it "Should allow one to fetch compiled stats", (done) ->
     ad = model()
