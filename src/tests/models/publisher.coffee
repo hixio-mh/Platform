@@ -40,9 +40,7 @@ describe "Publisher Model", ->
     it "Should allow apikey generation only once", (done) ->
       pub = model()
 
-      console.log pub.apikey
       pub.createAPIKey()
-      console.log pub.apikey
       expect(pub.apikey).to.not.be.empty
       expect(pub.apikey.length).to.equal 24
 
