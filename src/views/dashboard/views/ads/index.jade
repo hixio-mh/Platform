@@ -20,8 +20,8 @@ ul.list.ad-list(ng-if="ads")
   li(ng-repeat="ad in ads | orderBy:sort.metric:sort.direction" ng-if="!ad.tutorial || (ad.tutorial && me.tutorials.ads)")
     a.ad(ng-href="/ads/{{ ad.id }}" data-id="{{ ad.id }}" ng-class="{ tutorial: ad.tutorial }")
 
-      div.icon.noimage(ng-if="!ad.data.creative")
-      img.icon(ng-if="ad.data.creative" ng-src="{{ ad.data.creative.image }}")
+      div.icon.noimage(ng-if="ad.getIcon() == null")
+      img.icon(ng-if="ad.getIcon() != null" ng-src="{{ ad.getIcon() }}")
 
       .name(ng-bind="ad.name")
       .label.blue(ng-if="ad.tutorial") Example

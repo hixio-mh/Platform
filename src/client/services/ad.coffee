@@ -9,50 +9,13 @@ angular.module("AdefyApp").service "AdService", [
       if rawDate == 0 then return null
       else return new Date rawDate
 
-    processReceivedAd = (ad) ->
-      if ad.stats.ctr then ad.stats.ctr *= 100
-      if ad.stats.ctr24h then ad.stats.ctr24h *= 100
-
-      for c in ad.campaigns
-        if c.stats
-          if c.stats.ctr then c.stats.ctr *= 100
-          if c.stats.ctr24h then c.stats.ctr24h *= 100
-
-      # Attach methods to provide status info
-      ad.getNativeStatus = ->
-        data = @native
-
-        if !data.title.length or !data.description or !data.clickURL
-          @native.status = "missing"
-        else if !data.storeURL or !data.featureURL or !data.iconURL
-          @native.status = "incomplete"
-        else
-          @native.status = "complete"
-
-        @native.status
-
-      ad.getOrganicStatus = ->
-        data = @organic.data
-        notification = @organic.notification
-
-        if !data.title or !data.subtitle or !data.background
-          @organic.status = "missing"
-        else if !notification.title or !notification.clickURL
-          @organic.status = "incomplete"
-        else
-          @organic.status = "complete"
-
-        @organic.status
-
-      ad
-
     service =
       getAllAds: (cb) ->
-        Ad.query (ads) ->
+        Ad.query (ads) =>
           ret = []
 
           for ad in ads
-            cache[ad.id] = processReceivedAd ad
+            cache[ad.id] = @processReceivedAd ad
             ret.push cache[ad.id]
 
           cb ret
@@ -60,8 +23,8 @@ angular.module("AdefyApp").service "AdService", [
       getAd: (id, cb) ->
         if cache[id] != undefined then cb cache[id]
         else
-          Ad.get id: id, (ad) ->
-            cache[id] = processReceivedAd ad
+          Ad.get id: id, (ad) =>
+            cache[id] = @processReceivedAd ad
             cb cache[id]
 
       updateCachedAd: (id, ad) ->
@@ -84,4 +47,53 @@ angular.module("AdefyApp").service "AdService", [
           ->
             errcb()
         )
+
+      processReceivedAd: (ad) ->
+        if ad.stats
+          if ad.stats.ctr then ad.stats.ctr *= 100
+          if ad.stats.ctr24h then ad.stats.ctr24h *= 100
+
+        for c in ad.campaigns
+          if c.stats
+            if c.stats.ctr then c.stats.ctr *= 100
+            if c.stats.ctr24h then c.stats.ctr24h *= 100
+
+        # Attach methods to provide status info
+        ad.getNativeStatus = ->
+          data = @native
+
+          if !data.title.length or !data.description or !data.clickURL
+            @native.status = "missing"
+          else if !data.storeURL or !data.featureURL or !data.iconURL
+            @native.status = "incomplete"
+          else
+            @native.status = "complete"
+
+          @native.status
+
+        ad.getOrganicStatus = ->
+          data = @organic.data
+          notification = @organic.notification
+
+          if !data.title or !data.subtitle or !data.background
+            @organic.status = "missing"
+          else if !notification.title or !notification.clickURL
+            @organic.status = "incomplete"
+          else
+            @organic.status = "complete"
+
+          @organic.status
+
+        ad.getIcon = ->
+
+          if @organic.data.image
+            @organic.data.image
+          else if @native.iconURL
+            @native.iconURL
+          else if @organic.notification.icon
+            @organic.notification.icon
+          else
+            null
+
+        ad
 ]
