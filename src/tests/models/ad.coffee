@@ -33,7 +33,6 @@ describe "Ad Model", ->
   it "Should offer sane defaults", (done) ->
     ad = model()
 
-    expect(ad.version).to.equal 1
     expect(ad.data).to.equal ""
     expect(ad.url).to.equal ""
     expect(ad.pushTitle).to.equal ""
