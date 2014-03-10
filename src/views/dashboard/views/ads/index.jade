@@ -24,7 +24,12 @@ ul.list.ad-list(ng-if="ads")
       img.icon(ng-if="ad.getIcon() != null" ng-src="{{ ad.getIcon() }}")
 
       .name(ng-bind="ad.name")
+
       .label.blue(ng-if="ad.tutorial") Example
+
+      span(ng-if="!ad.tutorial && ad.status == 2" style="margin-top: 4px; display: inline-block; vertical-align: top")
+        .label.green(ng-if="ad.getNativeStatus() != 'missing'") Native Creative
+        .label.green(ng-if="ad.getOrganicStatus() != 'missing'") Organic Creative
 
       span(ng-switch="ad.status" ng-if="!ad.tutorial")
         .label.gray(ng-switch-when="0") Pending Approval
