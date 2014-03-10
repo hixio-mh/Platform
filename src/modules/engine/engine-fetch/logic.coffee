@@ -516,6 +516,6 @@ setup = (options, imports, register) ->
           @fetch req, res, publisher, startTimestamp, "organic", (data) ->
             delete data.organic.active
 
-            res.json data.organic
+            templates.generate data.template, data, res
 
 module.exports = setup
