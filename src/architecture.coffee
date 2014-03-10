@@ -28,6 +28,7 @@ module.exports = [
   "./modules/api/api-analytics",
   "./modules/api/api-editor",
   "./modules/api/api-filters",
+
   # Angular route definitions
   "./modules/api/api-views",
 

@@ -6,7 +6,6 @@
   "plugin": {
     "consumes": [
       "core-express",
-      "logic-utility",
       "core-redis"
     ],
     "provides": ["engine-rtb"]

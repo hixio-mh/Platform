@@ -17,7 +17,6 @@ guardCache = new NodeCache stdTTL: 1
 setup = (options, imports, register) ->
 
   app = imports["core-express"].server
-  utility = imports["logic-utility"]
   adEngine = imports["engine-fetch"]
 
   ###
