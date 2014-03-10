@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 require 'adefy'
 
-agent = Adefy::Agent.new host: "http://www.adefy.dev/"
+agent = Adefy::Agent.new host: "http://www.adefy.dev/",
+                         apikey: "Nkv9tU54M9LLw9pSC8zIM8IB"
 
 ## admin
 agent.users.login username: "admin", password: "sachercake"
