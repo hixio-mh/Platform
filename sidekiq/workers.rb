@@ -3,6 +3,7 @@
 # Setup sidekiq with NODE_ENV=.. sidekiq -r ./sidekiq/workers.rb
 # Entry point, require all the necessary modules from here
 require "mongo"
+#require "mongo_mapper"
 require "json"
 require "bson"
 require "yaml"
