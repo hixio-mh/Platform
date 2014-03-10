@@ -485,6 +485,9 @@ setup = (options, imports, register) ->
           @fetch req, res, publisher, startTimestamp, "native", (data) ->
             delete data.native.active
 
+            data.native.click = data.click
+            data.native.impression = data.impression
+
             res.json data.native
 
       ###

@@ -37,7 +37,7 @@ def stack_thread(arra)
       lnk = arra.shift
       begin
         Excon.get(lnk) if lnk
-        sleep 0.20
+        sleep 1.0
       rescue Excon::Errors::BadGateway
         STDERR.puts "Clicks/Impressions Server appears to be down, waiting a few seconds"
         sleep 3.0
@@ -56,8 +56,12 @@ loop do
     hsh = agent_u.serve.serve(id: pub["apikey"], width: 400, height: 400, json: true)
     imprs = hsh["impression"]
     click = hsh["click"]
-    impressions_stack << imprs if imprs && rand < 0.7
-    click_stack << click if click && rand < 0.5
+
+    if imprs or click
+      impressions_stack << imprs if imprs && rand < 0.7
+      click_stack << click if click && rand < 0.5
+    end
+
   rescue Excon::Errors::BadGateway
     STDERR.puts "Server appears to be down, waiting a few seconds"
     sleep 3.0
