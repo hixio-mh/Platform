@@ -128,7 +128,7 @@ setup = (options, imports, register) ->
       details = $ ".details-section-contents"
 
       app =
-        image: $(".details-wrapper.apps img.cover-image").attr "src"
+        icon: $(".details-wrapper.apps img.cover-image").attr "src"
         title: $(info).find(".document-title div").text()
         author: $(info).find("a.document-subtitle span[itemprop=name]").text()
         category: $(info).find("a.document-subtitle span[itemprop=genre]").text()

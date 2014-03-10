@@ -46,8 +46,29 @@ schema = new mongoose.Schema
     active: { type: Boolean, default: false }
 
   organic:
-    jsSource: { type: String, default: "" }
     googleStoreURL: { type: String, default: "" }
+
+    data:
+      title: { type: String, default: "" }
+      subtitle: { type: String, default: "" }
+      description: { type: String, default: "" }
+      developer: { type: String, default: "" }
+      price: { type: String, default: "" }
+      rating: { type: String, default: "" }
+
+      icon: { type: String, default: "" }
+      background: { type: String, default: "" }
+      screenshots: [{ type: String, default: "" }]
+
+      blur: { type: Number, default: 32, min: 16 }
+      type: { type: String, default: "flat_template" }
+
+      styleClass: { type: String, default: "palette-green" }
+      buttonStyleClass: { type: String, default: "button-round" }
+      bgOverlayClass: { type: String, default: "overlay-dark4" }
+
+      loadingColorClass: { type: String, default: "loading-white" }
+      loadingStyleClass: { type: String, default: "loading-style-round" }
 
     notification:
       clickURL: { type: String, default: "" }
@@ -64,7 +85,7 @@ schema = new mongoose.Schema
     key: String     # S3 asset key
   ]
 
-  version: { type: Number, default: 2 }
+  version: { type: Number, default: 3 }
 
   # 0 - Pending
   # 1 - Rejected
@@ -104,7 +125,7 @@ schema = new mongoose.Schema
   ]
 
   ##
-  ## LEGACY FIELDS
+  ## LEGACY FIELDS v1
   ## Keep these on untill all databases are migrated
   ##
   data: { type: String, default: "" }
@@ -112,9 +133,6 @@ schema = new mongoose.Schema
   pushTitle: { type: String, default: "" }
   pushDesc: { type: String, default: "" }
   pushIcon: { type: String, default: "" }
-  ##
-  ##
-  ##
 
 ##
 ## ID and handle generation
@@ -127,10 +145,6 @@ schema.methods.getGraphiteCampaignId = (campaignId) ->
 schema.methods.toAPI = ->
   ret = @toObject()
   ret.id = ret._id.toString()
-
-  if ret.data != undefined and ret.data.length > 0
-    try
-      ret.data = JSON.parse ret.data
 
   for i in [0...ret.campaigns.length]
     if ret.campaigns[i].campaign != null
@@ -379,20 +393,6 @@ schema.statics.getCampaigns = (adId, cb) ->
 ## Saving/update utility methods
 ##
 
-# Helper to prepare organic JS object source for shipping. Returns null if src
-# is not stringifiable
-#
-# @param [Object] src raw JS object source
-# @return [String] JSON stringified source
-schema.methods.prepareOrganicSource = (src) ->
-  if src.type == undefined then src.type = "flat_template"
-  jsSource = null
-
-  try
-    jsSource = JSON.stringify src
-
-  jsSource
-
 # Update organic ad notification
 #
 # @param [Object] data
@@ -431,15 +431,16 @@ schema.methods.updateAsset = (name, buffer, key) ->
 
 # Update organic creative with raw data (handles icon asset managment)
 #
-# @param [Object] data
-schema.methods.updateOrganic = (data) ->
-  if data.jsSource
-    @organic.jsSource = @prepareOrganicSource data.jsSource
+# @param [Object] organicData
+schema.methods.updateOrganic = (organicData) ->
+  if organicData.data
+    @organic.data = organicData.data
 
-    if data.googleStoreURL != undefined
-      @organic.googleStoreURL = data.googleStoreURL
+    if organicData.googleStoreURL != undefined
+      @organic.googleStoreURL = organicData.googleStoreURL
 
-  if data.notification then @updateOrganicNotification data.notification
+  if organicData.notification
+    @updateOrganicNotification organicData.notification
 
 # Update native creative with raw data
 schema.methods.updateNative = (data) ->
@@ -660,15 +661,5 @@ schema.pre "save", (next) ->
   @fetchAssetsFromS3 =>
     @createRedisStruture ->
       next()
-
-schema.path("organic.jsSource").validate (value) ->
-  try
-    if value
-      hash = JSON.parse(value)
-      if hash.min < 16 then return false
-    return true
-  catch e
-    spew.error e
-    false
 
 mongoose.model "Ad", schema
