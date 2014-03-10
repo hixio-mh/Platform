@@ -6,12 +6,12 @@ include _menu
       legend
         | Native Creative
 
-        .toggle-wrap.right(style="margin: 2px 0 0 32px" ng-if="ad.status == 2 && (dataStatus() == 'incomplete' || dataStatus() == 'complete')")
+        .toggle-wrap.right.header-toggle-switch(ng-if="ad.status == 2 && dataStatus() != 'missing'")
           toggle-switch(method="activeToggled()" model="ad.native.active")
 
-        .label.red.right(style="margin-top:16px" ng-if="dataStatus() == 'missing'") No content provided
-        .label.orange.right(style="margin-top:16px" ng-if="dataStatus() == 'incomplete'") Incomplete content
-        .label.green.right(style="margin-top:16px" ng-if="dataStatus() == 'complete'") Everything looks good!
+        .label.red.right(ng-if="dataStatus() == 'missing'") No content provided
+        .label.orange.right(ng-if="dataStatus() == 'incomplete'") Incomplete content
+        .label.green.right(ng-if="dataStatus() == 'complete'") Everything looks good!
 
       p Prepare your ad for native, contextual delivery by filling out the fields below. Our publishers will then render your content alongside their own, providing a rich and non-intrusive experience for users.
 
