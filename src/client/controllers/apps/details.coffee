@@ -10,8 +10,6 @@ angular.module("AdefyApp").controller "AdefyAppsDetailsController", ($scope, $ro
         UserService.getUser (user) ->
           if user.tutorials.appDetails then window.showTutorial()
 
-  AppService.getApp $routeParams.id, (app) -> $scope.app = app
-
   $scope.graphInterval = "30minutes"
   $scope.graphSum = true
   $scope.intervalOptions = [
@@ -74,6 +72,9 @@ angular.module("AdefyApp").controller "AdefyAppsDetailsController", ($scope, $ro
           type: "y"
           orientation: "right"
           formatter: (y) -> accounting.formatMoney y, "$", 2
+
+  AppService.getApp $routeParams.id, (app) ->
+    $scope.app = app
 
   buildGraphData()
 

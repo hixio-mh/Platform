@@ -26,6 +26,8 @@ module.exports =
       adFunds: 10000
       pubFunds: 2000
 
+      apikey: "Nkv9tU54M9LLw9pSC8zIM8IB"
+
       transactions: [
         action: "deposit"
         amount: 1500
