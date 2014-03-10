@@ -18,11 +18,7 @@
 .grid
   a.item(ng-repeat="campaign in campaigns | orderBy:sort.metric:sort.direction" ng-href="/campaigns/{{campaign.id}}" data-id="{{ campaign.id }}" ng-class="{ tutorial: campaign.tutorial }" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.campaigns)")
 
-    div.icon.noimage(ng-if="campaign.ads.length == 0")
-    img.icon(ng-if="campaign.ads.length == 1" ng-src="{{ campaign.ads[0].data.creative.image }}")
-    ul.icon.list(ng-if="campaign.ads.length > 1")
-      li(ng-repeat="ad in campaign.ads")
-        img(ng-src="{{ ad.data.creative.image }}")
+    campaign-icon(campaign="campaign")
 
     .name(ng-bind="campaign.name")
     .label.active(ng-class="campaign.active?'blue':'red'") {{ campaign.active ? "Active" : "Disabled" }}
