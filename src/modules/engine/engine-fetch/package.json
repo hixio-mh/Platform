@@ -1,14 +1,16 @@
 {
-  "name": "engine-ads",
+  "name": "engine-fetch",
   "version": "0.0.1",
   "main": "logic.coffee",
   "private": true,
   "plugin": {
     "consumes": [
       "core-express",
+      "logic-utility",
       "engine-templates",
-      "core-redis"
+      "core-redis",
+      "engine-rtb"
     ],
-    "provides": ["engine-ads"]
+    "provides": ["engine-fetch"]
   }
 }

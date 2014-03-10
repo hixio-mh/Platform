@@ -29,7 +29,7 @@ module.exports = (user, admin) ->
 
   validateAppFormat = (app) ->
     expect(app).to.exist
-    app.should.have.property "image"
+    app.should.have.property "icon"
     app.should.have.property "title"
     app.should.have.property "author"
     app.should.have.property "category"

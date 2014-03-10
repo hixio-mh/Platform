@@ -4,7 +4,7 @@ port: 5000
 loglevel: 10
 adloglevel: 4
 newrelic: false
-trafficgen: true
+trafficgen: false
 
 mandrill_apikey: qNnTW7jFhEn40lmizXKDLQ
 

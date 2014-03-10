@@ -1,4 +1,4 @@
-describe("AdefyAdCreativeController", function() {
+describe("AdefyAdOrganicCreativeController", function() {
   var scope = null;
   var AdServiceMock = {};
 
@@ -17,7 +17,7 @@ describe("AdefyAdCreativeController", function() {
     angular.mock.inject(function($rootScope, $controller, $injector) {
       scope = $rootScope.$new();
 
-      $controller("AdefyAdCreativeController", {
+      $controller("AdefyAdOrganicCreativeController", {
         $scope: scope,
         AdService: AdServiceMock,
         $routeParams: RouteParams
@@ -35,7 +35,7 @@ describe("AdefyAdCreativeController", function() {
 
   it("Provides a method to cycle the creative directive with a url", function() {
     scope.should.have.property("commitURL");
-    scope.ad = { data: { url: "www.google.com" } };
+    scope.ad = { organic: { googleStoreURL: "www.google.com" } };
     scope.renderURL = null;
 
     scope.cycle = true;
@@ -60,9 +60,9 @@ describe("AdefyAdCreativeController", function() {
   it("Exposes a getter for the saved creative data by URL", function() {
     scope.should.have.property("getSavedData");
     scope.ad = {
-      data: {
-        url: "waaazzzzaaaa",
-        creative: 123
+      organic: {
+        googleStoreURL: "waaazzzzaaaa",
+        data: 123
       }
     };
 
@@ -76,8 +76,8 @@ describe("AdefyAdCreativeController", function() {
   it("Provides a save method for the ad", function(done){
     scope.should.have.property("save");
     scope.ad = {
-      data: {
-        creative: 123
+      organic: {
+        data: 123
       }
     };
 

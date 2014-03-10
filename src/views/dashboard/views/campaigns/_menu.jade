@@ -22,7 +22,7 @@
       i.fa.fa-fw.fa-wrench
       | Settings
 
-  .toggle-wrap(style="float:right" ng-if="me.adFunds > 0 && !campaign.tutorial")
+  .toggle-wrap.right(ng-if="me.adFunds > 0 && !campaign.tutorial")
     toggle-switch(method="activeToggled()" model="campaign.active")
 
   .right

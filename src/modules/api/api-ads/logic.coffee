@@ -40,10 +40,75 @@ setup = (options, imports, register) ->
         res.json 200, newAd.toAnonAPI()
 
   ###
+  # POST /api/v1/ads/:id/:creative/activate
+  #   Activates an ad creative
+  # @param [ID] id
+  # @param [Creative] creative
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/activate"
+  ###
+  app.post "/api/v1/ads/:id/:creative/activate", isLoggedInAPI, (req, res) ->
+    if req.param("creative") != "native" and req.param("creative") != "organic"
+      return aem.send res, "400"
+
+    db.model("Ad")
+    .findById(req.param("id"))
+    .exec (err, ad) ->
+<<<<<<< HEAD
+      if aem.dbError err, res, false then return
+      if not ad then return aem.send res, "404:ad"
+=======
+      if utility.dbError err, res, false then return
+      if not ad then return aem.send res, "404"
+      if ad.tutorial == true then return aem.send res, "401"
+>>>>>>> native-format
+
+      if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
+        return aem.send res, "401"
+
+      if ad.status != 2
+        return aem.send res, "401", error: "Ad un-approved"
+
+      ad.setCreativeActive req.param("creative"), true
+      ad.save()
+
+      res.json 200, ad.toAnonAPI()
+
+  ###
+  # POST /api/v1/ads/:id/:creative/deactivate
+  #   Deactivates an ad creative
+  # @param [ID] id
+  # @param [Creative] creative
+  # @example
+  #   $.ajax method: "POST",
+  #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/deactivate"
+  ###
+  app.post "/api/v1/ads/:id/:creative/deactivate", isLoggedInAPI, (req, res) ->
+    if req.param("creative") != "native" and req.param("creative") != "organic"
+      return aem.send res, "400"
+
+    db.model("Ad")
+    .findById(req.param("id"))
+    .exec (err, ad) ->
+      if utility.dbError err, res, false then return
+      if not ad then return aem.send res, "404"
+      if ad.tutorial == true then return aem.send res, "401"
+
+      if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
+        return aem.send res, "401"
+
+      ad.setCreativeActive req.param("creative"), false
+      ad.save()
+
+      res.json 200, ad.toAnonAPI()
+
+  ###
   # POST /api/v1/ads/:id
   #   Updates an existing Ad by :id
   # @param [ID] id
-  # @qparam [String] name
+  # @qparam [Object] native
+  # @qparam [Object] organic
   # @response [Object] Ad returns an updated Ad object
   # @example
   #   $.ajax method: "POST",
@@ -52,58 +117,27 @@ setup = (options, imports, register) ->
   #            name: "AwesomeAdMkII"
   ###
   app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) ->
+
+    # TODO: Test this somehow
+    generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
+    getS3Key = (object) ->
+      if object.key != undefined
+        object.key
+      else
+        object.split("//#{s3Host}/")[1]
+
     db.model("Ad")
     .findById req.param("id")
     .populate "campaigns.campaign"
     .exec (err, ad) ->
-      if aem.dbError err, res, false then return
+      if utility.dbError err, res, false then return
       if not ad then return aem.send res, "404:ad"
 
       if not req.user.admin and "#{req.user.id}" != "#{ad.owner}"
         return aem.send res, "401"
 
-      ##
-      ## Creative saving
-      ##
-
-      # For now, only support saving of single creative
-      data = ad.data
-
-      if req.param "data"
-        try
-          data = JSON.stringify req.param "data"
-
-          # If no type is specified, default to flat_template
-          if data.type == undefined then data.type = "flat_template"
-
-      ad.data = data
-
-      ##
-      ## Notification stuff
-      ##
-
-      ad.url = req.param "url"
-      ad.pushTitle = req.param "pushTitle"
-      ad.pushDesc = req.param "pushDesc"
-
-      if req.param("pushIcon").key != undefined
-        iconKey = req.param("pushIcon").key
-      else
-        iconKey = req.param("pushIcon").split("//#{s3Host}/")[1]
-
-      ad.pushIcon = "//#{s3Host}/#{iconKey}"
-
-      ##
-      ## Todo: Fill in assets as needed!
-      ##
-      ## In the future, only update assets that need to be updated
-      ad.assets = []
-
-      # Add icon url
-      ad.assets.push
-        name: "push-icon"
-        buffer: ""
-        key: iconKey
+      if req.param("native") then ad.updateNative req.param "native"
+      if req.param("organic") then ad.updateOrganic req.param "organic"
 
       ad.validate (err) ->
         if err

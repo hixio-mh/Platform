@@ -1,3 +1,4 @@
+require "./helpers/throwableErrors"
 config = require "./config"
 architect = require "architect"
 spew = require "spew"
