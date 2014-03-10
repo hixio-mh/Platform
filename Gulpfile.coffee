@@ -145,8 +145,8 @@ gulp.task "assets", ->
 # Rerun the task when a file changes
 gulp.task "watch", ->
   gulp.watch paths.js, ["js"]
-  gulp.watch paths.angular, ["coffee"]
   gulp.watch paths.images, ["images"]
+  gulp.watch paths.angular, ["coffee"]
   gulp.watch paths.images, ["fonts"]
   gulp.watch paths.styl, ["stylus", "css"]
   gulp.watch paths.css, ["css"]
@@ -167,7 +167,9 @@ gulp.task "update", ->
 
 # Spin-up a development server
 gulp.task "server", ->
-  nodemon script: "src/adefy.coffee", options: "--watch src/"
+  nodemon
+    script: "src/adefy.coffee"
+    options: "--watch src/modules --watch src/helpers --watch src/models"
 
 # Build all of the assets
 gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", "assets"]
