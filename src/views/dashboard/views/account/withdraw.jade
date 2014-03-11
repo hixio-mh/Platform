@@ -1,23 +1,17 @@
 form
   fieldset: dl.form.thin.center
 
-    .field
-      label NOTE: You must have at least $100 to initiate a withdrawal
     .field.w50
-      label Ad Funds
-      input(required type="radio" name="model" ng-change="formObject.fundModelChanged()" value="ad" ng-model="formObject.model" selected)
+      label Interval
     .field.w50
-      label Publisher Funds
-      input(required type="radio" name="model" ng-change="formObject.fundModelChanged()" value="pub" ng-model="formObject.model")
+      input.wide(required type="number" placeholder="Days, 7 minimum" ng-model="formObject.interval" ng-keypress="enterSubmit($event)" min="7")
+
     .field.w50
-      label Available Funds
+      label Threshold Amount
     .field.w50
-      label ${{ formObject.availableFunds | number:2 }}
+      input.wide(required type="number" placeholder="$100 minimum" ng-model="formObject.min" ng-keypress="enterSubmit($event)" min="100")
+
     .field.w50
-      label Amount to withdraw $
+      label Paypal Email
     .field.w50
-      input.wide(required type="number" placeholder="100" ng-model="formObject.amount" ng-keypress="enterSubmit($event)" min="100")
-    .field.w50
-      label Paypal Email to send payment
-    .field.w50
-      input.wide(required type="email" placeholder="john.smith@gmail.com" ng-model="formObject.alt_email" ng-keypress="enterSubmit($event)" name="email")
+      input.wide(required type="email" placeholder="john.smith@gmail.com" ng-model="formObject.email" ng-keypress="enterSubmit($event)" name="email")

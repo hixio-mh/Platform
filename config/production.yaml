@@ -3,6 +3,7 @@ domain: app.adefy.com
 port: 10000
 loglevel: 0
 adloglevel: 0
+cron_log_level: 2
 newrelic: true
 trafficgen: false
 
@@ -26,16 +27,17 @@ redis_autocomplete_port: 23522
 stats_host: 192.168.152.31
 stats_port: 8125
 
+paypal_host: https://api.paypal.com
+paypal_classic_host: https://api-3t.paypal.com/nvp
+
 # All of the following have to be present on the environment!
 #
-# paypal_host:
 # paypal_client_id:
 # paypal_client_secret:
 #
 # paypal_classic_username
 # paypal_classic_password
 # paypal_classic_signature
-# paypal_classic_host
 #
 # s3_config_accessKeyId:
 # s3_config_secretAccessKey:

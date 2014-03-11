@@ -3,6 +3,7 @@ domain: localhost
 port: 5000
 loglevel: 0
 adloglevel: 0
+cron_log_level: 0
 newrelic: false
 trafficgen: false
 

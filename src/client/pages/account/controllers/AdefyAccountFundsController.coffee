@@ -8,6 +8,12 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
     UserService.getUser (user) ->
       if user.tutorials.funds then showTutorial()
 
+      $scope.withdrawalInfo =
+        disabled: false
+        email: user.withdrawal.email
+        min: user.withdrawal.min
+        interval: user.withdrawal.interval
+
   $http.get("/api/v1/user/transactions").success (data) ->
     $scope.transactions = data
 
@@ -46,38 +52,51 @@ angular.module("AdefyApp").controller "AdefyAccountFundsController", ($scope, $h
       $scope.paymentInfo.availableFunds = 0
       $scope.paymentInfo.errorMessage = "Please select a Fund to withdraw from"
 
-  triggerError = (message) ->
-    $scope.paymentInfo.disabled = false
-    $scope.paymentInfo.infoMessage = ""
-    $scope.paymentInfo.errorMessage = message
-    false
+  $scope.saveWithdrawalSettings = ->
 
-  $scope.withdraw = ->
-    amount = $scope.paymentInfo.amount
-    model = $scope.paymentInfo.model
-    email = $scope.paymentInfo.alt_email
+    triggerError = (message) ->
+      $scope.withdrawalInfo.disabled = false
+      $scope.withdrawalInfo.errorMessage = message
+      false
 
-    if model != "ad" and model != "pub"
-      return triggerError "Please select a fund to withdraw from"
+    min = $scope.withdrawalInfo.min
+    email = $scope.withdrawalInfo.email
+    interval = $scope.withdrawalInfo.interval
 
-    if amount < 100
-      return triggerError "Amount must be at least $100"
+    if interval == undefined or interval < 7 or isNaN interval
+      return triggerError "Interval must be at least 7 days"
 
-    if amount > $scope.paymentInfo.availableFunds
-      return triggerError "Insufficient funds!"
+    if min == undefined or min < 100 or isNaN min
+      return triggerError "Minimum must be at least $100"
 
-    $scope.paymentInfo.disabled = true
-    $scope.paymentInfo.infoMessage = "Please wait"
-    $scope.paymentInfo.errorMessage = ""
+    if email == undefined or email.length == 0 or email.indexOf("@") == -1 or email.split("@")[1].indexOf(".") == -1
+      return triggerError "Valid email required"
 
-    $http.post("/api/v1/user/withdraw/#{model}", amount: amount, email: email)
-    .success (data) ->
-      $scope.paymentInfo.disabled = false
-      $scope.paymentInfo.infoMessage = "Your request has been sent."
-    .error (err) ->
-      triggerError err.error
+    $scope.me.withdrawal.email = email
+    $scope.me.withdrawal.interval = interval
+    $scope.me.withdrawal.min = min
 
-    false
+    $scope.withdrawalInfo.disabled = true
+    UserService.clearCache()
+    $scope.me.$save().then(
+      ->
+        UserService.getUser (me) ->
+          $scope.withdrawalInfo.disabled = false
+          $scope.withdrawalInfo.errorMessage = ""
+          $scope.me = me
+
+          $scope.setNotification "Saved!", "success"
+
+      (err) ->
+        UserService.getUser (me) ->
+          $scope.withdrawalInfo.disabled = false
+          $scope.withdrawalInfo.errorMessage = ""
+          $scope.me = me
+
+          $scope.setNotification "An error occured", "error"
+    )
+
+    true
 
   $scope.deposit = ->
     amount = $scope.paymentInfo.amount
