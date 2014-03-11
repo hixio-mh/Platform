@@ -46,6 +46,7 @@ schema = new mongoose.Schema
     previousTimestamp: { type: Number, default: 0 }
     rateDays: { type: Number, default: 30 }
     min: { type: Number, default: 100 }
+    email: { type: String, default: "" }
 
   # Used to store intermediate transaction information. String is of the
   # format id|token
@@ -237,9 +238,40 @@ schema.methods.addFunds = (amount) ->
 
   true
 
-schema.methods.createWithdrawalRequest = (source, amount, email) ->
-  sidekiq.enqueue "AdefyPlatform::Jobs::MassPay", [], at: new Date()
+###
+# Checks if the user can perform a withdrawal
+#
+# @return [Boolean] canWithdraw
+###
+schema.methods.canWithdraw = ->
+  @hasMinimumForWithdrawal() && @isDueForWithdrawal()
 
+###
+# Checks if the user has enough publisher funds to initiate a withdrawal
+#
+# @return [Boolean] hasMinimum
+###
+schema.methods.hasMinimumForWithdrawal = ->
+  if @pubFunds < @withdrawal.min
+    false
+  else
+    true
+
+###
+# Checks if the user is due for a withdrawal
+#
+# @return [Boolean] isDue
+###
+schema.methods.isDueForWithdrawal = ->
+  elapsed = Date.now() - @withdrawal.previousTimestamp
+  delay = @withdrawal.rateDays * (60 * 60 * 24)
+
+  if elapsed < delay
+    false
+  else
+    true
+
+schema.path("withdrawal.min").validate (value) -> value > 100
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
   if not @hasAPIKey() then @createAPIKey()
