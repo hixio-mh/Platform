@@ -32,5 +32,10 @@ stats_port: 8125
 # paypal_client_id:
 # paypal_client_secret:
 #
+# paypal_classic_username
+# paypal_classic_password
+# paypal_classic_signature
+# paypal_classic_host
+#
 # s3_config_accessKeyId:
 # s3_config_secretAccessKey:
