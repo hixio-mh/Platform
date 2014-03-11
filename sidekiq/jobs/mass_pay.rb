@@ -3,45 +3,37 @@ module AdefyPlatform
     class MassPay
 
       include Sidekiq::Worker
+      include Sidetiq::Schedulable
 
-      def calc_withdrawal_amount(user)
-        ad_amount = 0
-        pub_amount = 0
-
-        for withdrawal in user["pendingWithdrawals"]
-          if withdrawal["source"] == "ad"
-            ad_amount += withdrawal.amount
-          elsif withdrawal["source"] == "pub"
-            pub_amount += withdrawal.amount
-          end
-        end
-
-        user_ad_funds = user["adFunds"]
-        user_pub_funds = user["pubFunds"]
-        ad_amount = 0 if ad_amount < 0
-        ad_amount = user_ad_funds if ad_amount > user_ad_funds
-
-        pub_amount = 0 if pub_amount < 0
-        pub_amount = user_pub_funds if pub_amount > user_pub_funds
-
-        return ad_amount + pub_amount
-      end
+      recurrence { daily }
 
       def perform
-        paypal_config = AdefyPlatform::Config["paypal"]
-        username  = paypal_config["username"]
-        password  = paypal_config["password"]
-        signature = paypal_config["signature"]
-        url       = paypal_config["host"]
+        username  = AdefyPlatform::Config["paypal_classic_username"]
+        password  = AdefyPlatform::Config["paypal_classic_password"]
+        signature = AdefyPlatform::Config["paypal_classic_signature"]
+        url       = AdefyPlatform::Config["paypal_classic_host"]
 
-        paypal = Paypal.new(username, password, signature, url)
+        paypal = Paypal.new(username, password, signature, :sandbox)
 
-        payments = AdefyPlatform::User.all.map do |user|
-          ppp = PayPalPayment.new
-          ppp.email     = user["email"]
-          ppp.unique_id = user["_id"]
-          ppp.amount    = calc_withdrawal_amount(user)
-          ppp
+        payments = AdefyPlatform::User.find({}).map do |user|
+
+          elapsed = Time.now = user["withdrawal"]["previousTimestamp"]
+          rate = user["withdrawal"]["rateDays"] * (60 * 60 * 24)
+
+          if elapsed >= rate and user["pubFunds"] >= user["withdrawal"]["min"]
+            ppp = PayPalPayment.new
+            ppp.email     = user["email"]
+            ppp.unique_id = user["_id"]
+            ppp.amount    = 0
+
+            user["pubFunds"] = 0
+            user.save
+
+            ppp
+          else
+            null
+          end
+
         end
 
         email_subject = nil # we aren't using this

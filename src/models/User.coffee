@@ -42,13 +42,10 @@ schema = new mongoose.Schema
 
   transactions: [{ action: String, amount: Number, time: Number }]
 
-  pendingWithdrawals: [
-    id: String
-    source: String
-    amount: Number
-    time: Number
-    email: String
-  ]
+  withdrawal:
+    previousTimestamp: { type: Number, default: 0 }
+    rateDays: { type: Number, default: 30 }
+    min: { type: Number, default: 100 }
 
   # Used to store intermediate transaction information. String is of the
   # format id|token
@@ -240,42 +237,8 @@ schema.methods.addFunds = (amount) ->
 
   true
 
-schema.methods.withdrawFunds = (type, amount) ->
-  if type == "pub"
-    @pubFunds -= Number amount
-    redis.incrbyfloat "#{@getRedisId()}:pubFunds", -amount
-
-    @transactions.push
-      action: "withdraw"
-      amount: amount
-      time: new Date().getTime()
-  else if type == "ad"
-    @adFunds -= Number amount
-    redis.incrbyfloat "#{@getRedisId()}:adFunds", -amount
-
-    @transactions.push
-      action: "withdraw"
-      amount: amount
-      time: new Date().getTime()
-
-  true
-
 schema.methods.createWithdrawalRequest = (source, amount, email) ->
-  paymentID = "#{Date.now()}-#{Math.round(Math.random() * 1000)}"
-
-  @pendingWithdrawals.push
-    source: String source
-    amount: Number amount
-    time: new Date().getTime()
-    email: String email
-    id: paymentID
-
-  sidekiq.enqueue "AdefyPlatform::Jobs::Withdrawal", [
-    "#{@_id}"
-    paymentID
-  ], at: new Date()
-
-  true
+  sidekiq.enqueue "AdefyPlatform::Jobs::MassPay", [], at: new Date()
 
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
