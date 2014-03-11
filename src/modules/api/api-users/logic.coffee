@@ -246,6 +246,11 @@ setup = (options, imports, register) ->
       user.phone = req.param("phone") || user.phone
       user.vat = req.param("vat") || user.vat
 
+      if req.param("withdrawal")
+        user.withdrawal.min = req.param("withdrawal").min
+        user.withdrawal.interval = req.param("withdrawal").interval
+        user.withdrawal.email = req.param("withdrawal").email
+
       # NOTE: Tutorial visiblity can not be updated from this point!
 
       changingPassword = false
@@ -309,38 +314,6 @@ setup = (options, imports, register) ->
       user.save()
 
       res.json user.toAPI()
-
-  # Deposit creation
-  app.post "/api/v1/user/withdraw/:model", isLoggedInAPI, (req, res) ->
-    db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res then return
-      if not user then return aem.send res, "404", error: "User not found"
-
-      if isNaN req.param "amount"
-        return aem.send res, "400", error: "Amount not a number"
-
-      amount = Number req.param "amount"
-      model = req.param "model"
-      email = req.param "email"
-
-      if amount < 100
-        return aem.send res, "400", error: "Amount below minimum: $100"
-      else if model != "ad" and model != "pub"
-        return aem.send res, "400", error: "Invalid model: #{model}"
-
-      userFunds = user["#{model}Funds"]
-
-      if amount > userFunds
-        return aem.send res, "400", error: "Amount exceeds available funds"
-
-      # Really primitive email checking
-      if email == undefined or email.length == 0 or email.indexOf("@") == -1
-        return aem.send res, "400", error: "Invalid email"
-
-      user.createWithdrawalRequest model, amount, email
-      user.save (err) ->
-        if err then aem.send res, "400", error: err
-        else aem.send res, "200"
 
   # Deposit creation
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->

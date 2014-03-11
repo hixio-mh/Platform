@@ -10,7 +10,17 @@ describe("AdefyAccountFundsController", function() {
       httpBackend = $injector.get("$httpBackend");
 
       UserServiceMock = {
-        getUser: function(cb) { cb({ tutorials: { funds: false } }); },
+        user: {
+          tutorials: {
+            funds: false
+          },
+          withdrawal: {
+            interval: 0,
+            min: 0,
+            email: ""
+          }
+        },
+        getUser: function(cb) { cb(this.user); },
       };
 
       $controller("AdefyAccountFundsController", {
@@ -38,8 +48,8 @@ describe("AdefyAccountFundsController", function() {
   });
 
   // TODO: Implement withdrawls and test the method
-  it("Provides a withdraw method", function() {
-    scope.should.have.property("withdraw");
+  it("Provides a withdrawal settings save method", function() {
+    scope.should.have.property("saveWithdrawalSettings");
   });
 
   it("Should fetch user transaction list on load", function() {
