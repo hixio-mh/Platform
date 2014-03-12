@@ -1,6 +1,6 @@
 ---
-- hosts: broke_production
-  remote_user: root
+- hosts: broke_staging
+  remote_user: adefy
 
   vars:
     node_version: "0.10.25"
@@ -8,8 +8,7 @@
     node_tarball: "{{ node_prefix }}.tar.gz"
     node_path: "/usr/local"
 
-    adefy_password: "$1$ladksfnljkybekbad$1I4bsHQqfSp2"
-    adefy_branch: production
+    adefy_branch: staging
 
   roles:
     - production

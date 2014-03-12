@@ -7,8 +7,8 @@
 [vagrant_mongo]
 192.168.100.12
 
-[staging]
-staging.adefy.com
+[broke_staging]
+88.80.191.142:7374
 
 [production]
 app1.adefy.com
