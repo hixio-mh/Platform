@@ -39,7 +39,6 @@ include _menu
           td {{ ad.name }}
 
           td
-            span.label(ng-class="ad.activeClass" style="margin-right: 8px;") {{ ad.activeText }}
             button.blue(ng-click="viewAd(ad)") View
 
     br
@@ -58,7 +57,6 @@ include _menu
           td {{ ad.name }}
 
           td
-            span.label(ng-class="ad.activeClass" style="margin-right: 8px;") {{ ad.activeText }}
             button.blue(ng-click="viewAd(ad)") View
 
   .w50.padded(ng-if="!adView")
@@ -66,54 +64,54 @@ include _menu
 
   .w50.padded(ng-if="adView")
     form
-      fieldset: dl.form.center
+      fieldset: dl.form.center.labels-only
         legend Basic Info
 
-        dt: h3.tright Name:
-        dd: h6 {{ adView.name }}
+        dt: label.tright Name:
+        dd: label {{ adView.name }}
 
         div(ng-if="adView.data")
-          dt: h3.tright URL:
+          dt: label.tright URL:
           dd: a(ng-href="{{ adView.data.url }}" target="_blank") {{ adView.data.url }}
 
-      fieldset(ng-if="adView.status == 2"): dl.form.center
+      fieldset(ng-if="adView.status == 2"): dl.form.center.labels-only
         legend Statistics
 
-        dt: h3.tright Impressions:
-        dd: h6 {{ adView.stats.impressions }}
+        dt: label.tright Impressions:
+        dd: label {{ adView.stats.impressions }}
 
-        dt: h3.tright Clicks:
-        dd: h6 {{ adView.stats.clicks }}
+        dt: label.tright Clicks:
+        dd: label {{ adView.stats.clicks }}
 
-        dt: h3.tright Spent:
-        dd: h6 ${{ adView.stats.spent | number:2 }}
+        dt: label.tright Spent:
+        dd: label ${{ adView.stats.spent | number:2 }}
 
-      fieldset: dl.form.center
+      fieldset: dl.form.center.labels-only
         legend User Information
 
-        dt: h3.tright Username:
-        dd: h6 {{ adView.owner.username }}
+        dt: label.tright Username:
+        dd: label {{ adView.owner.username }}
 
         div(ng-if="adView.owner.fname.length > 0")
-          dt: h3.tright First Name:
-          dd: h6 {{ adView.owner.fname }}
+          dt: label.tright First Name:
+          dd: label {{ adView.owner.fname }}
 
         div(ng-if="adView.owner.lname.length > 0")
-          dt: h3.tright Last Name:
-          dd: h6 {{ adView.owner.lname }}
+          dt: label.tright Last Name:
+          dd: label {{ adView.owner.lname }}
 
         div(ng-if="adView.owner.company.length > 0")
-          dt: h3.tright Company:
-          dd: h6 {{ adView.owner.company }}
+          dt: label.tright Company:
+          dd: label {{ adView.owner.company }}
 
-        dt: h3.tright Email:
-        dd: h6 {{ adView.owner.email }}
+        dt: label.tright Email:
+        dd: label {{ adView.owner.email }}
 
-        dt: h3.tright Publisher Revenue:
-        dd: h6 ${{ adView.owner.pubFunds | number:2 }}
+        dt: label.tright Publisher Revenue:
+        dd: label ${{ adView.owner.pubFunds | number:2 }}
 
-        dt: h3.tright Advertiser Credit:
-        dd: h6 ${{ adView.owner.adFunds | number:2 }}
+        dt: label.tright Advertiser Credit:
+        dd: label ${{ adView.owner.adFunds | number:2 }}
 
         dt
         dd
