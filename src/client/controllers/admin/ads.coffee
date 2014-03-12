@@ -24,14 +24,6 @@ angular.module("AdefyApp").controller "AdefyAdminAdsController", ($scope, $http,
           list[i].statusText = "Approved"
           list[i].statusClass = "green"
 
-        # Active
-        if list[i].active == true
-          list[i].activeText = "Active"
-          list[i].activeClass = "blue"
-        else if list[i].active == false
-          list[i].activeText = "Disabled"
-          list[i].activeClass = "red"
-
       $scope.ads = list
 
   refreshAdListing()

@@ -62,69 +62,69 @@ include _menu
 
   .w50.padded(ng-if="pubView")
     form
-      fieldset: dl.form.center
+      fieldset: dl.form.center.labels-only
         legend Basic Info
 
-        dt: h3.tright Name:
-        dd: h6 {{ pubView.name }}
+        dt: label.tright Name:
+        dd: label {{ pubView.name }}
 
-        dt: h3.tright URL:
+        dt: label.tright URL:
         dd: a(ng-href="{{ pubView.url }}" target="_blank") {{ pubView.url }}
 
-        dt: h3.tright Category:
-        dd: h6 {{ pubView.category }}
+        dt: label.tright Category:
+        dd: label {{ pubView.category }}
 
-        dt: h3.tright Pricing:
-        dd: h6 {{ pubView.preferredPricing }}
+        dt: label.tright Pricing:
+        dd: label {{ pubView.preferredPricing }}
 
-        dt: h3.tright Minimum CPM:
-        dd: h6 ${{ pubView.minimumCPM | number:2 }}
+        dt: label.tright Minimum CPM:
+        dd: label ${{ pubView.minimumCPM | number:2 }}
 
-        dt: h3.tright Minimum CPC:
-        dd: h6 ${{ pubView.minimumCPC | number:2 }}
+        dt: label.tright Minimum CPC:
+        dd: label ${{ pubView.minimumCPC | number:2 }}
 
         div(ng-if="pubView.description.length > 0")
-          dt: h3.tright Description:
-          dd: h6 {{ pubView.description }}
+          dt: label.tright Description:
+          dd: label {{ pubView.description }}
 
-      fieldset(ng-if="pubView.status == 2"): dl.form.center
+      fieldset(ng-if="pubView.status == 2"): dl.form.center.labels-only
         legend Statistics
 
-        dt: h3.tright Impressions:
-        dd: h6 {{ pubView.stats.impressions }}
+        dt: label.tright Impressions:
+        dd: label {{ pubView.stats.impressions }}
 
-        dt: h3.tright Clicks:
-        dd: h6 {{ pubView.stats.clicks }}
+        dt: label.tright Clicks:
+        dd: label {{ pubView.stats.clicks }}
 
-        dt: h3.tright Earnings:
-        dd: h6 ${{ pubView.stats.earnings | number:2 }}
+        dt: label.tright Earnings:
+        dd: label ${{ pubView.stats.earnings | number:2 }}
 
-      fieldset: dl.form.center
+      fieldset: dl.form.center.labels-only
         legend User Information
 
-        dt: h3.tright Username:
-        dd: h6 {{ pubView.owner.username }}
+        dt: label.tright Username:
+        dd: label {{ pubView.owner.username }}
 
         div(ng-if="pubView.owner.fname.length > 0")
-          dt: h3.tright First Name:
-          dd: h6 {{ pubView.owner.fname }}
+          dt: label.tright First Name:
+          dd: label {{ pubView.owner.fname }}
 
         div(ng-if="pubView.owner.lname.length > 0")
-          dt: h3.tright Last Name:
-          dd: h6 {{ pubView.owner.lname }}
+          dt: label.tright Last Name:
+          dd: label {{ pubView.owner.lname }}
 
         div(ng-if="pubView.owner.company.length > 0")
-          dt: h3.tright Company:
-          dd: h6 {{ pubView.owner.company }}
+          dt: label.tright Company:
+          dd: label {{ pubView.owner.company }}
 
-        dt: h3.tright Email:
-        dd: h6 {{ pubView.owner.email }}
+        dt: label.tright Email:
+        dd: label {{ pubView.owner.email }}
 
-        dt: h3.tright Publisher Revenue:
-        dd: h6 ${{ pubView.owner.pubFunds | number:2 }}
+        dt: label.tright Publisher Revenue:
+        dd: label ${{ pubView.owner.pubFunds | number:2 }}
 
-        dt: h3.tright Advertiser Credit:
-        dd: h6 ${{ pubView.owner.adFunds | number:2 }}
+        dt: label.tright Advertiser Credit:
+        dd: label ${{ pubView.owner.adFunds | number:2 }}
 
         dt
         dd
