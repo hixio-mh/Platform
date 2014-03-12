@@ -76,6 +76,25 @@ module.exports =
 
       , -> done ads
 
+    ###
+    # Set all null tutorial fields to false
+    ###
+    migrateToV5 = (ads, done) ->
+      async.each ads, (ad, adDoneCb) ->
+        if ad.version >= 5 then return adDoneCb()
+
+        spew.info "Migrating ad to v5..."
+
+        if ad.tutorial != true then ad.tutorial = false
+
+        ad.version = 5
+        ad.save (err) ->
+          if err then spew.error err
+          adDoneCb()
+
+      , -> done ads
+
     migrateToV2 ads, (ads) ->
       migrateToV3 ads, (ads) ->
-        migrateToV4 ads, -> cb()
+        migrateToV4 ads, (ads) ->
+          migrateToV5 ads, -> cb()
