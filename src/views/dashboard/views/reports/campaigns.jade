@@ -46,13 +46,12 @@ include _menu
 
 .contents.w920.center(ng-show="impressionsData != null && clicksData != null && spentData != null")
   .section Metric Performance
-    .w50.right.header-controls.campaign-reports-controls
-      .w50.contents-right
-        label(for="interval") Graph Interval:
-      .w50.contents-left
-        select(ui-select2 name="interval" ng-model="graphInterval")
-          option(value="")
-          option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}
+    .right.header-controls.campaign-reports-controls
+      select.right(ui-select2 name="interval" ng-model="graphInterval")
+        option(value="")
+        option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}
+
+      label.right(for="interval") Graph Interval:
 
   div(ng-if="impressionsData != null && clicksData != null && spentData != null")
     .w50
