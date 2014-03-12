@@ -58,6 +58,8 @@ schema = new mongoose.Schema
   # example items should not be allowed to get used
   tutorial: { type: Boolean, default: false }
 
+  version: { type: Number, default: 2 }
+
 ##
 ## ID and handle generation
 ##

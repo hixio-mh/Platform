@@ -90,7 +90,7 @@ schema = new mongoose.Schema
     key: String     # S3 asset key
   ]
 
-  version: { type: Number, default: 4 }
+  version: { type: Number, default: 5 }
 
   # 0 - Pending
   # 1 - Rejected

@@ -1,8 +1,6 @@
 spew = require "spew"
 async = require "async"
 
-CURRENT_VERSION = 1
-
 module.exports =
 
   # Tutorial ads are created on user creation
