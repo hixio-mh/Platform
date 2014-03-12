@@ -24,4 +24,4 @@ RUN mkdir -p /data/db/
 
 ADD ./ /vagrant
 
-ENTRYPOINT mongod --port 45452 > /dev/null & redis-server --port 23521 > /dev/null & nginx > /dev/null & bash -ex /vagrant/test.sh
+ENTRYPOINT mongod --port 45452 > /dev/null & redis-server --port 23521 > /dev/null & nginx > /dev/null
