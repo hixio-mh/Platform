@@ -92,6 +92,7 @@ schema.methods.toAPI = ->
   delete ret.__v
   delete ret.devices
   delete ret.countries
+  delete ret.version
   ret
 
 ###
