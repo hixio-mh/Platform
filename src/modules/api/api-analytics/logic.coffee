@@ -202,7 +202,7 @@ setup = (options, imports, register) ->
   ###
   # GET /api/v1/analytics/counts/:model
   #   Returns analytical data for :model, this data represents the number
-  #   of models have been created ever
+  #   of models have been created
   # @admin
   # @param [String] model
   # @response [Stats]
@@ -229,7 +229,12 @@ setup = (options, imports, register) ->
 
     if not validModel then return aem.send res, "400", error: "Invalid model: #{model}"
 
-    db.model(model).find {}, (err, objects) ->
+    if model == "User"
+      query = {}
+    else
+      query = tutorial: false
+
+    db.model(model).find query, (err, objects) ->
       if err then spew.error err
 
       ret = []
