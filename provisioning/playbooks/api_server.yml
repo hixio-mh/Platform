@@ -1,0 +1,7 @@
+---
+- hosts: api
+  remote_user: adefy
+
+  roles:
+    - common
+    - api

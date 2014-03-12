@@ -1,17 +1,6 @@
 ---
-- hosts: broke_staging
-  remote_user: adefy
-
-  vars:
+- vars:
     node_version: "0.10.25"
     node_prefix: "node-v{{ node_version }}"
     node_tarball: "{{ node_prefix }}.tar.gz"
     node_path: "/usr/local"
-
-    adefy_branch: staging
-
-  roles:
-    - production
-    - mongo
-    - redis
-    - api

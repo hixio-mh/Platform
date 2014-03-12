@@ -1,0 +1,12 @@
+---
+- hosts: vagrant
+  remote_user: vagrant
+
+  vars:
+    adefy_branch: master
+
+  roles:
+    - common
+    - mongo
+    - redis
+    - api

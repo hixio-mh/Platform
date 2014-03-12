@@ -1,0 +1,3 @@
+---
+- include: mongo.yml
+  sudo: yes
