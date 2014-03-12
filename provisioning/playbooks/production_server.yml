@@ -1,0 +1,13 @@
+---
+- hosts: production
+  remote_user: adefy
+
+  vars:
+    adefy_branch: production
+
+  roles:
+    - common
+    - production
+    - mongo
+    - redis
+    - api

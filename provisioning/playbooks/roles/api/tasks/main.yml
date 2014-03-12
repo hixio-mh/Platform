@@ -1,7 +1,4 @@
 ---
-- include: packages.yml
-- include: nodejs.yml
-  sudo: yes
 - include: platform.yml
 - include: nginx.yml
   sudo: yes

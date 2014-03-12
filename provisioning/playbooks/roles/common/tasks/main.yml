@@ -1,4 +1,4 @@
 ---
 - include: packages.yml
-- include: mongo.yml
+- include: nodejs.yml
   sudo: yes

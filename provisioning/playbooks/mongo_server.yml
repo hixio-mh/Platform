@@ -1,0 +1,7 @@
+---
+- hosts: mongo
+  remote_user: adefy
+
+  roles:
+    - common
+    - mongo
