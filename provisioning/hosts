@@ -1,11 +1,5 @@
-[vagrant_api]
-192.168.100.13
-
-[vagrant_redis]
+[vagrant]
 192.168.100.11
-
-[vagrant_mongo]
-192.168.100.12
 
 [broke_staging]
 88.80.191.142:7374
