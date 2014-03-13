@@ -2,6 +2,8 @@ module.exports =
 
   ###
   # @param [Array] array
+  #
+  # @return [Object] element a randomly chosen element from the array
   ###
   sample: (array) ->
     array[Math.floor(Math.random() * array.length)]
