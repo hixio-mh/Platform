@@ -151,6 +151,8 @@ module.exports = (user, admin) ->
 
       it "Should update an existing Campaign", (done) ->
 
+        @timeout 5000
+
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
@@ -240,7 +242,7 @@ module.exports = (user, admin) ->
           expect(campaign).property("active").to.equal false
           done()
 
-        # DELETE /api/v1/campaigns/:id
+    # DELETE /api/v1/campaigns/:id
     describe "Delete Campaign by Id", ->
 
       it "Should 404 if Campaign does not exist", (done) ->
