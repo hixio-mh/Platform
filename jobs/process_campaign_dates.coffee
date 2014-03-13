@@ -16,15 +16,23 @@ fetchCampaigns = (db, cb)->
     else
       cb campaigns
 
+activateCampaign = (campaign) ->
+  campaign.activate -> 
+    spew.info "Activated campaign #{campaign.name}"
+
+deactivateCampaign = (campaign) ->
+  campaign.deactivate -> 
+    spew.info "Deactivated campaign #{campaign.name}"
+
 db_connect (db)->
   now = Date.now()
+
   fetchCampaigns db, (campaigns) ->
     return if campaigns == null
 
     for campaign in campaigns
-      if now >= campaign.startDate && now < campaign.endDate
-        campaign.activate ->
-          #
-      else if now >= campaign.endDate
-        campaign.deactivate ->
-          #
+      if now >= campaign.startDate && now < campaign.endDate && !campaign.active
+        activateCampaign campaign
+
+      else if now >= campaign.endDate and campaign.active
+        deactivateCampaign campaign
