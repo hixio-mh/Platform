@@ -18,5 +18,5 @@ bower_components
 src/static/components
 
 testResults.xml
-
 provisioning/roles/production/files/env_vars.sh
+Gemfile.lock

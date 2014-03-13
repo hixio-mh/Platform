@@ -7,17 +7,34 @@
       .amount ${{ me.pubFunds | number:2 }}
       .desc Publisher Balance
     .actions
-      button(form-modal template="/views/dashboard/account:withdraw" title="Withdraw funds"
-      ok-button-text="Withdraw" form-submit="withdraw()" form-object="paymentInfo") Withdraw funds
+      button(form-modal template="/views/dashboard/account:withdraw" title="Withdrawal settings"
+      ok-button-text="Save" form-submit="saveWithdrawalSettings()" form-object="withdrawalInfo") Withdrawal settings
+
       button.blue(form-modal template="/views/dashboard/account:billing" title="Deposit funds"
       ok-button-text="Deposit via Paypal" form-submit="deposit()" form-object="paymentInfo") Deposit funds
-  table.transactions
-    tbody(ng-repeat="t in transactions" ng-switch="t.action")
-      tr.withdraw(ng-switch-when="withdrawal")
-        td.desc Withdrawn ${{ t.amount | number:2 }}
-        td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
-        td.number - ${{ t.amount | number:2 }}
-      tr.deposit(ng-switch-when="deposit")
-        td.desc Deposited ${{ t.amount | number:2 }}
-        td.time {{ t.time | date:'yyyy-MM-dd HH:mm:ss' }}
-        td.number + ${{ t.amount | number:2 }}
+  .field
+    table.transactions
+      tbody(ng-repeat="t in transactions" ng-if="t.action == 'withdrawal'")
+        tr.withdraw
+          td.desc Amount ${{ t.amount | number:2 }}
+          td.from {{ t.type }}
+          td.time {{ t.time | date:'yyyy-MM-dd' }}
+          td.number - ${{ t.amount | number:2 }}
+      tbody(ng-repeat="t in transactions" ng-if="t.action == 'deposit'")
+        tr.deposit
+          td.desc Amount ${{ t.amount | number:2 }}
+          td.from Paypal
+          td.time {{ t.time | date:'yyyy-MM-dd' }}
+          td.number + ${{ t.amount | number:2 }}
+
+    div(ng-if="pendingWithdrawals.length > 0")
+      br
+      br
+      h2.block.tcenter Pending Withdrawals
+      table.transactions
+        tbody(ng-repeat="t in pendingWithdrawals")
+          tr.withdraw
+            td.desc Amount ${{ t.amount | number:2 }}
+            td.from {{ t.type }}
+            td.time {{ t.time | date:'yyyy-MM-dd' }}
+            td.number - ${{ t.amount | number:2 }}
