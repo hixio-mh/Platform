@@ -1,5 +1,17 @@
 form
   fieldset: dl.form.thin.center
 
-    .field
-      label You must have at least $100 to initiate a withdrawal
+    .field.w50
+      label Interval
+    .field.w50
+      input.wide(required type="number" placeholder="Days, 7 minimum" ng-model="formObject.interval" ng-keypress="enterSubmit($event)" min="7")
+
+    .field.w50
+      label Threshold Amount
+    .field.w50
+      input.wide(required type="number" placeholder="$100 minimum" ng-model="formObject.min" ng-keypress="enterSubmit($event)" min="100")
+
+    .field.w50
+      label Paypal Email
+    .field.w50
+      input.wide(required type="email" placeholder="john.smith@gmail.com" ng-model="formObject.email" ng-keypress="enterSubmit($event)" name="email")

@@ -39,6 +39,12 @@ schema = new mongoose.Schema
 
   transactions: [{ action: String, amount: Number, time: Number }]
 
+  withdrawal:
+    previousTimestamp: { type: Number, default: 0 }
+    interval: { type: Number, default: 30 }
+    min: { type: Number, default: 100 }
+    email: { type: String, default: "" }
+
   # Used to store intermediate transaction information. String is of the
   # format id|token
   pendingDeposit: { type: String, default: "" }
@@ -77,6 +83,7 @@ schema.methods.toAPI = ->
   delete ret.permissions
   delete ret.hash
   delete ret.password
+  delete ret.withdrawal.previousTimestamp
   ret
 
 ###
@@ -300,29 +307,66 @@ schema.methods.addFunds = (amount) ->
   true
 
 ###
-# Perform a withdrawl from one of our balances
+# Checks if the user can perform a withdrawal
 #
-# @param [String] balance 'pub' or 'ad'
-# @param [Number] amount
+# @return [Boolean] canWithdraw
 ###
-schema.methods.withdrawFunds = (balance, amount) ->
-  if balance == "pub"
-    @pubFunds -= Number amount
-    redis.incrbyfloat "#{@getRedisId()}:pubFunds", -amount
+schema.methods.canWithdraw = ->
+  @hasMinimumForWithdrawal() and @isDueForWithdrawal() and @hasWithdrawalEmail()
 
-    @transactions.push
-      action: "withdraw"
-      amount: amount
-      time: new Date().getTime()
-  else if balance == "ad"
-    @adFunds -= Number amount
-    redis.incrbyfloat "#{@getRedisId()}:adFunds", -amount
+###
+# Checks if the user has enough publisher funds to initiate a withdrawal
+#
+# @return [Boolean] hasMinimum
+###
+schema.methods.hasMinimumForWithdrawal = ->
+  if @pubFunds < @withdrawal.min
+    false
+  else
+    true
 
-    @transactions.push
-      action: "withdraw"
-      amount: amount
-      time: new Date().getTime()
+###
+# Checks if the user is due for a withdrawal
+#
+# @return [Boolean] isDue
+###
+schema.methods.isDueForWithdrawal = ->
+  elapsed = Date.now() - @withdrawal.previousTimestamp
+  delay = @withdrawal.interval * (60 * 60 * 24 * 1000)
 
-  true
+  if elapsed < delay
+    false
+  else
+    true
+
+###
+# Checks if the user has a withdrawal email saved
+#
+# @return [Boolean] hasEmail
+###
+schema.methods.hasWithdrawalEmail = ->
+  email = @withdrawal.email
+
+  if email.indexOf("@") != -1 and email.split("@")[1].indexOf(".") != -1
+    true
+  else
+    false
+
+schema.pre "save", (next) ->
+  if not @isModified "password" then return next()
+  if not @hasAPIKey() then @createAPIKey()
+
+  bcrypt.genSalt 10, (err, salt) =>
+    if err
+      spew.error "Error when generating salt"
+      return next err
+
+    bcrypt.hash @password, salt, (err, hash) =>
+      if err
+        spew.error "Error when hashing password"
+        return next err
+
+      @password = hash
+      next()
 
 mongoose.model "User", schema

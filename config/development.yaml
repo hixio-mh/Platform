@@ -3,8 +3,10 @@ domain: www.adefy.dev
 port: 5000
 loglevel: 10
 adloglevel: 4
+
 newrelic: false
 allow_ad_json: true
+cron_log_level: 10
 
 mandrill_apikey: qNnTW7jFhEn40lmizXKDLQ
 
@@ -28,6 +30,7 @@ stats_host: stats1.adefy.com
 stats_port: 8125
 
 paypal_host: api.sandbox.paypal.com
+paypal_classic_host: https://api-3t.sandbox.paypal.com/nvp
 paypal_client_id: AT_m6RAOQUSm4xMz0HTgvmNWorhhDAqfHyDfxC4KpFEFj-8VGQtNMiLTTt0r
 paypal_client_secret: EGDIsBC6DBC1PvmaT6CdQr1AqwDd9EN7EyqFcmLb6ty35VX91PT_A9wXyphT
 
