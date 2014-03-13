@@ -38,7 +38,9 @@ module.exports =
     "#{user.id}" == "#{obj.owner}"
 
   ###
-  #
+  # Determines if an object (n) exists and isNaN
+  # @param [Object] n
+  # @return [Boolean] exists and is nan?
   ###
   optionalIsNaN: (n) ->
     n != undefined and isNaN n
