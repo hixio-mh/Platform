@@ -342,7 +342,7 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/ads/V8graeQTXklkx6AzODYDsDQR/disaprove"
   ###
   app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403:ad"
+    if not req.user.admin then return aem.send res, "403", error: "Attempted to access protected Ad"
 
     db.model("Ad")
     .findById(req.param("id"))
