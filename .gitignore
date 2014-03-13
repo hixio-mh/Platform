@@ -18,5 +18,9 @@ bower_components
 src/static/components
 
 testResults.xml
-
 provisioning/roles/production/files/env_vars.sh
+Gemfile.lock
+cron.log
+
+setup_admin.js
+setup_adefy.js

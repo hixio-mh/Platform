@@ -252,8 +252,8 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if aem.dbError err, res, false then return
-      if not user then return res.send 404
+      if utility.dbError err, res, false then return
+      if not user then return aem.send res, "404"
 
       user.updateFunds ->
         res.json user.toAPI()
@@ -302,6 +302,11 @@ setup = (options, imports, register) ->
       user.country = req.param("country") || user.country
       user.phone = req.param("phone") || user.phone
       user.vat = req.param("vat") || user.vat
+
+      if req.param("withdrawal")
+        user.withdrawal.min = req.param("withdrawal").min
+        user.withdrawal.interval = req.param("withdrawal").interval
+        user.withdrawal.email = req.param("withdrawal").email
 
       # NOTE: Tutorial visiblity can not be updated from this point!
 
@@ -397,41 +402,41 @@ setup = (options, imports, register) ->
   #          url: "/api/v1/user/deposit/600"
   ###
   app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) ->
-    if isNaN req.param "amount"
-      return aem.send res, "400", error: "Amount not a number"
-
-    amount = Number req.param "amount"
-
-    if amount < 50
-      return aem.send res, "400", error: "Amount below minimum: $50"
-
-    paymentJSON =
-      intent: "sale"
-      payer:
-        payment_method: "paypal"
-      redirect_urls:
-        return_url: "#{adefyDomain}/funds/confirm"
-        cancel_url: "#{adefyDomain}/funds/cancel"
-      transactions: [
-        item_list:
-          items: [
-            name: "Adefy"
-            sku: "1"
-            price: amount
-            currency: "USD"
-            quantity: 1
-          ]
-
-        amount:
-          currency: "USD"
-          total: amount
-
-        description: "$#{amount} Adefy Deposit"
-      ]
-
     db.model("User").findById req.user.id, (err, user) ->
       if aem.dbError err, res, false then return
       if not user then return aem.send res, "404", error: "User(req.user.id) not found"
+
+      if isNaN req.param "amount"
+        return aem.send res, "400", error: "Amount not a number"
+
+      amount = Number req.param "amount"
+
+      if amount < 50
+        return aem.send res, "400", error: "Amount below minimum: $50"
+
+      paymentJSON =
+        intent: "sale"
+        payer:
+          payment_method: "paypal"
+        redirect_urls:
+          return_url: "#{adefyDomain}/funds/confirm"
+          cancel_url: "#{adefyDomain}/funds/cancel"
+        transactions: [
+          item_list:
+            items: [
+              name: "Adefy"
+              sku: "1"
+              price: amount
+              currency: "USD"
+              quantity: 1
+            ]
+
+          amount:
+            currency: "USD"
+            total: amount
+
+          description: "$#{amount} Adefy Deposit"
+        ]
 
       paypalSDK.payment.create paymentJSON, (err, payment) ->
         if err

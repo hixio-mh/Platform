@@ -144,8 +144,11 @@ class AdefyAnalyticsDirective
 
         if atLeastOneNonZeroPoint
 
-          if @colors[graph.stat] != undefined and graph.newcol != true
-            color = @colors[graph.stat]
+          if graph.newcol != true
+            if @colors[graph.stat] != undefined
+              color = @colors[graph.stat]
+            else if @colors[graph.stat.split(":")[0]] != undefined 
+              color = @colors[graph.stat.split(":")[0]]
           else
             color = tempColorPalette.color()
 

@@ -99,10 +99,13 @@ setup = (options, imports, register) ->
           options = @parseRequestOptions req
           options.click = "http://www.adefy.com"
           options.impression = "http://www.adefy.com"
-          options.pushTitle = "Test ad"
-          options.pushDesc = "Test ad description"
-          options.pushURL = "http://www.adefy.com"
           options.assets = []
+
+          options.organic =
+            notification:
+              title: "Test ad"
+              description: "Test ad description"
+              clickURL: "http://www.adefy.com"
 
           templates.generate template, options, res
         else if type == "native"
@@ -519,8 +522,13 @@ setup = (options, imports, register) ->
         d.add publisher
 
         d.run =>
+          spew.init 1
           @fetch req, res, publisher, startTimestamp, "organic", (data) ->
             delete data.organic.active
+
+            spew.init 2
+            console.log "Sending options: #{JSON.stringify data}"
+            spew.init 3
 
             templates.generate data.template, data, res
 

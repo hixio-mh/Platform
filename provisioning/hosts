@@ -1,26 +1,11 @@
-[vagrant_api]
-192.168.100.13
-
-[vagrant_redis]
-192.168.100.11
-
-[vagrant_mongo]
-192.168.100.12
+[production]
+88.80.185.67:7374
 
 [staging]
-staging.adefy.com
-
-[production]
-app1.adefy.com
-
-[redis]
-redis1.adefy.com
-
-[mongo]
-mongo1.adefy.com
+88.80.191.142:7374
 
 [stats]
-stats1.adefy.com
+176.58.110.32:7374
 
-[broke_production]
-88.80.185.67
+[vagrant]
+192.168.100.11

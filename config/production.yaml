@@ -5,6 +5,7 @@ loglevel: 0
 adloglevel: 0
 newrelic: true
 allow_ad_json: true
+cron_log_level: 2
 
 mandrill_apikey: qNnTW7jFhEn40lmizXKDLQ
 
@@ -31,6 +32,11 @@ stats_port: 8125
 # paypal_host:
 # paypal_client_id:
 # paypal_client_secret:
+#
+# paypal_classic_host
+# paypal_classic_username
+# paypal_classic_password
+# paypal_classic_signature
 #
 # s3_config_accessKeyId:
 # s3_config_secretAccessKey:

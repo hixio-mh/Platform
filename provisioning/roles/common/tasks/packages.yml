@@ -3,19 +3,18 @@
   apt: upgrade=yes update_cache=yes
   sudo: true
 
-- name: install userspace packages
+- name: install common packages
   sudo: yes
   apt: pkg={{ item }} state=present
   tags: [packages]
   with_items:
     - build-essential
     - git
-    - nginx
-    - mongodb
+    - fish
     - python-pycurl # Needed for apt_repo
     - fontconfig # Needed for PhantomJS
     - ruby
 
 - name: install bundler
   sudo: yes
-  gem: name=bundler state=present
+  gem: executable=/opt/vagrant_ruby/bin/gem name=bundler state=present

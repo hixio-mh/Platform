@@ -12,8 +12,8 @@ createRedisConnection = (prefix) ->
 redisMain = createRedisConnection "redis_main"
 redisAutocomplete = createRedisConnection "redis_autocomplete"
 
-redisMain.on "error", (err) -> spew.error "Redis main: #{err}"
-redisAutocomplete.on "error", (err) -> spew.error "Redis autocomplete: #{err}"
+redisMain.on "error", (err) -> spew.error "Redis main: #{err.stack}"
+redisAutocomplete.on "error", (err) -> spew.error "Redis autocomplete: #{err.stack}"
 
 module.exports =
   main: redisMain
