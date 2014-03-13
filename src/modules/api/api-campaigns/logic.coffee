@@ -171,27 +171,20 @@ setup = (options, imports, register) ->
       # Process ad list first, so we know what we need to delete before
       # modifying refs
       if req.body.ads != undefined
-
         # Keep track of our current ads, so we know what changes
+        # We'll mark ads we find on the input array as "unmodified",
+        # meaning until found they are "deleted"
         currentAds = {}
         for ad in campaign.ads
-
-          # We'll mark ads we find on the input array as "unmodified",
-          # meaning until found they are "deleted"
           currentAds[ad._id.toString()] = "deleted"
 
-        for ad in req.body.ads
-          if ad.status == 2
-            adFound = false
-
-            # Mark as either unmodified, or created
-            for currentAd, v of currentAds
-              if currentAd == ad.id
-                adFound = true
-                break
-
-            if adFound then currentAds[ad.id] = "unmodified"
-            else currentAds[ad.id] = "created"
+        exarray(req.body.ads).select((e)-> e.status == 2).each (ad) ->
+          # Mark as either unmodified, or created
+          currentAds[ad.id] = "created"
+          for currentAd, v of currentAds
+            if currentAd == ad.id
+              currentAds[ad.id] = "unmodified"
+              break
 
         # Generate new ads array to save in campaign model
         adIds = []
