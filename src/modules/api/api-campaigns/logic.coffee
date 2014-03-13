@@ -149,26 +149,13 @@ setup = (options, imports, register) ->
       if not campaign then return aem.send res, "404"
 
       # Permission check
-      if not req.user.admin and compare.isOwnerOf(user, campaign)
-        return aem.send res, "401"
-
+      if not aem.isOwnerOf(req.user, campaign, res) then return
       # Perform basic validation
-      if compare.optionalIsNaN req.body.totalBudget
-        return aem.send res, "400", error: "Invalid total budget (expected a Number)"
-
-      if compare.optionalIsNaN req.body.dailyBudget
-        return aem.send res, "400", error: "Invalid daily budget (expected a Number)"
-
-      if compare.optionalIsNaN req.body.bid
-        return aem.send res, "400", error: "Invalid bid amount (expected a Number)"
-
-      if req.body.bidSystem != undefined
-        if req.body.bidSystem != "Manual" and req.body.bidSystem != "Automatic"
-          return aem.send res, "400", error: "Invalid bid system (expected 'Manual' or 'Automatic')"
-
-      if req.body.pricing != undefined
-        if req.body.pricing != "CPM" and req.body.pricing != "CPC"
-          return aem.send res, "400", error: "Invalid pricing (expected 'CPM' or 'CPC')"
+      if not aem.optIsNumber(req.body.totalBudget, "total budget", res) then return
+      if not aem.optIsNumber(req.body.dailyBudget, "daily budget", res) then return
+      if not aem.optIsNumber(req.body.bid, "bid amount", res) then return
+      if not aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res) then return
+      if not aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res) then return
 
       # Don't allow active state change through edit path
       if req.body.active != undefined then delete req.body.active
