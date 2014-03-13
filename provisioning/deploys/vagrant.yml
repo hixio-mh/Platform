@@ -3,7 +3,7 @@
   remote_user: vagrant
 
   vars:
-    adefy_branch: master
+    adefy_branch: refined-deploys
 
   roles:
     - common
