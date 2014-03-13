@@ -234,58 +234,49 @@ setup = (options, imports, register) ->
 
         # Iterate over and change all other properties
         for key, val of req.body
-          if key != "ads"
+          if key == "ads" then continue
+          if key == "networks"
+            if val[0] == "all" then val = ["mobile", "wifi"]
 
-            if key == "networks"
-              if val[0] == "all"
-                val = ["mobile", "wifi"]
+          # Only make changes if key is modified
+          currentVal = campaign[key]
+          validKey = key == "devices" or key == "countries" or
+                     currentVal != undefined
 
-            # Only make changes if key is modified
-            currentVal = campaign[key]
+          if validKey and !compare.equalityCheck currentVal, val then continue
 
-            if key == "devices" or key == "countries"
-              validKey = true
-            else
-              validKey = currentVal != undefined
+          # Convert include/exclude array sets
+          if key == "devices" or key == "countries"
+            # Properly form empty arguments
+            if val.length == 0 then val = []
 
-            if validKey and not equalityCheck currentVal, val
+            include = []
+            exclude = []
 
-              # Convert include/exclude array sets
-              if key == "devices" or key == "countries"
+            for entry in val
+              if entry.type == "exclude"
+                exclude.push entry.name
+              else if entry.type == "include"
+                include.push entry.name
+              else
+                spew.warning "Unrecognized entry in filter array: #{entry.type}"
 
-                # Properly form empty arguments
-                if val.length == 0 then val = []
+            if key == "devices"
+              campaign.devicesInclude = include
+              campaign.devicesExclude = exclude
+            else if key == "countries"
+              campaign.countriesInclude = include
+              campaign.countriesExclude = exclude
 
-                include = []
-                exclude = []
+          # Set ref refresh flag if needed
+          if not needsAdRefRefresh
+            if key == "bidSystem" or key == "bid" or key == "devices" or
+               key == "countries" or key == "pricing" or key == "category"
+              needsAdRefRefresh = true
 
-                for entry in val
-                  if entry.type == "exclude"
-                    exclude.push entry.name
-                  else if entry.type == "include"
-                    include.push entry.name
-                  else
-                    spew.warning "Unrecognized entry in filter array: #{entry.type}"
-
-                if key == "devices"
-                  campaign.devicesInclude = include
-                  campaign.devicesExclude = exclude
-                else if key == "countries"
-                  campaign.countriesInclude = include
-                  campaign.countriesExclude = exclude
-
-              # Set ref refresh flag if needed
-              if not needsAdRefRefresh
-                if key == "bidSystem" then needsAdRefRefresh = true
-                else if key == "bid" then needsAdRefRefresh = true
-                else if key == "devices" then needsAdRefRefresh = true
-                else if key == "countries" then needsAdRefRefresh = true
-                else if key == "pricing" then needsAdRefRefresh = true
-                else if key == "category" then needsAdRefRefresh = true
-
-              # Save final value on campaign
-              if key != "countries" and key != "devices"
-                campaign[key] = val
+          # Save final value on campaign
+          if key != "countries" and key != "devices"
+            campaign[key] = val
 
         # Refresh ad refs on unchanged ads (if we are active)
         if needsAdRefRefresh and campaign.active
