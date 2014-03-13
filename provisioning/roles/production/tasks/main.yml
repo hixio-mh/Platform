@@ -1,7 +1,4 @@
 ---
-- name: setup adefy user
-  action: user name=adefy password={{adefy_password}}
-
 - include: packages.yml
 
 - name: copy env var setup script

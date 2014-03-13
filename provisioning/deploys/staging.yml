@@ -1,0 +1,22 @@
+---
+- hosts: staging
+  remote_user: adefy
+
+  vars:
+    adefy_branch: staging
+
+  roles:
+    - common
+    - mongo
+    - redis
+    - api
+
+  tasks:
+    - name: start platform
+      shell: 'cd /var/adefy && NODE_ENV=staging pm2 start src/adefy.coffee -i 4'
+      register: start_result
+      ignore_errors: true
+
+    - name: reloading platform
+      command: pm2 reload all
+      when: start_result|failed

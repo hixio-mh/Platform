@@ -1,6 +1,4 @@
 ---
-- include: packages.yml
-
 - include: redis.yml
   sudo: yes
   vars:
