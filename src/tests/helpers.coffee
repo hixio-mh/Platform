@@ -11,6 +11,7 @@ api = supertest "http://#{config('domain')}:#{config('port')}"
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 
+require "./helpers/exarray"
 require "./helpers/filters"
 require "./helpers/graphiteInterface"
 require "./helpers/redisInterface"
