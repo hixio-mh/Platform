@@ -1,5 +1,5 @@
-set :output, "./cron.log"
+set :output, File.expand_path("./cron.log")
 
 every 6.hours do
-  command "coffee ../jobs/process_withdrawals.coffee"
+  command "coffee #{File.expand_path("../jobs/process_withdrawals.coffee")}"
 end
