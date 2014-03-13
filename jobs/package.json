@@ -1,0 +1,16 @@
+{
+  "name": "AdefyPlatform-CronJobs",
+  "description": "Packages required for Adefy's cron jobs",
+  "version": "0.1.0",
+  "dependencies": {
+    "connect": "~2.13.0",
+    "bcrypt": "~0.7.7",
+    "connect-redis": "~1.4.7",
+    "mongoose": "~3.8.7",
+    "spew": "0.0.2",
+    "request": "~2.34.0",
+    "underscore": "~1.6.0",
+    "async": "~0.2.10",
+    "qs": "~0.6.6"
+  }
+}
