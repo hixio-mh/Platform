@@ -54,7 +54,7 @@ setup = (options, imports, register) ->
     , (error, response, body) ->
       if error
         spew.error error
-        return aem.send res, "500"
+        return aem.send res, "500", error: error
 
       res.setHeader "Content-Type", response.headers["content-type"]
       res.end body, "binary"
@@ -73,7 +73,7 @@ setup = (options, imports, register) ->
     request "https://play.google.com/store/apps/category/GAME/collection/topselling_paid", (err, response, body) ->
       if err
         spew.error err
-        return aem.send res, "500", error: ""
+        return aem.send res, "500", error: err
 
       $ = cheerio.load body
       apps = []
@@ -118,7 +118,7 @@ setup = (options, imports, register) ->
     , (error, response, body) ->
       if error
         spew.error error
-        return aem.send res, "500"
+        return aem.send res, "500", error: error
 
       $ = cheerio.load body
       info = $ ".details-wrapper.apps .info-container"
