@@ -2,7 +2,7 @@ spew = require "spew"
 db = require "mongoose"
 
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
