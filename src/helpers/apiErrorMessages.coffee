@@ -1,6 +1,7 @@
 # AEM - ApiErrorMessage Helper Object (with humor!)
 spew = require "spew"
 randomize = require "./randomize"
+compare = require "./compare"
 
 ##
 # TODO: Move these to a JSON file possibly
@@ -325,3 +326,47 @@ module.exports =
           @send res, "500:db"
       return true
     false
+
+  ###
+  # Determines if (user) is the owner of (obj), a 401 is sent if the check
+  # results in false (if a res object is given)
+  # @param [Object] user
+  # @param [Object] obj
+  # @param [Response] res
+  ###
+  isOwnerOf: (user, obj, res) ->
+    if not user.admin and compare.isOwnerOf(user, obj)
+      @send res, "401" if res
+      return false
+    return true
+
+  ###
+  # Optionally determines if (obj) is a Number, if not a 400 error is
+  # sent (if res is given)
+  # @param [Object] obj
+  # @param [Object] name A name that will appear in the error string
+  # @param [Response] res
+  ###
+  optIsNumber: (obj, name, res) ->
+    if compare.optionalIsNaN obj
+      name = name || "object"
+      @send res, "400", error: "Invalid #{name} (expected a Number)"
+      return false
+    return true
+
+  ###
+  # Optionally determines if (obj) is one of the given objects in opts
+  # if not a 400 error is sent (if res is given)
+  # @param [Object] obj
+  # @param [Object] name A name that will appear in the error string
+  # @param [Response] res
+  ###
+  optIsOneOf: (obj, opts, name, res) ->
+    if obj != undefined
+      for opt in opts
+        return true if obj == opt
+      name = name || "object"
+      opts_s = opts.join(" or ")
+      @send res, "400", error: "Invalid #{name} (expected #{opts_s})"
+      return false
+    return true
