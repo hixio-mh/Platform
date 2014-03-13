@@ -335,7 +335,7 @@ module.exports =
   # @param [Response] res
   ###
   isOwnerOf: (user, obj, res) ->
-    if not user.admin and compare.isOwnerOf(user, obj)
+    unless user.admin or compare.isOwnerOf(user, obj)
       @send res, "401" if res
       return false
     return true

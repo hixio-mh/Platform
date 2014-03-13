@@ -4,7 +4,7 @@ db = require "mongoose"
 http = require "http"
 
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 randomize = require "../../../helpers/randomize"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 

@@ -3,7 +3,7 @@ domain = require "domain"
 config = require "../../../config"
 adefyDomain = "http://#{config("domain")}"
 filters = require "../../../helpers/filters"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 _ = require "underscore"
 
 ##
@@ -476,7 +476,7 @@ setup = (options, imports, register) ->
         d = domain.create()
         d.on "error", (e) =>
           if e instanceof NoAd
-            @fetchEmpty req, res 
+            @fetchEmpty req, res
           else
             spew.error e.stack
             res.send 500
@@ -509,7 +509,7 @@ setup = (options, imports, register) ->
         d = domain.create()
         d.on "error", (e) =>
           if e instanceof NoAd
-            @fetchEmpty req, res 
+            @fetchEmpty req, res
           else
             spew.error e.stack
             res.send 500
