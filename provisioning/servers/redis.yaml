@@ -1,0 +1,7 @@
+---
+- hosts: redis
+  remote_user: adefy
+
+  roles:
+    - common
+    - redis

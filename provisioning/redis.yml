@@ -1,6 +1,0 @@
----
-- hosts: vagrant_redis
-  remote_user: vagrant
-
-  roles:
-    - redis

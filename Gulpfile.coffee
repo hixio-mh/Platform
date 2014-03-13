@@ -159,12 +159,6 @@ gulp.task "test", ->
   gulp.src ""
   .pipe exec "npm test"
 
-# Update all dependencies
-gulp.task "update", ->
-  gulp.src ""
-  .pipe exec "npm install"
-  .pipe exec "bower install"
-
 # Spin-up a development server
 gulp.task "server", ->
   nodemon
@@ -178,4 +172,4 @@ gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", 
 gulp.task "develop", ["build", "watch", "server"]
 
 # The default task (called when you run `gulp` from cli)
-gulp.task "default", ["build", "update"]
+gulp.task "default", ["build"]

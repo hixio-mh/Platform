@@ -1,0 +1,10 @@
+---
+- hosts: api
+  remote_user: adefy
+
+  vars:
+    adefy_branch: master
+
+  roles:
+    - common
+    - api

@@ -217,6 +217,8 @@ class AdefyBaseAdTemplate
       #{creative.body}
     """
 
+    console.log JSON.stringify options
+
     # Build manifest
     manifest.click = options.click
     manifest.impression = options.impression
