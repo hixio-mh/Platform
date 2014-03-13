@@ -1,9 +1,9 @@
 ---
-- hosts: vagrant
-  remote_user: vagrant
+- hosts: staging
+  remote_user: adefy
 
   vars:
-    adefy_branch: master
+    adefy_branch: staging
 
   roles:
     - common
@@ -13,7 +13,7 @@
 
   tasks:
     - name: start platform
-      shell: 'cd /var/adefy && NODE_ENV=development pm2 start src/adefy.coffee -i 4'
+      shell: 'cd /var/adefy && NODE_ENV=staging pm2 start src/adefy.coffee -i 4'
       register: start_result
       ignore_errors: true
 
