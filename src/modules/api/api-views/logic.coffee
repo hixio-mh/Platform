@@ -4,7 +4,7 @@ routes = require "../../../angularDashboardViews.json"
 config = require "../../../config"
 crypto = require "crypto"
 passport = require "passport"
-#aem = require "../../../helpers/apiErrorMessages"
+#aem = require "../../../helpers/aem"
 #isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 isLoggedIn = (req, res, next) ->

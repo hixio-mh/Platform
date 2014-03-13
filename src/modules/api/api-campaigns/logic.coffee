@@ -3,7 +3,7 @@ db = require "mongoose"
 _ = require "underscore"
 
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 compare = require "../../../helpers/compare"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
@@ -199,72 +199,12 @@ setup = (options, imports, register) ->
 
         newAdList = adIds
 
-      # At this point, we can clear deleted ad refs
-      adsToRemove_a = []
-      for adId in adsToRemove
-        db.model("Ad").findById adId, (err, ad) ->
-          if aem.dbError err, res, false then return
-          if not ad
-            spew.error "Tried to remove ad from campaign, ad not found"
-            spew.error "Ad id: #{adId}"
-            return aem.send res, "500:delete"
-          adsToRemove_a.push(ad)
-
-      campaign.optionallyDeleteAds adsToRemove_a, ->
-
-        # Iterate over and change all other properties
-        for key, val of req.body
-          if key == "ads" then continue
-          if key == "networks"
-            if val[0] == "all" then val = ["mobile", "wifi"]
-
-          # Only make changes if key is modified
-          currentVal = campaign[key]
-          validKey = key == "devices" or key == "countries" or
-                     currentVal != undefined
-
-          if validKey and !compare.equalityCheck currentVal, val then continue
-
-          # Convert include/exclude array sets
-          if key == "devices" or key == "countries"
-            # Properly form empty arguments
-            if val.length == 0 then val = []
-
-            include = []
-            exclude = []
-
-            for entry in val
-              if entry.type == "exclude"
-                exclude.push entry.name
-              else if entry.type == "include"
-                include.push entry.name
-              else
-                spew.warning "Unrecognized entry in filter array: #{entry.type}"
-
-            if key == "devices"
-              campaign.devicesInclude = include
-              campaign.devicesExclude = exclude
-            else if key == "countries"
-              campaign.countriesInclude = include
-              campaign.countriesExclude = exclude
-
-          # Set ref refresh flag if needed
-          if not needsAdRefRefresh
-            if key == "bidSystem" or key == "bid" or key == "devices" or
-               key == "countries" or key == "pricing" or key == "category"
-              needsAdRefRefresh = true
-
-          # Save final value on campaign
-          if key != "countries" and key != "devices"
-            campaign[key] = val
-
-        # Refresh ad refs on unchanged ads (if we are active)
-        if needsAdRefRefresh and campaign.active
-          campaign.refreshAdRefs ->
-
-        # Generate refs and commit new list
+      # Generate refs and commit new list
+      buildAdAddArray = (list, cb) ->
         adsToAdd_a = []
-        for adId in adsToAdd
+        count = list.length
+        doneCb = -> count--; if count == 0 then cb(adsToAdd_a)
+        for adId in list
           db.model("Ad").findById adId, (err, ad) ->
             if aem.dbError err, res, false then return
             if not ad
@@ -276,12 +216,83 @@ setup = (options, imports, register) ->
               spew.error "Client and server-side checks were bypassed!"
               return aem.send res, "500:unexpected"
             adsToAdd_a.push(ad)
+            doneCb()
 
-        campaign.optionallyAddAds adsToAdd_a, ->
-          campaign.ads = newAdList
-          campaign.save()
+      buildAdRemovalArray = (list, cb) ->
+        adsToRemove_a = []
+        count = list.length
+        doneCb = -> count--; if count == 0 then cb(adsToRemove_a)
+        for adId in list
+          db.model("Ad").findById adId, (err, ad) ->
+            if aem.dbError err, res, false then return
+            if not ad
+              spew.error "Tried to remove ad from campaign, ad not found"
+              spew.error "Ad id: #{adId}"
+              return aem.send res, "500:delete"
+            adsToRemove_a.push(ad)
+            doneCb()
 
-          res.json campaign.toAnonAPI()
+      # At this point, we can clear deleted ad refs
+      buildAdRemovalArray adsToRemove, (adsToRemove_a) ->
+        campaign.optionallyDeleteAds adsToRemove_a, ->
+
+          # Iterate over and change all other properties
+          for key, val of req.body
+            if key == "ads" then continue
+            if key == "networks"
+              if val[0] == "all" then val = ["mobile", "wifi"]
+
+            # Only make changes if key is modified
+            currentVal = campaign[key]
+            validKey = key == "devices" or key == "countries" or
+                       currentVal != undefined
+
+            if not validKey or compare.equalityCheck currentVal, val then continue
+
+            # Convert include/exclude array sets
+            if key == "devices" or key == "countries"
+              # Properly form empty arguments
+              if val.length == 0 then val = []
+
+              include = []
+              exclude = []
+
+              for entry in val
+                if entry.type == "exclude"
+                  exclude.push entry.name
+                else if entry.type == "include"
+                  include.push entry.name
+                else
+                  spew.warning "Unrecognized entry in filter array: #{entry.type}"
+
+              if key == "devices"
+                campaign.devicesInclude = include
+                campaign.devicesExclude = exclude
+              else if key == "countries"
+                campaign.countriesInclude = include
+                campaign.countriesExclude = exclude
+
+            # Set ref refresh flag if needed
+            if not needsAdRefRefresh
+              if key == "bidSystem" or key == "bid" or key == "devices" or
+                 key == "countries" or key == "pricing" or key == "category"
+                needsAdRefRefresh = true
+
+            # Save final value on campaign
+            if key != "countries" and key != "devices"
+              campaign[key] = val
+
+          # Refresh ad refs on unchanged ads (if we are active)
+          if needsAdRefRefresh and campaign.active
+            campaign.refreshAdRefs ->
+
+
+          buildAdAddArray adsToAdd, (adsToAdd_a) ->
+            campaign.optionallyAddAds adsToAdd_a, ->
+              campaign.ads = newAdList
+              campaign.save()
+
+              res.json campaign.toAnonAPI()
 
   ###
   # DELETE /api/v1/campaigns/:id
