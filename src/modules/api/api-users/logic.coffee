@@ -9,7 +9,7 @@ adefyDomain = "http://#{config("domain")}"
 
 powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 paypalCredentials =

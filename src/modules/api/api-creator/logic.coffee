@@ -5,7 +5,7 @@ cheerio = require "cheerio"
 accounting = require "accounting"
 
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 # Redundent checks, just to make sure. We don't want to be fooled into
