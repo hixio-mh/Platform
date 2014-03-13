@@ -54,6 +54,8 @@ performWithdrawal = (users) ->
       spew.error "MassPay API call failed!"
       spew.error JSON.stringify apiResponse
 
+      process.exit 1
+
     ##
     ##
     ##
@@ -66,7 +68,7 @@ performWithdrawal = (users) ->
 
 db_connect ->
   fetchUsers (users) ->
-    return if users == null
+    if users == null then process.exit 0
 
     syncUserFunds users, ->
       eligibleUsers = []
@@ -75,3 +77,5 @@ db_connect ->
         eligibleUsers.push user if user.canWithdraw()
 
       performWithdrawal eligibleUsers
+
+      process.exit 0

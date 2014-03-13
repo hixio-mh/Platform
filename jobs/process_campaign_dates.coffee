@@ -9,7 +9,7 @@ db_connect = require "#{__dirname}/util/db_connect"
 spew.setLogLevel config "cron_log_level"
 
 fetchCampaigns = (db, cb)->
-  db.model("Campaign").find {}, (err, campaigns) ->
+  db.model("Campaign").find tutorial: false, (err, campaigns) ->
     if err
       spew.error "Failed to fetch campaigns: #{err}"
       cb null
@@ -24,15 +24,32 @@ deactivateCampaign = (campaign) ->
   campaign.deactivate -> 
     spew.info "Deactivated campaign #{campaign.name}"
 
+validCampaignDates = (campaign) ->
+  (campaign.startDate != undefined and campaign.endDate != undefined) \
+  and \
+  (campaign.startDate != 0 and campaign.endDate != 0) \
+  and \
+  (campaign.endDate > campaign.startDate)
+
+campaignShouldBeActive = (campaign) ->
+  now >= campaign.startDate && now < campaign.endDate
+
+campaignShouldNotBeActive = (campaign) ->
+  now < campaign.startDate || now >= campaign.endDate
+
 db_connect (db)->
   now = Date.now()
 
   fetchCampaigns db, (campaigns) ->
-    return if campaigns == null
+    campaigns = [] if campaigns == null
 
     for campaign in campaigns
-      if now >= campaign.startDate && now < campaign.endDate && !campaign.active
-        activateCampaign campaign
+      if validCampaignDates campaign
 
-      else if now >= campaign.endDate and campaign.active
-        deactivateCampaign campaign
+        if not campaign.active and campaignShouldBeActive campaign
+          activateCampaign campaign
+
+        else if campaign.active and campaignShouldNotBeActive campaign
+          deactivateCampaign campaign
+
+    process.exit 0
