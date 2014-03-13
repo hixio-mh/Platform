@@ -5,3 +5,8 @@ use adefy;
 if(db.system.users.find().count() == 0) {
   db.addUser("adefy", "CdZcBjub3NRpoQNPhlrFQ6sZMgXI93DZGUE1CwkIgl8FjWCn");
 }
+
+use adefy_development
+if(db.system.users.find().count() == 0) {
+  db.addUser("adefy", "JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ");
+}
