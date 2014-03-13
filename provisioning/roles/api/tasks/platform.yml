@@ -1,6 +1,14 @@
 - name: install global npm dependencies
-  command: npm install -g gulp pm2 coffee-script mocha mocha-phantomjs phantomjs bower
   sudo: yes
+  npm: name={{ item }} global=yes
+  with_items:
+    - gulp
+    - pm2
+    - coffee-script
+    - mocha
+    - mocha-phantomjs
+    - phantomjs
+    - bower
 
 - name: create SSH directory
   file: state=directory path=~/.ssh
@@ -19,7 +27,7 @@
   sudo: yes
 
 - name: deploy platform
-  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version=master
+  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version={{ adefy_branch }}
 
 - name: install node dependencies
   command: npm install chdir=/var/adefy
@@ -30,11 +38,17 @@
 - name: build platform
   command: gulp chdir=/var/adefy
 
-- name: start platform
-  shell: 'cd /var/adefy && . /var/adefy/env_vars.sh && NODE_ENV=production pm2 start src/adefy.coffee -i 4'
-  register: start_result
+- name: copy admin setup script
+  copy: src=setup_admin.js dest=/var/adefy/setup_admin.js
+
+- name: copy adefy user setup script
+  copy: src=setup_adefy.js dest=/var/adefy/setup_adefy.js
+
+- name: run admin setup script
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_admin.js
   ignore_errors: true
 
-- name: reloading platform
-  command: pm2 reload all
-  when: start_result|failed
+- name: run adefy user setup script
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_adefy.js
+  ignore_errors: true
+
