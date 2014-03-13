@@ -11,17 +11,17 @@ mandrill_apikey: qNnTW7jFhEn40lmizXKDLQ
 mongo_user: adefy
 mongo_pass: JPJsehsZkrBe15xIcQH419C2ZRoc4hg4uA90KVgjFkDbnKpQ
 mongo_host: 127.0.0.1
-mongo_port: 27017
+mongo_port: 45452
 mongo_db: adefy_development
 
 redis_main_db: 0
 redis_main_host: 127.0.0.1
-redis_main_port: 6379
+redis_main_port: 23521
 redis_main_rebuild: false
 
 redis_autocomplete_db: 1
 redis_autocomplete_host: 127.0.0.1
-redis_autocomplete_port: 6379
+redis_autocomplete_port: 23522
 redis_autocomplete_rebuild: false
 
 stats_host: stats1.adefy.com
