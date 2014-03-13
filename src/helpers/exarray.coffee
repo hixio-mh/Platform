@@ -30,7 +30,8 @@ exarray = (ary) ->
   ###
   select: (cb) ->
     result = []
-    result.push(e) if cb(e) for e in ary
+    for e in ary
+      result.push(e) if cb(e)
     return exarray(result)
 
   ###
@@ -41,7 +42,8 @@ exarray = (ary) ->
   ###
   reject: (cb) ->
     result = []
-    result.push(e) if not cb(e) for e in ary
+    for e in ary
+      result.push(e) if not cb(e)
     return exarray(result)
 
   ###
