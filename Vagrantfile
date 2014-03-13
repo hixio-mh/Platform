@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     platform.vm.network :private_network, ip: "192.168.100.11"
 
     platform.vm.provision :ansible do |ansible|
-      ansible.playbook = "provisioning/playbooks/vagrant.yml"
+      ansible.playbook = "provisioning/deploys/vagrant.yml"
       ansible.inventory_path = "provisioning/hosts"
     end
 

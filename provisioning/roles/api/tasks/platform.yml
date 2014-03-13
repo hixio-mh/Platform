@@ -30,6 +30,20 @@
 - name: build platform
   command: gulp chdir=/var/adefy
 
+- name: copy admin setup script
+  copy: src=setup_admin.js dest=/var/adefy/setup_admin.js
+
+- name: copy adefy user setup script
+  copy: src=setup_adefy.js dest=/var/adefy/setup_adefy.js
+
+- name: run admin setup script
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_admin.js
+  ignore_errors: true
+
+- name: run adefy user setup script
+  shell: mongo 127.0.0.1:45452 < /var/adefy/setup_adefy.js
+  ignore_errors: true
+
 - name: start platform
   shell: 'cd /var/adefy && . /var/adefy/env_vars.sh && NODE_ENV=production pm2 start src/adefy.coffee -i 4'
   register: start_result
