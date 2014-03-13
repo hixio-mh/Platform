@@ -200,11 +200,13 @@ setup = (options, imports, register) ->
         newAdList = adIds
 
       # Generate refs and commit new list
-      buildAdAddArray = (list, cb) ->
+      buildAdAddArray = (adlist, cb) ->
+        count = adlist.length
+        if count == 0 then return cb([])
+
         adsToAdd_a = []
-        count = list.length
         doneCb = -> count--; if count == 0 then cb(adsToAdd_a)
-        for adId in list
+        for adId in adlist
           db.model("Ad").findById adId, (err, ad) ->
             if aem.dbError err, res, false then return
             if not ad
@@ -218,11 +220,13 @@ setup = (options, imports, register) ->
             adsToAdd_a.push(ad)
             doneCb()
 
-      buildAdRemovalArray = (list, cb) ->
+      buildAdRemovalArray = (adlist, cb) ->
+        count = adlist.length
+        if count == 0 then return cb([])
+
         adsToRemove_a = []
-        count = list.length
         doneCb = -> count--; if count == 0 then cb(adsToRemove_a)
-        for adId in list
+        for adId in adlist
           db.model("Ad").findById adId, (err, ad) ->
             if aem.dbError err, res, false then return
             if not ad
