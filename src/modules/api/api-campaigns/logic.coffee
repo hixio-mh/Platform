@@ -4,6 +4,7 @@ _ = require "underscore"
 
 passport = require "passport"
 aem = require "../../../helpers/apiErrorMessages"
+compare = require "../../../helpers/compare"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 setup = (options, imports, register) ->
@@ -148,26 +149,26 @@ setup = (options, imports, register) ->
       if not campaign then return aem.send res, "404"
 
       # Permission check
-      if not req.user.admin and "#{req.user.id}" != "#{campaign.owner}"
+      if not req.user.admin and compare.isOwnerOf(user, campaign)
         return aem.send res, "401"
 
       # Perform basic validation
-      if req.body.totalBudget != undefined and isNaN req.body.totalBudget
-        return aem.send res, "400", error: "Invalid total budget"
+      if compare.optionalIsNaN req.body.totalBudget
+        return aem.send res, "400", error: "Invalid total budget (expected a Number)"
 
-      if req.body.dailyBudget != undefined and isNaN req.body.dailyBudget
-        return aem.send res, "400", error: "Invalid daily budget"
+      if compare.optionalIsNaN req.body.dailyBudget
+        return aem.send res, "400", error: "Invalid daily budget (expected a Number)"
 
-      if req.body.bid != undefined and isNaN req.body.bid
-        return aem.send res, "400", error: "Invalid bid amount"
+      if compare.optionalIsNaN req.body.bid
+        return aem.send res, "400", error: "Invalid bid amount (expected a Number)"
 
       if req.body.bidSystem != undefined
         if req.body.bidSystem != "Manual" and req.body.bidSystem != "Automatic"
-          return aem.send res, "400", error: "Invalid bid system"
+          return aem.send res, "400", error: "Invalid bid system (expected 'Manual' or 'Automatic')"
 
       if req.body.pricing != undefined
         if req.body.pricing != "CPM" and req.body.pricing != "CPC"
-          return aem.send res, "400", error: "Invalid pricing"
+          return aem.send res, "400", error: "Invalid pricing (expected 'CPM' or 'CPC')"
 
       # Don't allow active state change through edit path
       if req.body.active != undefined then delete req.body.active
@@ -179,67 +180,6 @@ setup = (options, imports, register) ->
 
       # Keep ad id list, update later once we have the new one
       newAdList = campaign.ads
-
-      arraysEqual = (a, b) ->
-        if not b or not a then return false
-        if a.length != b.length then return false
-
-        for elementA, i in a
-          if b[i] != elementA then return false
-
-        true
-
-      equalityCheck = (a, b) ->
-        if a instanceof Array and b instanceof Array
-          arraysEqual a, b
-        else
-          a == b
-
-      optionallyDeleteAds = (cb) ->
-        if adsToRemove.length == 0 then cb()
-        else
-          count = adsToRemove.length
-          doneCb = -> if count == 1 then cb() else count--
-
-          for adId in adsToRemove
-            db.model("Ad").findById adId, (err, ad) ->
-              if aem.dbError err, res then return
-              if not ad
-                spew.error "Tried to remove ad from campaign, ad not found"
-                spew.error "Ad id: #{adId}"
-                return aem.send res, "500:delete"
-
-              # NOTE: We don't wait for ad references to clear!
-              campaign.removeAd ad
-              doneCb()
-
-      optionallyAddAds = (cb) ->
-        if adsToAdd.length == 0 then cb()
-        else
-          count = adsToAdd.length
-          doneCb = -> count--; if count == 0 then cb()
-
-          for adId in adsToAdd
-            db.model("Ad").findById adId, (err, ad) ->
-              if aem.dbError err, res then return
-              if not ad
-                spew.error "Tried to add ad to campaign, ad not found"
-                spew.error "Ad id: #{adId}"
-                return aem.send res, "500:404"
-              else if ad.status != 2
-                spew.error "Tried to add un-approved ad to campaign"
-                spew.error "Client and server-side checks were bypassed!"
-                return aem.send res, "500:unexpected"
-
-              ad.registerCampaignParticipation campaign
-
-              if campaign.active
-                ad.createCampaignReferences campaign, -> ad.save()
-              else
-                ad.save()
-
-              # NOTE: We don't wait for campaign reference creation
-              doneCb()
 
       # Process ad list first, so we know what we need to delete before
       # modifying refs
@@ -280,7 +220,17 @@ setup = (options, imports, register) ->
         newAdList = adIds
 
       # At this point, we can clear deleted ad refs
-      optionallyDeleteAds ->
+      adsToRemove_a = []
+      for adId in adsToRemove
+        db.model("Ad").findById adId, (err, ad) ->
+          if aem.dbError err, res, false then return
+          if not ad
+            spew.error "Tried to remove ad from campaign, ad not found"
+            spew.error "Ad id: #{adId}"
+            return aem.send res, "500:delete"
+          adsToRemove_a.push(ad)
+
+      campaign.optionallyDeleteAds adsToRemove_a, ->
 
         # Iterate over and change all other properties
         for key, val of req.body
@@ -338,10 +288,25 @@ setup = (options, imports, register) ->
                 campaign[key] = val
 
         # Refresh ad refs on unchanged ads (if we are active)
-        if needsAdRefRefresh and campaign.active then campaign.refreshAdRefs ->
+        if needsAdRefRefresh and campaign.active
+          campaign.refreshAdRefs ->
 
         # Generate refs and commit new list
-        optionallyAddAds ->
+        adsToAdd_a = []
+        for adId in adsToAdd
+          db.model("Ad").findById adId, (err, ad) ->
+            if aem.dbError err, res, false then return
+            if not ad
+              spew.error "Tried to add ad to campaign, ad not found"
+              spew.error "Ad id: #{adId}"
+              return aem.send res, "500:404"
+            else if ad.status != 2
+              spew.error "Tried to add un-approved ad to campaign"
+              spew.error "Client and server-side checks were bypassed!"
+              return aem.send res, "500:unexpected"
+            adsToAdd_a.push(ad)
+
+        campaign.optionallyAddAds adsToAdd_a, ->
           campaign.ads = newAdList
           campaign.save()
 

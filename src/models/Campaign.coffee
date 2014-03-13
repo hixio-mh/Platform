@@ -453,6 +453,46 @@ schema.methods.refreshAdRefs = (cb) ->
     refreshRefsForAd ad, @, -> doneCb()
 
 ###
+# Registers an array of ads as apart of the campaign.
+#
+# @param [Array<Ad>] adsToAdd
+# @param [Method] callback
+###
+schema.methods.optionallyAddAds = (adsToAdd, cb) ->
+  if adsToAdd.length == 0 then cb()
+  else
+    count = adsToAdd.length
+    doneCb = -> count--; if count == 0 then cb()
+
+    for ad in adsToAdd
+      ad.registerCampaignParticipation @
+
+      if @active
+        ad.createCampaignReferences @, -> ad.save()
+      else
+        ad.save()
+
+      # NOTE: We don't wait for campaign reference creation
+      doneCb()
+
+###
+# Unregisters an array of ads as apart of the campaign.
+#
+# @param [Array<Ad>] adsToRemove
+# @param [Method] callback
+###
+schema.methods.optionallyDeleteAds = (adsToRemove, cb) ->
+  if adsToRemove.length == 0 then cb()
+  else
+    count = adsToRemove.length
+    doneCb = -> if count == 1 then cb() else count--
+
+    for ad in adsToRemove
+      # NOTE: We don't wait for ad references to clear!
+      campaign.removeAd ad
+      doneCb()
+
+###
 # Update redis pace information
 #
 #   - "redisID:pacing:spent" (Number)
@@ -492,21 +532,6 @@ schema.methods.createRedisStruture = (cb) ->
       @refreshAdRefs ->
         if cb then cb()
 
-# Cleans up campaign references within ads
-schema.pre "remove", (next) ->
-  if @ads.length == 0 then next()
-  else
-    @populate "ads", =>
-      count = @ads.length
-      done = -> count--; if count == 0 then next()
-
-      for ad in @ads
-        @removeAd ad, -> done()
-
-# Ensure our pacing data is up to date (target spend)
-schema.pre "save", (next) ->
-  @updatePaceData -> next()
-
 ###
 # Return array of ad documents belonging to a campaign
 #
@@ -529,5 +554,20 @@ schema.statics.getAds = (cId, cb) ->
       spew.error err
       cb null
     else cb campaign.ads
+
+# Cleans up campaign references within ads
+schema.pre "remove", (next) ->
+  if @ads.length == 0 then next()
+  else
+    @populate "ads", =>
+      count = @ads.length
+      done = -> count--; if count == 0 then next()
+
+      for ad in @ads
+        @removeAd ad, -> done()
+
+# Ensure our pacing data is up to date (target spend)
+schema.pre "save", (next) ->
+  @updatePaceData -> next()
 
 mongoose.model "Campaign", schema
