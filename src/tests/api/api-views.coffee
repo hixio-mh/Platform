@@ -19,7 +19,7 @@ module.exports = (user, admin) ->
   describe "Views API", ->
 
     # GET /creator"
-    describe "creator", ->
+    describe "Creator", ->
 
       it "Should retrieve the creator page", (done) ->
 
@@ -35,8 +35,10 @@ module.exports = (user, admin) ->
     # GET /reset
     # GET /logout
 
-    # GET /views/dashboard/:view
-    describe "dashboard", ->
+    describe "views", ->
 
-    # GET /views/creator/:view
-    describe "creator", ->
+      # GET /views/dashboard/:view
+      describe "Dashboards", ->
+
+      # GET /views/creator/:view
+      describe "Creators", ->

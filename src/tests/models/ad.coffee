@@ -167,6 +167,9 @@ describe "Ad Model", ->
       done()
 
   it "Should allow one to fetch graph data for a stat", (done) ->
+
+    @timeout 5000
+
     ad = model()
 
     options =
