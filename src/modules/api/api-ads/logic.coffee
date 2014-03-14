@@ -313,5 +313,5 @@ class APIAds
           aem.send res, "200:disapprove"
 
 module.exports = (options, imports, register) ->
-  apiAds.registerRoutes imports["core-express"].server
+  apiAds = new APIAds imports["core-express"].server
   register null, "api-ads": apiAds
