@@ -138,7 +138,30 @@ setup = (options, imports, register) ->
   #            --campaign-update-data--
   ###
   app.post "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) ->
-    if not aem.param req.param("id"), res, "Id" then return
+
+    # Todo: Figure out a way to break this stuff out onto the module
+    #       scope, so we can test it
+
+    ###
+    # Generate individual lists of flat includes and excludes from a client
+    # provided set.
+    #
+    # @param [Array<Object>] flatList
+    # @return [Array<Array, Array>] filters
+    ###
+    generateFilterSet = (flatList) ->
+      include = []
+      exclude = []
+
+      for entry in flatList
+        if entry.type == "exclude"
+          exclude.push entry.name
+        else if entry.type == "include"
+          include.push entry.name
+        else
+          spew.warning "Unrecognized entry in filter array: #{entry.type}"
+
+      [include, exclude]
 
     # Fetch campaign
     db.model("Campaign")
@@ -149,13 +172,14 @@ setup = (options, imports, register) ->
       if not campaign then return aem.send res, "404"
 
       # Permission check
-      if not aem.isOwnerOf(req.user, campaign, res) then return
+      return if not aem.isOwnerOf(req.user, campaign, res)
+
       # Perform basic validation
-      if not aem.optIsNumber(req.body.totalBudget, "total budget", res) then return
-      if not aem.optIsNumber(req.body.dailyBudget, "daily budget", res) then return
-      if not aem.optIsNumber(req.body.bid, "bid amount", res) then return
-      if not aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res) then return
-      if not aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res) then return
+      return if not aem.optIsNumber(req.body.totalBudget, "total budget", res) 
+      return if not aem.optIsNumber(req.body.dailyBudget, "daily budget", res) 
+      return if not aem.optIsNumber(req.body.bid, "bid amount", res) 
+      return if not aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res) 
+      return if not aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res) 
 
       # Don't allow active state change through edit path
       if req.body.active != undefined then delete req.body.active
@@ -201,40 +225,20 @@ setup = (options, imports, register) ->
 
       # Generate refs and commit new list
       buildAdAddArray = (adlist, cb) ->
-        count = adlist.length
-        if count == 0 then return cb([])
+        db.model("Ad").find _id: { $in: adlist }, (err, ads) ->
+          if aem.dbError err, res, false then return
 
-        adsToAdd_a = []
-        doneCb = -> count--; if count == 0 then cb(adsToAdd_a)
-        for adId in adlist
-          db.model("Ad").findById adId, (err, ad) ->
-            if aem.dbError err, res, false then return
-            if not ad
-              spew.error "Tried to add ad to campaign, ad not found"
-              spew.error "Ad id: #{adId}"
-              return aem.send res, "500:404"
-            else if ad.status != 2
-              spew.error "Tried to add un-approved ad to campaign"
-              spew.error "Client and server-side checks were bypassed!"
-              return aem.send res, "500:unexpected"
-            adsToAdd_a.push(ad)
-            doneCb()
+          allowedAds = []
+
+          for ad in ads
+            allowedAds.push ad if ad.status == 2
+
+          cb allowedAds
 
       buildAdRemovalArray = (adlist, cb) ->
-        count = adlist.length
-        if count == 0 then return cb([])
-
-        adsToRemove_a = []
-        doneCb = -> count--; if count == 0 then cb(adsToRemove_a)
-        for adId in adlist
-          db.model("Ad").findById adId, (err, ad) ->
-            if aem.dbError err, res, false then return
-            if not ad
-              spew.error "Tried to remove ad from campaign, ad not found"
-              spew.error "Ad id: #{adId}"
-              return aem.send res, "500:delete"
-            adsToRemove_a.push(ad)
-            doneCb()
+        db.model("Ad").find _id: { $in: adlist }, (err, ads) ->
+          if aem.dbError err, res, false then return
+          cb ads
 
       # At this point, we can clear deleted ad refs
       buildAdRemovalArray adsToRemove, (adsToRemove_a) ->
@@ -255,24 +259,16 @@ setup = (options, imports, register) ->
 
             # Convert include/exclude array sets
             if key == "devices" or key == "countries"
+
               # Properly form empty arguments
-              if val.length == 0 then val = []
-
-              include = []
-              exclude = []
-
-              for entry in val
-                if entry.type == "exclude"
-                  exclude.push entry.name
-                else if entry.type == "include"
-                  include.push entry.name
-                else
-                  spew.warning "Unrecognized entry in filter array: #{entry.type}"
+              val = [] if val.length == 0
 
               if key == "devices"
+                [include, exclude] = generateFilterSet val
                 campaign.devicesInclude = include
                 campaign.devicesExclude = exclude
               else if key == "countries"
+                [include, exclude] = generateFilterSet val
                 campaign.countriesInclude = include
                 campaign.countriesExclude = exclude
 
@@ -289,7 +285,6 @@ setup = (options, imports, register) ->
           # Refresh ad refs on unchanged ads (if we are active)
           if needsAdRefRefresh and campaign.active
             campaign.refreshAdRefs ->
-
 
           buildAdAddArray adsToAdd, (adsToAdd_a) ->
             campaign.optionallyAddAds adsToAdd_a, ->
