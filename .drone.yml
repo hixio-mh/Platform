@@ -1,0 +1,28 @@
+image: bradrydzewski/ubuntu
+
+env:
+  - GOPATH=/var/cache/drone
+
+script:
+  - npm install -g gulp
+  - npm install -g pm2
+  - npm install -g coffee-script
+  - npm install -g mocha
+  - npm install -g mocha-phantomjs
+  - npm install -g phantomjs
+  - npm install -g bower
+
+  - npm install
+  - bower install
+
+  - gulp
+  - npm test
+
+services:
+  - redis
+  - mongodb
+
+notify:
+  email:
+    recipients:
+      - cris.mihalache@spectrumit.eu
