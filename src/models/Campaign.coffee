@@ -110,6 +110,15 @@ schema.methods.toAnonAPI = ->
   delete ret.owner
   ret
 
+###
+# Helper to check if a user is our owner
+#
+# @param [User] model
+# @return [Boolean] isOwner
+###
+schema.methods.isOwner = (user) ->
+  "#{user.id}" == "#{@owner}"
+
 ##
 ## List compilation
 ##
@@ -301,7 +310,8 @@ schema.methods.populateSelf24hStats = (cb) ->
 ###
 schema.methods.populateSelfAllStats = (cb) ->
   @fetchOverviewStats (stats) =>
-    cb _.extend @toAnonAPI(), stats: stats
+    @stats = stats
+    cb()
 
 ###
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
@@ -359,7 +369,8 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
 # @param [Method] callback
 ###
 schema.methods.activate = (cb) ->
-  if @tutorial then return cb()
+  return cb() if @tutorial or @active
+
   @active = true
   @refreshAdRefs => cb()
 
@@ -369,7 +380,8 @@ schema.methods.activate = (cb) ->
 # @param [Method] callback
 ###
 schema.methods.deactivate = (cb) ->
-  if @tutorial then return cb()
+  return cb() if @tutorial or not @active
+
   @active = false
   @clearAdReferences => cb()
 
