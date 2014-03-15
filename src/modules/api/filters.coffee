@@ -5,9 +5,9 @@ spew = require "spew"
 db = require "mongoose"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-filterEngine = require "../../../helpers/filters"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+filterEngine = require "../../helpers/filters"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 class APIFilters
 
@@ -92,6 +92,4 @@ class APIFilters
           res.json d
         , uniqueIDs: true
 
-module.exports = (options, imports, register) ->
-  apiFilters = new APIFilters imports["core-express"].server
-  register null, "api-filters": apiFilters
+module.exports = (app) -> new APIFilters app

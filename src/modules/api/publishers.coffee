@@ -4,8 +4,8 @@ async = require "async"
 _ = require "underscore"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 class APIPublishers
 
@@ -320,6 +320,4 @@ class APIPublishers
         pub.fetchCustomStat req.params.range, req.params.stat, (data) ->
           res.json data
 
-module.exports = (options, imports, register) ->
-  apiPublishers = new APIPublishers imports["core-express"].server
-  register null, "api-publishers": apiPublishers
+module.exports = (app) -> new APIPublishers app

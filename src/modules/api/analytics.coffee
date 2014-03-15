@@ -1,11 +1,11 @@
-graphiteInterface = require "../../../helpers/graphiteInterface"
+graphiteInterface = require "../../helpers/graphiteInterface"
 spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 ###
 # TODO: Document, and replace direct queries with calls to other API modules
@@ -253,8 +253,4 @@ class APIAnalytics
 
         res.json ret
 
-setup = (options, imports, register) ->
-  apiAnalytics = new APIAnalytics imports["core-express"].server
-  register null, "api-analytics": apiAnalytics
-
-module.exports = setup
+module.exports = (app) -> new APIAnalytics app

@@ -4,11 +4,11 @@ db = require "mongoose"
 http = require "http"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-randomize = require "../../../helpers/randomize"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+randomize = require "../../helpers/randomize"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
-staticDir = "#{__dirname}/../../../static"
+staticDir = "#{__dirname}/../../static"
 
 class APIEditor
 
@@ -224,6 +224,4 @@ class APIEditor
           .on "error", (e) -> res.send 500
       .on "error", (e) -> res.send 500
 
-module.exports = (options, imports, register) ->
-  apiEditor = new APIEditor imports["core-express"].server
-  register null, "api-editor": apiEditor
+module.exports = (app) -> new APIEditor app

@@ -4,10 +4,10 @@ _ = require "underscore"
 async = require "async"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-compare = require "../../../helpers/compare"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
-engineFilters = require "../../../helpers/filters"
+aem = require "../../helpers/aem"
+compare = require "../../helpers/compare"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
+engineFilters = require "../../helpers/filters"
 
 class APICampaigns
 
@@ -406,6 +406,4 @@ class APICampaigns
           campaign.save()
           res.json 200, campaign.toAnonAPI()
 
-module.exports = (options, imports, register) ->
-  apiCampaigns = new APICampaigns imports["core-express"].server
-  register null, "api-campaigns": apiCampaigns
+module.exports = (app) -> new APICampaigns app

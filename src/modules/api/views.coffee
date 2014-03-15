@@ -1,7 +1,7 @@
 # Route middleware to make sure a user is logged in
 spew = require "spew"
-routes = require "../../../angularDashboardViews.json"
-config = require "../../../config"
+routes = require "../../angularDashboardViews.json"
+config = require "../../config"
 crypto = require "crypto"
 passport = require "passport"
 
@@ -122,6 +122,4 @@ class APIViews
 
       res.render "creator/#{req.params.view}.jade", viewData
 
-module.exports = (options, imports, register) ->
-  apiViews = new APIViews imports["core-express"].server
-  register null, "api-views": apiViews
+module.exports = (app) -> new APIViews app

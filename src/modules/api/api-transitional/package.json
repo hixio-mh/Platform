@@ -1,14 +1,13 @@
 {
-  "name": "api-ads",
+  "name": "api-transitional",
   "version": "0.0.1",
   "main": "logic.coffee",
   "private": true,
   "plugin": {
     "consumes": [
-      "core-express"
+      "core-express",
+      "engine-fetch"
     ],
-    "provides": [
-      "api-ads"
-    ]
+    "provides": []
   }
 }

@@ -4,8 +4,8 @@ async = require "async"
 _ = require "underscore"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 
@@ -304,6 +304,4 @@ class APIAds
           ad.save()
           aem.send res, "200:disapprove"
 
-module.exports = (options, imports, register) ->
-  apiAds = new APIAds imports["core-express"].server
-  register null, "api-ads": apiAds
+module.exports = (app) -> new APIAds app
