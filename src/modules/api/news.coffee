@@ -5,8 +5,8 @@ spew = require "spew"
 db = require "mongoose"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 class APINews
 
@@ -151,6 +151,4 @@ class APINews
 
         news.remove -> aem.send res, "200:delete"
 
-module.exports = (options, imports, register) ->
-  apiNews = new APINews imports["core-express"].server
-  register null, "api-news": apiNews
+module.exports = (app) -> new APINews app

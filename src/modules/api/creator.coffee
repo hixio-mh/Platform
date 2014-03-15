@@ -5,8 +5,8 @@ cheerio = require "cheerio"
 accounting = require "accounting"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 class APICreator
 
@@ -151,6 +151,4 @@ class APICreator
 
         res.json app
 
-module.exports = (options, imports, register) ->
-  apiCreator = new APICreator imports["core-express"].server
-  register null, "api-creator": apiCreator
+module.exports = (app) -> new APICreator app

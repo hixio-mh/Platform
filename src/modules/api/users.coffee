@@ -4,13 +4,13 @@
 spew = require "spew"
 db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
-config = require "../../../config"
+config = require "../../config"
 adefyDomain = "http://#{config("domain")}"
 
 powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 paypalCredentials =
 
@@ -490,6 +490,4 @@ class APIUsers
               amount: data.transactions[0].amount.total
               currency: data.transactions[0].amount.currency
 
-module.exports = (options, imports, register) ->
-  apiUsers = new APIUsers imports["core-express"].server
-  register null, "api-users": apiUsers
+module.exports = (app) -> new APIUsers app

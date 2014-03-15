@@ -3,13 +3,13 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-redisInterface = require "../../../helpers/redisInterface"
+redisInterface = require "../../helpers/redisInterface"
 redis = redisInterface.main
 NodeCache = require "node-cache"
 
 passport = require "passport"
-aem = require "../../../helpers/aem"
-isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
+aem = require "../../helpers/aem"
+isLoggedInAPI = require("../../helpers/apikeyLogin") passport, aem
 
 # Cache used for guarding against multiple duplicate impressions/clicks
 guardCache = new NodeCache stdTTL: 1
@@ -272,6 +272,4 @@ class APIServe
                   guardCache.del cacheKey
                   aem.send res, "200"
 
-module.exports = (options, imports, register) ->
-  apiServe = new APIServe imports["core-express"].server, imports["engine-fetch"]
-  register null, "api-serve": apiServe
+module.exports = (app, fetchEngine) -> new APIServe app, fetchEngine
