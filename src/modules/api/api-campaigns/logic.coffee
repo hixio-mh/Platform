@@ -13,6 +13,8 @@ class APICampaigns
 
   constructor: (@app) ->
 
+    @registerRoutes()
+
   ###
   # Creates a new campaign model with the provided options
   #
@@ -66,11 +68,20 @@ class APICampaigns
   # @param [Method] callback
   ###
   populateCampaignStats: (campaigns, cb) ->
-    async.each campaigns, (campaign, done) ->
+    async.map campaigns, (campaign, done) ->
       campaign.populateSelfAllStats ->
-        done()
-    , ->
+        done null, campaign
+    , (err, campaigns) ->
       cb campaigns
+
+  ###
+  # Anonymize an array of campaigns
+  #
+  # @param [Array<Campaign>] campaigns
+  # @param [Array<Object>] anonCampaigns
+  ###
+  anonymize: (campaigns) ->
+    _.map campaigns, (campaign) -> campaign.toAnonAPI()
 
   ###
   # Generate individual lists of flat includes and excludes from a client
@@ -92,6 +103,50 @@ class APICampaigns
         spew.warning "Unrecognized entry in filter array: #{entry.type}"
 
     [include, exclude]
+
+  ###
+  # This is the heart of the campaign update method. Sorts the provided ad list
+  # into seperate lists of ads to be added and removed, then returns a final
+  # new ad list to be saved on the model along with the modifications.
+  #
+  # @param [Campaign] campaign campaign model
+  # @param [Array<Object>] ads
+  # @return [Array<Add, Remove, List>] results
+  ###
+  sortUpdatedAdList: (campaign, ads) ->
+
+    add = []
+    remove = []
+    list = []
+
+    for id, status of @getAdStatuses(campaign, ads)
+
+      list.push id if status == "created" or status == "unmodified"
+      remove.push id if status == "deleted"
+      add.push id if status == "created"
+
+    [add, remove, list]
+
+  ###
+  # Builds an object describing the status of the combined ads on the request
+  # and the campaign. Statuses are "created", "deleted", or "unmodified"
+  #
+  # @param [Campaign] campaign campaign model
+  # @param [Array<Object>] ads
+  # @return [Object] statuses
+  ###
+  getAdStatuses: (campaign, ads) ->
+    adStatus = {}
+    adStatus["#{ad._id}"] = "deleted" for ad in campaign.ads
+
+    _.each _.filter(ads, (ad) -> ad.status == 2), (ad) ->
+
+      if adStatus[ad.id] == undefined
+        adStatus[ad.id] = "created"
+      else
+        adStatus[ad.id] = "unmodified"
+
+    adStatus
 
   ###
   # Register our routes on the express server
@@ -144,8 +199,8 @@ class APICampaigns
     ###
     @app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
       @query "find", owner: req.user.id, res, (campaigns) =>
-        @populateCampaignStats campaigns, ->
-          res.json 200, campaigns
+        @populateCampaignStats campaigns, (campaigns) =>
+          res.json 200, @anonymize campaigns
 
     ###
     # GET /api/v1/campaigns/:id
@@ -161,7 +216,7 @@ class APICampaigns
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
-        campaign.populateSelfAllStats -> res.json campaign
+        campaign.populateSelfAllStats -> res.json campaign.toAnonAPI()
 
     ###
     # POST /api/v1/campaigns/:id
@@ -196,8 +251,8 @@ class APICampaigns
 
         # Store modification information
         needsAdRefRefresh = false
-        adsToAdd = []
-        adsToRemove = []
+        add = []
+        remove = []
 
         # Keep ad id list, update later once we have the new one
         newAdList = campaign.ads
@@ -205,33 +260,8 @@ class APICampaigns
         # Process ad list first, so we know what we need to delete before
         # modifying refs
         if req.body.ads != undefined
-          # Keep track of our current ads, so we know what changes
-          # We'll mark ads we find on the input array as "unmodified",
-          # meaning until found they are "deleted"
-          currentAds = {}
-          for ad in campaign.ads
-            currentAds[ad._id.toString()] = "deleted"
 
-          exarray(req.body.ads).select((e)-> e.status == 2).each (ad) ->
-            # Mark as either unmodified, or created
-            currentAds[ad.id] = "created"
-            for currentAd, v of currentAds
-              if currentAd == ad.id
-                currentAds[ad.id] = "unmodified"
-                break
-
-          # Generate new ads array to save in campaign model
-          adIds = []
-
-          # Filter ads into proper arrays
-          for adId, status of currentAds
-            if status == "deleted" then adsToRemove.push adId
-            else if status == "created" then adsToAdd.push adId
-
-            if status == "created" or status == "unmodified"
-              adIds.push adId
-
-          newAdList = adIds
+          [add, remove, newAdList] = @sortUpdatedAdList campaign, req.body.ads
 
         # Generate refs and commit new list
         buildAdAddArray = (adlist, cb) ->
@@ -246,8 +276,8 @@ class APICampaigns
             cb ads
 
         # At this point, we can clear deleted ad refs
-        buildAdRemovalArray adsToRemove, (adsToRemove_a) ->
-          campaign.optionallyDeleteAds adsToRemove_a, ->
+        buildAdRemovalArray remove, (remove) =>
+          campaign.removeAds remove, =>
 
             # Iterate over and change all other properties
             for key, val of req.body
@@ -269,11 +299,11 @@ class APICampaigns
                 val = [] if val.length == 0
 
                 if key == "devices"
-                  [include, exclude] = generateFilterSet val
+                  [include, exclude] = @generateFilterSet val
                   campaign.devicesInclude = include
                   campaign.devicesExclude = exclude
                 else if key == "countries"
-                  [include, exclude] = generateFilterSet val
+                  [include, exclude] = @generateFilterSet val
                   campaign.countriesInclude = include
                   campaign.countriesExclude = exclude
 
@@ -289,10 +319,10 @@ class APICampaigns
 
             # Refresh ad refs on unchanged ads (if we are active)
             if needsAdRefRefresh and campaign.active
-              campaign.refreshAdRefs ->
+              campaign.refreshAdRefs()
 
-            buildAdAddArray adsToAdd, (adsToAdd_a) ->
-              campaign.optionallyAddAds adsToAdd_a, ->
+            buildAdAddArray add, (add) ->
+              campaign.addAds add, ->
                 campaign.ads = newAdList
                 campaign.save()
 

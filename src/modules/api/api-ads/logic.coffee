@@ -1,5 +1,7 @@
 spew = require "spew"
 db = require "mongoose"
+async = require "async"
+_ = require "underscore"
 
 passport = require "passport"
 aem = require "../../../helpers/aem"
@@ -10,6 +12,8 @@ s3Host = "adefyplatformmain.s3.amazonaws.com"
 class APIAds
 
   constructor: (@app) ->
+
+    @registerRoutes()
 
   ###
   # Creates a new ad model with the provided options
@@ -185,32 +189,19 @@ class APIAds
       @queryAds "find", owner: req.user.id, res, (ads) ->
         return res.json 200, [] if ads.length == 0
 
-        # This is a tad ugly, as we need to fetch stats both for all ads, and
-        # for all campagins within the ads.
-
-        count = ads.length
-        ret = []
-        done = -> count--; if count == 0 then res.json 200, ret
-
-        fetchStatsForCampaign = (campaignIndex, ad, cb) ->
-          campaign = ad.campaigns[campaignIndex].campaign
-          campaign.fetchTotalStatsForAd ad, (stats) ->
-            cb stats, campaignIndex
-
         async.map ads, (ad, done) ->
           ad.fetchCompiledStats (adStats) ->
 
             finish = -> done null, _.extend ad.toAnonAPI(), stats: adStats
-
             return finish() if ad.campaigns.length == 0
 
             async.each ad.campaigns, (campaign, done) ->
               return finish() if campaign.campaign == null
 
               campaign.campaign.fetchTotalStatsForAd ad, (stats) ->
-                _.extend campaign.stats, stats
-
+                campaign.stats = stats
                 finish()
+
         , (err, ads) ->
           return res.send aem.send res, "500" if err
           res.json ads
