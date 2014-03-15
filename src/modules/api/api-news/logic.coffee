@@ -8,149 +8,149 @@ passport = require "passport"
 aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-setup = (options, imports, register) ->
+class APINews
 
-  app = imports["core-express"].server
+  constructor: (@app) ->
+    @registerRoutes()
 
   ###
-  # POST /api/v1/news
-  #   Creates a new News article and returns it
-  # @param [String] title
-  #   This is the title of the News article
-  # @param [String] summary
-  #   This is optional and replaces the text when displayed on the front page
-  # @param [String] text
-  #   This is the body of the News article
-  # @response [Object] News returns a newly create News object
-  # @example
-  #   $.ajax method: "POST",
-  #          url: "/api/v1/news",
-  #          data:
-  #            title: "And Its an Example"
-  #            summary: "Today we show you gow to create a new News article"
-  #            text: """
-  #              So its pretty easy, you just POST to the /api/v1/news
-  #              provide it some data and you're ready to go
-  #            """
+  # Creates a new news model with the provided options
+  #
+  # @param [Object] options
+  # @param [ObjectId] auther
+  # @return [News] model
   ###
-  app.post "/api/v1/news", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403"
-
-    newNews = db.model("News")
-      writtenBy: req.user.id
+  createNewNews: (options, author) ->
+    db.model("News")
+      writtenBy: author
       date: new Date()
-      title: req.param "title"
-      summary: req.param "summary"
-      text: req.param "text"
-
-    newNews.save (err) ->
-      if err
-        spew.error "Error saving News [#{err}]"
-        return aem.send res, "400:validate", error: err
-      else
-        return res.json 200, newNews.toAnonAPI()
+      title: options.title
+      summary: options.summary
+      text: options.text
 
   ###
-  # GET /api/v1/news
-  #   Retrieves all News objects
-  # @response [Array<Object>] News
-  # @example
-  #   $.ajax method: "GET",
-  #          url: "/api/v1/news"
+  # Query helper method, that automatically takes care of population and error
+  # handling. The response is issued a JSON error message if an error occurs,
+  # otherwise the callback is called.
+  #
+  # @param [String] queryType
+  # @param [Object] query
+  # @param [Response] res
+  # @param [Method] callback
   ###
-  app.get "/api/v1/news", isLoggedInAPI, (req, res) ->
-    db.model("News").find {}, (err, list) ->
-      if aem.dbError err, res then return
+  query: (queryType, query, res, cb) ->
+    db.model("News")[queryType] query
+    .exec (err, news) ->
+      if aem.dbError err, res, false then return
 
-      result = []
+      cb news
 
-      for article in list
-        result.push article.toAnonAPI()
+  registerRoutes: ->
 
-      res.json 200, result
+    ###
+    # POST /api/v1/news
+    #   Creates a new News article and returns it
+    # @param [String] title
+    #   This is the title of the News article
+    # @param [String] summary
+    #   This is optional and replaces the text when displayed on the front page
+    # @param [String] text
+    #   This is the body of the News article
+    # @response [Object] News returns a newly create News object
+    # @example
+    #   $.ajax method: "POST",
+    #          url: "/api/v1/news",
+    #          data:
+    #            title: "And Its an Example"
+    #            summary: "Today we show you gow to create a new News article"
+    #            text: """
+    #              So its pretty easy, you just POST to the /api/v1/news
+    #              provide it some data and you're ready to go
+    #            """
+    ###
+    @app.post "/api/v1/news", isLoggedInAPI, (req, res) =>
+      return aem.send res, "403" unless req.user.admin
 
-  ###
-  # GET /api/v1/news/:id
-  #   Retreives a News article by :id
-  # @param [ID] id
-  # @response [Object] News returns requested News article
-  # @example
-  #   $.ajax method: "GET",
-  #          url: "/api/v1/news/J5VLjLsiPC2xO2VBlhjeMlBL"
-  ###
-  app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
-    db.model("News")
-    .find(_id: req.param "id")
-    .exec (err, list) ->
-      if aem.dbError err, res then return
-      if list.length == 0
-        return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
+      newNews = @createNewNews req.body, req.user.id
+      newNews.validate (err) ->
+        return aem.send res, "400:validate", error: err if err
 
-      news = list[0]
+        newNews.save -> res.json 200, newNews.toAnonAPI()
 
-      return res.json 200, news.toAnonAPI()
+    ###
+    # GET /api/v1/news
+    #   Retrieves all News objects
+    # @response [Array<Object>] News
+    # @example
+    #   $.ajax method: "GET",
+    #          url: "/api/v1/news"
+    ###
+    @app.get "/api/v1/news", isLoggedInAPI, (req, res) =>
+      @query "find", {}, res, (list) ->
+        res.json 200, list.map (article) -> article.toAnonAPI()
 
-  ###
-  # POST /api/v1/news/:id
-  #   Updates an existing News article by :id
-  # @param [ID] id
-  # @response [Object] News returns the updated News article
-  # @example
-  #   $.ajax method: "POST",
-  #          url: "/api/v1/news/iewTKw5y8bQO3FXQZxn3zlgT",
-  #          data:
-  #            title: "We are having an Ad Storm [EDIT]"
-  #            summary: "Today we had a huge update!"
-  #            text: """
-  #              So much has changed, we'd like to thank blah, dee, dah
-  #              EDIT: foobar
-  #            """
-  ###
-  app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403"
+    ###
+    # GET /api/v1/news/:id
+    #   Retreives a News article by :id
+    # @param [ID] id
+    # @response [Object] News returns requested News article
+    # @example
+    #   $.ajax method: "GET",
+    #          url: "/api/v1/news/J5VLjLsiPC2xO2VBlhjeMlBL"
+    ###
+    @app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+      @query "findById", req.params.id, res, (news) ->
+        return aem.send res, "404" unless news
 
-    db.model("News")
-    .find(_id: req.param "id")
-    .exec (err, list) ->
-      if aem.dbError err, res then return
-      if list.length == 0
-        return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
+        res.json 200, news.toAnonAPI()
 
-      news = list[0]
-      news.title = req.param "title" if req.param "title"
-      news.summary = req.param "summary" if req.param "summary"
-      news.text = req.param "text" if req.param "text"
+    ###
+    # POST /api/v1/news/:id
+    #   Updates an existing News article by :id
+    # @param [ID] id
+    # @response [Object] News returns the updated News article
+    # @example
+    #   $.ajax method: "POST",
+    #          url: "/api/v1/news/iewTKw5y8bQO3FXQZxn3zlgT",
+    #          data:
+    #            title: "We are having an Ad Storm [EDIT]"
+    #            summary: "Today we had a huge update!"
+    #            text: """
+    #              So much has changed, we'd like to thank blah, dee, dah
+    #              EDIT: foobar
+    #            """
+    ###
+    @app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+      return aem.send res, "403" unless req.user.admin
 
-      news.save (err) ->
-        if err
-          spew.error "Error saving News [#{err}]"
-          aem.send res, "400:validate", error: err
-        else
-          res.json 200, news.toAnonAPI()
+      @query "findById", req.params.id, res, (news) ->
+        return aem.send res, "404" unless news
 
-  ###
-  # DELETE /api/v1/news/:id
-  #   Deletes a News article by :id
-  # @param [ID] id
-  # @example
-  #   $.ajax method: "DELETE",
-  #          url: "/api/v1/news/tmHWeHKicu4xINCnhZH7mUDd"
-  ###
-  app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) ->
-    if not req.user.admin then return aem.send res, "403"
+        news.title = req.body.title if req.body.title != undefined
+        news.summary = req.body.summary if req.body.summary != undefined
+        news.text = req.body.text if req.body.text != undefined
 
-    db.model("News")
-    .find(_id: req.param "id")
-    .exec (err, list) ->
-      if aem.dbError err, res then return
-      if list.length == 0
-        return aem.send res, "404", "News Article (#{req.param "id"}) could not be found"
+        news.validate (err) ->
+          return aem.send res, "400:validate", error: err if err
 
-      news = list[0]
+          news.save -> res.json 200, news.toAnonAPI()
 
-      news.remove()
-      aem.send res, "200:delete"
+    ###
+    # DELETE /api/v1/news/:id
+    #   Deletes a News article by :id
+    # @param [ID] id
+    # @example
+    #   $.ajax method: "DELETE",
+    #          url: "/api/v1/news/tmHWeHKicu4xINCnhZH7mUDd"
+    ###
+    @app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+      return aem.send res, "403" unless req.user.admin
 
-  register null, {}
+      @query "findById", req.params.id, res, (news) ->
+        return aem.send res, "404" unless news
 
-module.exports = setup
+        news.remove -> aem.send res, "200:delete"
+
+module.exports = (options, imports, register) ->
+  apiNews = new APINews imports["core-express"].server
+  register null, "api-news": apiNews

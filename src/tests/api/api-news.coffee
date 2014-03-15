@@ -43,11 +43,10 @@ module.exports = (user, admin) ->
       it "Should fail if parameters are missing", (done) ->
 
         req = util.adminRequest "/api/v1/news?#{adminApiKey}", "post"
-        data =
+        req.send
           title: undefined
           summary: "And this is not awesome"
           text: undefined
-        req.send data
         req.expect(400).end (err, res) ->
           return if handleError(err, res, done)
 
@@ -56,11 +55,10 @@ module.exports = (user, admin) ->
       it "Should succeed if parameters are correct", (done) ->
 
         req = util.adminRequest "/api/v1/news?#{adminApiKey}", "post"
-        data =
+        req.send
           title: "Totally awesome news"
           summary: "And its awesome"
           text: "Indeed this is some awesome news, what more could we want"
-        req.send data
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
 
@@ -120,9 +118,7 @@ module.exports = (user, admin) ->
       it "Should update an existing News article", (done) ->
 
         req = util.adminRequest "/api/v1/news/#{testValidNewsId}?#{adminApiKey}", "post"
-        data =
-          title: "And we Updated it"
-        req.send data
+        req.send title: "And we Updated it"
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
 
