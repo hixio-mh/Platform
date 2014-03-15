@@ -12,7 +12,6 @@ s3Host = "adefyplatformmain.s3.amazonaws.com"
 class APIAds
 
   constructor: (@app) ->
-
     @registerRoutes()
 
   ###
