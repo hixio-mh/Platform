@@ -17,7 +17,7 @@ class APIPublishers
   #
   # @param [Object] options
   # @param [ObjectId] owner
-  # @return [Campaign] model
+  # @return [Publisher] model
   ###
   createNewPublisher: (options, owner) ->
     db.model("Publisher")
