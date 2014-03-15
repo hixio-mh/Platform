@@ -4,20 +4,91 @@ routes = require "../../../angularDashboardViews.json"
 config = require "../../../config"
 crypto = require "crypto"
 passport = require "passport"
-#aem = require "../../../helpers/aem"
-#isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
-isLoggedIn = (req, res, next) ->
-  if req.isAuthenticated() then next()
-  else res.redirect "/login"
+class APIViews
 
-setup = (options, imports, register) ->
+  constructor: (@app) ->
+    @registerRoutes()
 
-  app = imports["core-express"].server
+  isLoggedIn: (req, res, next) ->
+    if req.isAuthenticated() then next()
+    else res.redirect "/login"
 
-  # Serve layout to each path
-  for p in routes.views
-    app.get p, isLoggedIn, (req, res) ->
+  registerRoutes: ->
+
+    # Serve layout to each path
+    for p in routes.views
+      @app.get p, @isLoggedIn, (req, res) ->
+
+        viewData = {}
+        viewData.user = req.user
+        viewData.mode = config("NODE_ENV")
+        viewData.intercomSecureHash = (email) ->
+          API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
+          crypto.createHmac("sha256", API_SECRET)
+          .update(req.user.email).digest "hex"
+
+        res.render "dashboard/layout.jade", viewData, (err, html) ->
+          if err then spew.error err
+          else res.send html
+
+    @app.get "/creator", (req, res) ->
+      res.render "creator/public.jade"
+
+    # Login and Register views, redirect if user is already logged in
+    @app.get "/login", (req, res) ->
+      if req.user != undefined and req.user.id != undefined
+        res.redirect "/home/publisher"
+      else
+        res.render "account/login.jade"
+
+    @app.get "/register", (req, res) ->
+      if req.user != undefined and req.user.id != undefined
+        res.redirect "/home/publisher"
+      else
+        res.render "account/register.jade"
+
+    # Alias for /register
+    @app.get "/signup", (req, res) ->
+      if req.user != undefined and req.user.id != undefined
+        res.redirect "/home/publisher"
+      else
+        res.render "account/register.jade"
+
+    # Forgot password
+    @app.get "/forgot", (req, res) ->
+      if req.user != undefined and req.user.id != undefined
+        res.redirect "/home/publisher"
+      else
+        res.render "account/forgot.jade"
+
+    # Reset password
+    @app.get "/reset", (req, res) ->
+      if req.user != undefined and req.user.id != undefined
+        res.redirect "/home/publisher"
+      else
+        res.render "account/reset.jade"
+
+    # Logout
+    @app.get "/logout", (req, res) ->
+      req.logout()
+      res.redirect "/login"
+
+    ##
+    ## Todo: Cleanup the routines below
+    ##
+
+    # Dashboard views
+    @app.get "/views/dashboard/:view", @isLoggedIn, (req, res) ->
+
+      # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
+      if req.params.view.indexOf(":") != -1
+        req.params.view = req.params.view.split(":").join "/"
+
+      # Sanitize req.params.view
+      # TODO: figure out if this is enough
+      if req.params.view.indexOf("..") != -1
+        req.params.view = req.params.view.split("..").join ""
 
       viewData = {}
       viewData.user = req.user
@@ -27,100 +98,30 @@ setup = (options, imports, register) ->
         crypto.createHmac("sha256", API_SECRET)
         .update(req.user.email).digest "hex"
 
-      res.render "dashboard/layout.jade", viewData, (err, html) ->
-        if err then spew.error err
-        else res.send html
+      res.render "dashboard/views/#{req.params.view}.jade", viewData
 
-  app.get "/creator", (req, res) ->
-    res.render "creator/public.jade"
+    # Creator view
+    @app.get "/views/creator/:view", (req, res) ->
 
-  # Login and Register views, redirect if user is already logged in
-  app.get "/login", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/login.jade"
+      # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
+      if req.params.view.indexOf(":") != -1
+        req.params.view = req.params.view.split(":").join "/"
 
-  app.get "/register", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/register.jade"
+      # Sanitize req.params.view
+      # TODO: figure out if this is enough
+      if req.params.view.indexOf("..") != -1
+        req.params.view = req.params.view.split("..").join ""
 
-  # Alias for /register
-  app.get "/signup", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/register.jade"
+      viewData = {}
+      viewData.user = req.user
+      viewData.mode = config("NODE_ENV")
+      viewData.intercomSecureHash = (email) ->
+        API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
+        crypto.createHmac("sha256", API_SECRET)
+        .update(req.user.email).digest "hex"
 
-  # Forgot password
-  app.get "/forgot", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/forgot.jade"
+      res.render "creator/#{req.params.view}.jade", viewData
 
-  # Reset password
-  app.get "/reset", (req, res) ->
-    if req.user != undefined and req.user.id != undefined
-      res.redirect "/home/publisher"
-    else
-      res.render "account/reset.jade"
-
-  # Logout
-  app.get "/logout", (req, res) ->
-    req.logout()
-    res.redirect "/login"
-
-  ##
-  ## Todo: Cleanup the routines below
-  ##
-
-  # Dashboard views
-  app.get "/views/dashboard/:view", isLoggedIn, (req, res) ->
-
-    # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
-    if req.params.view.indexOf(":") != -1
-      req.params.view = req.params.view.split(":").join "/"
-
-    # Sanitize req.params.view
-    # TODO: figure out if this is enough
-    if req.params.view.indexOf("..") != -1
-      req.params.view = req.params.view.split("..").join ""
-
-    viewData = {}
-    viewData.user = req.user
-    viewData.mode = config("NODE_ENV")
-    viewData.intercomSecureHash = (email) ->
-      API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-      crypto.createHmac("sha256", API_SECRET)
-      .update(req.user.email).digest "hex"
-
-    res.render "dashboard/views/#{req.params.view}.jade", viewData
-
-  # Creator view
-  app.get "/views/creator/:view", (req, res) ->
-
-    # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
-    if req.params.view.indexOf(":") != -1
-      req.params.view = req.params.view.split(":").join "/"
-
-    # Sanitize req.params.view
-    # TODO: figure out if this is enough
-    if req.params.view.indexOf("..") != -1
-      req.params.view = req.params.view.split("..").join ""
-
-    viewData = {}
-    viewData.user = req.user
-    viewData.mode = config("NODE_ENV")
-    viewData.intercomSecureHash = (email) ->
-      API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-      crypto.createHmac("sha256", API_SECRET)
-      .update(req.user.email).digest "hex"
-
-    res.render "creator/#{req.params.view}.jade", viewData
-
-  register null, {}
-
-module.exports = setup
+module.exports = (options, imports, register) ->
+  apiViews = new APIViews imports["core-express"].server
+  register null, "api-views": apiViews
