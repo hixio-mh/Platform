@@ -5,8 +5,11 @@
   "private": true,
   "plugin": {
     "consumes": [
-      "core-express"
+      "core-express",
+      "api-ads"
     ],
-    "provides": []
+    "provides": [
+      "api-campaigns"
+    ]
   }
 }

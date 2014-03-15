@@ -10,6 +10,7 @@ manufacturersList = require "./filters/manufacturers.json"
 
 AUTOCOMPLETE_VERSION = 2
 
+###
 # Generate flat list for targeting structure (which only takes into account
 # includes). We simulate targeting exclude support by including everything
 # that is included and not excluded. An empty include list implies include
@@ -19,6 +20,7 @@ AUTOCOMPLETE_VERSION = 2
 # @param [Array<String>] includes specific items to include, empty == all
 # @param [Array<String>] excludes specific items to exclude
 # @return [Array<String>] flatList
+###
 generateFlatList = (list, includes, excludes) ->
   if includes.length == 0
     flatList = list

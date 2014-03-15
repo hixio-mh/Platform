@@ -41,14 +41,14 @@ ul.list.ad-list(ng-if="ads")
       tr(ng-repeat="campaign in ad.campaigns")
         th {{ campaign.name }}
         td
-          .amount {{ campaign.stats.ctr | number:2 }}%
+          .amount {{ campaign.campaign.stats.ctr | number:2 }}%
           .desc CTR
         td
-          .amount ▲ {{ campaign.stats.impressions | number }}
+          .amount ▲ {{ campaign.campaign.stats.impressions | number }}
           .desc Impressions
         td
-          .amount ▲ {{ campaign.stats.clicks | number }}
+          .amount ▲ {{ campaign.campaign.stats.clicks | number }}
           .desc Clicks
         td
-          .amount $ {{ campaign.stats.spent | number:2 }}
+          .amount $ {{ campaign.campaign.stats.spent | number:2 }}
           .desc Spent

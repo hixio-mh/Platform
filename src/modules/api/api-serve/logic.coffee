@@ -8,7 +8,7 @@ redis = redisInterface.main
 NodeCache = require "node-cache"
 
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 # Cache used for guarding against multiple duplicate impressions/clicks
