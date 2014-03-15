@@ -72,8 +72,14 @@ module.exports = (user, admin) ->
 
         @timeout 15000
 
-        param_str = "name=TheAdefier&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{userApiKey}"
-        req = util.userRequest "/api/v1/campaigns?#{param_str}", "post"
+        req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "post"
+        req.send
+          name: "TheAdefier"
+          category: "Awesomeness"
+          pricing: "CPM"
+          bidSystem: "automatic"
+          bid: 5
+          dailyBudget: 100
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           campaign = res.body
@@ -85,8 +91,14 @@ module.exports = (user, admin) ->
 
         @timeout 15000
 
-        param_str = "name=TheAdefierAdmin&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{adminApiKey}"
-        req = util.adminRequest "/api/v1/campaigns?#{param_str}", "post"
+        req = util.adminRequest "/api/v1/campaigns?#{userApiKey}", "post"
+        req.send
+          name: "TheAdefier"
+          category: "Awesomeness"
+          pricing: "CPM"
+          bidSystem: "automatic"
+          bid: 5
+          dailyBudget: 100
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           campaign = res.body
@@ -150,6 +162,8 @@ module.exports = (user, admin) ->
           done()
 
       it "Should update an existing Campaign", (done) ->
+
+        @timeout 5000
 
         req = util.userRequest "/api/v1/campaigns/#{testValidCampaignId}?#{userApiKey}", "post"
         req.expect(200).end (err, res) ->
@@ -240,7 +254,7 @@ module.exports = (user, admin) ->
           expect(campaign).property("active").to.equal false
           done()
 
-        # DELETE /api/v1/campaigns/:id
+    # DELETE /api/v1/campaigns/:id
     describe "Delete Campaign by Id", ->
 
       it "Should 404 if Campaign does not exist", (done) ->

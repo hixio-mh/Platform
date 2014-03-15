@@ -2,6 +2,7 @@ graphiteInterface = require "../helpers/graphiteInterface"
 mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
+async = require "async"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
 
@@ -59,6 +60,7 @@ schema = new mongoose.Schema
   tutorial: { type: Boolean, default: false }
 
   version: { type: Number, default: 2 }
+  stats: Object
 
 ##
 ## ID and handle generation
@@ -109,6 +111,15 @@ schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
   ret
+
+###
+# Helper to check if a user is our owner
+#
+# @param [User] model
+# @return [Boolean] isOwner
+###
+schema.methods.isOwner = (user) ->
+  "#{user.id}" == "#{@owner}"
 
 ##
 ## List compilation
@@ -301,7 +312,8 @@ schema.methods.populateSelf24hStats = (cb) ->
 ###
 schema.methods.populateSelfAllStats = (cb) ->
   @fetchOverviewStats (stats) =>
-    cb _.extend @toAnonAPI(), stats: stats
+    @stats = stats
+    cb stats
 
 ###
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
@@ -359,7 +371,8 @@ schema.methods.fetchCustomStat = (range, stat, cb) ->
 # @param [Method] callback
 ###
 schema.methods.activate = (cb) ->
-  if @tutorial then return cb()
+  return cb() if @tutorial or @active
+
   @active = true
   @refreshAdRefs => cb()
 
@@ -369,7 +382,8 @@ schema.methods.activate = (cb) ->
 # @param [Method] callback
 ###
 schema.methods.deactivate = (cb) ->
-  if @tutorial then return cb()
+  return cb() if @tutorial or not @active
+
   @active = false
   @clearAdReferences => cb()
 
@@ -405,7 +419,7 @@ schema.methods.removeAd = (ad, cb) ->
     ownAdId = ownAd._id or ownAd.id or ownAd
 
     # Perform actual id check
-    if "#{adId}" == "ownAdId"
+    if "#{adId}" == ownAdId
       foundAd = true
 
       # Clear campaign:ad references from redis
@@ -433,24 +447,58 @@ schema.methods.removeAd = (ad, cb) ->
 # @param [Method] callback
 ###
 schema.methods.refreshAdRefs = (cb) ->
-  if @ads.length == 0 and cb then cb()
-
-  # Clear and re-create campaign references for a single ad
-  refreshRefsForAd = (ad, campaign, cb) ->
-    ad.populate "campaigns.campaign", (err, populatedAd) ->
+  async.each @ads, (ad, done) =>
+    ad.populate "campaigns.campaign", (err, populatedAd) =>
       if err
         spew.error "Error populating ad campaigns field"
-        if cb then return cb()
+        return done()
 
-      populatedAd.clearCampaignReferences campaign, ->
-        populatedAd.createCampaignReferences campaign, ->
-          if cb then cb()
+      populatedAd.clearCampaignReferences @, =>
+        populatedAd.createCampaignReferences @, =>
+          done()
+  , ->
+    if cb then cb()
 
-  count = @ads.length
-  doneCb = -> count--; if count == 0 and cb then cb()
+###
+# Adds an array of ads to us
+#
+# @param [Array<Ad>] ads
+# @param [Method] callback
+###
+schema.methods.addAds = (ads, cb) ->
+  async.each ads, (ad, done) =>
+    @addAd ad, -> done()
+  , ->
+    if cb then cb()
 
-  for ad in @ads
-    refreshRefsForAd ad, @, -> doneCb()
+###
+# Adds a single ad to us
+#
+# @param [Ad] ad
+# @param [Method] callback
+###
+schema.methods.addAd = (ad, cb) ->
+  ad.registerCampaignParticipation @
+
+  if @active
+    ad.createCampaignReferences @, ->
+      ad.save ->
+        if cb then cb()
+  else
+    ad.save ->
+      if cb then cb()
+
+###
+# Unregisters an array of ads as a part of the campaign.
+#
+# @param [Array<Ad>] ads
+# @param [Method] callback
+###
+schema.methods.removeAds = (ads, cb) ->
+  async.each ads, (ad, done) =>
+    @removeAd ad, -> done()
+  , ->
+    if cb then cb()
 
 ###
 # Update redis pace information
@@ -492,21 +540,6 @@ schema.methods.createRedisStruture = (cb) ->
       @refreshAdRefs ->
         if cb then cb()
 
-# Cleans up campaign references within ads
-schema.pre "remove", (next) ->
-  if @ads.length == 0 then next()
-  else
-    @populate "ads", =>
-      count = @ads.length
-      done = -> count--; if count == 0 then next()
-
-      for ad in @ads
-        @removeAd ad, -> done()
-
-# Ensure our pacing data is up to date (target spend)
-schema.pre "save", (next) ->
-  @updatePaceData -> next()
-
 ###
 # Return array of ad documents belonging to a campaign
 #
@@ -529,5 +562,20 @@ schema.statics.getAds = (cId, cb) ->
       spew.error err
       cb null
     else cb campaign.ads
+
+# Cleans up campaign references within ads
+schema.pre "remove", (next) ->
+  if @ads.length == 0 then next()
+  else
+    @populate "ads", =>
+      count = @ads.length
+      done = -> count--; if count == 0 then next()
+
+      for ad in @ads
+        @removeAd ad, -> done()
+
+# Ensure our pacing data is up to date (target spend)
+schema.pre "save", (next) ->
+  @updatePaceData -> next()
 
 mongoose.model "Campaign", schema

@@ -9,7 +9,7 @@ adefyDomain = "http://#{config("domain")}"
 
 powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
-aem = require "../../../helpers/apiErrorMessages"
+aem = require "../../../helpers/aem"
 isLoggedInAPI = require("../../../helpers/apikeyLogin") passport, aem
 
 paypalCredentials =
@@ -252,7 +252,7 @@ setup = (options, imports, register) ->
   ###
   app.get "/api/v1/user", isLoggedInAPI, (req, res) ->
     db.model("User").findById req.user.id, (err, user) ->
-      if utility.dbError err, res, false then return
+      if aem.dbError err, res, false then return
       if not user then return aem.send res, "404"
 
       user.updateFunds ->

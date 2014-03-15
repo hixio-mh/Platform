@@ -69,7 +69,8 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/ads?#{userApiKey}", "post"
+      req.send name: testAdName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validateAdFormat res.body
@@ -77,7 +78,8 @@ module.exports = (user, admin) ->
         testAdId1 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/ads?#{userApiKey}", "post"
+      req.send name: testAdName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validateAdFormat res.body
@@ -85,7 +87,8 @@ module.exports = (user, admin) ->
         testAdId2 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/ads?name=#{testAdName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/ads?#{userApiKey}", "post"
+      req.send name: testAdName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validateAdFormat res.body
