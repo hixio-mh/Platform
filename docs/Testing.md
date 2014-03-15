@@ -1,7 +1,7 @@
 Testing the Adefy platform
 =====================================
 
-Unit tests are present in `src/tests/`, and should test every route provided by the application, along with all non-trivial behaviour. To run the tests, either use `grunt test`, or manually run `mocha --compilers coffee:coffee-script --reporter nyan src/tests/*`
+Unit (server and client) + integration tests are present in `src/tests/`, and can be run with `npm test`.
 
 Tests will *not* run in production!
 -----------------------------------
