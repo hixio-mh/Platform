@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 module.exports =
 
   ###
@@ -8,13 +10,8 @@ module.exports =
   # @return [Boolean] arrays_match returns false if the arrays do not match
   ###
   arraysEqual: (a, b) ->
-    if not b or not a then return false
-    if a.length != b.length then return false
-
-    for elementA, i in a
-      if b[i] != elementA then return false
-
-    true
+    return false if not a instanceof Array or not b instanceof Array
+    _.difference(a, b).length == 0
 
   ###
   # Compares to 2 objects and determines if they are equal
