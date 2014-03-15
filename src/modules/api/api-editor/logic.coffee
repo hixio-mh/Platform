@@ -224,8 +224,6 @@ class APIEditor
           .on "error", (e) -> res.send 500
       .on "error", (e) -> res.send 500
 
-setup = (options, imports, register) ->
+module.exports = (options, imports, register) ->
   apiEditor = new APIEditor imports["core-express"].server
   register null, "api-editor": apiEditor
-
-module.exports = setup
