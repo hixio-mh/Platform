@@ -338,7 +338,7 @@ module.exports =
     unless user.admin or compare.isOwnerOf(user, obj)
       @send res, "401" if res
       return false
-    return true
+    true
 
   ###
   # Optionally determines if (obj) is a Number, if not a 400 error is
@@ -352,7 +352,7 @@ module.exports =
       name = name || "object"
       @send res, "400", error: "Invalid #{name} (expected a Number)"
       return false
-    return true
+    true
 
   ###
   # Optionally determines if (obj) is one of the given objects in opts
@@ -369,4 +369,4 @@ module.exports =
       opts_s = opts.join(" or ")
       @send res, "400", error: "Invalid #{name} (expected #{opts_s})"
       return false
-    return true
+    true
