@@ -49,9 +49,8 @@ class APIAds
   ###
   # Register our routes on an express server
   #
-  # @param [Object] app
   ###
-  registerRoutes: (app) ->
+  registerRoutes: ->
 
     ###
     # POST /api/v1/ads
@@ -65,7 +64,7 @@ class APIAds
     #            name: "AwesomeAd"
     ###
     @app.post "/api/v1/ads", isLoggedInAPI, (req, res) =>
-      return unless aem.param req.param("name"), res, "Ad name"
+      return unless aem.param req.body.name, res, "Ad name"
 
       newAd = @createNewAd req.body, req.user.id
       newAd.validate (err) ->
@@ -83,17 +82,17 @@ class APIAds
     #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/activate"
     ###
     @app.post "/api/v1/ads/:id/:creative/activate", isLoggedInAPI, (req, res) =>
-      if req.param("creative") != "native" and req.param("creative") != "organic"
+      if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
 
         return aem.send res, "401", error: "Ad un-approved" if ad.status != 2
 
-        ad.setCreativeActive req.param("creative"), true
+        ad.setCreativeActive req.params.creative, true
         ad.save ->
           res.json 200, ad.toAnonAPI()
 
@@ -107,15 +106,15 @@ class APIAds
     #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/deactivate"
     ###
     @app.post "/api/v1/ads/:id/:creative/deactivate", isLoggedInAPI, (req, res) =>
-      if req.param("creative") != "native" and req.param("creative") != "organic"
+      if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
 
-        ad.setCreativeActive req.param("creative"), false
+        ad.setCreativeActive req.params.creative, false
         ad.save ->
           res.json 200, ad.toAnonAPI()
 
@@ -142,13 +141,13 @@ class APIAds
         else
           object.split("//#{s3Host}/")[1]
 
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
 
-        if req.param("native") then ad.updateNative req.param "native"
-        if req.param("organic") then ad.updateOrganic req.param "organic"
+        if req.params.native then ad.updateNative req.params.native
+        if req.params.organic then ad.updateOrganic req.params.organic
 
         ad.validate (err) ->
           return aem.send res, "400:validate", error: err if err
@@ -168,7 +167,7 @@ class APIAds
     #          url: "/api/v1/ads/fCf3hGpvM3rVIoDNi09bvMYo"
     ###
     @app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -192,15 +191,18 @@ class APIAds
         async.map ads, (ad, done) ->
           ad.fetchCompiledStats (adStats) ->
 
-            finish = -> done null, _.extend ad.toAnonAPI(), stats: adStats
-            return finish() if ad.campaigns.length == 0
+            if ad.campaigns.length == 0
+              return done null, _.extend ad.toAnonAPI(), stats: adStats
 
-            async.each ad.campaigns, (campaign, done) ->
-              return finish() if campaign.campaign == null
+            async.map ad.campaigns, (campaign, innerDone) ->
+              return innerDone(null, null) if campaign.campaign == null
 
               campaign.campaign.fetchTotalStatsForAd ad, (stats) ->
-                campaign.stats = stats
-                finish()
+                campaign.campaign.stats = stats
+                innerDone null, campaign
+            , (err, campaigns) ->
+              ad.campaigns = campaigns
+              done err, _.extend ad.toAnonAPI(), stats: adStats
 
         , (err, ads) ->
           return res.send aem.send res, "500" if err
@@ -246,7 +248,7 @@ class APIAds
     #          url: "/api/v1/ads/l46Wyehf72ovf1tkDa5Y3ddA"
     ###
     @app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return unless aem.isOwnerOf req.user, ad, res
 
@@ -266,7 +268,7 @@ class APIAds
     #          url: "/api/v1/ads/WaeE4dObsK7ObS2ifntxqrGh/approve"
     ###
     @app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -294,7 +296,7 @@ class APIAds
     @app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) =>
       if not req.user.admin then return aem.send res, "403", error: "Attempted to access protected Ad"
 
-      @queryAds "findById", req.param("id"), res, (ad) ->
+      @queryAds "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
