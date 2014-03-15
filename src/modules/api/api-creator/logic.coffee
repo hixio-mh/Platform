@@ -151,9 +151,6 @@ class APICreator
 
         res.json app
 
-
-setup = (options, imports, register) ->
+module.exports = (options, imports, register) ->
   apiCreator = new APICreator imports["core-express"].server
   register null, "api-creator": apiCreator
-
-module.exports = setup
