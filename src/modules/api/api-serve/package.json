@@ -8,6 +8,8 @@
       "core-express",
       "engine-fetch"
     ],
-    "provides": []
+    "provides": [
+      "api-serve"
+    ]
   }
 }
