@@ -100,8 +100,11 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      param_str = "name=TestPublisher1&category=None&type=0&#{userApiKey}"
-      req = util.userRequest "/api/v1/publishers?#{param_str}", "post"
+      req = util.userRequest "/api/v1/publishers?#{userApiKey}", "post"
+      req.send
+        name: "TestPublisher1"
+        category: "None"
+        type: 0
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidPublisherId = res.body.id
@@ -111,8 +114,11 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      param_str = "name=TestPublisher2&category=None&type=0&#{adminApiKey}"
-      req = util.adminRequest "/api/v1/publishers?#{param_str}", "post"
+      req = util.adminRequest "/api/v1/publishers?#{adminApiKey}", "post"
+      req.send
+        name: "TestPublisher2"
+        category: "None"
+        type: 0
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidPublisherId2 = res.body.id

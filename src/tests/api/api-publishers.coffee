@@ -67,7 +67,8 @@ module.exports = (user, admin) ->
 
       requests = 3
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?#{userApiKey}", "post"
+      req.send name: testPublisherName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validatePublisherFormat res.body
@@ -75,7 +76,8 @@ module.exports = (user, admin) ->
         testPublisherId1 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?#{userApiKey}", "post"
+      req.send name: testPublisherName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validatePublisherFormat res.body
@@ -83,7 +85,8 @@ module.exports = (user, admin) ->
         testPublisherId2 = res.body.id
         requests = util.actuallyDoneCheck done, requests
 
-      req = util.userRequest "/api/v1/publishers?name=#{testPublisherName}&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/publishers?#{userApiKey}", "post"
+      req.send name: testPublisherName
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         validatePublisherFormat res.body
