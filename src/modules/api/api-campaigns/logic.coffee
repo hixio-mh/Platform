@@ -175,12 +175,12 @@ class APICampaigns
     #            bid: ""
     ###
     @app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
-      return unless aem.param req.body.name, res, "Campaign name" 
-      return unless aem.param req.body.category, res, "Category" 
-      return unless aem.param req.body.pricing, res, "Pricing" 
-      return unless aem.param req.body.dailyBudget, res, "Daily budget" 
-      return unless aem.param req.body.bidSystem, res, "Bid system" 
-      return unless aem.param req.body.bid, res, "Bid" 
+      return unless aem.param req.body.name, res, "Campaign name"
+      return unless aem.param req.body.category, res, "Category"
+      return unless aem.param req.body.pricing, res, "Pricing"
+      return unless aem.param req.body.dailyBudget, res, "Daily budget"
+      return unless aem.param req.body.bidSystem, res, "Bid system"
+      return unless aem.param req.body.bid, res, "Bid"
 
       newCampaign = @createNewCampaign req.body, req.user.id
       newCampaign.validate (err) ->
@@ -240,11 +240,11 @@ class APICampaigns
         return unless aem.isOwnerOf req.user, campaign, res
 
         # Perform basic validation
-        return unless aem.optIsNumber(req.body.totalBudget, "total budget", res) 
-        return unless aem.optIsNumber(req.body.dailyBudget, "daily budget", res) 
-        return unless aem.optIsNumber(req.body.bid, "bid amount", res) 
-        return unless aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res) 
-        return unless aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res) 
+        return unless aem.optIsNumber(req.body.totalBudget, "total budget", res)
+        return unless aem.optIsNumber(req.body.dailyBudget, "daily budget", res)
+        return unless aem.optIsNumber(req.body.bid, "bid amount", res)
+        return unless aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res)
+        return unless aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res)
 
         # Don't allow active state change through edit path
         delete req.body.active if req.body.active != undefined
@@ -290,7 +290,7 @@ class APICampaigns
               validKey = key == "devices" or key == "countries" or
                          currentVal != undefined
 
-              if not validKey or compare.equalityCheck currentVal, val then continue
+              if not validKey or _.isEqual currentVal, val then continue
 
               # Convert include/exclude array sets
               if key == "devices" or key == "countries"

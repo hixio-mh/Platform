@@ -14,18 +14,6 @@ module.exports =
     _.difference(a, b).length == 0
 
   ###
-  # Compares to 2 objects and determines if they are equal
-  # @param [Object] a
-  # @param [Object] b
-  # @return [Boolean] match
-  ###
-  equalityCheck: (a, b) ->
-    if a instanceof Array and b instanceof Array
-      @arraysEqual a, b
-    else
-      a == b
-
-  ###
   # Determines if given obj belongs to user
   # @param [Object] user
   # @param [Object] obj
