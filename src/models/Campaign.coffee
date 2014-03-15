@@ -2,6 +2,7 @@ graphiteInterface = require "../helpers/graphiteInterface"
 mongoose = require "mongoose"
 spew = require "spew"
 _ = require "underscore"
+async = require "async"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
 
@@ -59,6 +60,7 @@ schema = new mongoose.Schema
   tutorial: { type: Boolean, default: false }
 
   version: { type: Number, default: 2 }
+  stats: Object
 
 ##
 ## ID and handle generation
@@ -311,7 +313,7 @@ schema.methods.populateSelf24hStats = (cb) ->
 schema.methods.populateSelfAllStats = (cb) ->
   @fetchOverviewStats (stats) =>
     @stats = stats
-    cb()
+    cb stats
 
 ###
 # Fetch lifetime impressions, clicks, and amount spent from redis. This
@@ -417,7 +419,7 @@ schema.methods.removeAd = (ad, cb) ->
     ownAdId = ownAd._id or ownAd.id or ownAd
 
     # Perform actual id check
-    if "#{adId}" == "ownAdId"
+    if "#{adId}" == ownAdId
       foundAd = true
 
       # Clear campaign:ad references from redis
@@ -445,64 +447,58 @@ schema.methods.removeAd = (ad, cb) ->
 # @param [Method] callback
 ###
 schema.methods.refreshAdRefs = (cb) ->
-  if @ads.length == 0 and cb then cb()
-
-  # Clear and re-create campaign references for a single ad
-  refreshRefsForAd = (ad, campaign, cb) ->
-    ad.populate "campaigns.campaign", (err, populatedAd) ->
+  async.each @ads, (ad, done) =>
+    ad.populate "campaigns.campaign", (err, populatedAd) =>
       if err
         spew.error "Error populating ad campaigns field"
-        if cb then return cb()
+        return done()
 
-      populatedAd.clearCampaignReferences campaign, ->
-        populatedAd.createCampaignReferences campaign, ->
-          if cb then cb()
-
-  count = @ads.length
-  doneCb = -> count--; if count == 0 and cb then cb()
-
-  for ad in @ads
-    refreshRefsForAd ad, @, -> doneCb()
+      populatedAd.clearCampaignReferences @, =>
+        populatedAd.createCampaignReferences @, =>
+          done()
+  , ->
+    if cb then cb()
 
 ###
-# Registers an array of ads as apart of the campaign.
+# Adds an array of ads to us
 #
-# @param [Array<Ad>] adsToAdd
+# @param [Array<Ad>] ads
 # @param [Method] callback
 ###
-schema.methods.optionallyAddAds = (adsToAdd, cb) ->
-  if adsToAdd.length == 0 then cb()
-  else
-    count = adsToAdd.length
-    doneCb = -> count--; if count == 0 then cb()
-
-    for ad in adsToAdd
-      ad.registerCampaignParticipation @
-
-      if @active
-        ad.createCampaignReferences @, -> ad.save()
-      else
-        ad.save()
-
-      # NOTE: We don't wait for campaign reference creation
-      doneCb()
+schema.methods.addAds = (ads, cb) ->
+  async.each ads, (ad, done) =>
+    @addAd ad, -> done()
+  , ->
+    if cb then cb()
 
 ###
-# Unregisters an array of ads as apart of the campaign.
+# Adds a single ad to us
 #
-# @param [Array<Ad>] adsToRemove
+# @param [Ad] ad
 # @param [Method] callback
 ###
-schema.methods.optionallyDeleteAds = (adsToRemove, cb) ->
-  if adsToRemove.length == 0 then cb()
-  else
-    count = adsToRemove.length
-    doneCb = -> if count == 1 then cb() else count--
+schema.methods.addAd = (ad, cb) ->
+  ad.registerCampaignParticipation @
 
-    for ad in adsToRemove
-      # NOTE: We don't wait for ad references to clear!
-      campaign.removeAd ad
-      doneCb()
+  if @active
+    ad.createCampaignReferences @, ->
+      ad.save ->
+        if cb then cb()
+  else
+    ad.save ->
+      if cb then cb()
+
+###
+# Unregisters an array of ads as a part of the campaign.
+#
+# @param [Array<Ad>] ads
+# @param [Method] callback
+###
+schema.methods.removeAds = (ads, cb) ->
+  async.each ads, (ad, done) =>
+    @removeAd ad, -> done()
+  , ->
+    if cb then cb()
 
 ###
 # Update redis pace information
