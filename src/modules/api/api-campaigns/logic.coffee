@@ -12,7 +12,6 @@ engineFilters = require "../../../helpers/filters"
 class APICampaigns
 
   constructor: (@app) ->
-
     @registerRoutes()
 
   ###
