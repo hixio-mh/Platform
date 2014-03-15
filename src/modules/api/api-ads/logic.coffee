@@ -37,7 +37,7 @@ class APIAds
   # @param [Response] res
   # @param [Method] callback
   ###
-  queryAds: (queryType, query, res, cb) ->
+  query: (queryType, query, res, cb) ->
     db.model("Ad")[queryType] query
     .populate "campaigns.campaign"
     .exec (err, ads) ->
@@ -84,7 +84,7 @@ class APIAds
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -108,7 +108,7 @@ class APIAds
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -140,7 +140,7 @@ class APIAds
         else
           object.split("//#{s3Host}/")[1]
 
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -166,7 +166,7 @@ class APIAds
     #          url: "/api/v1/ads/fCf3hGpvM3rVIoDNi09bvMYo"
     ###
     @app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -184,7 +184,7 @@ class APIAds
     #          url: "/api/v1/ads"
     ###
     @app.get "/api/v1/ads", isLoggedInAPI, (req, res) =>
-      @queryAds "find", owner: req.user.id, res, (ads) ->
+      @query "find", owner: req.user.id, res, (ads) ->
         return res.json 200, [] if ads.length == 0
 
         async.map ads, (ad, done) ->
@@ -247,7 +247,7 @@ class APIAds
     #          url: "/api/v1/ads/l46Wyehf72ovf1tkDa5Y3ddA"
     ###
     @app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return unless aem.isOwnerOf req.user, ad, res
 
@@ -267,7 +267,7 @@ class APIAds
     #          url: "/api/v1/ads/WaeE4dObsK7ObS2ifntxqrGh/approve"
     ###
     @app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) =>
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -295,7 +295,7 @@ class APIAds
     @app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) =>
       if not req.user.admin then return aem.send res, "403", error: "Attempted to access protected Ad"
 
-      @queryAds "findById", req.params.id, res, (ad) ->
+      @query "findById", req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
