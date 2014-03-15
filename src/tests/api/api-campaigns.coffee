@@ -72,8 +72,14 @@ module.exports = (user, admin) ->
 
         @timeout 15000
 
-        param_str = "name=TheAdefier&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{userApiKey}"
-        req = util.userRequest "/api/v1/campaigns?#{param_str}", "post"
+        req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "post"
+        req.send
+          name: "TheAdefier"
+          category: "Awesomeness"
+          pricing: "CPM"
+          bidSystem: "automatic"
+          bid: 5
+          dailyBudget: 100
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           campaign = res.body
@@ -85,8 +91,14 @@ module.exports = (user, admin) ->
 
         @timeout 15000
 
-        param_str = "name=TheAdefierAdmin&category=Awesomeness&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{adminApiKey}"
-        req = util.adminRequest "/api/v1/campaigns?#{param_str}", "post"
+        req = util.adminRequest "/api/v1/campaigns?#{userApiKey}", "post"
+        req.send
+          name: "TheAdefier"
+          category: "Awesomeness"
+          pricing: "CPM"
+          bidSystem: "automatic"
+          bid: 5
+          dailyBudget: 100
         req.expect(200).end (err, res) ->
           return if handleError(err, res, done)
           campaign = res.body

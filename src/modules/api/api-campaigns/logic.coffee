@@ -175,12 +175,12 @@ class APICampaigns
     #            bid: ""
     ###
     @app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
-      return unless aem.param req.param("name"), res, "Campaign name" 
-      return unless aem.param req.param("category"), res, "Category" 
-      return unless aem.param req.param("pricing"), res, "Pricing" 
-      return unless aem.param req.param("dailyBudget"), res, "Daily budget" 
-      return unless aem.param req.param("bidSystem"), res, "Bid system" 
-      return unless aem.param req.param("bid"), res, "Bid" 
+      return unless aem.param req.body.name, res, "Campaign name" 
+      return unless aem.param req.body.category, res, "Category" 
+      return unless aem.param req.body.pricing, res, "Pricing" 
+      return unless aem.param req.body.dailyBudget, res, "Daily budget" 
+      return unless aem.param req.body.bidSystem, res, "Bid system" 
+      return unless aem.param req.body.bid, res, "Bid" 
 
       newCampaign = @createNewCampaign req.body, req.user.id
       newCampaign.validate (err) ->
@@ -212,7 +212,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/gt8hfuquiNfzdJac3YYeWmgE"
     ###
     @app.get "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.param("id"), res, (campaign) ->
+      @query "findById", req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -235,7 +235,7 @@ class APICampaigns
       # Todo: Figure out a way to break this stuff out onto the module
       #       scope, so we can test it
 
-      @query "findById", req.param("id"), res, (campaign) =>
+      @query "findById", req.params.id, res, (campaign) =>
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -330,7 +330,7 @@ class APICampaigns
 
     ###
     # DELETE /api/v1/campaigns/:id
-    #   Delete the campaign identified by req.param("id")
+    #   Delete the campaign identified by id
     #   If we are not the administrator, we must own the campaign!
     # @param [ID] id
     # @example
@@ -340,9 +340,9 @@ class APICampaigns
     #            --campaign-update-data--
     ###
     @app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
-      return unless aem.param req.param("id"), res, "Id"
+      return unless aem.param req.params.id, res, "Id"
 
-      @query "findById", req.param("id"), res, (campaign) ->
+      @query "findById", req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -360,15 +360,15 @@ class APICampaigns
     #          url: "/api/v1/campaigns/xGIX51EP6ABK12Kg4XDT5f1J/clicks/from=-24h&to=-1h"
     ###
     @app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) =>
-      return unless aem.param req.param("id"), res, "Campaign id"
-      return unless aem.param req.param("range"), res, "Temporal range"
-      return unless aem.param req.param("stat"), res, "Stat"
+      return unless aem.param req.params.id, res, "Campaign id"
+      return unless aem.param req.params.range, res, "Temporal range"
+      return unless aem.param req.params.stat, res, "Stat"
 
-      @query "findById", req.param("id"), res, (campaign) ->
+      @query "findById", req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
-        campaign.fetchCustomStat req.param("range"), req.param("stat"), (data) ->
+        campaign.fetchCustomStat req.params.range, req.param.stat, (data) ->
           res.json data
 
     ###
@@ -380,7 +380,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/U1FyJtQHy8S5nfZvmfyjDPt3/activate"
     ###
     @app.post "/api/v1/campaigns/:id/activate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.param("id"), res, (campaign) ->
+      @query "findById", req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial
         return unless aem.isOwnerOf req.user, campaign, res
@@ -398,7 +398,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/WThH9UVp1V41Tw7qwOuR8PVm/deactivate"
     ###
     @app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.param("id"), res, (campaign) ->
+      @query "findById", req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial
         return unless aem.isOwnerOf req.user, campaign, res

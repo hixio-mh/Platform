@@ -44,7 +44,8 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      req = util.userRequest "/api/v1/ads?name=TestAd1&#{userApiKey}", "post"
+      req = util.userRequest "/api/v1/ads?#{userApiKey}", "post"
+      req.send name: "TestAd1"
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidAdId = res.body.id
@@ -54,7 +55,8 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      req = util.adminRequest "/api/v1/ads?name=TestAd2&#{adminApiKey}", "post"
+      req = util.adminRequest "/api/v1/ads?#{adminApiKey}", "post"
+      req.send name: "TestAd2"
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidAdId2 = res.body.id
@@ -64,8 +66,14 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      param_str = "name=TestCampaign1&category=None&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{userApiKey}"
-      req = util.userRequest "/api/v1/campaigns?#{param_str}", "post"
+      req = util.userRequest "/api/v1/campaigns?#{userApiKey}", "post"
+      req.send
+        name: "TestCampaign1"
+        category: "Awesomeness"
+        pricing: "CPM"
+        bidSystem: "automatic"
+        bid: 5
+        dailyBudget: 100
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidCampaignId = res.body.id
@@ -75,8 +83,14 @@ module.exports = (user, admin) ->
 
       @timeout 15000
 
-      param_str = "name=TestCampaign2&category=None&pricing=120&dailyBudget=&bidSystem=automatic&bid=100&#{adminApiKey}"
-      req = util.adminRequest "/api/v1/campaigns?#{param_str}", "post"
+      req = util.adminRequest "/api/v1/campaigns?#{adminApiKey}", "post"
+      req.send
+        name: "TestCampaign2"
+        category: "Awesomeness"
+        pricing: "CPM"
+        bidSystem: "automatic"
+        bid: 5
+        dailyBudget: 100
       req.expect(200).end (err, res) ->
         return if handleError(err, res, done)
         testValidCampaignId2 = res.body.id
