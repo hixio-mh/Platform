@@ -29,8 +29,6 @@
     "express": "~3.4.8",
     "jade": "~1.1.5",
     "mongoose": "~3.8.7",
-    "socket.io": "0.9",
-    "architect": "~0.1.11",
     "bcrypt": "~0.7.7",
     "request": "~2.34.0",
     "spew": "0.0.2",
@@ -83,7 +81,7 @@
   },
   "scripts": {
     "test": "npm run test-server && npm run test-client",
-    "test-server": "mocha -R spec ./src/tests/selftest.coffee --compilers coffee:coffee-script/register",
-    "test-client": "mocha-phantomjs ./src/tests/client/test.html"
+    "test-server": "mocha -R spec ./tests/selftest.coffee --compilers coffee:coffee-script/register",
+    "test-client": "mocha-phantomjs ./tests/client/test.html"
   }
 }
