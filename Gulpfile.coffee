@@ -16,15 +16,15 @@ order = require "gulp-order"
 exec = require "gulp-exec"
 
 paths =
-  angular: "src/client/**/*.coffee"
-  js: "src/static/js/**/*.js"
-  styl: "src/stylus/**/*.styl"
-  css: "src/static/css/**/*.css"
-  images: "src/static/img/**/*"
-  fonts: "src/static/fonts/**/*"
-  components: "src/static/components/**/*"
-  jade: "src/views/static/**/*.jade"
-  assets: "src/modules/engine/engine-templates/templates/*Assets/**/*"
+  angular: "src/client/angular/**/*.coffee"
+  js: "src/client/static/js/**/*.js"
+  styl: "src/client/stylus/**/*.styl"
+  css: "src/client/static/css/**/*.css"
+  images: "src/client/static/img/**/*"
+  fonts: "src/client/static/fonts/**/*"
+  components: "src/client/static/components/**/*"
+  jade: "src/vclient/iews/static/**/*.jade"
+  assets: "src/server/engine/templates/*Assets/**/*"
 
   jsConcat: [
     "public/components/jquery/dist/jquery.min.js"
@@ -87,7 +87,7 @@ gulp.task "coffee", ->
     "directives/**/*.coffee"
     "services/**/*.coffee"
     "controllers/**/*.coffee"
-    "**/*.coffee"
+    "*.coffee"
   ]
   .pipe coffee()
   .pipe gulp.dest "public/js"
@@ -162,8 +162,8 @@ gulp.task "test", ->
 # Spin-up a development server
 gulp.task "server", ->
   nodemon
-    script: "src/adefy.coffee"
-    options: "--watch src/modules --watch src/helpers --watch src/models"
+    script: "src/server/server.coffee"
+    options: "--watch src/server"
 
 # Build all of the assets
 gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", "assets"]
