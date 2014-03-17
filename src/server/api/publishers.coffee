@@ -2,14 +2,15 @@ spew = require "spew"
 db = require "mongoose"
 async = require "async"
 _ = require "underscore"
-
+APIBase = require "./base"
 passport = require "passport"
 aem = require "../helpers/aem"
 isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
-class APIPublishers
+class APIPublishers extends APIBase
 
   constructor: (@app) ->
+    super model: "Publisher"
     @registerRoutes()
 
   ###
@@ -30,23 +31,6 @@ class APIPublishers
       preferredPricing: String options.preferredPricing || ""
       minimumCPM: Number options.minimumCPM || 0
       minimumCPC: Number options.minimumCPC || 0
-
-  ###
-  # Query helper method, that automatically takes care of population and error
-  # handling. The response is issued a JSON error message if an error occurs,
-  # otherwise the callback is called.
-  #
-  # @param [String] queryType
-  # @param [Object] query
-  # @param [Response] res
-  # @param [Method] callback
-  ###
-  query: (queryType, query, res, cb) ->
-    db.model("Publisher")[queryType] query
-    .exec (err, campaigns) ->
-      if aem.dbError err, res, false then return
-
-      cb campaigns
 
   registerRoutes: ->
 
@@ -108,7 +92,7 @@ class APIPublishers
     #            name: "NewPublisherName2"
     ###
     @app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return error404 res, req.param "id" unless pub
         return unless aem.isOwnerOf req.user, pub, res
 
@@ -147,7 +131,7 @@ class APIPublishers
     #          url: "/api/v1/publishers/DX2m3kWwm3TN48AMM5LDsgEG"
     ###
     @app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return error404 res, req.param "id" unless pub
         return unless aem.isOwnerOf req.user, pub, res
 
@@ -163,7 +147,7 @@ class APIPublishers
     #          url: "/api/v1/publishers"
     ###
     @app.get "/api/v1/publishers", isLoggedInAPI, (req, res) =>
-      @query "find", owner: req.user.id, res, (publishers) ->
+      @queryOwner req.user.id, res, (publishers) ->
 
         async.map publishers, (pub, done) ->
           pub.fetchOverviewStats (stats) ->
@@ -187,7 +171,7 @@ class APIPublishers
     @app.get "/api/v1/publishers/all", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "find", tutorial: false, res, (publishers) ->
+      @query tutorial: false, res, (publishers) ->
         async.map publishers, (pub, done) ->
           pub.fetchOverviewStats (stats) ->
 
@@ -209,7 +193,7 @@ class APIPublishers
     #          url: "/api/v1/publishers/xZTzWhVV9BJyoeWHaV4BzPln"
     ###
     @app.get "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return unless aem.isOwnerOf req.user, pub, res
 
@@ -227,7 +211,7 @@ class APIPublishers
     #          url: "/api/v1/publishers/vz69jRnMUaHs6HHfKgS4YpRk/approve"
     ###
     @app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
         return unless aem.isOwnerOf req.user, pub, res
@@ -253,7 +237,7 @@ class APIPublishers
     @app.post "/api/v1/publishers/:id/disaprove", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
         return unless aem.isOwnerOf req.user, pub, res
@@ -272,7 +256,7 @@ class APIPublishers
     #          url: "/api/v1/publishers/yZP2A5gjhhpueKOfQ2k7pAVC/activate"
     ###
     @app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
         return unless aem.isOwnerOf req.user, pub, res
@@ -290,7 +274,7 @@ class APIPublishers
     #          url: "/api/v1/publishers/Y2AOyPQfWk6Eg12sq71NpfZq/deactivate"
     ###
     @app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
         return unless aem.isOwnerOf req.user, pub, res
@@ -314,7 +298,7 @@ class APIPublishers
       return unless aem.param req.params.range, res, "Temporal range"
       return unless aem.param req.params.stat, res, "Stat"
 
-      @query "findById", req.params.id, res, (pub) ->
+      @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
 
         pub.fetchCustomStat req.params.range, req.params.stat, (data) ->

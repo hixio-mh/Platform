@@ -59,11 +59,6 @@ module.exports = (express, cb) ->
       done err, user
 
   ##
-  ## Initialize express
-  ##
-  express.setup()
-
-  ##
   ## Connect to MongoDB
   ##
   con = "mongodb://#{config("mongo_user")}:#{config("mongo_pass")}"
@@ -93,4 +88,4 @@ module.exports = (express, cb) ->
 
       # Set a timeout just in case connections take more than a minute to close
       setTimeout (-> process.exit 1), 60000
-      express.server.close -> process.exit 0
+      express.close -> process.exit 0

@@ -2,16 +2,17 @@ spew = require "spew"
 db = require "mongoose"
 _ = require "underscore"
 async = require "async"
-
+APIBase = require "./base"
 passport = require "passport"
 aem = require "../helpers/aem"
 compare = require "../helpers/compare"
 isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 engineFilters = require "../helpers/filters"
 
-class APICampaigns
+class APICampaigns extends APIBase
 
   constructor: (@app) ->
+    super model: "Campaign", populate: ["ads"]
     @registerRoutes()
 
   ###
@@ -41,24 +42,6 @@ class APICampaigns
       endDate: Number options.endDate || 0
 
       ads: []
-
-  ###
-  # Query helper method, that automatically takes care of population and error
-  # handling. The response is issued a JSON error message if an error occurs,
-  # otherwise the callback is called.
-  #
-  # @param [String] queryType
-  # @param [Object] query
-  # @param [Response] res
-  # @param [Method] callback
-  ###
-  query: (queryType, query, res, cb) ->
-    db.model("Campaign")[queryType] query
-    .populate "ads"
-    .exec (err, campaigns) ->
-      if aem.dbError err, res, false then return
-
-      cb campaigns
 
   ###
   # Populate stats field with all stats on provided campaigns
@@ -197,7 +180,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns",
     ###
     @app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
-      @query "find", owner: req.user.id, res, (campaigns) =>
+      @queryOwner req.user.id, res, (campaigns) =>
         @populateCampaignStats campaigns, (campaigns) =>
           res.json 200, @anonymize campaigns
 
@@ -211,7 +194,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/gt8hfuquiNfzdJac3YYeWmgE"
     ###
     @app.get "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (campaign) ->
+      @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -234,7 +217,7 @@ class APICampaigns
       # Todo: Figure out a way to break this stuff out onto the module
       #       scope, so we can test it
 
-      @query "findById", req.params.id, res, (campaign) =>
+      @queryId req.params.id, res, (campaign) =>
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -341,7 +324,7 @@ class APICampaigns
     @app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
       return unless aem.param req.params.id, res, "Id"
 
-      @query "findById", req.params.id, res, (campaign) ->
+      @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -363,7 +346,7 @@ class APICampaigns
       return unless aem.param req.params.range, res, "Temporal range"
       return unless aem.param req.params.stat, res, "Stat"
 
-      @query "findById", req.params.id, res, (campaign) ->
+      @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
@@ -379,7 +362,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/U1FyJtQHy8S5nfZvmfyjDPt3/activate"
     ###
     @app.post "/api/v1/campaigns/:id/activate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (campaign) ->
+      @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial
         return unless aem.isOwnerOf req.user, campaign, res
@@ -397,7 +380,7 @@ class APICampaigns
     #          url: "/api/v1/campaigns/WThH9UVp1V41Tw7qwOuR8PVm/deactivate"
     ###
     @app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (campaign) ->
+      @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial
         return unless aem.isOwnerOf req.user, campaign, res

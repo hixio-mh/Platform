@@ -19,7 +19,6 @@ src/client/static/components
 
 testResults.xml
 provisioning/roles/production/files/env_vars.sh
-Gemfile.lock
 cron.log
 
 setup_admin.js
