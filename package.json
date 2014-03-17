@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "private": true,
   "engine": "node >= 0.10.12",
-  "main": "src/adefy.coffee",
+  "main": "src/server/server.coffee",
   "contributors": [
     {
       "name": "Cris Mihalache",
