@@ -80,9 +80,9 @@
     "gulp-order": "~1.0.6"
   },
   "scripts": {
-    "test": "npm run test-server && npm run test-unit-client && npm run test-unit-server",
-    "test-server": "mocha -R spec ./tests/integration.coffee --compilers coffee:coffee-script/register",
-    "test-unit-client": "mocha-phantomjs ./tests/unit/client/test.html",
-    "test-unit-server": "mocha -R spec ./tests/unit.coffee --compilers coffee:coffee-script/register"
+    "test": "npm run integration-tests && npm run unit-tests-client && npm run unit-tests-server",
+    "integration-tests": "mocha -R spec ./tests/integration.coffee --compilers coffee:coffee-script/register",
+    "unit-tests-client": "mocha-phantomjs ./tests/unit/client/test.html",
+    "unit-tests-server": "mocha -R spec ./tests/unit.coffee --compilers coffee:coffee-script/register"
   }
 }
