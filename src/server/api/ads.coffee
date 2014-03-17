@@ -2,16 +2,17 @@ spew = require "spew"
 db = require "mongoose"
 async = require "async"
 _ = require "underscore"
-
+APIBase = require "./base"
 passport = require "passport"
 aem = require "../helpers/aem"
 isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 
-class APIAds
+class APIAds extends APIBase
 
   constructor: (@app) ->
+    super model: "Ad", populate: ["campaigns.campaign"]
     @registerRoutes()
 
   ###
@@ -26,24 +27,6 @@ class APIAds
       owner: owner
       name: options.name
       campaigns: []
-
-  ###
-  # Query helper method, that automatically takes care of population and error
-  # handling. The response is issued a JSON error message if an error occurs,
-  # otherwise the callback is called.
-  #
-  # @param [String] queryType
-  # @param [Object] query
-  # @param [Response] res
-  # @param [Method] callback
-  ###
-  query: (queryType, query, res, cb) ->
-    db.model("Ad")[queryType] query
-    .populate "campaigns.campaign"
-    .exec (err, ads) ->
-      if aem.dbError err, res, false then return
-
-      cb ads
 
   ###
   # Register our routes on an express server
@@ -84,7 +67,7 @@ class APIAds
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -108,7 +91,7 @@ class APIAds
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -140,7 +123,7 @@ class APIAds
         else
           object.split("//#{s3Host}/")[1]
 
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -166,7 +149,7 @@ class APIAds
     #          url: "/api/v1/ads/fCf3hGpvM3rVIoDNi09bvMYo"
     ###
     @app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -184,7 +167,7 @@ class APIAds
     #          url: "/api/v1/ads"
     ###
     @app.get "/api/v1/ads", isLoggedInAPI, (req, res) =>
-      @query "find", owner: req.user.id, res, (ads) ->
+      @queryOwner req.user.id, res, (ads) ->
         return res.json 200, [] if ads.length == 0
 
         async.map ads, (ad, done) ->
@@ -219,11 +202,7 @@ class APIAds
     @app.get "/api/v1/ads/all", isLoggedInAPI, (req, res) =>
       return aem.send res, "401" unless req.user.admin
 
-      db.model("Ad")
-      .find tutorial: false
-      .populate("owner")
-      .exec (err, ads) ->
-        return if aem.dbError err, res, false
+      @queryRaw { populate: ["owner"] }, tutorial: false, res, (ads) ->
 
         # Attach 24 hour stats to publishers, and return with complete data
         async.map ads, (ad, done) ->
@@ -247,7 +226,7 @@ class APIAds
     #          url: "/api/v1/ads/l46Wyehf72ovf1tkDa5Y3ddA"
     ###
     @app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return unless aem.isOwnerOf req.user, ad, res
 
@@ -267,7 +246,7 @@ class APIAds
     #          url: "/api/v1/ads/WaeE4dObsK7ObS2ifntxqrGh/approve"
     ###
     @app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
@@ -295,7 +274,7 @@ class APIAds
     @app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) =>
       if not req.user.admin then return aem.send res, "403", error: "Attempted to access protected Ad"
 
-      @query "findById", req.params.id, res, (ad) ->
+      @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res

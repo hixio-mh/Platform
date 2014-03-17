@@ -6,7 +6,7 @@ db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
 config = require "../config"
 adefyDomain = "http://#{config("domain")}"
-
+APIBase = require "./base"
 powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
 aem = require "../helpers/aem"
@@ -23,27 +23,11 @@ paypalSDK.configure
   client_id: config "paypal_client_id"
   client_secret: config "paypal_client_secret"
 
-class APIUsers
+class APIUsers extends APIBase
 
   constructor: (@app) ->
+    super model: "User"
     @registerRoutes()
-
-  ###
-  # Query helper method, that automatically takes care of population and error
-  # handling. The response is issued a JSON error message if an error occurs,
-  # otherwise the callback is called.
-  #
-  # @param [String] queryType
-  # @param [Object] query
-  # @param [Response] res
-  # @param [Method] callback
-  ###
-  query: (queryType, query, res, cb) ->
-    db.model("User")[queryType] query
-    .exec (err, user) ->
-      if aem.dbError err, res, false then return
-
-      cb user
 
   ###
   # Creates a new user model
@@ -94,7 +78,7 @@ class APIUsers
       return unless aem.param req.body.password, res, "Password"
 
       # Ensure username is not taken (don't trust client-side check)
-      @query "findOne", username: req.body.username, (user) ->
+      @queryOne username: req.body.username, (user) ->
         return aem.send res, "409", error: "Username already taken" if user
 
         newUser = @createNewUser req.body
@@ -116,7 +100,7 @@ class APIUsers
     @app.post "/api/v1/forgot", (req, res) =>
       return unless aem.param req.body.email, res, "Email"
 
-      @query "findOne", email: req.body.email, res, (user) ->
+      @queryOne email: req.body.email, res, (user) ->
         return aem.send res, "401", error: "Email invalid" unless user
 
         if user.resetTokenValid()
@@ -156,7 +140,7 @@ class APIUsers
       if req.body.password.trim().length == 0
         return aem.send res, "400", error: "No password provided"
 
-      @query "findOne", forgotPasswordToken: req.body.token, res, (user) ->
+      @queryOne forgotPasswordToken: req.body.token, res, (user) ->
         return aem.send res, "401", error: "Token invalid" unless user
 
         if not user.resetTokenValid()
@@ -187,12 +171,12 @@ class APIUsers
       return aem.send res, "403" unless req.user.admin
 
       if req.query.username
-        @query "findOne", username: req.query.username, res, (user) ->
+        @queryOne username: req.query.username, res, (user) ->
           return aem.send res, "404" unless user
           user.updateFunds -> res.json user.toAPI()
 
       else
-        @query "find", {}, res, (users) ->
+        @queryAll res, (users) ->
           async.map users, (user, done) ->
             user.updateFunds ->
               done null, user
@@ -212,7 +196,7 @@ class APIUsers
     @app.get "/api/v1/users/:id", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "findById", req.params.id, res, (user) ->
+      @queryId req.params.id, res, (user) ->
         res.json user.toAPI()
 
     ###
@@ -226,7 +210,7 @@ class APIUsers
     @app.delete "/api/v1/users/:id", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "findById", req.params.id, res, (user) ->
+      @queryId req.params.id, res, (user) ->
         if "#{req.user.id}" == "#{user._id}"
           return aem.send res, "500", error: "You can't delete yourself!"
 
@@ -243,7 +227,7 @@ class APIUsers
     #          url: "/api/v1/user"
     ###
     @app.get "/api/v1/user", isLoggedInAPI, (req, res) =>
-      @query "findById", req.user.id, res, (user) ->
+      @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
 
         user.updateFunds -> res.json user.toAPI()
@@ -273,7 +257,7 @@ class APIUsers
     #            lname: "Guy"
     ###
     @app.post "/api/v1/user", isLoggedInAPI, (req, res) =>
-      @query "findById", req.user.id, res, (user) ->
+      @queryId req.user.id, res, (user) ->
 
         req.onValidationError (msg) -> aem.send res, "400", error: msg.path
 
@@ -339,7 +323,7 @@ class APIUsers
     #          url: "/api/v1/user/transactions"
     ###
     @app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) =>
-      @query "findById", req.user.id, res, (user) ->
+      @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
         res.json user.transactions
 
@@ -389,7 +373,7 @@ class APIUsers
     #          url: "/api/v1/user/deposit/600"
     ###
     @app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) =>
-      @query "findById", req.user.id, res, (user) ->
+      @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
 
         if isNaN req.params.amount
@@ -459,7 +443,7 @@ class APIUsers
       else if action == "confirm" and payerID == undefined
         return aem.send res, "400", error: "No payer id"
 
-      @query "findById", req.user.id, {}, (user) ->
+      @queryId req.user.id, {}, (user) ->
         return aem.send res, "404" unless user
 
         pendingDeposit = user.pendingDeposit.split "|"
