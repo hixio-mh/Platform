@@ -13,7 +13,7 @@
 
   tasks:
     - name: start platform
-      shell: 'cd /var/adefy && NODE_ENV=development pm2 start src/adefy.coffee -i 4'
+      shell: 'cd /var/adefy && NODE_ENV=development pm2 start src/server/server.coffee -i 4'
       register: start_result
       ignore_errors: true
 
