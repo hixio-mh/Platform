@@ -2,9 +2,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.define "platform" do |platform|
-    platform.vm.box = "precise32"
-    platform.vm.box_url = "http://files.vagrantup.com/precise32.box"
+  config.vm.define "platform-docker" do |platform|
+    platform.vm.box = "docker-precise64"
+    platform.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/ubuntu-12.04.3-amd64-vbox.box"
 
     platform.ssh.forward_agent = true
     platform.vm.network :private_network, ip: "192.168.100.11"
