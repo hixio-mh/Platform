@@ -111,7 +111,7 @@ class APICreator
     ###
     @app.get "/api/v1/creator/:url", (req, res) =>
       urlObj = url.parse req.param "url"
-      if not @validURL urlObj then return aem.send res, "400", error: "Invalid Creator url #{req.param("url")}"
+      if not @validURL urlObj then return aem.send res, "400", error: "Invalid Creator url #{req.params.url}"
 
       request
         url: req.param "url"
