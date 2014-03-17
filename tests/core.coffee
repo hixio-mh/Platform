@@ -13,12 +13,6 @@ describe "General Authentication", ->
   it "Expect redirection on root access", (done) ->
     api.get("/").expect 302, done
 
-  it "Should redirect to login on unauth access of existing page", (done) ->
-    api.get("/dashboard").expect 302, done
-
-  it "Should redirect to login on unauth access of non-existent page", (done) ->
-    api.get("/tz4mnKtz4mnKqE03OqzDMWqE03OqzDMW").expect 302, done
-
   it "Should reject incorrect credentials", (done) ->
     api.post("/api/v1/login").send
       username: "testy-tristat"

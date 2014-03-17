@@ -59,11 +59,6 @@ module.exports = (express, cb) ->
       done err, user
 
   ##
-  ## Initialize express
-  ##
-  express.setup()
-
-  ##
   ## Connect to MongoDB
   ##
   con = "mongodb://#{config("mongo_user")}:#{config("mongo_pass")}"
