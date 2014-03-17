@@ -28,8 +28,8 @@ class FetchEngine
       if not validIP req.query.ip then return "Invalid IP"
 
     if type == "organic"
-      if isNaN req.param("width") then return "Invalid width"
-      if isNaN req.param("height") then return "Invalid height"
+      if isNaN req.params.width then return "Invalid width"
+      if isNaN req.params.height then return "Invalid height"
 
     null
 
@@ -70,7 +70,7 @@ class FetchEngine
     options.width = Number req.param "width"
     options.height = Number req.param "height"
 
-    if req.param("html") != undefined then options.html = true
+    if req.params.html != undefined then options.html = true
 
     options
 
