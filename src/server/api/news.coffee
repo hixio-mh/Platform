@@ -3,14 +3,15 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-
+APIBase = require "./base"
 passport = require "passport"
 aem = require "../helpers/aem"
 isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
-class APINews
+class APINews extends APIBase
 
   constructor: (@app) ->
+    super model: "News"
     @registerRoutes()
 
   ###
@@ -27,23 +28,6 @@ class APINews
       title: options.title
       summary: options.summary
       text: options.text
-
-  ###
-  # Query helper method, that automatically takes care of population and error
-  # handling. The response is issued a JSON error message if an error occurs,
-  # otherwise the callback is called.
-  #
-  # @param [String] queryType
-  # @param [Object] query
-  # @param [Response] res
-  # @param [Method] callback
-  ###
-  query: (queryType, query, res, cb) ->
-    db.model("News")[queryType] query
-    .exec (err, news) ->
-      if aem.dbError err, res, false then return
-
-      cb news
 
   registerRoutes: ->
 
@@ -86,7 +70,7 @@ class APINews
     #          url: "/api/v1/news"
     ###
     @app.get "/api/v1/news", isLoggedInAPI, (req, res) =>
-      @query "find", {}, res, (list) ->
+      @queryAll res, (list) ->
         res.json 200, list.map (article) -> article.toAnonAPI()
 
     ###
@@ -99,7 +83,7 @@ class APINews
     #          url: "/api/v1/news/J5VLjLsiPC2xO2VBlhjeMlBL"
     ###
     @app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
-      @query "findById", req.params.id, res, (news) ->
+      @queryId req.params.id, res, (news) ->
         return aem.send res, "404" unless news
 
         res.json 200, news.toAnonAPI()
@@ -123,7 +107,7 @@ class APINews
     @app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "findById", req.params.id, res, (news) ->
+      @queryId req.params.id, res, (news) ->
         return aem.send res, "404" unless news
 
         news.title = req.body.title if req.body.title != undefined
@@ -146,7 +130,7 @@ class APINews
     @app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      @query "findById", req.params.id, res, (news) ->
+      @queryId req.params.id, res, (news) ->
         return aem.send res, "404" unless news
 
         news.remove -> aem.send res, "200:delete"
