@@ -1,0 +1,168 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <!-- Testing libs -->
+    <script src="../../../public/components/mocha/mocha.js"></script>
+    <script src="../../../public/components/chai/chai.js"></script>
+
+    <script>
+      mocha.ui("bdd");
+      mocha.reporter("spec");
+      chai.should();
+      expect = chai.expect;
+    </script>
+
+    <!-- Runtime libs -->
+    <script src="../../../public/components/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/js/vendor/stackBlur.min.js"></script>
+    <script src="../../../public/js/vendor/guiders.js"></script>
+    <script src="../../../public/components/accounting/accounting.min.js"></script>
+    <script src="../../../public/components/select2/select2.min.js"></script>
+    <script src="../../../public/components/chosen/chosen.jquery.min.js"></script>
+    <script src="../../../public/components/moment/min/moment.min.js"></script>
+    <script src="../../../public/components/d3/d3.min.js"></script>
+    <script src="../../../public/components/rickshaw/rickshaw.min.js"></script>
+
+    <!-- AngularJS -->
+    <script src="../../../public/components/angular/angular.min.js"></script>
+    <script src="../../../public/components/angular-resource/angular-resource.min.js"></script>
+    <script src="../../../public/components/angular-route/angular-route.min.js"></script>
+    <script src="../../../public/components/angular-mocks/angular-mocks.js"></script>
+    <script src="../../../public/components/angular-ui-select2/src/select2.js"></script>
+    <script src="../../../public/components/angular-chosen-localytics/chosen.js"></script>
+    <script src="../../../public/components/ng-table/ng-table.js"></script>
+    <script src="../../../public/components/angular-markdown-filter/markdown.js"></script>
+
+    <!-- More runtime libs, that depend on angular -->
+    <script src="../../../public/components/angles/angles.js"></script>
+    <script src="../../../public/components/ngQuickDate/dist/ng-quick-date.min.js"></script>
+
+    <!-- App Definition -->
+    <script src="../../../public/js/routes/normal.js"></script>
+    <script src="../../../public/js/routes/admin.js"></script>
+
+    <!-- Root Controller -->
+    <script src="../../../public/js/controllers/root.js"></script>
+
+    <!-- Tutorial -->
+    <script src="../../../public/js/tutorial/dashboard.js"></script>
+    <script src="../../../public/js/tutorial/apps.js"></script>
+    <script src="../../../public/js/tutorial/appDetails.js"></script>
+    <script src="../../../public/js/tutorial/ads.js"></script>
+    <script src="../../../public/js/tutorial/adDetails.js"></script>
+    <script src="../../../public/js/tutorial/campaigns.js"></script>
+    <script src="../../../public/js/tutorial/campaignDetails.js"></script>
+    <script src="../../../public/js/tutorial/reports.js"></script>
+    <script src="../../../public/js/tutorial/funds.js"></script>
+
+    <!-- User Factory -->
+    <script src="../../../public/js/factories/user.js"></script>
+
+    <!-- Directives -->
+    <script src="../../../public/js/directives/dropdown.js"></script>
+    <script src="../../../public/js/directives/tab.js"></script>
+    <script src="../../../public/js/directives/form_modal.js"></script>
+    <script src="../../../public/js/directives/graph.js"></script>
+    <script src="../../../public/js/directives/analytics.js"></script>
+    <script src="../../../public/js/directives/toggle_switch.js"></script>
+    <script src="../../../public/js/directives/creator.js"></script>
+
+    <!-- Services -->
+    <script src="../../../public/js/services/campaign.js"></script>
+    <script src="../../../public/js/services/app.js"></script>
+    <script src="../../../public/js/services/ad.js"></script>
+    <script src="../../../public/js/services/user.js"></script>
+    <script src="../../../public/js/services/news.js"></script>
+
+    <!-- Controllers -->
+    <script src="../../../public/js/controllers/account/funds.js"></script>
+    <script src="../../../public/js/controllers/account/settings.js"></script>
+
+    <script src="../../../public/js/controllers/ads/native.js"></script>
+    <script src="../../../public/js/controllers/ads/organic.js"></script>
+    <script src="../../../public/js/controllers/ads/detail.js"></script>
+    <script src="../../../public/js/controllers/ads/index.js"></script>
+    <script src="../../../public/js/controllers/ads/menu.js"></script>
+    <script src="../../../public/js/controllers/ads/reminder.js"></script>
+    <script src="../../../public/js/factories/ad.js"></script>
+
+    <script src="../../../public/js/controllers/apps/create.js"></script>
+    <script src="../../../public/js/controllers/apps/details.js"></script>
+    <script src="../../../public/js/controllers/apps/edit.js"></script>
+    <script src="../../../public/js/controllers/apps/index.js"></script>
+    <script src="../../../public/js/controllers/apps/menu.js"></script>
+    <script src="../../../public/js/factories/app.js"></script>
+
+    <script src="../../../public/js/controllers/campaigns/create.js"></script>
+    <script src="../../../public/js/controllers/campaigns/details.js"></script>
+    <script src="../../../public/js/controllers/campaigns/edit.js"></script>
+    <script src="../../../public/js/controllers/campaigns/index.js"></script>
+    <script src="../../../public/js/controllers/campaigns/menu.js"></script>
+    <script src="../../../public/js/factories/campaign.js"></script>
+
+    <script src="../../../public/js/controllers/dashboards/advertiser.js"></script>
+    <script src="../../../public/js/controllers/dashboards/publisher.js"></script>
+
+    <script src="../../../public/js/controllers/reports/ads.js"></script>
+    <script src="../../../public/js/controllers/reports/apps.js"></script>
+    <script src="../../../public/js/controllers/reports/campaigns.js"></script>
+
+    <script src="../../../public/js/controllers/admin/index.js"></script>
+    <script src="../../../public/js/controllers/admin/publishers.js"></script>
+    <script src="../../../public/js/controllers/admin/users.js"></script>
+    <script src="../../../public/js/controllers/admin/menu.js"></script>
+    <script src="../../../public/js/controllers/admin/ads.js"></script>
+
+    <script src="../../../public/js/controllers/news/create.js"></script>
+    <script src="../../../public/js/controllers/news/details.js"></script>
+    <script src="../../../public/js/controllers/news/edit.js"></script>
+    <script src="../../../public/js/controllers/news/index.js"></script>
+    <script src="../../../public/js/controllers/news/menu.js"></script>
+    <script src="../../../public/js/factories/news.js"></script>
+
+    <!-- Tests! -->
+    <script src="tests/root.js"></script>
+    <script src="tests/controllers/account/funds.js"></script>
+    <script src="tests/controllers/account/settings.js"></script>
+
+    <script src="tests/controllers/ads/organic.js"></script>
+    <script src="tests/controllers/ads/native.js"></script>
+    <script src="tests/controllers/ads/details.js"></script>
+    <script src="tests/controllers/ads/index.js"></script>
+    <script src="tests/controllers/ads/menu.js"></script>
+    <script src="tests/controllers/ads/reminder.js"></script>
+
+    <script src="tests/controllers/apps/organic.js"></script>
+    <script src="tests/controllers/apps/native.js"></script>
+    <script src="tests/controllers/apps/details.js"></script>
+    <script src="tests/controllers/apps/edit.js"></script>
+    <script src="tests/controllers/apps/index.js"></script>
+    <script src="tests/controllers/apps/menu.js"></script>
+
+    <script src="tests/controllers/campaigns/create.js"></script>
+    <script src="tests/controllers/campaigns/details.js"></script>
+    <script src="tests/controllers/campaigns/edit.js"></script>
+    <script src="tests/controllers/campaigns/index.js"></script>
+    <script src="tests/controllers/campaigns/menu.js"></script>
+
+    <script src="tests/controllers/dashboards/advertiser.js"></script>
+    <script src="tests/controllers/dashboards/publisher.js"></script>
+
+    <script src="tests/controllers/reports/campaigns.js"></script>
+    <script src="tests/controllers/reports/apps.js"></script>
+    <script src="tests/controllers/reports/ads.js"></script>
+
+    <script src="tests/controllers/news/create.js"></script>
+    <script src="tests/controllers/news/details.js"></script>
+    <script src="tests/controllers/news/edit.js"></script>
+
+    <script>
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+    </script>
+  </body>
+</html>
