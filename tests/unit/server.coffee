@@ -35,3 +35,5 @@ require "./server/models/user"
 require "./server/helpers/filters"
 require "./server/helpers/graphiteInterface"
 require "./server/helpers/redisInterface"
+
+require "./server/api/base"

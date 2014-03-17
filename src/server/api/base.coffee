@@ -11,6 +11,20 @@ class APIBase
     @_populateQueries = options.populate or []
 
   ###
+  # Get API model name
+  #
+  # @return [String] model
+  ###
+  getModel: -> @_model
+
+  ###
+  # Get default query population field list
+  #
+  # @return [Array<String>] fields
+  ###
+  getPopulateFields: -> @_populateQueries
+
+  ###
   # Fetch all models
   #
   # @param [Response] res
