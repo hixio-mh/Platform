@@ -16,22 +16,21 @@ express = require "./express"
 
 require("./init") express, ->
 
-  require("./api/ads") express.server
-  require("./api/analytics") express.server
-  require("./api/campaigns") express.server
-  require("./api/creator") express.server
-  require("./api/editor") express.server
-  require("./api/filters") express.server
-  require("./api/news") express.server
-  require("./api/publishers") express.server
-  require("./api/serve") express.server, fetchEngine
-  require("./api/users") express.server
-  require("./api/views") express.server
+  require("./api/ads") express.app
+  require("./api/analytics") express.app
+  require("./api/campaigns") express.app
+  require("./api/creator") express.app
+  require("./api/editor") express.app
+  require("./api/filters") express.app
+  require("./api/news") express.app
+  require("./api/publishers") express.app
+  require("./api/serve") express.app, fetchEngine
+  require("./api/users") express.app
+  require("./api/views") express.app
 
   # TODO: Rename/split these up, or merge them somehow
   #       Can we listen and then register more routes?
-  express.initLastRoutes()
-  express.beginListen()
+  express.register404Route()
 
   spew.init "Init complete!"
 
