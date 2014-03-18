@@ -23,7 +23,7 @@ paths =
   images: "src/client/static/img/**/*"
   fonts: "src/client/static/fonts/**/*"
   components: "src/client/static/components/**/*"
-  jade: "src/vclient/iews/static/**/*.jade"
+  jade: "src/client/views/static/**/*.jade"
   assets: "src/server/engine/templates/*Assets/**/*"
 
   jsConcat: [
