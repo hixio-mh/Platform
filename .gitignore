@@ -14,8 +14,7 @@ naught.log
 stderr.log
 stdout.log
 
-bower_components
-src/client/static/components
+src/static/components
 
 testResults.xml
 provisioning/roles/production/files/env_vars.sh

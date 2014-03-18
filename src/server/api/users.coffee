@@ -2,6 +2,7 @@
 ## User manipulation
 ##
 spew = require "spew"
+async = require "async"
 db = require "mongoose"
 paypalSDK = require "paypal-rest-sdk"
 config = require "../config"
