@@ -27,7 +27,7 @@
   sudo: yes
 
 - name: deploy platform
-  git: repo=ssh://git@bitbucket.org/spectrumit/adefyplatform.git dest=/var/adefy version={{ adefy_branch }}
+  git: repo=ssh://git@github.com/Adefy/Platform.git dest=/var/adefy version={{ adefy_branch }}
 
 - name: install node dependencies
   command: npm install chdir=/var/adefy

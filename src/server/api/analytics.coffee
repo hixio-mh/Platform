@@ -142,7 +142,7 @@ class APIAnalytics
     #            sum: true
     ###
     @app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) =>
-      db.model("Publisher").findById req.param("id"), (err, publisher) =>
+      db.model("Publisher").findById req.params.id, (err, publisher) =>
         return if aem.dbError err, res, false
         return aem.send res, "404" unless publisher
 
