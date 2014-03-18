@@ -13,8 +13,8 @@
     - fish
     - python-pycurl # Needed for apt_repo
     - fontconfig # Needed for PhantomJS
-    - ruby
+    - ruby1.9.1
 
 - name: install bundler
   sudo: yes
-  gem: executable=/opt/vagrant_ruby/bin/gem name=bundler state=present
+  gem: name=bundler state=present
