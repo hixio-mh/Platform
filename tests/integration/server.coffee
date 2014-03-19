@@ -23,7 +23,7 @@ before (done) ->
       if msg == "init_complete"
 
         # Give models time to load
-        setTimeout (-> done()), 700
+        setTimeout (-> done()), 1500
 
 after -> if adefy != null then adefy.kill()
 
