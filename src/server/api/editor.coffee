@@ -2,15 +2,13 @@ spew = require "spew"
 fs = require "fs"
 db = require "mongoose"
 http = require "http"
-
-passport = require "passport"
 aem = require "../helpers/aem"
 randomize = require "../helpers/randomize"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
+APIBase = require "./base"
 
 staticDir = "#{__dirname}/../../client/static/"
 
-class APIEditor
+class APIEditor extends APIBase
 
   constructor: (@app) ->
     @registerRoutes()
@@ -26,7 +24,7 @@ class APIEditor
     #   $.ajax method: "GET",
     #          url: "/api/v1/editor/7AboeHJAcrKNeeQFUYvInYVB"
     ###
-    @app.get "/api/v1/editor/:ad", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/editor/:ad", @apiLogin, (req, res) ->
       return unless aem.param req.params.ad, res, "Ad"
 
       res.render "editor.jade", ad: req.params.ad, (err, html) ->
@@ -86,7 +84,7 @@ class APIEditor
     #          data:
     #            id: "2rWLv0Txs3g3LUX1ZrQ4HNwa"
     ###
-    @app.get "/api/v1/editor", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/editor", @apiLogin, (req, res) ->
       return unless aem.param req.query.id, res, "Id"
 
       db.model("Ad").findById req.query.id, (err, ad) ->
@@ -111,7 +109,7 @@ class APIEditor
     #            id: "slZTN6DLd1UbjbvkFwKwfWJL"
     #            data: "{\"minblur\":16}"
     ###
-    @app.post "/api/v1/editor", isLoggedInAPI, (req, res) ->
+    @app.post "/api/v1/editor", @apiLogin, (req, res) ->
       return unless aem.param req.query.id, res, "Id"
       return unless aem.param req.query.data, res, "Data"
 
@@ -143,7 +141,7 @@ class APIEditor
     #            id: "YATqPkB7fT5tvosqjqhSqWmk"
     #            data: "{\"minblur\":16}"
     ###
-    @app.post "/api/v1/editor/export", isLoggedInAPI, (req, res) ->
+    @app.post "/api/v1/editor/export", @apiLogin, (req, res) ->
       return unless  aem.param req.query.id, res, "Id"
       return unless aem.param req.query.data, res, "Data"
 

@@ -3,12 +3,10 @@ request = require "request"
 url = require "url"
 cheerio = require "cheerio"
 accounting = require "accounting"
-
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
+APIBase = require "./base"
 
-class APICreator
+class APICreator extends APIBase
 
   constructor: (@app) ->
     @registerRoutes()

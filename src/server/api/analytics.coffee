@@ -2,15 +2,13 @@ graphiteInterface = require "../helpers/graphiteInterface"
 spew = require "spew"
 crypto = require "crypto"
 db = require "mongoose"
-
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
+APIBase = require "./base"
 
 ###
 # TODO: Document, and replace direct queries with calls to other API modules
 ###
-class APIAnalytics
+class APIAnalytics extends APIBase
 
   constructor: (@app) ->
     @registerRoutes()
@@ -75,7 +73,7 @@ class APIAnalytics
     #            sum: false
     #            total: 20
     ###
-    @app.get "/api/v1/analytics/campaigns/:id/:stat", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/analytics/campaigns/:id/:stat", @apiLogin, (req, res) =>
       db.model("Campaign")
       .findById(req.param "id")
       .populate("ads")
@@ -108,7 +106,7 @@ class APIAnalytics
     #            interval: "30minutes"
     #            sum: true
     ###
-    @app.get "/api/v1/analytics/ads/:id/:stat", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/analytics/ads/:id/:stat", @apiLogin, (req, res) =>
       db.model("Ad")
       .findById(req.param "id")
       .populate("campaigns.campaign")
@@ -141,7 +139,7 @@ class APIAnalytics
     #            interval: "30minutes"
     #            sum: true
     ###
-    @app.get "/api/v1/analytics/publishers/:id/:stat", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/analytics/publishers/:id/:stat", @apiLogin, (req, res) =>
       db.model("Publisher").findById req.params.id, (err, publisher) =>
         return if aem.dbError err, res, false
         return aem.send res, "404" unless publisher
@@ -161,7 +159,7 @@ class APIAnalytics
     #   $.ajax method: "GET",
     #          url: "/api/v1/analytics/totals/:stat"
     ###
-    @app.get "/api/v1/analytics/totals/:stat", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/analytics/totals/:stat", @apiLogin, (req, res) =>
       stat = req.param "stat"
       options = @buildOptionsFromQuery req
 
@@ -212,7 +210,7 @@ class APIAnalytics
     #   $.ajax method: "GET",
     #          url: "/api/v1/analytics/counts/User"
     ###
-    @app.get "/api/v1/analytics/counts/:model", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/analytics/counts/:model", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       model = req.param "model"
