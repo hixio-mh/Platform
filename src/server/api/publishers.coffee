@@ -3,9 +3,7 @@ db = require "mongoose"
 async = require "async"
 _ = require "underscore"
 APIBase = require "./base"
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
 class APIPublishers extends APIBase
 
@@ -56,7 +54,7 @@ class APIPublishers extends APIBase
     #            name: "NewPublisherName2"
     #            catergory: "Games"
     ###
-    @app.post "/api/v1/publishers", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers", @apiLogin, (req, res) =>
       return unless aem.param req.body.name, res, "Application name"
 
       req.body.type = 0 if req.body.type != 1 and req.body.type != 2
@@ -91,7 +89,7 @@ class APIPublishers extends APIBase
     #          data:
     #            name: "NewPublisherName2"
     ###
-    @app.post "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return error404 res, req.param "id" unless pub
         return unless aem.isOwnerOf req.user, pub, res
@@ -130,7 +128,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "DELETE",
     #          url: "/api/v1/publishers/DX2m3kWwm3TN48AMM5LDsgEG"
     ###
-    @app.delete "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
+    @app.delete "/api/v1/publishers/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return error404 res, req.param "id" unless pub
         return unless aem.isOwnerOf req.user, pub, res
@@ -146,7 +144,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/publishers"
     ###
-    @app.get "/api/v1/publishers", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/publishers", @apiLogin, (req, res) =>
       @queryOwner req.user.id, res, (publishers) ->
 
         async.map publishers, (pub, done) ->
@@ -168,7 +166,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/publishers/all"
     ###
-    @app.get "/api/v1/publishers/all", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/publishers/all", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @query tutorial: false, res, (publishers) ->
@@ -192,7 +190,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/publishers/xZTzWhVV9BJyoeWHaV4BzPln"
     ###
-    @app.get "/api/v1/publishers/:id", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/publishers/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return unless aem.isOwnerOf req.user, pub, res
@@ -210,7 +208,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/publishers/vz69jRnMUaHs6HHfKgS4YpRk/approve"
     ###
-    @app.post "/api/v1/publishers/:id/approve", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers/:id/approve", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
@@ -234,7 +232,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/publishers/IvaJDAKMXfpYFoOdhMtXyeIh/disaprove"
     ###
-    @app.post "/api/v1/publishers/:id/disaprove", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers/:id/disaprove", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @queryId req.params.id, res, (pub) ->
@@ -255,7 +253,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/publishers/yZP2A5gjhhpueKOfQ2k7pAVC/activate"
     ###
-    @app.post "/api/v1/publishers/:id/activate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers/:id/activate", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
@@ -273,7 +271,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/publishers/Y2AOyPQfWk6Eg12sq71NpfZq/deactivate"
     ###
-    @app.post "/api/v1/publishers/:id/deactivate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/publishers/:id/deactivate", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (pub) ->
         return aem.send res, "404" unless pub
         return aem.send res, "401" if pub.tutorial
@@ -293,7 +291,7 @@ class APIPublishers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/publishers/Z7e4r1sPSeevjV5HTS9yhyXy/impressions/from=-24h&to=-1h"
     ###
-    @app.get "/api/v1/publishers/stats/:id/:stat/:range", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/publishers/stats/:id/:stat/:range", @apiLogin, (req, res) =>
       return unless aem.param req.params.id, res, "Publisher id"
       return unless aem.param req.params.range, res, "Temporal range"
       return unless aem.param req.params.stat, res, "Stat"

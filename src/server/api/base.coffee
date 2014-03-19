@@ -1,5 +1,6 @@
 db = require "mongoose"
 aem = require "../helpers/aem"
+passport = require "passport"
 
 ###
 # API base class, provides useful methods for route implementation
@@ -94,5 +95,23 @@ class APIBase
       return if aem.dbError err, res, false
 
       cb objects
+
+  ###
+  # Passport API authentication middleware to pass to requests
+  #
+  # @param [Request] req
+  # @param [Response] res
+  # @param [Method] next
+  ###
+  apiLogin: (req, res, next) ->
+    return next() if req.isAuthenticated()
+
+    passport.authenticate("localapikey", session: false, (err, user, info) ->
+      return next err if err
+      return aem.make res, "403:apikey" unless user
+
+      req.user = user
+      next()
+    ) req, res, next
 
 module.exports = APIBase

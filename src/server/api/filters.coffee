@@ -3,13 +3,11 @@
 ##
 spew = require "spew"
 db = require "mongoose"
-
-passport = require "passport"
 aem = require "../helpers/aem"
 filterEngine = require "../helpers/filters"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
+APIBase = require "./base"
 
-class APIFilters
+class APIFilters extends APIBase
 
   constructor: (@app) ->
     @registerRoutes()
@@ -27,7 +25,7 @@ class APIFilters
     #          data:
     #            name: "Ger"
     ###
-    @app.get "/api/v1/filters/countries", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/filters/countries", @apiLogin, (req, res) ->
       if req.query.q == undefined
         res.json filterEngine.getCountries()
       else
@@ -46,7 +44,7 @@ class APIFilters
     #          data:
     #            name: "Gam"
     ###
-    @app.get "/api/v1/filters/categories", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/filters/categories", @apiLogin, (req, res) ->
       if req.query.q == undefined
         res.json filterEngine.getCategories()
       else
@@ -65,7 +63,7 @@ class APIFilters
     #          data:
     #            name: "Andr"
     ###
-    @app.get "/api/v1/filters/devices", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/filters/devices", @apiLogin, (req, res) ->
       if req.query.q == undefined
         res.json filterEngine.getDevices()
       else
@@ -84,7 +82,7 @@ class APIFilters
     #          data:
     #            name: "Appl"
     ###
-    @app.get "/api/v1/filters/manufacturers", isLoggedInAPI, (req, res) ->
+    @app.get "/api/v1/filters/manufacturers", @apiLogin, (req, res) ->
       if req.query.q == undefined
         res.json filterEngine.getManufacturers()
       else

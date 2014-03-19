@@ -5,15 +5,13 @@ spew = require "spew"
 db = require "mongoose"
 redis = require("../helpers/redisInterface").main
 NodeCache = require "node-cache"
-
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
+APIBase = require "./base"
 
 # Cache used for guarding against multiple duplicate impressions/clicks
 guardCache = new NodeCache stdTTL: 1
 
-class APIServe
+class APIServe extends APIBase
 
   constructor: (@app, @adEngine) ->
     @registerRoutes()

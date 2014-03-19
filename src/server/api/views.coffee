@@ -4,8 +4,9 @@ routes = require "../views.json"
 config = require "../config"
 crypto = require "crypto"
 passport = require "passport"
+APIBase = require "./base"
 
-class APIViews
+class APIViews extends APIBase
 
   constructor: (@app) ->
     @registerRoutes()

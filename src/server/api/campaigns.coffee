@@ -3,10 +3,8 @@ db = require "mongoose"
 _ = require "underscore"
 async = require "async"
 APIBase = require "./base"
-passport = require "passport"
 aem = require "../helpers/aem"
 compare = require "../helpers/compare"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 engineFilters = require "../helpers/filters"
 
 class APICampaigns extends APIBase
@@ -156,7 +154,7 @@ class APICampaigns extends APIBase
     #            bidSystem: ""
     #            bid: ""
     ###
-    @app.post "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/campaigns", @apiLogin, (req, res) =>
       return unless aem.param req.body.name, res, "Campaign name"
       return unless aem.param req.body.category, res, "Category"
       return unless aem.param req.body.pricing, res, "Pricing"
@@ -179,7 +177,7 @@ class APICampaigns extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/campaigns",
     ###
-    @app.get "/api/v1/campaigns", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/campaigns", @apiLogin, (req, res) =>
       @queryOwner req.user.id, res, (campaigns) =>
         @populateCampaignStats campaigns, (campaigns) =>
           res.json 200, @anonymize campaigns
@@ -193,7 +191,7 @@ class APICampaigns extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/campaigns/gt8hfuquiNfzdJac3YYeWmgE"
     ###
-    @app.get "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/campaigns/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
@@ -212,7 +210,7 @@ class APICampaigns extends APIBase
     #          data:
     #            --campaign-update-data--
     ###
-    @app.post "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/campaigns/:id", @apiLogin, (req, res) =>
 
       # Todo: Figure out a way to break this stuff out onto the module
       #       scope, so we can test it
@@ -321,7 +319,7 @@ class APICampaigns extends APIBase
     #          data:
     #            --campaign-update-data--
     ###
-    @app.delete "/api/v1/campaigns/:id", isLoggedInAPI, (req, res) =>
+    @app.delete "/api/v1/campaigns/:id", @apiLogin, (req, res) =>
       return unless aem.param req.params.id, res, "Id"
 
       @queryId req.params.id, res, (campaign) ->
@@ -341,7 +339,7 @@ class APICampaigns extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/campaigns/xGIX51EP6ABK12Kg4XDT5f1J/clicks/from=-24h&to=-1h"
     ###
-    @app.get "/api/v1/campaigns/stats/:id/:stat/:range", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/campaigns/stats/:id/:stat/:range", @apiLogin, (req, res) =>
       return unless aem.param req.params.id, res, "Campaign id"
       return unless aem.param req.params.range, res, "Temporal range"
       return unless aem.param req.params.stat, res, "Stat"
@@ -361,7 +359,7 @@ class APICampaigns extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/campaigns/U1FyJtQHy8S5nfZvmfyjDPt3/activate"
     ###
-    @app.post "/api/v1/campaigns/:id/activate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/campaigns/:id/activate", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial
@@ -379,7 +377,7 @@ class APICampaigns extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/campaigns/WThH9UVp1V41Tw7qwOuR8PVm/deactivate"
     ###
-    @app.post "/api/v1/campaigns/:id/deactivate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/campaigns/:id/deactivate", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (campaign) ->
         return aem.send res, "404" unless campaign
         return aem.send res, "401" if campaign.tutorial

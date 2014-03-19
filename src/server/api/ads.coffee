@@ -3,9 +3,7 @@ db = require "mongoose"
 async = require "async"
 _ = require "underscore"
 APIBase = require "./base"
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 
@@ -45,7 +43,7 @@ class APIAds extends APIBase
     #          data:
     #            name: "AwesomeAd"
     ###
-    @app.post "/api/v1/ads", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads", @apiLogin, (req, res) =>
       return unless aem.param req.body.name, res, "Ad name"
 
       newAd = @createNewAd req.body, req.user.id
@@ -63,7 +61,7 @@ class APIAds extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/activate"
     ###
-    @app.post "/api/v1/ads/:id/:creative/activate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads/:id/:creative/activate", @apiLogin, (req, res) =>
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
@@ -87,7 +85,7 @@ class APIAds extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/ads/U1FyJtQHy8S5nfZvmfyjDPt3/native/deactivate"
     ###
-    @app.post "/api/v1/ads/:id/:creative/deactivate", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads/:id/:creative/deactivate", @apiLogin, (req, res) =>
       if req.params.creative != "native" and req.params.creative != "organic"
         return aem.send res, "400"
 
@@ -113,7 +111,7 @@ class APIAds extends APIBase
     #          data:
     #            name: "AwesomeAdMkII"
     ###
-    @app.post "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads/:id", @apiLogin, (req, res) =>
 
       # TODO: Test this somehow
       generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
@@ -148,7 +146,7 @@ class APIAds extends APIBase
     #   $.ajax method: "DELETE",
     #          url: "/api/v1/ads/fCf3hGpvM3rVIoDNi09bvMYo"
     ###
-    @app.delete "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
+    @app.delete "/api/v1/ads/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
@@ -166,7 +164,7 @@ class APIAds extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/ads"
     ###
-    @app.get "/api/v1/ads", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/ads", @apiLogin, (req, res) =>
       @queryOwner req.user.id, res, (ads) ->
         return res.json 200, [] if ads.length == 0
 
@@ -199,7 +197,7 @@ class APIAds extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/ads/all"
     ###
-    @app.get "/api/v1/ads/all", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/ads/all", @apiLogin, (req, res) =>
       return aem.send res, "401" unless req.user.admin
 
       @queryRaw { populate: ["owner"] }, tutorial: false, res, (ads) ->
@@ -225,7 +223,7 @@ class APIAds extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/ads/l46Wyehf72ovf1tkDa5Y3ddA"
     ###
-    @app.get "/api/v1/ads/:id", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/ads/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return unless aem.isOwnerOf req.user, ad, res
@@ -245,7 +243,7 @@ class APIAds extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/ads/WaeE4dObsK7ObS2ifntxqrGh/approve"
     ###
-    @app.post "/api/v1/ads/:id/approve", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads/:id/approve", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
@@ -271,7 +269,7 @@ class APIAds extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/ads/V8graeQTXklkx6AzODYDsDQR/disaprove"
     ###
-    @app.post "/api/v1/ads/:id/disaprove", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/ads/:id/disaprove", @apiLogin, (req, res) =>
       if not req.user.admin then return aem.send res, "403", error: "Attempted to access protected Ad"
 
       @queryId req.params.id, res, (ad) ->

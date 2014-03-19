@@ -11,7 +11,6 @@ APIBase = require "./base"
 powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
 paypalCredentials =
 
@@ -168,7 +167,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/users?username=Dragme"
     ###
-    @app.get "/api/v1/users", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/users", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       if req.query.username
@@ -194,7 +193,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/users/9keTBEYUbgvU0GNteBChBVBY"
     ###
-    @app.get "/api/v1/users/:id", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/users/:id", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @queryId req.params.id, res, (user) ->
@@ -208,7 +207,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "DELETE",
     #          url: "/api/v1/users/yDhBQrwvJIshcchTBTAmW3qJ"
     ###
-    @app.delete "/api/v1/users/:id", isLoggedInAPI, (req, res) =>
+    @app.delete "/api/v1/users/:id", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @queryId req.params.id, res, (user) ->
@@ -227,7 +226,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/user"
     ###
-    @app.get "/api/v1/user", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/user", @apiLogin, (req, res) =>
       @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
 
@@ -257,7 +256,7 @@ class APIUsers extends APIBase
     #            fname: "That",
     #            lname: "Guy"
     ###
-    @app.post "/api/v1/user", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/user", @apiLogin, (req, res) =>
       @queryId req.user.id, res, (user) ->
 
         req.onValidationError (msg) -> aem.send res, "400", error: msg.path
@@ -323,7 +322,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/user/transactions"
     ###
-    @app.get "/api/v1/user/transactions", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/user/transactions", @apiLogin, (req, res) =>
       @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
         res.json user.transactions
@@ -373,7 +372,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/user/deposit/600"
     ###
-    @app.post "/api/v1/user/deposit/:amount", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/user/deposit/:amount", @apiLogin, (req, res) =>
       @queryId req.user.id, res, (user) ->
         return aem.send res, "404" unless user
 
@@ -434,7 +433,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/user/deposit/RvZsYer3pDMRgaMZQNGripnt/cancel"
     ###
-    @app.post "/api/v1/user/deposit/:token/:action", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/user/deposit/:token/:action", @apiLogin, (req, res) =>
       action = req.params.action
       token = req.params.token
       payerID = req.query.payerID

@@ -4,9 +4,7 @@
 spew = require "spew"
 db = require "mongoose"
 APIBase = require "./base"
-passport = require "passport"
 aem = require "../helpers/aem"
-isLoggedInAPI = require("../helpers/apikeyLogin") passport, aem
 
 class APINews extends APIBase
 
@@ -52,7 +50,7 @@ class APINews extends APIBase
     #              provide it some data and you're ready to go
     #            """
     ###
-    @app.post "/api/v1/news", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/news", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       newNews = @createNewNews req.body, req.user.id
@@ -69,7 +67,7 @@ class APINews extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/news"
     ###
-    @app.get "/api/v1/news", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/news", @apiLogin, (req, res) =>
       @queryAll res, (list) ->
         res.json 200, list.map (article) -> article.toAnonAPI()
 
@@ -82,7 +80,7 @@ class APINews extends APIBase
     #   $.ajax method: "GET",
     #          url: "/api/v1/news/J5VLjLsiPC2xO2VBlhjeMlBL"
     ###
-    @app.get "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+    @app.get "/api/v1/news/:id", @apiLogin, (req, res) =>
       @queryId req.params.id, res, (news) ->
         return aem.send res, "404" unless news
 
@@ -104,7 +102,7 @@ class APINews extends APIBase
     #              EDIT: foobar
     #            """
     ###
-    @app.post "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+    @app.post "/api/v1/news/:id", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @queryId req.params.id, res, (news) ->
@@ -127,7 +125,7 @@ class APINews extends APIBase
     #   $.ajax method: "DELETE",
     #          url: "/api/v1/news/tmHWeHKicu4xINCnhZH7mUDd"
     ###
-    @app.delete "/api/v1/news/:id", isLoggedInAPI, (req, res) =>
+    @app.delete "/api/v1/news/:id", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
       @queryId req.params.id, res, (news) ->
