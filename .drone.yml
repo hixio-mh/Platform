@@ -11,6 +11,7 @@ script:
 
   - npm install
   - bower install
+  - bundle update
 
   - gulp
   - npm test
