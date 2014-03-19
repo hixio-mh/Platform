@@ -84,6 +84,9 @@
     "test": "npm run integration-tests && npm run unit-tests-client && npm run unit-tests-server",
     "integration-tests": "mocha -R spec ./tests/integration.coffee --compilers coffee:coffee-script/register",
     "unit-tests-client": "mocha-phantomjs ./tests/unit/client/test.html",
-    "unit-tests-server": "mocha -R spec ./tests/unit.coffee --compilers coffee:coffee-script/register"
+    "unit-tests-server": "mocha -R spec ./tests/unit.coffee --compilers coffee:coffee-script/register",
+
+    "prestart": "npm install && bower install && bundle update",
+    "start": "gulp develop"
   }
 }

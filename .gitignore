@@ -23,3 +23,5 @@ cron.log
 setup_admin.js
 setup_adefy.js
 setup_cris_ports.sh
+
+.bundle/
