@@ -9,7 +9,7 @@ api = supertest "http://#{config('domain')}:#{config('port')}"
 agent = superagent.agent()
 agentAdmin = superagent.agent()
 
-describe "General Authentication", ->
+describe "API Authentication", ->
 
   it "Expect redirection on root access", (done) ->
     api.get("/").expect 302, done
@@ -19,17 +19,6 @@ describe "General Authentication", ->
       username: "testy-tristat"
       password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
     .expect 401, done
-
-  it "Should accept and authenticate test credentials", (done) ->
-    api.post("/api/v1/login").send
-      username: "testy-trista"
-      password: "AvPV52ujHpmhUJjzorBx7aixkrIIKrca"
-    .expect(200)
-    .end (err, res) ->
-      agent.saveCookies res
-      done()
-
-describe "API Authentication", ->
 
   it "Should accept and authenticate test credentials", (done) ->
     api.post("/api/v1/login").send
