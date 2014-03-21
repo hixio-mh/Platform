@@ -11,7 +11,7 @@ manufacturers = require "../../../../src/server/helpers/filters/manufacturers.js
 
 describe "Filters Helper", ->
 
-  it "Should autocomplete given Catergories", (done) ->
+  it "Should autocomplete given Categories", (done) ->
     expect(filters.autocompleteCategories).to.exist
 
     filters.autocompleteCategories "gam", (results) ->
