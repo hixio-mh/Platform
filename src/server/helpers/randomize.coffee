@@ -9,10 +9,6 @@ module.exports =
   # @return [String] randomString
   ###
   randomString: (length) ->
-    code = ""
     map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-    for i in [0...length]
-      code += map.charAt Math.floor(Math.random() * map.length)
-
-    code
+    [0...length].map(-> map.charAt _.random(map.length)).join ""

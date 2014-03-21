@@ -20,6 +20,8 @@ module.exports =
   # @return [Boolean] match
   ###
   isOwnerOf: (user, obj) ->
+    return false if user == undefined or user.id == undefined
+    return false if obj == undefined or obj.owner == undefined
     "#{user.id}" == "#{obj.owner}"
 
   ###
