@@ -270,24 +270,25 @@ module.exports =
 
     msg = errmsg || usrmsg || msg
 
-    ret =
-      status: code
-      humor: response if @humor
-      error: msg if is_error
-      message: msg unless is_error
+    ret = {}
+    ret.status = code
+    ret.humor = response if @humor
+    ret.error = msg if is_error
+    ret.message = msg unless is_error
+    ret
 
   ###
   # Generates and sends a message object using the response Object
   # @param [ResultObject] res response object
-  # @param [String] ex expected message type
-  # @param [Options] opt
+  # @param [String] messageType expected message type
+  # @param [Options] options
   ###
-  send: (res, exp, opt) ->
+  send: (res, messageType, options) ->
 
-    dat = @make exp, opt
+    responseData = @make messageType, options
 
     # optionally we could drop the "status" from the Hash
-    res.json dat.status, dat
+    res.json responseData.status, responseData
 
   ###
   # Check for missing param, return a JSON error if needed
@@ -299,11 +300,10 @@ module.exports =
   # @return [Boolean] valid true if the param is defined
   ###
   param: (param, res, label) ->
-    if param == undefined
-      if res and label
-        @send res, "400", error: label
-      return false
-    true
+    return true if param != undefined
+
+    @send res, "400", error: label if res and label
+    false
 
   ###
   # Log db error and send appropriate response
@@ -314,17 +314,18 @@ module.exports =
   #
   # @return [Boolean] wasError false if error was undefined or null
   ###
-  dbError: (err, res, passive) ->
-    if err
-      # Just treat cast errors as 404s
-      unless passive
-        if err.name == "CastError"
-          @send res, "404"
-        else
-          spew.error err
-          @send res, "500:db"
-      return true
-    false
+  dbError: (err, res) ->
+    return false unless err
+
+    # Just treat cast errors as 404s
+    if res
+      if err.name == "CastError"
+        @send res, "404"
+      else
+        spew.error err
+        @send res, "500:db"
+
+    true
 
   ###
   # Determines if (user) is the owner of (obj), a 401 is sent if the check
@@ -334,10 +335,11 @@ module.exports =
   # @param [Response] res
   ###
   isOwnerOf: (user, obj, res) ->
-    unless user.admin or compare.isOwnerOf(user, obj)
-      @send res, "401" if res
-      return false
-    true
+    return false unless obj.owner != undefined
+    return true if user.admin or compare.isOwnerOf(user, obj)
+
+    @send res, "401" if res
+    false
 
   ###
   # Optionally determines if (obj) is a Number, if not a 400 error is
@@ -347,11 +349,13 @@ module.exports =
   # @param [Response] res
   ###
   optIsNumber: (obj, name, res) ->
-    unless isNaN obj
+    return true unless isNaN obj
+
+    if res
       name = name || "object"
       @send res, "400", error: "Invalid #{name} (expected a Number)"
-      return false
-    true
+
+    false
 
   ###
   # Optionally determines if (obj) is one of the given objects in opts
@@ -361,11 +365,12 @@ module.exports =
   # @param [Response] res
   ###
   optIsOneOf: (obj, opts, name, res) ->
-    if obj != undefined
-      for opt in opts
-        return true if obj == opt
+    return false if obj == undefined
+    return true if _.contains opts, obj
+
+    if res
       name = name || "object"
       opts_s = opts.join(" or ")
       @send res, "400", error: "Invalid #{name} (expected #{opts_s})"
-      return false
-    true
+
+    false

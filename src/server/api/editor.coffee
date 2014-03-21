@@ -51,7 +51,7 @@ class APIEditor extends APIBase
       file = req.params.file
 
       db.model("Export").findOne { folder: folder, file: file }, (err, ex) ->
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404" unless ex
 
         if not req.user.admin and not ex.owner.equals req.user.id
@@ -88,7 +88,7 @@ class APIEditor extends APIBase
       return unless aem.param req.query.id, res, "Id"
 
       db.model("Ad").findById req.query.id, (err, ad) ->
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404:ad" unless ad
 
         if not req.user.admin and not ad.owner.equals req.user.id
@@ -114,7 +114,7 @@ class APIEditor extends APIBase
       return unless aem.param req.query.data, res, "Data"
 
       db.model("Ad").findById req.query.id, (err, ad) ->
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404:ad" unless ad
 
         if not req.user.admin and not ad.owner.equals req.user.id

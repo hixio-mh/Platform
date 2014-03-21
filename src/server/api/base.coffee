@@ -92,7 +92,7 @@ class APIBase
     rawQuery = db.model(@_model)[options.type] query
     rawQuery.populate(pop) for pop in options.populate
     rawQuery.exec (err, objects) ->
-      return if aem.dbError err, res, false
+      return if aem.dbError err, res
 
       cb objects
 

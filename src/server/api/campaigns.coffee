@@ -239,13 +239,13 @@ class APICampaigns extends APIBase
         # Generate refs and commit new list
         buildAdAddArray = (adlist, cb) ->
           db.model("Ad").find _id: { $in: adlist }, (err, ads) ->
-            return if aem.dbError err, res, false
+            return if aem.dbError err, res
 
             cb _.filter ads, (ad) -> ad.status == 2
 
         buildAdRemovalArray = (adlist, cb) ->
           db.model("Ad").find _id: { $in: adlist }, (err, ads) ->
-            return if aem.dbError err, res, false
+            return if aem.dbError err, res
             cb ads
 
         # At this point, we can clear deleted ad refs

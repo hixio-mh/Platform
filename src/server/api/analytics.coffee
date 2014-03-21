@@ -39,7 +39,7 @@ class APIAnalytics extends APIBase
     .find(query)
     .populate("ads")
     .exec (err, campaigns) ->
-      return if aem.dbError err, res, false
+      return if aem.dbError err, res
 
       adRefs = []
       for campaign in campaigns
@@ -78,7 +78,7 @@ class APIAnalytics extends APIBase
       .findById(req.param "id")
       .populate("ads")
       .exec (err, campaign) =>
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404" unless campaign
 
         if not req.user.admin and "#{campaign.owner}" != "#{req.user.id}"
@@ -111,7 +111,7 @@ class APIAnalytics extends APIBase
       .findById(req.param "id")
       .populate("campaigns.campaign")
       .exec (err, ad) =>
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404" unless ad
 
         if not req.user.admin and "#{ad.owner}" != "#{req.user.id}"
@@ -141,7 +141,7 @@ class APIAnalytics extends APIBase
     ###
     @app.get "/api/v1/analytics/publishers/:id/:stat", @apiLogin, (req, res) =>
       db.model("Publisher").findById req.params.id, (err, publisher) =>
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
         return aem.send res, "404" unless publisher
 
         if not req.user.admin and "#{publisher.owner}" != "#{req.user.id}"
@@ -229,7 +229,7 @@ class APIAnalytics extends APIBase
         query = tutorial: false
 
       db.model(model).find query, (err, objects) ->
-        return if aem.dbError err, res, false
+        return if aem.dbError err, res
 
         ret = objects.map (object) ->
           x: new Date(Date.parse(object._id.getTimestamp())).getTime()
