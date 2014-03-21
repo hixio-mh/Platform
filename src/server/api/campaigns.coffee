@@ -214,11 +214,20 @@ class APICampaigns extends APIBase
         return unless aem.isOwnerOf req.user, campaign, res
 
         # Perform basic validation
-        return unless aem.optIsNumber(req.body.totalBudget, "total budget", res)
-        return unless aem.optIsNumber(req.body.dailyBudget, "daily budget", res)
-        return unless aem.optIsNumber(req.body.bid, "bid amount", res)
-        return unless aem.optIsOneOf(req.body.bidSystem, ["Manual", "Automatic"], "bid system", res)
-        return unless aem.optIsOneOf(req.body.pricing, ["CPM", "CPC"], "pricing", res)
+        if req.body.totalBudget
+          return unless aem.optIsNumber req.body.totalBudget, "total budget", res
+
+        if req.body.dailyBudget
+          return unless aem.optIsNumber req.body.dailyBudget, "daily budget", res
+
+        if req.body.bid
+          return unless aem.optIsNumber req.body.bid, "bid amount", res
+
+        if req.body.bidSystem
+          return unless aem.optIsOneOf req.body.bidSystem, ["Manual", "Automatic"], "bid system", res
+
+        if req.body.pricing
+          return unless aem.optIsOneOf req.body.pricing, ["CPM", "CPC"], "pricing", res
 
         # Don't allow active state change through edit path
         delete req.body.active if req.body.active != undefined
