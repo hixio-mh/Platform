@@ -57,7 +57,8 @@ class APINews extends APIBase
       newNews.validate (err) ->
         return aem.send res, "400:validate", error: err if err
 
-        newNews.save -> res.json 200, newNews.toAnonAPI()
+        newNews.save()
+        res.json 200, newNews.toAnonAPI()
 
     ###
     # GET /api/v1/news
@@ -115,7 +116,8 @@ class APINews extends APIBase
         news.validate (err) ->
           return aem.send res, "400:validate", error: err if err
 
-          news.save -> res.json 200, news.toAnonAPI()
+          news.save()
+          res.json 200, news.toAnonAPI()
 
     ###
     # DELETE /api/v1/news/:id
@@ -131,6 +133,7 @@ class APINews extends APIBase
       @queryId req.params.id, res, (news) ->
         return aem.send res, "404" unless news
 
-        news.remove -> aem.send res, "200:delete"
+        news.remove()
+        aem.send res, "200:delete"
 
 module.exports = (app) -> new APINews app

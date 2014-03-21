@@ -50,7 +50,8 @@ class APIAds extends APIBase
       newAd.validate (err) ->
         return aem.send res, "400:validate", error: err if err
 
-        newAd.save -> res.json 200, newAd.toAnonAPI()
+        newAd.save()
+        res.json 200, newAd.toAnonAPI()
 
     ###
     # POST /api/v1/ads/:id/:creative/activate
@@ -73,8 +74,8 @@ class APIAds extends APIBase
         return aem.send res, "401", error: "Ad un-approved" if ad.status != 2
 
         ad.setCreativeActive req.params.creative, true
-        ad.save ->
-          res.json 200, ad.toAnonAPI()
+        ad.save()
+        res.json 200, ad.toAnonAPI()
 
     ###
     # POST /api/v1/ads/:id/:creative/deactivate
@@ -95,8 +96,8 @@ class APIAds extends APIBase
         return unless aem.isOwnerOf req.user, ad, res
 
         ad.setCreativeActive req.params.creative, false
-        ad.save ->
-          res.json 200, ad.toAnonAPI()
+        ad.save()
+        res.json 200, ad.toAnonAPI()
 
     ###
     # POST /api/v1/ads/:id
@@ -112,15 +113,6 @@ class APIAds extends APIBase
     #            name: "AwesomeAdMkII"
     ###
     @app.post "/api/v1/ads/:id", @apiLogin, (req, res) =>
-
-      # TODO: Test this somehow
-      generateS3Url = (object) -> "//#{s3Host}/#{getS3Key object}"
-      getS3Key = (object) ->
-        if object.key != undefined
-          object.key
-        else
-          object.split("//#{s3Host}/")[1]
-
       @queryId req.params.id, res, (ad) ->
         return aem.send res, "404:ad" unless ad
         return aem.send res, "401" if ad.tutorial
@@ -153,8 +145,8 @@ class APIAds extends APIBase
         return unless aem.isOwnerOf req.user, ad, res
 
         ad.removeFromCampaigns ->
-          ad.remove()
-          aem.send res, "200:delete"
+          ad.remove ->
+            aem.send res, "200:delete"
 
     ###
     # GET /api/v1/ads
@@ -229,9 +221,7 @@ class APIAds extends APIBase
         return unless aem.isOwnerOf req.user, ad, res
 
         ad.fetchCompiledStats (stats) ->
-          ad = ad.toAnonAPI()
-          ad.stats = stats
-          res.json 200, ad
+          res.json 200, _.extend ad.toAnonAPI(), stats: stats
 
     ###
     # POST /api/v1/ads/:id/approve
@@ -257,8 +247,8 @@ class APIAds extends APIBase
           ad.clearApproval()
           aemResponse = aem.make "200:approve_pending"
 
-        ad.save ->
-          res.json dat.status, aemResponse
+        ad.save()
+        res.json 200, aemResponse
 
     ###
     # POST /api/v1/ads/:id/disaprove

@@ -71,16 +71,8 @@ class APICampaigns extends APIBase
   # @return [Array<Array, Array>] filters
   ###
   generateFilterSet: (flatList) ->
-    include = []
-    exclude = []
-
-    for entry in flatList
-      if entry.type == "exclude"
-        exclude.push entry.name
-      else if entry.type == "include"
-        include.push entry.name
-      else
-        spew.warning "Unrecognized entry in filter array: #{entry.type}"
+    include = _.filter(flatList, (e) -> e.type == "include").map (e) -> e.name
+    exclude = _.filter(flatList, (e) -> e.type == "exclude").map (e) -> e.name
 
     [include, exclude]
 
@@ -166,7 +158,8 @@ class APICampaigns extends APIBase
       newCampaign.validate (err) ->
         return aem.send res, "400:validate", error: err if err
 
-        newCampaign.save -> res.json newCampaign.toAnonAPI()
+        newCampaign.save()
+        res.json newCampaign.toAnonAPI()
 
     ###
     # GET /api/v1/campaigns
@@ -196,7 +189,8 @@ class APICampaigns extends APIBase
         return aem.send res, "404" unless campaign
         return unless aem.isOwnerOf req.user, campaign, res
 
-        campaign.populateSelfAllStats -> res.json campaign.toAnonAPI()
+        campaign.populateSelfAllStats ->
+          res.json campaign.toAnonAPI()
 
     ###
     # POST /api/v1/campaigns/:id
@@ -240,7 +234,6 @@ class APICampaigns extends APIBase
         # Process ad list first, so we know what we need to delete before
         # modifying refs
         if req.body.ads != undefined
-
           [add, remove, newAdList] = @sortUpdatedAdList campaign, req.body.ads
 
         # Generate refs and commit new list
@@ -289,9 +282,17 @@ class APICampaigns extends APIBase
 
               # Set ref refresh flag if needed
               if not needsAdRefRefresh
-                if key == "bidSystem" or key == "bid" or key == "devices" or
-                   key == "countries" or key == "pricing" or key == "category"
-                  needsAdRefRefresh = true
+
+                forceRefresh = [
+                  "bidSystem"
+                  "bid"
+                  "devices"
+                  "countries"
+                  "pricing"
+                  "category"
+                ]
+
+                needsAdRefRefresh = true if _.contains forceRefresh, key
 
               # Save final value on campaign
               if key != "countries" and key != "devices"
@@ -304,9 +305,8 @@ class APICampaigns extends APIBase
             buildAdAddArray add, (add) ->
               campaign.addAds add, ->
                 campaign.ads = newAdList
-                campaign.save()
-
-                res.json campaign.toAnonAPI()
+                campaign.save ->
+                  res.json campaign.toAnonAPI()
 
     ###
     # DELETE /api/v1/campaigns/:id
@@ -366,8 +366,8 @@ class APICampaigns extends APIBase
         return unless aem.isOwnerOf req.user, campaign, res
 
         campaign.activate ->
-          campaign.save()
-          res.json 200, campaign.toAnonAPI()
+          campaign.save ->
+            res.json 200, campaign.toAnonAPI()
 
     ###
     # POST /api/v1/campaigns/:id/deactivate
@@ -384,7 +384,7 @@ class APICampaigns extends APIBase
         return unless aem.isOwnerOf req.user, campaign, res
 
         campaign.deactivate ->
-          campaign.save()
-          res.json 200, campaign.toAnonAPI()
+          campaign.save ->
+            res.json 200, campaign.toAnonAPI()
 
 module.exports = (app) -> new APICampaigns app
