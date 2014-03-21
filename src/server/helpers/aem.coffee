@@ -1,6 +1,6 @@
 # AEM - ApiErrorMessage Helper Object (with humor!)
 spew = require "spew"
-randomize = require "./randomize"
+_ = require "underscore"
 compare = require "./compare"
 
 ##
@@ -154,115 +154,115 @@ module.exports =
     switch exp
       # Generic 200
       when "200"
-        resp = randomize.sample responses200
+        resp = _.sample responses200
         msg = "OK"
         code = 200
       # Response to a successful login
       when "200:login"
-        resp = randomize.sample responses200login
+        resp = _.sample responses200login
         msg = "Login successful"
         code = 200
       # Soft response to user not having enough funds
       when "200:nofunds"
-        resp = randomize.sample responses200nofunds
+        resp = _.sample responses200nofunds
         msg = "You do not appear to have enough funds to complete this action"
         code = 200
       # Response to a resource deletion request
       when "200:delete"
-        resp = randomize.sample responses200delete
+        resp = _.sample responses200delete
         msg = "Request received"
         code = 200
       # Response to a resource dissaproval request
       when "200:disapprove"
-        resp = randomize.sample responses200disapprove
+        resp = _.sample responses200disapprove
         msg = "Object has been disapproved"
         code = 200
       # Response to a resource approval request
       when "200:approve"
-        resp = randomize.sample responses200approve
+        resp = _.sample responses200approve
         msg = "Object has been approved"
         code = 200
       # Response to a resource aproval request (in pending)
       when "200:approve_pending"
-        resp = randomize.sample responses200approve_pending
+        resp = _.sample responses200approve_pending
         msg = "Request received"
         code = 200
       # Generic 302
       when "302"
-        resp = randomize.sample responses302
+        resp = _.sample responses302
         msg = "Redirecting"
         code = 302
       # Generic 400 error
       when "400"
-        resp = randomize.sample responses400
+        resp = _.sample responses400
         msg = "Malformed request"
         code = 400
       # When an error occurs because of validation error
       when "400:validate"
-        resp = randomize.sample responses400validate
+        resp = _.sample responses400validate
         msg = "Validation has failed"
         code = 400
       # When an error occurs during saving, possibly by validation
       when "400:save"
-        resp = randomize.sample responses400save
+        resp = _.sample responses400save
         msg = "An error occurred while saving the resource"
         code = 400
       # Generic 401 error
       when "401"
-        resp = randomize.sample responses401
+        resp = _.sample responses401
         msg = "Unauthorized access!"
         code = 401
       # Generic 403 error
       when "403"
-        resp = randomize.sample responses403
+        resp = _.sample responses403
         msg = "Forbidden"
         code = 403
       # apikey authentication failed
       when "403:apikey"
-        resp = randomize.sample responses403apikey
+        resp = _.sample responses403apikey
         msg = "Apikey authentication failed, forbidden to continue"
         code = 403
       # Generic 404 error
       when "404"
-        resp = randomize.sample responses404
+        resp = _.sample responses404
         msg = "Could not find requested resource"
         code = 404
       when "404:ad"
-        resp = randomize.sample responses404ad
+        resp = _.sample responses404ad
         msg = "Ad could not be found"
         code = 404
       when "409"
-        resp = randomize.sample(responses409)
+        resp = _.sample(responses409)
         msg = "Conflict!"
         code = 409
       # Generic 500 error
       when "500"
-        resp = randomize.sample responses500
+        resp = _.sample responses500
         msg = "An internal error occurred"
         code = 500
       # When an error occurred because of a missing internal reference
       when "500:404"
-        resp = randomize.sample responses404
+        resp = _.sample responses404
         msg = "An internal error occurred"
         code = 500
       # When an error occurs during the removal of an internal resource
       when "500:delete"
-        resp = randomize.sample responses500delete
+        resp = _.sample responses500delete
         msg = "Error occurred while removing object"
         code = 500
       # When an error occurs during the accessing of a Database
       when "500:db"
-        resp = randomize.sample responses500db
+        resp = _.sample responses500db
         msg = "A database error occurred"
         code = 500
       # When an error while saving occurs, despite the data
       when "500:save"
-        resp = randomize.sample responses500save
+        resp = _.sample responses500save
         msg = "An error occurred while saving the resource"
         code = 500
       # When an error occurs from something funky
       when "500:unexpected"
-        resp = randomize.sample responses500unexpected
+        resp = _.sample responses500unexpected
         msg = "An unexpected internal error occurred"
         code = 500
 

@@ -1,18 +1,11 @@
-module.exports =
+_ = require "underscore"
 
-  ###
-  # @param [Array] array
-  #
-  # @return [Object] element a randomly chosen element from the array
-  ###
-  sample: (array) ->
-    array[Math.floor(Math.random() * array.length)]
+module.exports =
 
   ###
   # Generate a random string of a specific length
   #
   # @param [Number] length
-  #
   # @return [String] randomString
   ###
   randomString: (length) ->
