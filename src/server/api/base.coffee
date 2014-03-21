@@ -72,7 +72,7 @@ class APIBase
   # @param [Method] cb
   ###
   queryOwner: (owner, res, cb) ->
-    @queryRaw { type: "find" }, owner: owner, res, cb
+    @queryRaw { type: "find" }, { owner: owner }, res, cb
 
   ###
   # Low level query method, takes an explicit query type and list of fields
