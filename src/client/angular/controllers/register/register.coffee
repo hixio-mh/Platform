@@ -12,18 +12,18 @@ window.AdefyRegister.controller "AdefyRegisterController", ($scope, $http) ->
     else
       $scope.error = null
 
-    url = "/api/v1/register?"
-    url += "username=#{$scope.username}"
-    url += "&password=#{$scope.password}"
-    url += "&email=#{$scope.email}"
+    data =
+      username: $scope.username
+      password: $scope.password
+      email: $scope.email
 
-    if $scope.fname != undefined then url += "&fname=#{$scope.fname}"
-    if $scope.lname != undefined then url += "&lname=#{$scope.lname}"
-    if $scope.company != undefined then url += "&company=#{$scope.company}"
-    if $scope.phone != undefined then url += "&phone=#{$scope.phone}"
-    if $scope.vat != undefined then url += "&vat=#{$scope.vat}"
+    if $scope.fname != undefined then data.fname = $scope.fname
+    if $scope.lname != undefined then data.lname = $scope.lname
+    if $scope.company != undefined then data.company = $scope.company
+    if $scope.phone != undefined then data.phone = $scope.phone
+    if $scope.vat != undefined then data.vat = $scope.vat
 
-    $http.post(url)
+    $http.post("/api/v1/register", data)
     .success(-> window.location.href = "/")
     .error (res) -> $scope.error = "Username is in use"
 
