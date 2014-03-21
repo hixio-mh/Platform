@@ -4,6 +4,7 @@ crypto = require "crypto"
 db = require "mongoose"
 aem = require "../helpers/aem"
 APIBase = require "./base"
+_ = require "underscore"
 
 ###
 # TODO: Document, and replace direct queries with calls to other API modules
@@ -24,22 +25,21 @@ class APIAnalytics extends APIBase
 
   queryPublishers: (query, options, stat, res) ->
     db.model("Publisher").find query, (err, publishers) ->
-      if aem.dbError err, res then return
+      retrn if aem.dbError err, res
 
-      pubRefs = []
-      for publisher in publishers
-        pubRefs.push "#{publisher.getGraphiteId()}.#{stat}"
+      pubRefs = publishers.map (p) -> "#{p.getGraphiteId()}.#{stat}"
 
       delete options.stat
       options.multipleSeries = pubRefs
-      graphiteInterface.makeAnalyticsQuery options, (data) -> res.json data
+      graphiteInterface.makeAnalyticsQuery options, (data) ->
+        res.json data
 
   queryCampaigns: (query, options, stat, res) ->
     db.model("Campaign")
     .find(query)
     .populate("ads")
     .exec (err, campaigns) ->
-      if aem.dbError err, res, false then return
+      return if aem.dbError err, res, false
 
       adRefs = []
       for campaign in campaigns
@@ -213,7 +213,7 @@ class APIAnalytics extends APIBase
     @app.get "/api/v1/analytics/counts/:model", @apiLogin, (req, res) =>
       return aem.send res, "403" unless req.user.admin
 
-      model = req.param "model"
+      model = req.params.model
       validModels = [
         "User"
         "Ad"
@@ -221,13 +221,7 @@ class APIAnalytics extends APIBase
         "Publisher"
       ]
 
-      validModel = false
-      for m in validModels
-        if m == model
-          validModel = true
-          break
-
-      if not validModel then return aem.send res, "400", error: "Invalid model: #{model}"
+      return aem.send res, "400" unless _.contains validModels, model
 
       if model == "User"
         query = {}
@@ -235,14 +229,11 @@ class APIAnalytics extends APIBase
         query = tutorial: false
 
       db.model(model).find query, (err, objects) ->
-        if err then spew.error err
+        return if aem.dbError err, res, false
 
-        ret = []
-
-        for object in objects
-          ret.push
-            x: new Date(Date.parse(object._id.getTimestamp())).getTime()
-            y: object
+        ret = objects.map (object) ->
+          x: new Date(Date.parse(object._id.getTimestamp())).getTime()
+          y: object
 
         ret.sort (a, b) -> a.x - b.x
 
