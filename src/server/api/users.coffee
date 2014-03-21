@@ -78,7 +78,7 @@ class APIUsers extends APIBase
       return unless aem.param req.body.password, res, "Password"
 
       # Ensure username is not taken (don't trust client-side check)
-      @queryOne username: req.body.username, (user) ->
+      @queryOne username: req.body.username, res, (user) ->
         return aem.send res, "409", error: "Username already taken" if user
 
         newUser = @createNewUser req.body
