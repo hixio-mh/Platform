@@ -101,16 +101,15 @@ describe "Publisher Model", ->
       pub.save (err) ->
         expect(err).to.exist
 
-        pub.remove()
-        done()
+        pub.remove ->
+          done()
 
     it "Should generate api key on save", (done) ->
       pub = model({ name: "Test" })
 
       pub.save (err) ->
         expect(err).to.not.exist
-
         expect(pub.apikey.length).to.equal 24
 
-        pub.remove()
-        done()
+        pub.remove ->
+          done()

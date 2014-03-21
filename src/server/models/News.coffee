@@ -8,10 +8,10 @@ spew = require "spew"
 schema = new mongoose.Schema
 
   writtenBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
-  title: String
+  title: { type: String, required: true }
   date: Date
   summary: String
-  text: String
+  text: { type: String, required: true }
   markupLanguage: { type: String, default: "markdown" }
 
 ###

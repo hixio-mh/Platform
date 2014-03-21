@@ -22,25 +22,24 @@ describe "News Model", ->
 
     done()
 
-  it "Should fail if title or text is missing", (done) ->
+  describe "Saving", ->
 
-    news = model()
+    it "should fail if title or text is missing", (done) ->
+      news = model()
 
-    news.title = undefined
-    news.text = undefined
+      news.save (err) ->
+        expect(err).to.exist
 
-    news.save (err) ->
-      expect(err).to.exist
-      done()
+        done()
 
-  it "Should succeed all parameters are set", (done) ->
+    it "should succeed if all parameters are set", (done) ->
 
-    news = model()
-    news.title = "Test Title"
-    news.text = "Some content and stuff"
+      news = model()
+      news.title = "Test Title"
+      news.text = "Some content and stuff"
 
-    news.save (err) ->
-      expect(err).to.not.exist
-      done()
+      news.save (err) ->
+        expect(err).to.not.exist
 
-    news.remove()
+        news.remove ->
+          done()
