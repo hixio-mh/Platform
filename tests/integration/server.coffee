@@ -22,8 +22,11 @@ before (done) ->
     adefy.on "message", (msg) ->
       if msg == "init_complete"
 
+        timeout = 1500
+        timeout = 10000 if process.env.NODE_ENV == "codeship"
+
         # Give models time to load
-        setTimeout (-> done()), 1500
+        setTimeout (-> done()), timeout
 
 after -> if adefy != null then adefy.kill()
 
