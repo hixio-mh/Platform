@@ -9,6 +9,7 @@ module.exports =
   # @return [String] randomString
   ###
   randomString: (length) ->
+    return "" if length <= 0 or isNaN length
     map = "abcdefghijklmnopqrstuvwzyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-    [0...length].map(-> map.charAt _.random(map.length)).join ""
+    [0...length].map(-> map.charAt _.random(map.length - 1)).join ""
