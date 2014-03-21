@@ -10,8 +10,8 @@ module.exports =
   # @return [Boolean] arrays_match returns false if the arrays do not match
   ###
   arraysEqual: (a, b) ->
-    return false if not a instanceof Array or not b instanceof Array
-    _.difference(a, b).length == 0
+    return false if a not instanceof Array or b not instanceof Array
+    _.isEqual a, b
 
   ###
   # Determines if given obj belongs to user
@@ -23,11 +23,3 @@ module.exports =
     return false if user == undefined or user.id == undefined
     return false if obj == undefined or obj.owner == undefined
     "#{user.id}" == "#{obj.owner}"
-
-  ###
-  # Determines if an object (n) exists and isNaN
-  # @param [Object] n
-  # @return [Boolean] exists and is nan?
-  ###
-  optionalIsNaN: (n) ->
-    n != undefined and isNaN n

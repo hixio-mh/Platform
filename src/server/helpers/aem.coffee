@@ -348,7 +348,7 @@ module.exports =
   # @param [Response] res
   ###
   optIsNumber: (obj, name, res) ->
-    if compare.optionalIsNaN obj
+    unless isNaN obj
       name = name || "object"
       @send res, "400", error: "Invalid #{name} (expected a Number)"
       return false
