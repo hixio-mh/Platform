@@ -32,6 +32,7 @@ require "./server/models/news"
 require "./server/models/publisher"
 require "./server/models/user"
 
+require "./server/helpers/aem"
 require "./server/helpers/randomize"
 require "./server/helpers/compare"
 require "./server/helpers/filters"
