@@ -346,7 +346,7 @@ class APIUsers extends APIBase
       else
         return res.send 400
 
-      db.model("User").findById req.user.id, (user) ->
+      db.model("User").findById req.user.id, (err, user) ->
         return if aem.dbError err, res
         return aem.send res, "404" unless user
 
