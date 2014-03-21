@@ -232,7 +232,7 @@ module.exports =
         msg = "Ad could not be found"
         code = 404
       when "409"
-        resp = _.sample(responses409)
+        resp = _.sample responses409
         msg = "Conflict!"
         code = 409
       # Generic 500 error
