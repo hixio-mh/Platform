@@ -71,41 +71,11 @@ guiders.createGuider
       window.UserService.disableTutorial "dashboard"
 
 guiders.createGuider
-  title: "Top Apps"
-  description: "Here you can view lifetime details for your top 10 best performing apps.",
-  attachTo: "#home-publisher table.info"
-  buttons: [{ name: "Next" }, { name: "Previous" }, { name: "Close" }]
-  id: "dashboardGuider6"
-  next: "dashboardGuider7"
-  position: "12"
-  overlay: true
-  highlight: "#home-publisher table.info"
-  onShow: -> $("#home-publisher table.info")[0].scrollIntoView()
-  onClose: ->
-    if window.UserService != undefined
-      window.UserService.disableTutorial "dashboard"
-
-guiders.createGuider
-  title: "News"
-  description: "Any noteworthy events and updates will be posted here."
-  attachTo: "#home-publisher ul.news"
-  buttons: [{ name: "Next" }, { name: "Previous" }, { name: "Close" }]
-  id: "dashboardGuider7"
-  next: "dashboardGuider8"
-  position: "12"
-  overlay: true
-  highlight: "#home-publisher ul.news"
-  onShow: -> $("#home-publisher ul.news")[0].scrollIntoView()
-  onClose: ->
-    if window.UserService != undefined
-      window.UserService.disableTutorial "dashboard"
-
-guiders.createGuider
   title: "Advertiser Dashboard"
   description: "The advertiser dashboard offers a similar layout, but tailored to your campaigns and ads."
   attachTo: ".index.dashboard#home-publisher a.switch-view"
   buttons: [{ name: "Check out Apps", onclick: guiders.navigate }, { name: "Previous" }, { name: "Close" }]
-  id: "dashboardGuider8"
+  id: "dashboardGuider6"
   position: "6"
   onShow: -> $(window).scrollTop 0
   onNavigate: ->
