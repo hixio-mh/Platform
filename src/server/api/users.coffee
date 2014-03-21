@@ -346,7 +346,8 @@ class APIUsers extends APIBase
       else
         return res.send 400
 
-      @queryRaw "findById", req.user.id, res, (user) ->
+      db.model("User").findById req.user.id, (user) ->
+        return if aem.dbError err, res
         return aem.send res, "404" unless user
 
         sectionCheck = (name) -> section == "all" or section == name
