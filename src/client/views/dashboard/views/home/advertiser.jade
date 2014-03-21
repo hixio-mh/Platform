@@ -41,7 +41,7 @@
       td(data-title="'Spent'" sortable="'stats.spent'")
         {{ campaign.stats.spent | currency:$ }}
 
-  div(ng-if="articles.length > 0")
+  //- div(ng-if="articles.length > 0")
     .section News
     ul.news
       li(ng-repeat="article in articles | orderBy:'date':true")
