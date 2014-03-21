@@ -2,11 +2,23 @@ should = require("chai").should()
 supertest = require "supertest"
 superagent = require "superagent"
 mongoose = require "mongoose"
+exec = require("child_process").exec
 fs = require "fs"
 spew = require "spew"
 
 config = require "../../src/server/config"
 
+dbHost = "#{config("mongo_host")}:#{config("mongo_port")}"
+
+# Setup mongo
+before (done) ->
+  @timeout 0
+
+  dbSetup = exec "mongo #{dbHost} < #{__dirname}/../../setup_db.js"
+  dbSetup.on "close", ->
+    done()
+
+# Connect to mongo
 before (done) ->
   con = "mongodb://#{config("mongo_user")}:#{config("mongo_pass")}"
   con += "@#{config("mongo_host")}:#{config("mongo_port")}"
