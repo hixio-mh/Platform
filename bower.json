@@ -6,7 +6,7 @@
     "Blaž Hrastnik <blaz.hrast@gmail.com>",
     "Corey Powell <mistdragon100@gmail.com>"
   ],
-  "main": "src/adefy.coffee",
+  "main": "src/server/server.coffee",
   "license": "Closed",
   "homepage": "https://app.adefy.com",
   "private": true,
