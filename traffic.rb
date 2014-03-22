@@ -1,21 +1,24 @@
 #!/usr/bin/env ruby
 require 'adefy'
 
-@log = File.open("traffik.log", "w")
+def timestamp
+  Time.now.strftime("[%d/%m/%Y %H:%M:%S]")
+end
+
+@log = File.open("traffik.log", "a")
 @log.sync = true
 
 @admin_agent = Adefy::Agent.new host: "http://www.adefy.dev/",
-                         apikey: "Nkv9tU54M9LLw9pSC8zIM8IB"
+                                apikey: "Nkv9tU54M9LLw9pSC8zIM8IB"
 
 ## admin
 @admin_agent.users.login username: "admin", password: "sachercake"
 @pubs = @admin_agent.publishers.all
 
 ## create a visitor agent
-#@agent_u = Adefy::Agent.new host: "http://www.adefy.dev/"
-
-# Use the admin agent for requests as well, I have no idea what will happen...
-@agent_u = @admin_agent
+@agent_u = Adefy::Agent.new host: "http://www.adefy.dev/"
+## Use the admin agent for requests as well, I have no idea what will happen...
+#@agent_u = @admin_agent
 
 i = 0
 loader = '|/-\\'
@@ -42,11 +45,14 @@ def stack_thread(label, arra)
     loop do
       lnk = arra.shift
       begin
-        @log.puts "#{label} getting link #{lnk}"
-        Excon.get(lnk) if lnk
+        @log.puts "#{timestamp} #{label} GET link #{lnk}"
+        if lnk
+          resp = Excon.get(lnk)
+          @log.puts "#{timestamp} #{label} GET link #{lnk} [#{resp.status}]"
+        end
         sleep 1.0
       rescue Excon::Errors::BadGateway
-        @log.puts "Clicks/Impressions Server appears to be down, waiting a few seconds"
+        @log.puts "#{timestamp} #{label} Server appears to be down, waiting a few seconds"
         sleep 3.0
       end
     end
@@ -55,6 +61,8 @@ end
 
 @click_thread = stack_thread("Click", click_stack)
 @impressions_thread = stack_thread("Impression", impressions_stack)
+
+@log.puts "#{timestamp} Started Traffic Generator"
 
 loop do
   print line_clear
@@ -70,7 +78,7 @@ loop do
     click_stack << click if click && rand < 0.5
 
   rescue Excon::Errors::BadGateway
-    @log.puts "Server appears to be down, waiting a few seconds"
+    @log.puts "#{timestamp} Server appears to be down, waiting a few seconds"
     sleep 3.0
   rescue Excon::Errors::NotFound
     sleep 0.02
