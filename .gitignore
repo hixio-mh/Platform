@@ -25,3 +25,5 @@ setup_adefy.js
 setup_cris_ports.sh
 
 .bundle/
+
+traffik.log
