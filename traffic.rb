@@ -52,15 +52,15 @@ stack_thread(impressions_stack)
 loop do
   print line_clear
   pub = pubs.sample
-  begin
-    hsh = agent_u.serve.serve(id: pub["apikey"], width: 400, height: 400, json: true)
-    imprs = hsh["impression"]
-    click = hsh["click"]
 
-    if imprs or click
-      impressions_stack << imprs if imprs && rand < 0.7
-      click_stack << click if click && rand < 0.5
-    end
+  begin
+    hsh = agent_u.serve.serve(id: pub["apikey"])
+
+    imprs = hsh["impressionURL"]
+    click = hsh["clickURL"]
+
+    impressions_stack << imprs if imprs && rand < 0.7
+    click_stack << click if click && rand < 0.5
 
   rescue Excon::Errors::BadGateway
     STDERR.puts "Server appears to be down, waiting a few seconds"
