@@ -75,8 +75,8 @@ loop do
   begin
     hsh = @agent_u.serve.serve(apikey: pub["apikey"])
 
-    imprs = hsh["impressionURL"]
-    click = hsh["clickURL"]
+    imprs = hsh["impression"]
+    click = hsh["click"]
 
     impressions_stack << imprs if imprs && rand < 0.7
     click_stack << click if click && rand < 0.5
