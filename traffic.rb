@@ -52,8 +52,13 @@ def stack_thread(label, arra)
         end
         sleep 1.0
       rescue Excon::Errors::BadGateway
-        @log.puts "#{timestamp} #{label} Server appears to be down, waiting a few seconds"
+        @log.puts "#{timestamp} #{label} [WARN] Server appears to be down, waiting a few seconds"
         sleep 3.0
+      # catch any other exception
+      rescue Exception => ex
+        @log.puts "#{timestamp} #{label} [ERROR] #{ex.inspect}\n#{ex.backtrace.join("\n")}"
+        # and raise that mofo after we've logged it
+        raise ex
       end
     end
   end
