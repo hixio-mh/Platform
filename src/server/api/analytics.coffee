@@ -16,7 +16,7 @@ class APIAnalytics extends APIBase
 
   buildOptionsFromQuery: (req) ->
     options =
-      stat: req.query.stat
+      stat: req.params.stat
       start: req.query["from"] or null
       end: req.query.until or null
       interval: req.query.interval or "5min"
