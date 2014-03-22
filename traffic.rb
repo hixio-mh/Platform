@@ -43,12 +43,11 @@ Thread.abort_on_exception = true
 def stack_thread(label, arra)
   Thread.new do
     loop do
-      lnk = arra.shift
       begin
-        @log.puts "#{timestamp} #{label} GET link #{lnk}"
-        if lnk
+        if lnk = arra.shift
+          @log.puts "#{timestamp} #{label} GET link #{lnk.inspect}"
           resp = Excon.get(lnk)
-          @log.puts "#{timestamp} #{label} GET link #{lnk} [#{resp.status}]"
+          @log.puts "#{timestamp} #{label} GET link #{lnk.inspect} [#{resp.status}]"
         end
         sleep 1.0
       rescue Excon::Errors::BadGateway
@@ -76,8 +75,8 @@ loop do
   begin
     hsh = @agent_u.serve.serve(apikey: pub["apikey"])
 
-    imprs = hsh["impression"]
-    click = hsh["click"]
+    imprs = hsh["impressionURL"]
+    click = hsh["clickURL"]
 
     impressions_stack << imprs if imprs && rand < 0.7
     click_stack << click if click && rand < 0.5
