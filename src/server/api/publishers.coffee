@@ -101,15 +101,15 @@ class APIPublishers extends APIBase
         pub.description = req.body.description || pub.description
 
         if req.body.minimumCPM
-          req.check("minimumCPM", "Invalid minimum CPM").min 0
+          req.checkBody("minimumCPM", "Invalid minimum CPM").min 0
           pub.minimumCPM = req.body.minimumCPM
 
         if req.body.minimumCPC
-          req.check("minimumCPC", "Invalid minimum CPC").min 0
+          req.checkBody("minimumCPC", "Invalid minimum CPC").min 0
           pub.minimumCPC = req.body.minimumCPC
 
         if req.body.url
-          req.check("url", "Invalid url").isUrl()
+          req.checkBody("url", "Invalid url").isURL()
           pub.url = req.body.url
 
         if req.body.preferredPricing
