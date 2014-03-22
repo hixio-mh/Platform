@@ -243,10 +243,13 @@ schema.methods.resetTokenValid = ->
 ###
 # Create 24 character api key
 ###
-schema.methods.createAPIKey = ->
-  if @hasAPIKey() then return
+schema.methods.createAPIKey = (cb) ->
+  return if @hasAPIKey()
 
-  crypto.randomBytes 24, (ex, buf) => @apikey = buf.toString "hex"
+  crypto.randomBytes 24, (ex, buf) =>
+    @apikey = buf.toString "hex"
+
+    cb() if cb
 
 ###
 # Check if we have an API key
@@ -254,10 +257,7 @@ schema.methods.createAPIKey = ->
 # @return [Boolean] hasKey
 ###
 schema.methods.hasAPIKey = ->
-  if @apikey and @apikey.length == 24
-    true
-  else
-    false
+  @apikey and @apikey.length == 24
 
 schema.pre "save", (next) ->
   if not @isModified "password" then return next()
