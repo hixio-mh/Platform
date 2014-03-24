@@ -573,10 +573,10 @@ schema.methods.updateNative = (data) ->
   if data.clickURL != undefined then @native.clickURL = data.clickURL
 
   # S3 assets
-  if data.iconURL != undefined
+  if typeof data.iconURL == "string" and data.iconURL.length > 0
     @native.iconURL = generateS3Url data.iconURL
 
-  if data.featureURL != undefined
+  if typeof data.featureURL == "string" and data.featureURL.length > 0
     @native.featureURL = generateS3Url data.featureURL
 
 ##
@@ -788,6 +788,7 @@ schema.methods.fetchAssetsFromS3 = (finalCb) ->
 
   async.each @assets, (asset, cb) ->
     if asset.buffer.length > 0 then return cb()
+    return cb() unless asset.key and asset.key != "undefined"
 
     s3.getObject
       Bucket: "adefyplatformmain"
@@ -795,7 +796,7 @@ schema.methods.fetchAssetsFromS3 = (finalCb) ->
     , (err, data) ->
 
       if err
-        spew.error err
+        spew.error "Ad.fetchAssetsFromS3: #{err} [#{asset.key}]"
       else
         asset.buffer = new Buffer(data.Body).toString "base64"
 

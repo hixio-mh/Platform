@@ -118,8 +118,8 @@ class APIAds extends APIBase
         return aem.send res, "401" if ad.tutorial
         return unless aem.isOwnerOf req.user, ad, res
 
-        if req.params.native then ad.updateNative req.params.native
-        if req.params.organic then ad.updateOrganic req.params.organic
+        if req.body.native then ad.updateNative req.body.native
+        if req.body.organic then ad.updateOrganic req.body.organic
 
         ad.validate (err) ->
           return aem.send res, "400:validate", error: err if err
