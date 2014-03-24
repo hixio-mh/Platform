@@ -18,11 +18,51 @@ module.exports = (user, admin) ->
 
   describe "Users API", ->
 
-    # POST /api/v1/login", passport.authenticate("local
-    describe "login", ->
-
     # POST /api/v1/register
     describe "register", ->
+      uniqueUsername = "#{Math.round(Math.random() * 100000)}"
+
+      it "should fail the request with 400 if missing username", (done) ->
+        api.post("/api/v1/register").send
+          email: "watwat"
+          password: "watwat"
+        .expect(400)
+        .end (err, res) ->
+          done()
+
+      it "should fail the request with 400 if missing email", (done) ->
+        api.post("/api/v1/register").send
+          username: "watwat"
+          password: "watwat"
+        .expect(400)
+        .end (err, res) ->
+          done()
+
+      it "should fail the request with 400 if missing password", (done) ->
+        api.post("/api/v1/register").send
+          email: "watwat"
+          username: "watwat"
+        .expect(400)
+        .end (err, res) ->
+          done()
+
+      it "should succeed with a unique username and valid arguments", (done) ->
+        api.post("/api/v1/register").send
+          username: uniqueUsername
+          email: "watwat"
+          password: "watwat"
+        .expect(200)
+        .end (err, res) ->
+          done()
+
+      it "should fail with 409 if the username is already taken", (done) ->
+        api.post("/api/v1/register").send
+          username: uniqueUsername
+          email: "watwat"
+          password: "watwat"
+        .expect(409)
+        .end (err, res) ->
+          done()
 
     # POST /api/v1/forgot
     describe "forgot", ->
@@ -50,6 +90,49 @@ module.exports = (user, admin) ->
 
     # POST /api/v1/user/tutorial/:section/:status
     describe "user tutorial", ->
+      it "returns 400 if the status is not 'enable' or 'disable'", (done) ->
+        api.post("/api/v1/user/tutorial/apps/asdf?#{userApiKey}")
+        .expect(400)
+        .end (err, res) ->
+          done()
+
+      it "disables an individual section", (done) ->
+        api.post("/api/v1/user/tutorial/apps/disable?#{userApiKey}")
+        .expect(200)
+        .end (err, res) ->
+          res.body.should.have.property "tutorials"
+          res.body.tutorials.should.have.property "apps"
+
+          expect(res.body.tutorials.apps).to.be.false
+          done()
+
+      it "enables an individual section", (done) ->
+        api.post("/api/v1/user/tutorial/apps/enable?#{userApiKey}")
+        .expect(200)
+        .end (err, res) ->
+          res.body.should.have.property "tutorials"
+          res.body.tutorials.should.have.property "apps"
+
+          expect(res.body.tutorials.apps).to.be.true
+          done()
+
+      it "disables all sections", (done) ->
+        api.post("/api/v1/user/tutorial/all/disable?#{userApiKey}")
+        .expect(200)
+        .end (err, res) ->
+          res.body.should.have.property "tutorials"
+
+          expect(val).to.be.false for key, val of res.body.tutorials
+          done()
+
+      it "enables all sections", (done) ->
+        api.post("/api/v1/user/tutorial/all/enable?#{userApiKey}")
+        .expect(200)
+        .end (err, res) ->
+          res.body.should.have.property "tutorials"
+
+          expect(val).to.be.true for key, val of res.body.tutorials
+          done()
 
     # POST /api/v1/user/deposit/:amount
     describe "user deposit", ->
