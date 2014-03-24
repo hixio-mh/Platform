@@ -573,11 +573,13 @@ schema.methods.updateNative = (data) ->
   if data.clickURL != undefined then @native.clickURL = data.clickURL
 
   # S3 assets
-  if data.iconURL.key or (typeof data.iconURL == "string" and data.iconURL.length > 0)
-    @native.iconURL = generateS3Url data.iconURL
+  if data.iconURL
+    if data.iconURL.key or (typeof data.iconURL == "string" and data.iconURL.length > 0)
+      @native.iconURL = generateS3Url data.iconURL
 
-  if data.featureURL.key or (typeof data.featureURL == "string" and data.featureURL.length > 0)
-    @native.featureURL = generateS3Url data.featureURL
+  if data.featureURL
+    if data.featureURL.key or (typeof data.featureURL == "string" and data.featureURL.length > 0)
+      @native.featureURL = generateS3Url data.featureURL
 
 ##
 ##
