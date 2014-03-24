@@ -93,6 +93,8 @@ module.exports =
     @_filter = false
     @_targets = []
 
+    @randomize = false
+
     @enableFilter = => @_filter = true
     @disableFilter = => @_filter = false
     @isFiltered = => @_filter
@@ -135,6 +137,26 @@ module.exports =
         name: "stats_counts.#{config("NODE_ENV")}.#{target}"
         args: args
 
+    @genRandomData = ->
+      startX = 1395520440000
+      startY = (Math.random() * 100) + 25
+
+      data = []
+      data[0].datapoints = []
+
+      for i in [0...300]
+
+        point =
+          x: startX
+          y: startY
+
+        startX += 100
+        startY += (Math.random() * 10) - 5
+
+        data[0].datapoints.push point
+
+      data
+
     @exec = (cb) =>
       query = @_buildQuery()
 
@@ -149,7 +171,12 @@ module.exports =
           try
             if @_filter then body = @_filterResponse JSON.parse body
             else body = JSON.parse body
-            if cb then cb body
+
+            if @randomize
+              cb @genRandomData()
+            else
+              cb body
+
           catch err
             spew.error "Graphite response parsing error: #{err}"
             spew.error body
