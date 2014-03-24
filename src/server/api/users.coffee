@@ -336,7 +336,7 @@ class APIUsers extends APIBase
     #   $.ajax method: "POST",
     #          url: "/api/v1/user/tutorial/all/enable"
     ###
-    @app.post "/api/v1/user/tutorial/:section/:status", (req, res) =>
+    @app.post "/api/v1/user/tutorial/:section/:status", @apiLogin, (req, res) =>
       section = req.params.section
 
       if req.params.status == "enable"
