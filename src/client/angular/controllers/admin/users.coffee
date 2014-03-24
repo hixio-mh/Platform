@@ -6,6 +6,6 @@ angular.module("AdefyApp").controller "AdefyAdminUsersController", ($scope, $htt
   $scope.delete = (i) ->
     if confirm "Are you sure?"
 
-      $http.delete("/api/v1/users/#{$scope.userlist[i].id}").success (result) ->
+      $http.delete("/api/v1/users/#{$scope.userlist[i]._id}").success (result) ->
         if result.error != undefined then $scope.setNotification result.error, "error"
         else $scope.userlist.splice i, 1
