@@ -141,7 +141,7 @@ module.exports =
       startX = 1395520440000
       startY = (Math.random() * 100) + 25
 
-      data = []
+      data = [{}]
       data[0].datapoints = []
 
       for i in [0...300]
@@ -211,7 +211,7 @@ module.exports =
               if typeof arg == "string" then arg = "'#{arg}'"
               query += ", #{arg}"
 
-          if target.method != null
+          if target.method
             query += ")"
 
             # Add another paranthesis for each sub-function in the target
