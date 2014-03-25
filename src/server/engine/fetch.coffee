@@ -107,11 +107,18 @@ class FetchEngine
     else if type == "native"
 
       res.json
-        title: "Test ad"
-        description: "Test ad description"
-        clickURL: "http://www.adefy.com"
-        impressionURL: "http://www.adefy.com"
-        iconURL: "http://www.adefy.com/favicon.png"
+        creative:
+          text:
+            title: "Test Ad"
+            description: "An ad used for testing publisher integrations"
+
+          graphics:
+            icon: "http://adefy.com/favicon.png"
+            featureLarge: "http://adefy.com/img/native-iphone-shadow.jpg"
+
+        action:
+          click: "http://www.adefy.com"
+          impression: "http://www.adefy.com"
 
   ###
   # Called when an ad is not available, works identically for all formats
@@ -485,13 +492,50 @@ class FetchEngine
     d.add publisher
 
     d.run =>
-      @fetch req, res, publisher, startTimestamp, "native", (data) ->
+      @fetch req, res, publisher, startTimestamp, "native", (data) =>
         delete data.native.active
 
-        data.native.click = data.click
-        data.native.impression = data.impression
+        res.json @buildNativeFromRaw data
 
-        res.json data.native
+  ###
+  # Generate valid native ad JSON from a raw ad data object
+  #
+  # @param [Object] raw
+  # @return [Object] json
+  ###
+  buildNativeFromRaw: (raw) ->
+
+    # Data that is always available
+    data =
+      creative:
+        text:
+          title: raw.native.title
+          description: raw.native.description
+        graphics: {}
+      action:
+        click: raw.click
+        impression: raw.impression
+
+    # Optional extra data, varies by publisher
+    if raw.native.content
+      data.creative.text.content = raw.native.content
+
+    if raw.native.iconURL
+      data.creative.graphics.icon = @processS3URL raw.native.iconURL
+
+    if raw.native.featureURL
+      data.creative.graphics.featureMedium = @processS3URL raw.native.featureURL
+
+    data
+
+  ###
+  # Helper to prefix the protocol to asset S3 urls
+  #
+  # @param [String] url
+  # @return [String] prefixedUrl
+  ###
+  processS3URL: (url) ->
+    "http:#{url}"
 
   ###
   # Fetch an organic ad. Wraps around our generic fetch() method for most
