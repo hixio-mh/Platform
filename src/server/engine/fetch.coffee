@@ -4,7 +4,7 @@ config = require "../config"
 adefyDomain = "http://#{config("domain")}"
 filters = require "../helpers/filters"
 aem = require "../helpers/aem"
-_ = require "underscore"
+_ = require "lodash"
 
 redis = require("../helpers/redisInterface").main
 

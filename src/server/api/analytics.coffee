@@ -4,7 +4,7 @@ crypto = require "crypto"
 db = require "mongoose"
 aem = require "../helpers/aem"
 APIBase = require "./base"
-_ = require "underscore"
+_ = require "lodash"
 
 ###
 # TODO: Document, and replace direct queries with calls to other API modules

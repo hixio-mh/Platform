@@ -1,6 +1,6 @@
 redis = require("./redisInterface").autocomplete
 spew = require "spew"
-_ = require "underscore"
+_ = require "lodash"
 
 # Countries taken from angular-country-select!
 countriesList = require "./filters/countries.json"
