@@ -2,7 +2,7 @@ spew = require "spew"
 fs = require "fs"
 request = require "request"
 archiver = require "archiver"
-_ = require "underscore"
+_ = require "lodash"
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 

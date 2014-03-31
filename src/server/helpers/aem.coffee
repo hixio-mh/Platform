@@ -1,6 +1,6 @@
 # AEM - ApiErrorMessage Helper Object (with humor!)
 spew = require "spew"
-_ = require "underscore"
+_ = require "lodash"
 compare = require "./compare"
 
 ##

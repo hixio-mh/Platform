@@ -1,7 +1,7 @@
 spew = require "spew"
 db = require "mongoose"
 async = require "async"
-_ = require "underscore"
+_ = require "lodash"
 APIBase = require "./base"
 aem = require "../helpers/aem"
 

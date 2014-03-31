@@ -4,7 +4,7 @@ redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
 mongoose = require "mongoose"
 spew = require "spew"
-_ = require "underscore"
+_ = require "lodash"
 async = require "async"
 config = require "../config"
 

@@ -1,7 +1,7 @@
 graphiteInterface = require "../helpers/graphiteInterface"
 mongoose = require "mongoose"
 spew = require "spew"
-_ = require "underscore"
+_ = require "lodash"
 async = require "async"
 redisInterface = require "../helpers/redisInterface"
 redis = redisInterface.main
