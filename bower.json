@@ -40,7 +40,9 @@
     "chai": "~1.9.0",
     "coffee-script": "~1.7.1",
     "showdown": "~0.3.1",
-    "angular-markdown-filter": "*"
+    "angular-markdown-filter": "*",
+    "adefy-js": "git@github.com:Adefy/AdefyJS.git#v1.0",
+    "adefy-re": "git@github.com:Adefy/AdefyRE.git#v1.0"
   },
   "resolutions": {
     "chosen": "e-tag:face03d32",
