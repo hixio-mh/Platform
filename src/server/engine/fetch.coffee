@@ -28,8 +28,8 @@ class FetchEngine
       if not validIP req.query.ip then return "Invalid IP"
 
     if type == "organic"
-      if isNaN req.params.width then return "Invalid width"
-      if isNaN req.params.height then return "Invalid height"
+      if isNaN req.query.width then return "Invalid width"
+      if isNaN req.query.height then return "Invalid height"
 
     null
 
