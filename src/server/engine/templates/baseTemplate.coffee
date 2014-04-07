@@ -6,10 +6,12 @@ _ = require "lodash"
 
 s3Host = "adefyplatformmain.s3.amazonaws.com"
 
+componentsDir = "#{__dirname}/../../../../public/components"
+
 class AdefyBaseAdTemplate
 
-  @AJSCdnUrl: "http://cdn.adefy.com/ajs/ajs.js"
-  @ARECdnUrl: "http://cdn.adefy.com/are/are-full.js"
+  @AJSPath: "#{componentsDir}/adefy-js/build/ajs-prod.min.js"
+  @AREPath: "#{componentsDir}/adefy-re/build/are-prod-full.min.js"
 
   name: "Base Template"
   ready: false
@@ -19,10 +21,7 @@ class AdefyBaseAdTemplate
   files: []
 
   _cachedAJS: null
-  _cachedAWGL: null
-
-  _cachedAJSTimestamp: null
-  _cachedAWGLTimestamp: null
+  _cachedARE: null
 
   # Base template constructor; loads all base assets into RAM as a zip file,
   # and awaits calls to @create()
@@ -33,7 +32,7 @@ class AdefyBaseAdTemplate
 
     @loadAssets()
     @fetchAJS =>
-      @fetchAWGL =>
+      @fetchARE =>
         @signalReady()
 
   # Prefixes the path to our static assets directory for remote access to an
@@ -99,7 +98,7 @@ class AdefyBaseAdTemplate
     else
       key
 
-  # Sends an HTML ad, pulling in AWGL.
+  # Sends an HTML ad, pulling in ARE.
   #
   # @param [Object] creative
   # @param [Object] options
@@ -141,7 +140,7 @@ class AdefyBaseAdTemplate
     </head>
     <body>
       <script>
-      #{@getCachedAWGL()}
+      #{@getCachedARE()}
       </script>
       <script>
       #{@getCachedAJS()}
@@ -217,8 +216,6 @@ class AdefyBaseAdTemplate
       #{creative.body}
     """
 
-    console.log JSON.stringify options
-
     # Build manifest
     manifest.click = options.click
     manifest.impression = options.impression
@@ -260,47 +257,25 @@ class AdefyBaseAdTemplate
     null
 
   fetchAJS: (cb) ->
-    request.head AdefyBaseAdTemplate.AJSCdnUrl, (err, res, body) =>
-      if err then return spew.error err
+    fs.readFile AdefyBaseAdTemplate.AJSPath, (err, ajs) =>
+      return spew.error err if err
+      @_cachedAJS = ajs
 
-      timestamp = new Date(res.headers["last-modified"]).getTime()
+      cb() if cb
 
-      if @_cachedAJSTimestamp == null or @_cachedAJSTimestamp < timestamp
-        @_cachedAJSTimestamp = timestamp
+  fetchARE: (cb) ->
+    fs.readFile AdefyBaseAdTemplate.AREPath, (err, ajs) =>
+      return spew.error err if err
+      @_cachedARE = ajs
 
-        request.get AdefyBaseAdTemplate.AJSCdnUrl, (err, res, body) =>
-          if err
-            @_cachedAJSTimestamp = null
-            return spew.error err
-
-          @_cachedAJS = body
-          if cb then cb()
-      else if cb then cb()
-
-  fetchAWGL: (cb) ->
-    request.head AdefyBaseAdTemplate.ARECdnUrl, (err, res, body) =>
-      if err then return spew.error err
-
-      timestamp = new Date(res.headers["last-modified"]).getTime()
-
-      if @_cachedAWGLTimestamp == null or @_cachedAWGLTimestamp < timestamp
-        @_cachedAWGLTimestamp = timestamp
-
-        request.get AdefyBaseAdTemplate.ARECdnUrl, (err, res, body) =>
-          if err
-            @_cachedAWGLTimestamp = null
-            return spew.error err
-
-          @_cachedAWGL = body
-          if cb then cb()
-      else if cb then cb()
+      cb() if cb
 
   getCachedAJS: ->
     @fetchAJS()
     @_cachedAJS
 
-  getCachedAWGL: ->
-    @fetchAWGL()
-    @_cachedAWGL
+  getCachedARE: ->
+    @fetchARE()
+    @_cachedARE
 
 module.exports = AdefyBaseAdTemplate
