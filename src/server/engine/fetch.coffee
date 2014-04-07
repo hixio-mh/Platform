@@ -59,20 +59,13 @@ class FetchEngine
   # @return [Object] options
   ###
   parseRequestOptions: (req) ->
-    options = {}
-
-    if req.param "ua" then options.userAgent = req.param "ua"
-    else options.userAgent = req.headers["user-agent"]
-
-    if req.param "ip" then options.ip = req.param "ip"
-    else options.ip = req.ip
-
-    options.width = Number req.param "width"
-    options.height = Number req.param "height"
-
-    if req.params.html != undefined then options.html = true
-
-    options
+    {
+      userAgent: req.query.ua or req.headers["user-agent"]
+      ip: req.query.ip or req.ip
+      width: Number req.query.width
+      height: Number req.query.height
+      html: "#{req.query.html}" == "true"
+    }
 
   ###
   # Fetches a test ad
@@ -103,7 +96,7 @@ class FetchEngine
           description: "Test ad description"
           clickURL: "http://www.adefy.com"
 
-      @templates.generate template, options, res
+      @templates template, options, res
     else if type == "native"
 
       res.json
@@ -562,14 +555,9 @@ class FetchEngine
     d.add publisher
 
     d.run =>
-      spew.init 1
       @fetch req, res, publisher, startTimestamp, "organic", (data) =>
         delete data.organic.active
 
-        spew.init 2
-        console.log "Sending options: #{JSON.stringify data}"
-        spew.init 3
-
-        @templates.generate data.template, data, res
+        @templates data.template, data, res
 
 module.exports = (templates, rtbEngine) -> new FetchEngine templates, rtbEngine
