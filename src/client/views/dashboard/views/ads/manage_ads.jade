@@ -1,8 +1,10 @@
+include menus/main
+
 .grid-options
-  a.new-item(form-modal template="/views/dashboard/ads:new" title="Create ad"
-        ok-button-text="Save" form-submit="create()" form-object="adForm" close="closeForm")
+  a.new-item(form-modal template="/views/dashboard/ads:modals:new_ad" title="Create ad"
+        ok-button-text="Create" form-submit="create()" form-object="adForm" close="closeForm")
       i.fa.fa-plus
-      | New ad
+      | New Ad
 
   .sort(ng-if="ads.length > 2")
     p Sorting

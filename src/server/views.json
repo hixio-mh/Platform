@@ -3,8 +3,6 @@
     "/",
     "/home",
 
-    "/reports/campaigns",
-    "/reports/ads",
     "/reports/apps",
 
     "/apps",
@@ -13,7 +11,10 @@
     "/apps/:id/edit",
     "/apps/:id/integration",
 
+    "/creatives",
+
     "/ads",
+    "/ads/reports",
     "/ads/:id",
     "/ads/:id/creative",
     "/ads/:id/native",
@@ -21,6 +22,7 @@
 
     "/campaigns",
     "/campaigns/new",
+    "/campaigns/reports",
     "/campaigns/:id",
     "/campaigns/:id/edit",
 

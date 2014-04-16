@@ -1,6 +1,7 @@
 // Vendor CSS
 @import "../static/css/reset.css"
 @import "./fonts"
+@import "./devices"
 
 user-select()
   -webkit-user-select arguments
@@ -299,6 +300,34 @@ pre
 
 .error
   text-align center
+
+.creative-list .creative
+  padding-bottom 0 !important
+
+  .name
+    padding 0 0 8px 0
+    display block !important
+    text-align center
+
+    font-size 20px
+
+  .preview
+    background-size cover !important
+    width 335px
+    height 200px
+
+    margin-top 8px
+
+    border-bottom-left-radius 5px
+    border-bottom-right-radius 5px
+
+  .creative-stats
+    margin 16px 0
+
+    .creative-stat
+      width 100%
+      font-size 16px
+      text-align center
 
 header
   width 100%
@@ -735,12 +764,45 @@ fieldset
         text-align center
         display inline-block
 
+.nav-header
+  width 100%
+
+  border-bottom 1px solid #eee
+
+  a
+    display inline-block
+    vertical-align top
+
+    text-align center
+    padding 16px 0
+
+    color #858585
+    transition color .25s,background-color .25s,border-color .25s
+
+    i
+      margin-right 8px
+      opacity 0
+
+      transition opacity 0.25s
+
+    &:hover, &.active
+      background-color #eee
+      color black
+
+      i
+        opacity 1
+
+  &.three-cols
+    a
+      width 33%
+
 .grid-options
   margin 20px 40px
   color #aaa
   text-shadow 0 1px white
   line-height 1
   overflow hidden
+
   .sort
     p
       float left

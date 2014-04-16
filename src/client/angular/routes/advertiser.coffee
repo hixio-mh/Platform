@@ -29,24 +29,32 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   ##
 
   $routeProvider.when "/ads",
-    controller: "AdefyAdIndexController"
-    templateUrl: "/views/dashboard/ads:index"
+    controller: "AdefyAdsIndexController"
+    templateUrl: "/views/dashboard/ads:manage_ads"
+
+  $routeProvider.when "/creatives",
+    controller: "AdefyCreativesIndexController"
+    templateUrl: "/views/dashboard/ads:manage_creatives"
+
+  $routeProvider.when "/ads/reports",
+    controller: "AdefyReportsAdsController"
+    templateUrl: "/views/dashboard/ads:reports"
 
   $routeProvider.when "/ads/:id",
-    controller: "AdefyAdDetailController"
-    templateUrl: "/views/dashboard/ads:show"
+    controller: "AdefyAdDetailsController"
+    templateUrl: "/views/dashboard/ads:ad:details"
 
   $routeProvider.when "/ads/:id/creative",
     controller: "AdefyAdOrganicCreativeController"
-    templateUrl: "/views/dashboard/ads:organicCreative"
+    templateUrl: "/views/dashboard/ads:ad:organicCreative"
 
   $routeProvider.when "/ads/:id/native",
     controller: "AdefyAdNativeCreativeController"
-    templateUrl: "/views/dashboard/ads:nativeCreative"
+    templateUrl: "/views/dashboard/ads:ad:nativeCreative"
 
   $routeProvider.when "/ads/:id/reminder",
     controller: "AdefyAdReminderController"
-    templateUrl: "/views/dashboard/ads:reminder"
+    templateUrl: "/views/dashboard/ads:ad:reminder"
 
   ##
   ## Campaigns
@@ -68,17 +76,9 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyCampaignIndexController"
     templateUrl: "/views/dashboard/campaigns:index"
 
-  ##
-  ## Reports
-  ##
-
-  $routeProvider.when "/reports/campaigns",
+  $routeProvider.when "/campaigns/reports",
     controller: "AdefyReportsCampaignsController"
-    templateUrl: "/views/dashboard/reports:campaigns"
-
-  $routeProvider.when "/reports/ads",
-    controller: "AdefyReportsAdsController"
-    templateUrl: "/views/dashboard/reports:ads"
+    templateUrl: "/views/dashboard/campaigns:reports"
 
   ##
   ## Settings and funds

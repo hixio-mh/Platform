@@ -1,6 +1,6 @@
-include _menu
+include menus/main
 
-.contents.w920.center.ad-reports-controls
+.contents.w920.center.campaign-reports-controls
   .graphs
     .graph.w100.reports-header
       .w33
@@ -29,24 +29,24 @@ include _menu
 
   .section Comparison
   table.info(ng-cloak ng-table="cmpTableParams")
-    tr(ng-repeat="ad in $data" ng-show="!ad.tutorial")
-      td(data-title="'Ad Name'" sortable="'name'")
-        {{ ad.name }}
+    tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial || (campaign.tutorial && me.tutorials.reports)")
+      td(data-title="'App Name'" sortable="'name'")
+        {{ campaign.name }}
       td(data-title="'Impressions'" sortable="'impressions'")
-        {{ ad.impressions | number }}
+        {{ campaign.impressions | number }}
       td(data-title="'Clicks'" sortable="'clicks'")
-        {{ ad.clicks | number }}
+        {{ campaign.clicks | number }}
       td(data-title="'CTR'" sortable="'ctr'")
-        {{ ad.ctr | number:2 }}%
+        {{ campaign.ctr | number:2 }}%
       td(data-title="'Spent'" sortable="'spent'")
-        {{ ad.spent | currency:$ }}
+        {{ campaign.spent | currency:$ }}
 
 .contents.w920.center(ng-if="impressionsData == null || clicksData == null || spentData == null")
   h2.loading Loading performance data...
 
 .contents.w920.center(ng-show="impressionsData != null && clicksData != null && spentData != null")
   .section Metric Performance
-    .right.header-controls.ad-reports-controls
+    .right.header-controls.campaign-reports-controls
       select.right(ui-select2 name="interval" ng-model="graphInterval")
         option(value="")
         option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}

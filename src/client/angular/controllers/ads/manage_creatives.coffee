@@ -1,4 +1,4 @@
-angular.module("AdefyApp").controller "AdefyAdIndexController", ($scope, $location, Ad, AdService) ->
+angular.module("AdefyApp").controller "AdefyCreativesIndexController", ($scope, $location, Ad, AdService) ->
 
   $scope.sort =
     metric: "stats.ctr"

@@ -70,9 +70,9 @@ html(lang="en" ng-app="AdefyApp")
           a#campaigns-tab(href="/campaigns" tab)
             i.fa.fa-fw.fa-bullhorn
             | Campaigns
-          a#ads-tab(href="/ads" tab)
+          a#ads-tab(href="/ads" alias="/creatives" tab)
             i.fa.fa-fw.fa-sitemap
-            | Ads
+            | Ads &amp; Creatives
           a#apps-tab(href="/publishers" tab)
             i.fa.fa-fw.fa-rocket
             | Publishers
@@ -228,12 +228,13 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/controllers/account/settings.js")
 
         //- Ads
-        script(src="/js/controllers/ads/organic.js")
-        script(src="/js/controllers/ads/native.js")
-        script(src="/js/controllers/ads/detail.js")
-        script(src="/js/controllers/ads/index.js")
-        script(src="/js/controllers/ads/menu.js")
-        script(src="/js/controllers/ads/reminder.js")
+        script(src="/js/controllers/ads/manage_ads.js")
+        script(src="/js/controllers/ads/manage_creatives.js")
+        script(src="/js/controllers/ads/menus/ad.js")
+        script(src="/js/controllers/ads/ad/details.js")
+        script(src="/js/controllers/ads/ad/edit_organic_creative.js")
+        script(src="/js/controllers/ads/ad/edit_native_creative.js")
+        script(src="/js/controllers/ads/ad/edit_reminder.js")
 
         //- Apps
         script(src="/js/controllers/apps/create.js")
