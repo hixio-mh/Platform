@@ -12,8 +12,6 @@ powerdrill = require("powerdrill") config("mandrill_apikey")
 passport = require "passport"
 aem = require "../helpers/aem"
 
-paypalCredentials =
-
 if config("paypal_client_id") == undefined or config("paypal_client_secret") == undefined
   throw new Error "Paypal credentials missing on config!"
 

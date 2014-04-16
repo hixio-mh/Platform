@@ -61,39 +61,57 @@ html(lang="en" ng-app="AdefyApp")
     header.navbar.cf
       a(href="/")
         #logo Adefy
-      .menu.left.full
-        a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
-          i.fa.fa-fw.fa-home
-          | Dashboard
-        //- a#news-tab(href="/news" tab)
-          i.fa.fa-fw.fa-inbox
-          | News
-        a#reports-tab(href="/reports/campaigns" tab)
-          i.fa.fa-fw.fa-signal
-          | Reports
-        a#campaigns-tab(href="/campaigns" tab)
-          i.fa.fa-fw.fa-bullhorn
-          | Campaigns
-        a#ads-tab(href="/ads" tab)
-          i.fa.fa-fw.fa-sitemap
-          | Ads
-        a#apps-tab(href="/apps" tab)
-          i.fa.fa-fw.fa-rocket
-          | Apps
+
+      if user.type == "advertiser"
+        .menu.left.full
+          a#home-tab(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Advertiser
+          a#campaigns-tab(href="/campaigns" tab)
+            i.fa.fa-fw.fa-bullhorn
+            | Campaigns
+          a#ads-tab(href="/ads" tab)
+            i.fa.fa-fw.fa-sitemap
+            | Ads
+          a#apps-tab(href="/publishers" tab)
+            i.fa.fa-fw.fa-rocket
+            | Publishers
+
+      else if user.type == "publisher"
+        .menu.left.full
+          a#home-tab(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Publisher
+          a#campaigns-tab(href="/apps" tab)
+            i.fa.fa-fw.fa-rocket
+            | Apps
+          a#ads-tab(href="/offers" tab)
+            i.fa.fa-fw.fa-money
+            | Offers
+
+      else if user.type == "admin"
+        .menu.left.full
+          a#home-tab(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Admin
 
       .menu.right
-        a(href="/funds" tab ng-cloak) Advertiser {{ me.adFunds | currency:$ }}
-        a(href="/funds" tab ng-cloak) Publisher {{ me.pubFunds | currency:$ }}
+
+        if user.type == "advertiser"
+          a(href="/funds" tab ng-cloak) Balance {{ me.adFunds | currency:$ }}
+        else if user.type == "publisher"
+          a(href="/funds" tab ng-cloak) Credit {{ me.pubFunds | currency:$ }}
+
         .da(dropdown, ng-click="toggleSelect()")
           i.fa.fa-fw.fa-cogs
           .dropdown(ng-show="isPopupVisible")
-            if user.admin
+            if user.type == "admin"
               a(href="/admin/home")
                 i.fa.fa-fw.fa-user
                 | Admin
             a(href="/funds")
               i.fa.fa-fw.fa-dollar
-              | Payments
+              | Funds
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
@@ -148,9 +166,11 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/components/d3/d3.min.js")
         script(src="/components/rickshaw/rickshaw.min.js")
 
-        script(src="/js/routes/normal.js")
-
-        if user.admin
+        if user.type == "publisher"
+          script(src="/js/routes/publisher.js")
+        else if user.type == "advertiser"
+          script(src="/js/routes/advertiser.js")
+        else if user.type == "admin"
           script(src="/js/routes/admin.js")
 
         script(src="/js/controllers/root.js")

@@ -13,8 +13,7 @@
     .desc Spent today
 
 .index.dashboard
-  a.switch-view(href="/home/publisher") Switch to publisher view
-
+  br
   div.w50(ng-if="graph24hStats")
     h6.block.tcenter 24h Clicks &amp; Impressions
     div(analytics data="graph24hStats" width="340" height="150" type="line" legend="true" hover="hoverFormatter")

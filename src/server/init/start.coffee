@@ -17,17 +17,15 @@ module.exports = (express, cb) ->
   passport.use new passportLocalStrategy (username, password, done) ->
 
     mongoose.model("User").findOne username: username, (err, user) ->
-      if err then return done err
-      if not user then return done null, false, message: "Incorrect username"
+      return done err if err
+      return done null, false, message: "Incorrect username" unless user
 
       user.comparePassword password, (err, match) ->
-        if err then return done err
-        if not match then return done null, false, message: "Incorrect password"
+        return done err if err
+        return done null, false, message: "Incorrect password" unless match
 
         signedup = new Date(Date.parse(user._id.getTimestamp())).getTime() / 1000
-        admin = user.permissions == 0
         user = user.toAPI()
-        user.admin = admin
         user.signedup = signedup
 
         done null, user

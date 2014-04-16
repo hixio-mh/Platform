@@ -1,8 +1,7 @@
 {
   "views": [
     "/",
-    "/home/advertiser",
-    "/home/publisher",
+    "/home",
 
     "/reports/campaigns",
     "/reports/ads",

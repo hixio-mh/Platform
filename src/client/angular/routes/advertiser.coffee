@@ -16,45 +16,17 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $locationProvider.html5Mode true
   $locationProvider.hashPrefix "!"
 
-  $routeProvider.when "/home/publisher",
-    controller: "AdefyDashboardPublisherController"
-    templateUrl: "/views/dashboard/home:publisher"
+  ##
+  ## Dashboard
+  ##
 
-  $routeProvider.when "/home/advertiser",
+  $routeProvider.when "/home",
     controller: "AdefyDashboardAdvertiserController"
     templateUrl: "/views/dashboard/home:advertiser"
 
-  $routeProvider.when "/reports/campaigns",
-    controller: "AdefyReportsCampaignsController"
-    templateUrl: "/views/dashboard/reports:campaigns"
-
-  $routeProvider.when "/reports/ads",
-    controller: "AdefyReportsAdsController"
-    templateUrl: "/views/dashboard/reports:ads"
-
-  $routeProvider.when "/reports/apps",
-    controller: "AdefyReportsAppsController"
-    templateUrl: "/views/dashboard/reports:apps"
-
-  $routeProvider.when "/apps",
-    controller: "AdefyAppsIndexController"
-    templateUrl: "/views/dashboard/apps:index"
-
-  $routeProvider.when "/apps/new",
-    controller: "AdefyAppsCreateController"
-    templateUrl: "/views/dashboard/apps:new"
-
-  $routeProvider.when "/apps/:id",
-    controller: "AdefyAppsDetailsController"
-    templateUrl: "/views/dashboard/apps:show"
-
-  $routeProvider.when "/apps/:id/integration",
-    controller: "AdefyAppsDetailsController"
-    templateUrl: "/views/dashboard/apps:integration"
-
-  $routeProvider.when "/apps/:id/edit",
-    controller: "AdefyAppsEditController"
-    templateUrl: "/views/dashboard/apps:edit"
+  ##
+  ## Ads and Creatives
+  ##
 
   $routeProvider.when "/ads",
     controller: "AdefyAdIndexController"
@@ -76,6 +48,10 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyAdReminderController"
     templateUrl: "/views/dashboard/ads:reminder"
 
+  ##
+  ## Campaigns
+  ##
+
   $routeProvider.when "/campaigns/new",
     controller: "AdefyCampaignCreateController"
     templateUrl: "/views/dashboard/campaigns:new"
@@ -92,6 +68,22 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyCampaignIndexController"
     templateUrl: "/views/dashboard/campaigns:index"
 
+  ##
+  ## Reports
+  ##
+
+  $routeProvider.when "/reports/campaigns",
+    controller: "AdefyReportsCampaignsController"
+    templateUrl: "/views/dashboard/reports:campaigns"
+
+  $routeProvider.when "/reports/ads",
+    controller: "AdefyReportsAdsController"
+    templateUrl: "/views/dashboard/reports:ads"
+
+  ##
+  ## Settings and funds
+  ##
+
   $routeProvider.when "/settings",
     controller: "AdefyAccountSettingsController"
     templateUrl: "/views/dashboard/account:settings"
@@ -104,6 +96,7 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyAccountFundsController"
     templateUrl: "/views/dashboard/account:depositFinal"
 
+  ###
   $routeProvider.when "/news/new",
     controller: "AdefyNewsCreateController"
     templateUrl: "/views/dashboard/news:new"
@@ -119,8 +112,9 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $routeProvider.when "/news",
     controller: "AdefyNewsIndexController"
     templateUrl: "/views/dashboard/news:index"
+  ###
 
-  $routeProvider.otherwise { redirectTo: "/home/publisher" }
+  $routeProvider.otherwise { redirectTo: "/home" }
 
   ngQuickDateDefaultsProvider.set
     closeButtonHtml: "<i class='fa fa-times'></i>"

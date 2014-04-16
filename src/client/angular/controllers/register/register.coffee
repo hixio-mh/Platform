@@ -24,7 +24,7 @@ window.AdefyRegister.controller "AdefyRegisterController", ($scope, $http) ->
     if $scope.vat != undefined then data.vat = $scope.vat
 
     $http.post("/api/v1/register", data)
-    .success(-> window.location.href = "/")
+    .success(-> window.location.href = "/home")
     .error (res) -> $scope.error = "Username is in use"
 
   $scope.enterSubmit = (e) ->
