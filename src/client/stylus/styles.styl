@@ -259,7 +259,7 @@ legend, .section
   width 100%
   margin-bottom 10px
   font-weight 300
-  color #aaa
+  color #666
   font-size 32px
   border-bottom 1px solid #ddd
   text-shadow 0 1px white
@@ -276,6 +276,86 @@ legend, .section
 
 fieldset:nth-of-type(n+2)
   margin-top 25px
+
+.cards, .single-card
+  background-color #eee
+  padding 32px 0
+
+  .new-card
+    display block
+    color #666
+
+    margin 0 0 32px 32px
+
+    i
+      margin-right 8px
+
+.cards
+
+  .card
+    display inline-block
+    vertical-align top
+    width 30%
+    margin 0 1.5%
+
+.card
+  width 720px
+  padding 16px 32px
+  margin 32px auto
+  position relative
+  background-color white
+  overflow hidden
+
+  box-shadow rgba(0, 0, 0, 0.047) 0px 2px 3px 0px
+
+  .card-inner, .simple-inner
+    width 75%
+
+  &.no-preview .card-inner, &.no-preview .simple-inner
+    width 100%
+
+  .simple-inner
+    padding 32px 0 32px 16px
+
+    .title
+      border-bottom 0
+      margin-bottom 0
+      padding-bottom 0
+
+    .subtitle
+      font-size 14px
+      width 100%
+      font-style italic
+      color #666
+
+  .info
+    width 50%
+    display inline-block
+    vertical-align top
+
+    .info-header
+      width 100%
+      font-size 14px
+
+    .info-detail
+      width 100%
+      font-size 18px
+
+  .title
+    font-size 28px
+    font-weight 300
+    color #999
+    width 100%
+
+    padding-bottom 8px
+    margin-bottom 16px
+    border-bottom 1px solid #eee
+
+  .preview
+    position absolute
+    width 25%
+    top 0
+    right 0
 
 code, pre
   padding 0 3px 2px
@@ -766,8 +846,8 @@ fieldset
 
 .nav-header
   width 100%
-
   border-bottom 1px solid #eee
+  background-color white
 
   a
     display inline-block

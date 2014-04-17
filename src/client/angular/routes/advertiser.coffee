@@ -32,13 +32,17 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyAdsIndexController"
     templateUrl: "/views/dashboard/ads:manage_ads"
 
+  $routeProvider.when "/ads/reports",
+    controller: "AdefyReportsAdsController"
+    templateUrl: "/views/dashboard/ads:reports"
+
   $routeProvider.when "/creatives",
     controller: "AdefyCreativesIndexController"
     templateUrl: "/views/dashboard/ads:manage_creatives"
 
-  $routeProvider.when "/ads/reports",
-    controller: "AdefyReportsAdsController"
-    templateUrl: "/views/dashboard/ads:reports"
+  $routeProvider.when "/creatives/:id",
+    controller: "AdefyCreativeDetailsController"
+    templateUrl: "/views/dashboard/ads:creative:details"
 
   $routeProvider.when "/ads/:id",
     controller: "AdefyAdDetailsController"

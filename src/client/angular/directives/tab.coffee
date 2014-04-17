@@ -26,10 +26,13 @@ angular.module("AdefyApp").directive "tab", ($location) ->
         added = false
 
         for alias in aliases
-          if (attrs.partial == "false" or not attrs.partial) and $location.path() == alias
-            element.addClass "active"
-            added = true
-            break
+          if (attrs.partial == "false" or not attrs.partial)
+
+            # Allow multi-path aliases (ending in /)
+            if $location.path() == alias or ($location.path().indexOf(alias) != -1 and alias[-1..] == "/")
+              element.addClass "active"
+              added = true
+              break
 
         if not added then element.removeClass "active"
 

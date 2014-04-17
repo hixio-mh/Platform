@@ -12,6 +12,7 @@
     "/apps/:id/integration",
 
     "/creatives",
+    "/creatives/:id",
 
     "/ads",
     "/ads/reports",

@@ -70,7 +70,7 @@ html(lang="en" ng-app="AdefyApp")
           a#campaigns-tab(href="/campaigns" tab)
             i.fa.fa-fw.fa-bullhorn
             | Campaigns
-          a#ads-tab(href="/ads" alias="/creatives" tab)
+          a#ads-tab(href="/ads" alias="/creatives,/creatives/,/ads/reports" tab)
             i.fa.fa-fw.fa-sitemap
             | Ads &amp; Creatives
           a#apps-tab(href="/publishers" tab)
@@ -231,6 +231,10 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/controllers/ads/manage_ads.js")
         script(src="/js/controllers/ads/manage_creatives.js")
         script(src="/js/controllers/ads/menus/ad.js")
+        script(src="/js/controllers/ads/menus/creative.js")
+
+        script(src="/js/controllers/ads/creative/details.js")
+
         script(src="/js/controllers/ads/ad/details.js")
         script(src="/js/controllers/ads/ad/edit_organic_creative.js")
         script(src="/js/controllers/ads/ad/edit_native_creative.js")

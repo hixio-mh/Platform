@@ -1,54 +1,32 @@
 include menus/main
 
-.grid-options
-  a.new-item(form-modal template="/views/dashboard/ads:modals:new_creative" title="New Creative"
+.cards
+
+  a.new-card(form-modal template="/views/dashboard/ads:modals:new_creative" title="New Creative"
         ok-button-text="Create" form-submit="create()" form-object="creativeForm" close="closeForm")
       i.fa.fa-plus
       | New Creative
 
-//- ul.creative-list
-  .creative(href="#")
-    li
-      .nexus5
-        .device
-          .inner
-          .sleep
-          .volume
-          .camera
-          .top-bar
-          .sensor
-          .speaker
-          .screen
-            .name Awesome Creative 2
-            .edit
-              button Open in editor
-          .bottom-bar
-          .home
+  .card(href="/creatives/skittles")
+    .simple-inner
 
-ul.grid.creative-list
-  li.item.creative
-    .name Skittle Demo
-    .creative-stats
-      .creative-stat 1 Exported Ad(s)
-      .creative-stat 322kB
-      br
-      .creative-stat Created yesterday
-    .preview(style="background: url('https://developer.adefy.com/demos/assets/skittles/thumb.jpg')")
+      .title Skittle Demo
+      .subtitle Created yesterday
 
-  li.item.creative
-    .name Watch Demo
-    .creative-stats
-      .creative-stat 1 Exported Ad(s)
-      .creative-stat 234kB
-      br
-      .creative-stat Created yesterday
-    .preview(style="background: url('https://developer.adefy.com/demos/assets/watch/thumb.jpg')")
+    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
 
-  li.item.creative
-    .name Car Demo
-    .creative-stats
-      .creative-stat 1 Exported Ad(s)
-      .creative-stat 195kB
-      br
-      .creative-stat Created 3 days ago
-    .preview(style="background: url('https://developer.adefy.com/demos/assets/car/thumb.jpg')")
+  .card(href="/creatives/watch")
+    .simple-inner
+
+      .title Watch Demo
+      .subtitle Created yesterday
+
+    img.preview(src="https://developer.adefy.com/demos/assets/watch/thumb.jpg")
+
+  .card(href="/creatives/car")
+    .simple-inner
+
+      .title Car Demo
+      .subtitle Created 3 day(s) ago
+
+    img.preview(src="https://developer.adefy.com/demos/assets/car/thumb.jpg")
