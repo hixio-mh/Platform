@@ -94,6 +94,8 @@ class AdefyAnalyticsDirective
     @colors.publishers = @colors.publisher = @colors.Publisher
 
   fetchData: ->
+    return unless @scope.data
+
     @_fetchedData = null
     @requestIndividualDataSet(graph, i) for graph, i in @scope.data.graphs
 

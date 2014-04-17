@@ -1,6 +1,12 @@
 include ../menus/creative
 
-.single-card
+.stacked-cards
+
+  a.new-card(form-modal template="/views/dashboard/ads:modals:new_export" title="New Export"
+        ok-button-text="Create" form-submit="create()" form-object="exportForm" close="closeForm")
+      i.fa.fa-plus
+      | Export new Ad
+
   .card(style="min-height: 266px")
     .card-inner
       .title Details
@@ -13,4 +19,68 @@ include ../menus/creative
         .info-header Created
         .info-detail Yesterday
 
+      .info
+        .info-header Device support
+        .info-detail Phones, Tablets
+
+      .card-labels
+        .label.green Exported
+
     img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+
+  .card.no-preview(style="min-height: 266px")
+    .card-inner
+      .title Running Ads
+
+      table
+        thead
+          tr
+            th Name
+            th CTR
+            th Impressions
+        tbody
+          tr
+            td
+              a(href="#") Angry Birds
+            td 2.36%
+            td 24,364
+          tr
+            td
+              a(href="#") Frontback
+            td 4.42%
+            td 31,853
+          tr
+            td
+              a(href="#") Runtastic
+            td 3.38%
+            td 32,012
+
+  .card.no-preview(style="min-height: 266px")
+    .card-inner
+      .title
+        | Size on Device
+        i.fa.fa-gears
+
+      .info
+        .info-header Nexus 5
+        .info-detail 156KB
+
+      .info
+        .info-header iPhone 5S
+        .info-detail 115KB
+
+      .info
+        .info-header iPhone 5C
+        .info-detail 102KB
+
+      .info
+        .info-header Lumia 920
+        .info-detail 98KB
+
+      .info
+        .info-header Galaxy Tab 10.1
+        .info-detail 198KB
+
+      .info
+        .info-header Nexus 7
+        .info-detail 174KB

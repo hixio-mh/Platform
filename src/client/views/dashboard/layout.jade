@@ -64,34 +64,37 @@ html(lang="en" ng-app="AdefyApp")
 
       if user.type == "advertiser"
         .menu.left.full
-          a#home-tab(href="/home" tab)
+          a(href="/home" tab)
             i.fa.fa-fw.fa-home
             | Advertiser
-          a#campaigns-tab(href="/campaigns" tab)
+          a(href="/campaigns" tab)
             i.fa.fa-fw.fa-bullhorn
             | Campaigns
-          a#ads-tab(href="/ads" alias="/creatives,/creatives/,/ads/reports" tab)
+          a(href="/ads" alias="/creatives,/creatives/,/ads/reports" tab)
             i.fa.fa-fw.fa-sitemap
             | Ads &amp; Creatives
-          a#apps-tab(href="/publishers" tab)
+          a(href="/publishers" tab)
             i.fa.fa-fw.fa-rocket
             | Publishers
+          a(href="/marketplace" tab)
+            i.fa.fa-legal
+            | Marketplace
 
       else if user.type == "publisher"
         .menu.left.full
-          a#home-tab(href="/home" tab)
+          a(href="/home" tab)
             i.fa.fa-fw.fa-home
             | Publisher
-          a#campaigns-tab(href="/apps" tab)
+          a(href="/apps" tab)
             i.fa.fa-fw.fa-rocket
             | Apps
-          a#ads-tab(href="/offers" tab)
-            i.fa.fa-fw.fa-money
-            | Offers
+          a(href="/marketplace" tab)
+            i.fa.fa-fw.fa-legal
+            | Marketplace
 
       else if user.type == "admin"
         .menu.left.full
-          a#home-tab(href="/home" tab)
+          a(href="/home" tab)
             i.fa.fa-fw.fa-home
             | Admin
 
@@ -234,6 +237,7 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/controllers/ads/menus/creative.js")
 
         script(src="/js/controllers/ads/creative/details.js")
+        script(src="/js/controllers/ads/creative/exports.js")
 
         script(src="/js/controllers/ads/ad/details.js")
         script(src="/js/controllers/ads/ad/edit_organic_creative.js")

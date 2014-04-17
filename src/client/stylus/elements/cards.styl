@@ -1,0 +1,143 @@
+.cards, .stacked-cards
+  background-color #eee
+  padding 32px 0
+
+  .new-card
+    display block
+    width 256px
+    margin 0 auto
+    padding 8px 0
+
+    color #aaa
+    border 1px solid #aaa
+    text-align center
+
+    &:hover
+      color #666
+      border 1px solid #666
+
+    i
+      margin-right 8px
+
+.cards
+
+  .card
+    display inline-block
+    vertical-align top
+    width 48%
+    margin 0 1% 32px 1%
+
+.card
+  width 720px
+  padding 16px 32px
+  margin 32px auto
+  position relative
+  background-color white
+  overflow hidden
+
+  box-shadow rgba(0, 0, 0, 0.047) 0px 2px 3px 0px
+
+  &:hover
+    cursor pointer
+    box-shadow rgba(0, 0, 0, 0.15) 0px 2px 3px 0px  
+
+  .card-inner, .simple-inner
+    width 75%
+
+  &.no-preview .card-inner, &.no-preview .simple-inner
+    width 100%
+
+  .simple-inner
+    padding 32px 0 32px 16px
+
+    .title
+      border-bottom 0
+      margin-bottom 0
+      padding-bottom 0
+
+    .subtitle
+      font-size 14px
+      width 100%
+      font-style italic
+      color #666
+
+  .icon
+    width 128px
+    position absolute
+    right 32px
+    bottom 46px
+
+  .card-labels
+    width 100%
+    padding 8px 0
+
+    .label:first-child
+      margin-left 0
+
+  .info
+    display inline-block
+    vertical-align top
+    margin-bottom 16px
+    width 50%
+
+    .info-header
+      width 100%
+      font-size 14px
+
+    .info-detail
+      width 100%
+      font-size 18px
+
+    &.large
+
+      .info-header
+        font-size 18px
+
+      .info-detail
+        font-size 24px
+
+  table
+    width 100%
+    text-align left
+
+    thead
+      color #666
+
+    tr
+      border-bottom 1px solid #eee
+
+    td
+      padding 6px 0
+
+  &:not(.no-preview)
+    .title i
+      margin-right 16px 
+
+  .title
+    font-size 28px
+    font-weight 300
+    color #999
+    width 100%
+
+    padding-bottom 8px
+    margin-bottom 16px
+    border-bottom 1px solid #eee
+
+    i
+      float right
+      margin-top 12px
+      font-size 18px
+
+      &::before
+        padding-right 8px
+
+      transition color 0.25s
+
+      &:hover
+        color #666
+
+  .preview
+    position absolute
+    width 25%
+    top 0
+    right 0

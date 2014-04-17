@@ -1,32 +1,68 @@
 include menus/main
 
-.cards
+.stacked-cards
 
   a.new-card(form-modal template="/views/dashboard/ads:modals:new_creative" title="New Creative"
         ok-button-text="Create" form-submit="create()" form-object="creativeForm" close="closeForm")
       i.fa.fa-plus
       | New Creative
 
-  .card(href="/creatives/skittles")
-    .simple-inner
+  a(href="/creatives/skittles")
+    .card
+      .card-inner
+        .title Skittles Tech Demo
 
-      .title Skittle Demo
-      .subtitle Created yesterday
+        .info
+          .info-header Size
+          .info-detail 115KB (Compressed)
 
-    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+        .info
+          .info-header Created
+          .info-detail Yesterday
 
-  .card(href="/creatives/watch")
-    .simple-inner
+        .info
+          .info-header Device support
+          .info-detail Phones, Tablets
 
-      .title Watch Demo
-      .subtitle Created yesterday
+        .card-labels
+          .label.green Exported
 
-    img.preview(src="https://developer.adefy.com/demos/assets/watch/thumb.jpg")
+      img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
 
-  .card(href="/creatives/car")
-    .simple-inner
+  a(href="/creatives/skittles")
+    .card
+      .card-inner
+        .title Watch Tech Demo
 
-      .title Car Demo
-      .subtitle Created 3 day(s) ago
+        .info
+          .info-header Size
+          .info-detail 142KB (Compressed)
 
-    img.preview(src="https://developer.adefy.com/demos/assets/car/thumb.jpg")
+        .info
+          .info-header Created
+          .info-detail Yesterday
+
+        .info
+          .info-header Device support
+          .info-detail Phones, Tablets
+
+      img.preview(src="https://developer.adefy.com/demos/assets/watch/thumb.jpg")
+
+  a(href="/creatives/car")
+    .card
+      .card-inner
+        .title Car Tech Demo
+
+        .info
+          .info-header Size
+          .info-detail 88KB (Compressed)
+
+        .info
+          .info-header Created
+          .info-detail 3 days ago
+
+        .info
+          .info-header Device support
+          .info-detail Phones
+
+      img.preview(src="https://developer.adefy.com/demos/assets/car/thumb.jpg")

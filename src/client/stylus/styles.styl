@@ -2,6 +2,7 @@
 @import "../static/css/reset.css"
 @import "./fonts"
 @import "./devices"
+@import "./elements/cards"
 
 user-select()
   -webkit-user-select arguments
@@ -40,6 +41,7 @@ campaign-icon
 body
   font-family Proxima Nova, sans-serif
   color #333
+  background-color #eee
   line-height 1.6
   padding-top 52px // navbar
   padding-bottom 50px
@@ -96,6 +98,19 @@ blockquote
 .select2-chosen
   font-size 14px
   font-weight 400
+
+.green
+  color #2ecc71
+.red
+  color #e74c3c
+.gray
+  color #95a5a6
+.blue
+  color #0099CC
+.yellow
+  color #f1c40f
+.orange
+  color #f39c12
 
 button
   background -webkit-linear-gradient(#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
@@ -277,86 +292,6 @@ legend, .section
 fieldset:nth-of-type(n+2)
   margin-top 25px
 
-.cards, .single-card
-  background-color #eee
-  padding 32px 0
-
-  .new-card
-    display block
-    color #666
-
-    margin 0 0 32px 32px
-
-    i
-      margin-right 8px
-
-.cards
-
-  .card
-    display inline-block
-    vertical-align top
-    width 30%
-    margin 0 1.5%
-
-.card
-  width 720px
-  padding 16px 32px
-  margin 32px auto
-  position relative
-  background-color white
-  overflow hidden
-
-  box-shadow rgba(0, 0, 0, 0.047) 0px 2px 3px 0px
-
-  .card-inner, .simple-inner
-    width 75%
-
-  &.no-preview .card-inner, &.no-preview .simple-inner
-    width 100%
-
-  .simple-inner
-    padding 32px 0 32px 16px
-
-    .title
-      border-bottom 0
-      margin-bottom 0
-      padding-bottom 0
-
-    .subtitle
-      font-size 14px
-      width 100%
-      font-style italic
-      color #666
-
-  .info
-    width 50%
-    display inline-block
-    vertical-align top
-
-    .info-header
-      width 100%
-      font-size 14px
-
-    .info-detail
-      width 100%
-      font-size 18px
-
-  .title
-    font-size 28px
-    font-weight 300
-    color #999
-    width 100%
-
-    padding-bottom 8px
-    margin-bottom 16px
-    border-bottom 1px solid #eee
-
-  .preview
-    position absolute
-    width 25%
-    top 0
-    right 0
-
 code, pre
   padding 0 3px 2px
   font-family Monaco,Menlo,Consolas,"Courier New",monospace
@@ -509,18 +444,6 @@ header
   border-radius 4px
   border 1px solid
   vertical-align text-bottom
-  &.green
-    color #2ecc71
-  &.red
-    color #e74c3c
-  &.gray
-    color #95a5a6
-  &.blue
-    color #0099CC
-  &.yellow
-    color #f1c40f
-  &.orange
-    color #f39c12
 
   &.active
     margin inherit

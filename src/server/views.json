@@ -13,6 +13,7 @@
 
     "/creatives",
     "/creatives/:id",
+    "/creatives/:id/exports",
 
     "/ads",
     "/ads/reports",
