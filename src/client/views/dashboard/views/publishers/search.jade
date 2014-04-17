@@ -1,0 +1,80 @@
+include menus/main
+
+.stacked-cards
+
+  .card.no-preview
+    .card-inner
+      .title Search
+
+      .info.fullw.large
+        .info-header Keywords
+        .info-detail: input(required type="text" placeholder="Enter a query")
+
+      .info.large
+        .info-header Category
+        .info-detail: select(ui-select2)
+          option(value="any") Any
+          option(value="Gaming") Gaming
+          option(value="Finance") Finance
+          option(value="Productivity") Productivity
+          option(value="Fitness") Fitness
+          option(value="Communication") Communication
+          option(value="Music & Audio") Music &amp; Audio
+
+      .info.large
+        .info-header Volume
+        .info-detail: select(ui-select2)
+          option(value="any") Any
+          option(value="0-10k") 0 - 10k Impressions/mo
+          option(value="10k-100k") 10k - 100k Impressions/mo
+          option(value="100k-1M") 100k - 1M Impressions/mo
+          option(value="1M-10M") 1M - 10M Impressions/mo
+          option(value="10M+") 10M+ Impressions/mo
+
+  .card.no-preview
+    .card-inner
+      .title Recent Searches
+
+      table
+        thead
+          tr
+            th Query
+            th Results
+        tbody
+          tr
+            td
+              a(href="#") RPG in:Gaming
+            td 426
+          tr
+            td
+              a(href="#") Stock watcher in:Finance
+            td 77
+          tr
+            td
+              a(href="#") Social network in:Communication
+            td 1,563
+
+  .card-spacer 2,123 Search Results
+
+  a(href="/publishers/frontback" target="_blank")
+    .card.no-preview
+      .card-inner
+        .title
+          i.left.hoverable.fa.fa-star-o
+          | Frontback
+          i.fa.fa-bar-chart-o Details
+
+        .info.large
+          .info-header Impressions last 30 days
+          .info-content.green 76,342
+
+        .info.large
+          .info-header Average CTR
+          .info-content 2.7%
+
+        div.noAxes(analytics data="null" width="496" height="300")
+
+        img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+      .card-labels
+        .label.green Active Campaigns

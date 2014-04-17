@@ -76,7 +76,7 @@ html(lang="en" ng-app="AdefyApp")
           a(href="/publishers" tab)
             i.fa.fa-fw.fa-rocket
             | Publishers
-          a(href="/marketplace" tab)
+          a(href="/marketplace/active" tab)
             i.fa.fa-legal
             | Marketplace
 
@@ -88,7 +88,7 @@ html(lang="en" ng-app="AdefyApp")
           a(href="/apps" tab)
             i.fa.fa-fw.fa-rocket
             | Apps
-          a(href="/marketplace" tab)
+          a(href="/marketplace/active" tab)
             i.fa.fa-fw.fa-legal
             | Marketplace
 
@@ -243,6 +243,18 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/controllers/ads/ad/edit_organic_creative.js")
         script(src="/js/controllers/ads/ad/edit_native_creative.js")
         script(src="/js/controllers/ads/ad/edit_reminder.js")
+
+        //- Publishers
+        script(src="/js/controllers/publishers/favorites.js")
+        script(src="/js/controllers/publishers/featured.js")
+        script(src="/js/controllers/publishers/search.js")
+        script(src="/js/controllers/publishers/details.js")
+
+        //- Marketplace
+        script(src="/js/controllers/marketplace/history.js")
+        script(src="/js/controllers/marketplace/messages.js")
+        script(src="/js/controllers/marketplace/pending_deals.js")
+        script(src="/js/controllers/marketplace/active_deals.js")
 
         //- Apps
         script(src="/js/controllers/apps/create.js")

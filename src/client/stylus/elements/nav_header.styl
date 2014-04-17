@@ -1,0 +1,35 @@
+.nav-header
+  width 100%
+  border-bottom 1px solid #eee
+  background-color white
+
+  a
+    display inline-block
+    vertical-align top
+
+    text-align center
+    padding 16px 0
+
+    color #858585
+    transition color .25s,background-color .25s,border-color .25s
+
+    i
+      margin-right 8px
+      opacity 0
+
+      transition opacity 0.25s
+
+    &:hover, &.active
+      background-color #eee
+      color black
+
+      i
+        opacity 1
+
+  &.three-cols
+    a
+      width 33%
+
+  &.four-cols
+    a
+      width 25%

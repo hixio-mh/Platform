@@ -65,6 +65,26 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     templateUrl: "/views/dashboard/ads:ad:reminder"
 
   ##
+  ## Marketplace
+  ##
+
+  $routeProvider.when "/marketplace/active",
+    controller: "AdefyMarketplaceActiveDealsController"
+    templateUrl: "/views/dashboard/marketplace:active_deals"
+
+  $routeProvider.when "/marketplace/pending",
+    controller: "AdefyMarketplacePendingDealsController"
+    templateUrl: "/views/dashboard/marketplace:pending_deals"
+
+  $routeProvider.when "/marketplace/history",
+    controller: "AdefyMarketplaceHistoryController"
+    templateUrl: "/views/dashboard/marketplace:history"
+
+  $routeProvider.when "/marketplace/messages",
+    controller: "AdefyMarketplaceMessagesController"
+    templateUrl: "/views/dashboard/marketplace:messages"
+
+  ##
   ## Campaigns
   ##
 
@@ -87,6 +107,26 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
   $routeProvider.when "/campaigns/reports",
     controller: "AdefyReportsCampaignsController"
     templateUrl: "/views/dashboard/campaigns:reports"
+
+  ##
+  ## Publishers
+  ##
+
+  $routeProvider.when "/publishers/favorites",
+    controller: "AdefyFavoritePublishersController"
+    templateUrl: "/views/dashboard/publishers:favorites"
+
+  $routeProvider.when "/publishers",
+    controller: "AdefySearchPublishersController"
+    templateUrl: "/views/dashboard/publishers:search"
+
+  $routeProvider.when "/publishers/featured",
+    controller: "AdefyFeaturedPublishersController"
+    templateUrl: "/views/dashboard/publishers:featured"
+
+  $routeProvider.when "/publishers/:id",
+    controller: "AdefyPublisherDetailsController"
+    templateUrl: "/views/dashboard/publishers:details"
 
   ##
   ## Settings and funds

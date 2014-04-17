@@ -15,6 +15,16 @@
     "/creatives/:id",
     "/creatives/:id/exports",
 
+    "/marketplace/pending",
+    "/marketplace/active",
+    "/marketplace/history",
+    "/marketplace/messages",
+
+    "/publishers",
+    "/publishers/favorites",
+    "/publishers/featured",
+    "/publishers/:id",
+
     "/ads",
     "/ads/reports",
     "/ads/:id",

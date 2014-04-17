@@ -19,6 +19,17 @@
     i
       margin-right 8px
 
+.stacked-cards .card-spacer
+  font-size 36px
+  font-weight 300
+  color #aaa
+
+  width 100%
+  display block
+  text-align center
+
+  margin-bottom 32px
+
 .cards
 
   .card
@@ -30,6 +41,8 @@
 .card
   width 720px
   padding 16px 32px
+  min-height 266px
+
   margin 32px auto
   position relative
   background-color white
@@ -38,8 +51,7 @@
   box-shadow rgba(0, 0, 0, 0.047) 0px 2px 3px 0px
 
   &:hover
-    cursor pointer
-    box-shadow rgba(0, 0, 0, 0.15) 0px 2px 3px 0px  
+    box-shadow rgba(0, 0, 0, 0.15) 0px 2px 3px 0px
 
   .card-inner, .simple-inner
     width 75%
@@ -80,6 +92,16 @@
     margin-bottom 16px
     width 50%
 
+    &.fullw
+      width 100%
+
+      .info-detail input
+        width 75%
+
+    &.large
+      .info-header
+        margin-bottom 4px
+
     .info-header
       width 100%
       font-size 14px
@@ -87,6 +109,11 @@
     .info-detail
       width 100%
       font-size 18px
+
+      > *
+        width 80%
+        vertical-align top
+        display block
 
     &.large
 
@@ -127,6 +154,12 @@
       float right
       margin-top 12px
       font-size 18px
+
+      &.hoverable:hover
+        cursor pointer
+
+      &.left
+        float left
 
       &::before
         padding-right 8px

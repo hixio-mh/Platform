@@ -2,7 +2,9 @@
 @import "../static/css/reset.css"
 @import "./fonts"
 @import "./devices"
+
 @import "./elements/cards"
+@import "./elements/nav_header"
 
 user-select()
   -webkit-user-select arguments
@@ -100,17 +102,17 @@ blockquote
   font-weight 400
 
 .green
-  color #2ecc71
+  color #2ecc71 !important
 .red
-  color #e74c3c
+  color #e74c3c !important
 .gray
-  color #95a5a6
+  color #95a5a6 !important
 .blue
-  color #0099CC
+  color #0099CC !important
 .yellow
-  color #f1c40f
+  color #f1c40f !important
 .orange
-  color #f39c12
+  color #f39c12 !important
 
 button
   background -webkit-linear-gradient(#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
@@ -766,38 +768,6 @@ fieldset
         width 50%
         text-align center
         display inline-block
-
-.nav-header
-  width 100%
-  border-bottom 1px solid #eee
-  background-color white
-
-  a
-    display inline-block
-    vertical-align top
-
-    text-align center
-    padding 16px 0
-
-    color #858585
-    transition color .25s,background-color .25s,border-color .25s
-
-    i
-      margin-right 8px
-      opacity 0
-
-      transition opacity 0.25s
-
-    &:hover, &.active
-      background-color #eee
-      color black
-
-      i
-        opacity 1
-
-  &.three-cols
-    a
-      width 33%
 
 .grid-options
   margin 20px 40px
