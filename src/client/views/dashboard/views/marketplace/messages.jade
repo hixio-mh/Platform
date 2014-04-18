@@ -14,25 +14,25 @@ include menus/main
             th Last Message
         tbody
           tr.bold
+            td: a(href="#") Frontback
+            td: .label.green active
+            td Just now
+          tr.bold
             td: a(href="#") 500px
             td: .label.gray pending
-            td Today
+            td 3 hours ago
           tr.bold
             td: a(href="#") car2go
             td: .label.gray pending
-            td Today
+            td 3 hours ago
           tr
             td: a(href="#") ASTRO File Manager
             td: .label.gray pending
-            td 1 day ago
+            td Yesterday
           tr
             td: a(href="#") ColorNote
             td: .label.gray pending
             td 2 days ago
-          tr
-            td: a(href="#") Frontback
-            td: .label.green active
-            td 2 weeks ago
           tr
             td: a(href="#") Al Jazeera
             td: .label.gray pending
@@ -53,3 +53,191 @@ include menus/main
             td: a(href="#") Runtastic
             td
             td 1 month ago
+
+  .card-spacer Frontback
+
+  .card.no-preview
+    .title
+      | New Message
+      a(href="#")
+        i.fa.fa-money Make Proposal
+
+    .info.fullw
+      .info-header Content
+      .info-detail: textarea(rows="8" placeholder="Write a message to Frontback")
+
+    .info
+      .info-detail: div: button(type="submit") Send message
+
+  .card.no-preview
+    .title
+      | Make Proposal
+      a(href="#")
+        i.fa.fa-pencil Write Message
+
+    .info
+      .info-header CPM
+      .info-detail: input(type="number" placeholder="Enter CPM $" ng-model="cpm")
+
+    .info
+      .info-header Impressions
+      .info-detail: input(type="number" placeholder="Enter impression quantity" ng-model="impressions")
+
+    .info
+      .info-header Creative
+      .info-detail: select(ui-select2 ng-model="creative")
+        option(value="skittles") Skittle Demo
+        option(value="watch") Watch Demo
+        option(value="car") Car Demo
+
+    .info
+      .info-header Payment Method
+      .info-detail: select(ui-select2 ng-model="paymentMethod")
+        option(value="paypal") Paypal
+        option(value="moneybookers") Moneybookers
+        option(value="bank") Bank Account
+
+    .info
+      .info-header: p
+      .info-detail: div: button(type="submit") Submit proposal
+
+    .info
+      .info-header Total Cost
+      .info-detail: ${{ cpm * (impressions / 1000) |number:2}}
+
+  .card.message.reply
+    .title
+      .wrapper
+        .position Advertising Manager
+        .name Tim McDonald
+
+        img.avatar(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent Just now
+
+  .card.message.proposal
+    .title
+      .wrapper
+        img.avatar(src="http://adefy.com/favicon.png")
+
+        .name Cris Mihalache
+        .position Product Director
+
+        .proposal-header Proposal
+
+    .info
+      .info-header CPM
+      .info-detail.green $5.00
+
+    .info
+      .info-header Impressions
+      .info-detail 100,000
+
+    .info
+      .info-header Payment Method
+      .info-detail Paypal
+
+    .info
+      .info-header Payment Details
+      .info-detail paypal@frontback.me
+
+    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+
+    .card-footer
+      .sent 16 minutes ago
+      
+      .proposal-action
+        button.accept Accept
+        button.decline Decline
+
+  .card.message.reply
+    .title
+      .wrapper
+        .position Advertising Manager
+        .name Tim McDonald
+
+        img.avatar(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent 49 minutes ago
+
+  .card.message.proposal
+    .title
+      .wrapper
+        img.avatar(src="http://adefy.com/favicon.png")
+
+        .name Cris Mihalache
+        .position Product Director
+
+        .proposal-header Proposal
+
+    .info
+      .info-header CPM
+      .info-detail.green $4.50
+
+    .info
+      .info-header Impressions
+      .info-detail 100,000
+
+    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+
+    .card-footer
+      .sent 16 minutes ago
+      .label.red Declined
+
+  .card.message.reply
+    .title
+      .wrapper
+        .position Advertising Manager
+        .name Tim McDonald
+
+        img.avatar(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent 49 minutes ago
+
+  .card.message
+    .title
+      .wrapper
+        img.avatar(src="http://adefy.com/favicon.png")
+
+        .name Cris Mihalache
+        .position Product Director
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent 1 hour ago
+
+  .card.message.reply
+    .title
+      .wrapper
+        .position Advertising Manager
+        .name Tim McDonald
+
+        img.avatar(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent 1 hour ago
+
+  .card.message
+    .title
+      .wrapper
+        img.avatar(src="http://adefy.com/favicon.png")
+
+        .name Cris Mihalache
+        .position Product Director
+
+    .content Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+
+    .card-footer
+      .sent Yesterday

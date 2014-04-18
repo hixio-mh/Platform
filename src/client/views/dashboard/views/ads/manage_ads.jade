@@ -2,6 +2,17 @@ include menus/main
 
 .stacked-cards
 
+  .card.no-preview.thin
+    .title Controls
+
+    .info
+      .info-header View
+      .info-detail: select(ui-select2 ng-model="view")
+        option(value="graphs") Graphs
+        option(value="simple") Simple
+
+  .card-spacer My Ads
+
   a(href="/marketplace/deals/skittles")
     .card.no-preview
       .card-inner
@@ -11,11 +22,11 @@ include menus/main
 
         .info.large
           .info-header CPM
-          .info-content.green $5.00
+          .info-detail.green $5.00
 
         .info.large
           .info-header Target Impressions
-          .info-content 100,000
+          .info-detail 100,000
 
         div.noAxes(analytics data="null" width="496" height="300")
 
@@ -30,11 +41,11 @@ include menus/main
 
         .info.large
           .info-header CPM
-          .info-content.green $4.50
+          .info-detail.green $4.50
 
         .info.large
           .info-header Target Impressions
-          .info-content 50,000
+          .info-detail 50,000
 
         div.noAxes(analytics data="null" width="496" height="300")
 
@@ -49,11 +60,11 @@ include menus/main
 
         .info.large
           .info-header CPM
-          .info-content.green $3.90
+          .info-detail.green $3.90
 
         .info.large
           .info-header Target Impressions
-          .info-content 500,000
+          .info-detail 500,000
 
         div.noAxes(analytics data="null" width="496" height="300")
 

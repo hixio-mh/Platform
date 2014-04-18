@@ -1,6 +1,14 @@
-.cards, .stacked-cards, .fullpage-card
+.stacked-cards
+  width 720px
+
+.fullpage-card
+  width 960px
+
+.stacked-cards, .fullpage-card
   background-color #eee
   padding 32px 0
+
+  margin 0 auto
 
   .new-card
     display block
@@ -30,23 +38,18 @@
 
   margin-bottom 32px
 
-.cards
-
-  .card
-    display inline-block
-    vertical-align top
-    width 48%
-    margin 0 1% 32px 1%
-
 .card
-  width 720px
   padding 16px 32px
   min-height 266px
+  font-weight 300
 
   &.fullpage
     width 960px
 
-  margin 32px auto
+  &.thin
+    min-height 0
+
+  margin 32px 0
   position relative
   background-color white
   overflow hidden
@@ -89,6 +92,15 @@
     .label:first-child
       margin-left 0
 
+  .card-footer
+    position absolute
+    bottom 24px
+    width 100%
+
+    > *
+      display inline-block
+      vertical-align top
+
   .info
     display inline-block
     vertical-align top
@@ -98,7 +110,7 @@
     &.fullw
       width 100%
 
-      .info-detail input
+      .info-detail input, textarea
         width 75%
 
     &.large
@@ -151,7 +163,6 @@
 
   .title
     font-size 28px
-    font-weight 300
     color #999
     width 100%
 
@@ -183,3 +194,70 @@
     width 25%
     top 0
     right 0
+
+// Split this into a seperate .styl
+.card.message
+  padding-bottom 64px
+  min-height 200px
+
+  .title
+    font-size 20px
+    height 45px
+
+    *
+      display inline-block
+      vertical-align middle
+
+    .avatar, .name
+      margin-right 16px
+
+    .avatar
+      width 36px
+      height 36px
+
+    .name
+      color #666
+
+    .position
+      font-style italic
+      font-size 16px
+      color #aaa
+
+    .proposal-header
+      position absolute
+      right 32px
+
+  .sent
+    font-style italic
+
+  &.proposal
+    .title
+      width 75%
+      position relative
+
+    .info
+      width 37.5%
+
+    .card-footer
+      width 75%
+
+      .proposal-action
+        position absolute
+        right 64px
+
+        button
+          margin-left 8px
+
+          &:hover
+            cursor pointer
+
+  &.reply
+
+    .title
+      .wrapper
+        position absolute
+        right 32px
+
+      .avatar, .name
+        margin-right 0
+        margin-left 16px
