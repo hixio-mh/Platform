@@ -1,0 +1,85 @@
+include menus/main
+
+.stacked-cards
+
+  .card.hanging-card
+    a(href="#") Back
+
+  .card-spacer Frontback
+
+  .card: .card-inner
+    .title Details
+
+    .info
+      .info-header CPM
+      .info-detail.green $5.00
+
+    .info
+      .info-header Impressions
+      .info-detail 100,000
+
+    .info
+      .info-header Payment Method
+      .info-detail Paypal
+
+    .info
+      .info-header Payment Details
+      .info-detail paypal@frontback.me
+
+    .info
+      .info-header Status
+      .info-detail: div: .green Active
+
+    .info
+      .info-header Campaign
+      .info-detail: a(href="#") Skittles Germany
+
+    img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+  .card.with-preview
+    .card-inner
+      .title Creative
+
+      .info
+        .info-header Name
+        .info-detail Skittles Demo
+
+      .info
+        .info-header Size
+        .info-detail 115KB (Compressed)
+
+      .info
+        .info-header Created
+        .info-detail 2 weeks ago
+
+      .info
+        .info-header Device support
+        .info-detail Phones, Tablets
+
+    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+
+  .card: .card-inner
+    .title Impressions
+
+    .info
+      .info-header Received
+      .info-content.green 34,525
+
+    .info
+      .info-header Remaining
+      .info-content.green 65,475
+
+    div.noAxes(analytics data="null" width="656" height="300")
+
+  .card: .card-inner
+    .title CTR
+
+    .info
+      .info-header Average
+      .info-content.green 3.6%
+
+    .info
+      .info-header 24hr Peak
+      .info-content.green 4.5%
+
+    div.noAxes(analytics data="null" width="656" height="300")

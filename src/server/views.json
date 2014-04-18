@@ -19,6 +19,7 @@
     "/marketplace/active",
     "/marketplace/history",
     "/marketplace/messages",
+    "/marketplace/:id",
 
     "/publishers",
     "/publishers/favorites",

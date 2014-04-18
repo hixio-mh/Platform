@@ -84,6 +84,10 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
     controller: "AdefyMarketplaceMessagesController"
     templateUrl: "/views/dashboard/marketplace:messages"
 
+  $routeProvider.when "/marketplace/:id",
+    controller: "AdefyMarketplaceDealController"
+    templateUrl: "/views/dashboard/marketplace:deal"
+
   ##
   ## Campaigns
   ##
