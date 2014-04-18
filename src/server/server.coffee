@@ -58,7 +58,6 @@ require("./init") app, ->
   require("./api/ads") app
   require("./api/analytics") app
   require("./api/campaigns") app
-  require("./api/creator") app
   require("./api/editor") app
   require("./api/filters") app
   require("./api/news") app
