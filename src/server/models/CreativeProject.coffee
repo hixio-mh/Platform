@@ -1,11 +1,18 @@
 mongoose = require "mongoose"
+S = require "string"
 
 schema = new mongoose.Schema
+  name: { type: String, required: true }
+  slugifiedName: String
+
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 
-  assets: [
-    # Textures
-  ]
+  assets: [{
+    name: { type: String, required: true }
+    key: { type: String, required: true }
+  }]
+
+  exports: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ad" }]
 
 ###
 # Convert model to API-safe object
@@ -28,5 +35,17 @@ schema.methods.toAnonAPI = ->
   ret = @toAPI()
   delete ret.owner
   ret
+
+###
+# Return a slugified asset path consisting of our owner and name (for S3)
+#
+# @return [String] path
+###
+schema.methods.getRootAssetPath = ->
+  "/creative/#{@owner}/#{@slugifiedName}"
+
+schema.pre "save", (next) ->
+  @slugifiedName = S(@name).slugify().s
+  next()
 
 mongoose.model "CreativeProject", schema
