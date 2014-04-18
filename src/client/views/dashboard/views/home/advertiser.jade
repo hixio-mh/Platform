@@ -12,41 +12,36 @@
     .amount.large {{ spent24h | currency:$ }}
     .desc Spent today
 
-.index.dashboard
-  br
-  div.w50(ng-if="graph24hStats")
-    h6.block.tcenter 24h Clicks &amp; Impressions
-    div(analytics data="graph24hStats" width="340" height="150" type="line" legend="true" hover="hoverFormatter")
+.fullpage-card
+  .card.fullpage
+    .title Dashboard
 
-  div.w50(ng-if="graph24hSpent")
-    h6.block.tcenter 24h Expenses
-    div(analytics data="graph24hSpent" width="340" height="150" type="line" legend="true" hover="hoverFormatter")
+    .info.large
+      .info-header 24h Clicks &amp; Impressions
+      .info-details
+        div(analytics data="graph24hStats" width="308" height="150" type="line" legend="true" hover="hoverFormatter")
 
-  div.block(ng-if="graphLifetimeMetrics")
-    h6.block.tcenter Lifetime Metrics
-    div(analytics data="graphLifetimeMetrics" width="800" height="300" type="line" legend="true" hover="hoverFormatter")
+    .info.large
+      .info-header 24h Expenses
+      .info-details
+        div(analytics data="graph24hSpent" width="308" height="150" type="line" legend="true" hover="hoverFormatter")
 
-  div(ng-if="campaigns.length > 1")
-    .section Top Campaigns
-    table.info(ng-cloak ng-table="campaignTableParams")
-      tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial")
-        td(data-title="'Campaign Name'" sortable="'name'")
-          {{ campaign.name }}
-        td(data-title="'Impressions'" sortable="'stats.impressions'")
-          {{ campaign.stats.impressions | number }}
-        td(data-title="'Clicks'" sortable="'stats.clicks'")
-          {{ campaign.stats.clicks | number }}
-        td(data-title="'CTR'" sortable="'stats.ctr'")
-          {{ campaign.stats.ctr | number:2 }}%
-        td(data-title="'Spent'" sortable="'stats.spent'")
-          {{ campaign.stats.spent | currency:$ }}
+    .info.fullw.large
+      .info-header Lifetime Metrics
+      .info-details
+        div(analytics data="graphLifetimeMetrics" width="756" height="300" type="line" legend="true" hover="hoverFormatter")
 
-  //- div(ng-if="articles.length > 0")
-    .section News
-    ul.news
-      li(ng-repeat="article in articles | orderBy:'date':true")
-        a(href="/news/{{ article.id }}")
-          span.title {{ article.title }}
-        span.date {{ article.date | date:'MMMM dd, yyyy' }}
-        //- span.time @ {{ article.date | date:'HH:mm:ss' }}
-        p(ng-bind-html="article.markup")
+    .info.fullw(ng-if="campaigns.length > 1")
+      .info-header Top Campaigns
+      .info-details(ng-cloak ng-table="campaignTableParams")
+        tr(ng-repeat="campaign in $data" ng-show="!campaign.tutorial")
+          td(data-title="'Campaign Name'" sortable="'name'")
+            {{ campaign.name }}
+          td(data-title="'Impressions'" sortable="'stats.impressions'")
+            {{ campaign.stats.impressions | number }}
+          td(data-title="'Clicks'" sortable="'stats.clicks'")
+            {{ campaign.stats.clicks | number }}
+          td(data-title="'CTR'" sortable="'stats.ctr'")
+            {{ campaign.stats.ctr | number:2 }}%
+          td(data-title="'Spent'" sortable="'stats.spent'")
+            {{ campaign.stats.spent | currency:$ }}

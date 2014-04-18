@@ -100,21 +100,9 @@ html(lang="en" ng-app="AdefyApp")
 
       .menu.right
 
-        if user.type == "advertiser"
-          a(href="/funds" tab ng-cloak) Balance {{ me.adFunds | currency:$ }}
-        else if user.type == "publisher"
-          a(href="/funds" tab ng-cloak) Credit {{ me.pubFunds | currency:$ }}
-
         .da(dropdown, ng-click="toggleSelect()")
-          i.fa.fa-fw.fa-cogs
+          i.fa.fa-fw.fa-bars
           .dropdown(ng-show="isPopupVisible")
-            if user.type == "admin"
-              a(href="/admin/home")
-                i.fa.fa-fw.fa-user
-                | Admin
-            a(href="/funds")
-              i.fa.fa-fw.fa-dollar
-              | Funds
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
