@@ -94,7 +94,7 @@ angular.module("AdefyApp").config ($routeProvider, $locationProvider, ngQuickDat
 
   $routeProvider.when "/campaigns/:id",
     controller: "AdefyCampaignDetailsController"
-    templateUrl: "/views/dashboard/campaigns:show"
+    templateUrl: "/views/dashboard/campaigns:details"
 
   $routeProvider.when "/campaigns/:id/edit",
     controller: "AdefyCampaignEditController"

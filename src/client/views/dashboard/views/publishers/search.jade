@@ -2,7 +2,7 @@ include menus/main
 
 .stacked-cards
 
-  .card.no-preview
+  .card: .card-inner
     .title Search
 
     .info.fullw.large
@@ -33,7 +33,7 @@ include menus/main
     .info
       .info-detail: div: button(type="submit") Search
 
-  .card.no-preview
+  .card: .card-inner
     .title Recent Searches
 
     table
@@ -54,24 +54,65 @@ include menus/main
 
   .card-spacer 2,123 Search Results
 
-  a(href="/publishers/frontback" target="_blank")
-    .card.no-preview
-      .title
-        i.left.hoverable.fa.fa-star-o
-        | Frontback
-        i.fa.fa-bar-chart-o Details
+  a(href="/publishers/frontback" target="_blank"): .card: .card-inner
+    .title
+      i.left.hoverable.fa.fa-star-o
+      | Frontback
+      i.fa.fa-bar-chart-o Details
 
-      .info.large
-        .info-header Impressions last 30 days
-        .info-detail.green 76,342
+    .info.large
+      .info-header Impressions last 30 days
+      .info-detail.green 76,342
 
-      .info.large
-        .info-header Average CTR
-        .info-detail 2.7%
+    .info.large
+      .info-header Average CTR
+      .info-detail 2.7%
 
-      div.noAxes(analytics data="null" width="496" height="300")
+    div.noAxes(analytics data="null" width="496" height="300")
 
-      img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+    img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
 
-      .card-labels
-        .label.green Active Campaigns
+    .card-labels
+      .label.green Active Campaigns
+
+  a(href="/publishers/frontback" target="_blank"): .card: .card-inner
+    .title
+      i.left.hoverable.fa.fa-star-o
+      | Frontback
+      i.fa.fa-bar-chart-o Details
+
+    .info.large
+      .info-header Impressions last 30 days
+      .info-detail.green 76,342
+
+    .info.large
+      .info-header Average CTR
+      .info-detail 2.7%
+
+    div.noAxes(analytics data="null" width="496" height="300")
+
+    img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .card-labels
+      .label.green Active Campaigns
+
+  a(href="/publishers/frontback" target="_blank"): .card: .card-inner
+    .title
+      i.left.hoverable.fa.fa-star-o
+      | Frontback
+      i.fa.fa-bar-chart-o Details
+
+    .info.large
+      .info-header Impressions last 30 days
+      .info-detail.green 76,342
+
+    .info.large
+      .info-header Average CTR
+      .info-detail 2.7%
+
+    div.noAxes(analytics data="null" width="496" height="300")
+
+    img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+    .card-labels
+      .label.green Active Campaigns

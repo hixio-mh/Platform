@@ -5,27 +5,11 @@
   width 960px
 
 .stacked-cards, .fullpage-card
+  position relative
   background-color #eee
   padding 32px 0
 
   margin 0 auto
-
-  .new-card
-    display block
-    width 256px
-    margin 0 auto
-    padding 8px 0
-
-    color #aaa
-    border 1px solid #aaa
-    text-align center
-
-    &:hover
-      color #666
-      border 1px solid #666
-
-    i
-      margin-right 8px
 
 .stacked-cards .card-spacer
   font-size 36px
@@ -43,9 +27,6 @@
   min-height 266px
   font-weight 300
 
-  &.fullpage
-    width 960px
-
   &.thin
     min-height 0
 
@@ -60,10 +41,10 @@
     box-shadow rgba(0, 0, 0, 0.15) 0px 2px 3px 0px
 
   .card-inner, .simple-inner
-    width 75%
-
-  &.no-preview .card-inner, &.no-preview .simple-inner
     width 100%
+
+  &.with-preview .card-inner, &.with-preview .simple-inner
+    width 75%
 
   .simple-inner
     padding 32px 0 32px 16px
@@ -125,10 +106,16 @@
       width 100%
       font-size 18px
 
-      > *
+      input, textarea, p
         width 80%
         vertical-align top
         display block
+
+      img
+        width 30%
+
+        &:first-child
+          margin-top 8px
 
     &.large
 
@@ -194,6 +181,25 @@
     width 25%
     top 0
     right 0
+
+// Split
+.card.hanging-card
+  margin-top -33px
+  min-height 0
+  text-align center
+  font-size 18px
+  color #666
+
+  a
+    color #666
+    &:hover
+      color #5897fb
+
+  &.bright
+    a
+      color #2ecc71
+      &:hover
+        color #666
 
 // Split this into a seperate .styl
 .card.message

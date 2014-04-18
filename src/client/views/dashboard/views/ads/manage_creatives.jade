@@ -2,67 +2,62 @@ include menus/main
 
 .stacked-cards
 
-  a.new-card(form-modal template="/views/dashboard/ads:modals:new_creative" title="New Creative"
-        ok-button-text="Create" form-submit="create()" form-object="creativeForm" close="closeForm")
-      i.fa.fa-plus
-      | New Creative
+  .card.hanging-card.bright
+    a(href="#") New Creative
 
-  a(href="/creatives/skittles")
-    .card
-      .card-inner
-        .title Skittles Tech Demo
+  a(href="/creatives/skittles"): .card.with-preview
+    .card-inner
+      .title Skittles Tech Demo
 
-        .info
-          .info-header Size
-          .info-detail 115KB (Compressed)
+      .info
+        .info-header Size
+        .info-detail 115KB (Compressed)
 
-        .info
-          .info-header Created
-          .info-detail Yesterday
+      .info
+        .info-header Created
+        .info-detail Yesterday
 
-        .info
-          .info-header Device support
-          .info-detail Phones, Tablets
+      .info
+        .info-header Device support
+        .info-detail Phones, Tablets
 
-        .card-labels
-          .label.green Exported
+      .card-labels
+        .label.green Exported
 
-      img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
+    img.preview(src="https://developer.adefy.com/demos/assets/skittles/thumb.jpg")
 
-  a(href="/creatives/skittles")
-    .card
-      .card-inner
-        .title Watch Tech Demo
+  a(href="/creatives/skittles"): .card.with-preview
+    .card-inner
+      .title Watch Tech Demo
 
-        .info
-          .info-header Size
-          .info-detail 142KB (Compressed)
+      .info
+        .info-header Size
+        .info-detail 142KB (Compressed)
 
-        .info
-          .info-header Created
-          .info-detail Yesterday
+      .info
+        .info-header Created
+        .info-detail Yesterday
 
-        .info
-          .info-header Device support
-          .info-detail Phones, Tablets
+      .info
+        .info-header Device support
+        .info-detail Phones, Tablets
 
-      img.preview(src="https://developer.adefy.com/demos/assets/watch/thumb.jpg")
+    img.preview(src="https://developer.adefy.com/demos/assets/watch/thumb.jpg")
 
-  a(href="/creatives/car")
-    .card
-      .card-inner
-        .title Car Tech Demo
+  a(href="/creatives/car"): .card.with-preview
+    .card-inner
+      .title Car Tech Demo
 
-        .info
-          .info-header Size
-          .info-detail 88KB (Compressed)
+      .info
+        .info-header Size
+        .info-detail 88KB (Compressed)
 
-        .info
-          .info-header Created
-          .info-detail 3 days ago
+      .info
+        .info-header Created
+        .info-detail 3 days ago
 
-        .info
-          .info-header Device support
-          .info-detail Phones
+      .info
+        .info-header Device support
+        .info-detail Phones
 
-      img.preview(src="https://developer.adefy.com/demos/assets/car/thumb.jpg")
+    img.preview(src="https://developer.adefy.com/demos/assets/car/thumb.jpg")

@@ -2,61 +2,60 @@ include menus/main
 
 .stacked-cards
 
-  .card.no-preview
-    .card-inner
-      .title Message Threads
+  .card: .card-inner
+    .title Message Threads
 
-      table
-        thead
-          tr
-            th Publisher
-            th Deals
-            th Last Message
-        tbody
-          tr.bold
-            td: a(href="#") Frontback
-            td: .label.green active
-            td Just now
-          tr.bold
-            td: a(href="#") 500px
-            td: .label.gray pending
-            td 3 hours ago
-          tr.bold
-            td: a(href="#") car2go
-            td: .label.gray pending
-            td 3 hours ago
-          tr
-            td: a(href="#") ASTRO File Manager
-            td: .label.gray pending
-            td Yesterday
-          tr
-            td: a(href="#") ColorNote
-            td: .label.gray pending
-            td 2 days ago
-          tr
-            td: a(href="#") Al Jazeera
-            td: .label.gray pending
-            td 4 weeks ago
-          tr
-            td: a(href="#") Plants vs Zombies 2
-            td
-            td 4 weeks ago
-          tr
-            td: a(href="#") New York Times
-            td
-            td 1 month ago
-          tr
-            td: a(href="#") Plants vs Zombies 2
-            td
-            td 1 month ago
-          tr
-            td: a(href="#") Runtastic
-            td
-            td 1 month ago
+    table
+      thead
+        tr
+          th Publisher
+          th Deals
+          th Last Message
+      tbody
+        tr.bold
+          td: a(href="#") Frontback
+          td: .label.green active
+          td Just now
+        tr.bold
+          td: a(href="#") 500px
+          td: .label.gray pending
+          td 3 hours ago
+        tr.bold
+          td: a(href="#") car2go
+          td: .label.gray pending
+          td 3 hours ago
+        tr
+          td: a(href="#") ASTRO File Manager
+          td: .label.gray pending
+          td Yesterday
+        tr
+          td: a(href="#") ColorNote
+          td: .label.gray pending
+          td 2 days ago
+        tr
+          td: a(href="#") Al Jazeera
+          td: .label.gray pending
+          td 4 weeks ago
+        tr
+          td: a(href="#") Plants vs Zombies 2
+          td
+          td 4 weeks ago
+        tr
+          td: a(href="#") New York Times
+          td
+          td 1 month ago
+        tr
+          td: a(href="#") Plants vs Zombies 2
+          td
+          td 1 month ago
+        tr
+          td: a(href="#") Runtastic
+          td
+          td 1 month ago
 
   .card-spacer Frontback
 
-  .card.no-preview
+  .card: .card-inner
     .title
       | New Message
       a(href="#")
@@ -69,7 +68,7 @@ include menus/main
     .info
       .info-detail: div: button(type="submit") Send message
 
-  .card.no-preview
+  .card: .card-inner
     .title
       | Make Proposal
       a(href="#")
@@ -105,7 +104,7 @@ include menus/main
       .info-header Total Cost
       .info-detail: ${{ cpm * (impressions / 1000) |number:2}}
 
-  .card.message.reply
+  .card.message.reply: .card-inner
     .title
       .wrapper
         .position Advertising Manager
@@ -118,7 +117,7 @@ include menus/main
     .card-footer
       .sent Just now
 
-  .card.message.proposal
+  .card.message.proposal: .card-inner
     .title
       .wrapper
         img.avatar(src="http://adefy.com/favicon.png")
@@ -153,7 +152,7 @@ include menus/main
         button.accept Accept
         button.decline Decline
 
-  .card.message.reply
+  .card.message.reply: .card-inner
     .title
       .wrapper
         .position Advertising Manager
@@ -166,7 +165,7 @@ include menus/main
     .card-footer
       .sent 49 minutes ago
 
-  .card.message.proposal
+  .card.message.proposal: .card-inner
     .title
       .wrapper
         img.avatar(src="http://adefy.com/favicon.png")
@@ -190,7 +189,7 @@ include menus/main
       .sent 16 minutes ago
       .label.red Declined
 
-  .card.message.reply
+  .card.message.reply: .card-inner
     .title
       .wrapper
         .position Advertising Manager
@@ -203,7 +202,7 @@ include menus/main
     .card-footer
       .sent 49 minutes ago
 
-  .card.message
+  .card.message: .card-inner
     .title
       .wrapper
         img.avatar(src="http://adefy.com/favicon.png")
@@ -216,7 +215,7 @@ include menus/main
     .card-footer
       .sent 1 hour ago
 
-  .card.message.reply
+  .card.message.reply: .card-inner
     .title
       .wrapper
         .position Advertising Manager
@@ -229,7 +228,7 @@ include menus/main
     .card-footer
       .sent 1 hour ago
 
-  .card.message
+  .card.message: .card-inner
     .title
       .wrapper
         img.avatar(src="http://adefy.com/favicon.png")
