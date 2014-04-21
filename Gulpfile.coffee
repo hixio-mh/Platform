@@ -163,7 +163,10 @@ gulp.task "test", ->
 gulp.task "server", ->
   nodemon
     script: "src/server/server.coffee"
-    options: "--watch src/server"
+    ignore: [
+      "src/editor/*"
+      "public/*"
+    ]
 
 # Build all of the assets
 gulp.task "build", ["stylus", "css", "images", "fonts", "jade", "js", "coffee", "assets"]
