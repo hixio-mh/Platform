@@ -12,20 +12,23 @@ class APIEditor extends APIBase
   registerRoutes: ->
 
     ###
-    # GET /editor/:ad
-    #   Returns the editor page for :ad
-    # @param [ID] ad
+    # GET /editor/:creative
+    #   Returns the editor page for :creative
+    # @param [ID] creative
     # @response [HTML] editor
     # @example
     #   $.ajax method: "GET",
     #          url: "/editor/7AboeHJAcrKNeeQFUYvInYVB"
     ###
-    @app.get "/tools/editor/:ad", @apiLogin, (req, res) =>
+    @app.get "/tools/editor/:creative", @apiLogin, (req, res) =>
 
-      @queryOne slugifiedName: req.params.ad, req, (ad) ->
-        return res.send 404 unless ad
+      @queryOne slugifiedName: req.params.creative, req, (creative) ->
+        return res.send 404 unless creative
 
-        res.render "../../editor/src/index.jade", ad: ad.toAnonAPI(), (err, html) ->
+        payload = creative: creative.toAnonAPI()
+        payload.creative.owner = creative.owner
+
+        res.render "../../editor/src/index.jade", payload, (err, html) ->
           if err
             spew.error err
             aem.send res, "500", error: "Error occurred while rendering page"

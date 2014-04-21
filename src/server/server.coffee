@@ -55,6 +55,7 @@ require("./init") app, ->
   rtbEngine = require "./engine/rtb"
   fetchEngine = require("./engine/fetch")(templates, rtbEngine)
 
+  require("./api/creatives") app
   require("./api/ads") app
   require("./api/analytics") app
   require("./api/campaigns") app
