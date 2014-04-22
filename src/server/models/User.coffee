@@ -360,8 +360,8 @@ schema.methods.hasWithdrawalEmail = ->
     false
 
 schema.pre "save", (next) ->
-  if not @isModified "password" then return next()
   if not @hasAPIKey() then @createAPIKey()
+  if not @isModified "password" then return next()
 
   bcrypt.genSalt 10, (err, salt) =>
     if err
