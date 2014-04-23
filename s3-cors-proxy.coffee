@@ -19,9 +19,6 @@ app.disable "x-powered-by"
 # Receive request from CloudFront
 app.get "*", (req, res) ->
 
-  headers = {}
-  headers[key] = req.get(key) for key in req.headers
-
   # Pass on to S3
   request.get
     url: "#{s3BucketUrl}#{req.url}"
