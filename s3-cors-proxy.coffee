@@ -25,7 +25,7 @@ app.get "*", (req, res) ->
   # Pass on to S3
   request.get
     url: "#{s3BucketUrl}#{req.url}"
-    headers: headers
+    encoding: null
   , (err, s3Response, body) ->
     return res.send 500 if err
 
@@ -38,7 +38,6 @@ app.get "*", (req, res) ->
     res.set "Barrel Roll", "Phteven"
 
     # Send S3 reply
-    res.send body
-    res.end()
+    res.end body, "binary"
 
 app.listen 6060
