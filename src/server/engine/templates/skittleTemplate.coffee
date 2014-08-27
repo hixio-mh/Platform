@@ -266,16 +266,20 @@ class AdefySkittleAdTemplate extends require "./baseTemplate"
     guider = AJS.createRectangleActor 215, 1000, 500, 10
     .setRotation(102).setColor(guiderColor).setLayer 0
     .enablePsyx 0, 0.5, 0.8
+    .setVisible false
 
     # Create walls to keep skittles in
     AJS.createRectangleActor(0, 810, 10, 1280).setLayer 0
     .enablePsyx 0, 0.5, 0.5
+    .setVisible false
 
     AJS.createRectangleActor(720, 810, 10, 1180).setLayer 0
     .enablePsyx 0, 0.5, 0.5
+    .setVisible false
 
     AJS.createRectangleActor(360, 1280, 700, 10).setLayer 0
     .enablePsyx 0, 0.5, 0.5
+    .setVisible false
 
 
     # Set background

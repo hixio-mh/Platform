@@ -22,8 +22,9 @@ initializers =
   "Ad": require "./mongo/ads"
   "Campaign": require "./mongo/campaigns"
   "News": require "./mongo/news"
+  "CreativeProject": require "./mongo/creatives"
 
-["User", "Publisher", "Ad", "Campaign", "News"].map (model) ->
+["User", "Publisher", "Ad", "Campaign", "News", "CreativeProject"].map (model) ->
   db.model(model).find {}, (err, objects) ->
     if err then spew.error err
 

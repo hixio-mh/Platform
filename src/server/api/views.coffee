@@ -25,16 +25,15 @@ class APIViews extends APIBase
         viewData.user = req.user
         viewData.mode = config("NODE_ENV")
         viewData.intercomSecureHash = (email) ->
-          API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-          crypto.createHmac("sha256", API_SECRET)
+          crypto.createHmac("sha256", config "intercom_secret")
           .update(req.user.email).digest "hex"
 
         res.render "dashboard/layout.jade", viewData, (err, html) ->
-          if err then spew.error err
-          else res.send html
+          if err
+            spew.error err
+            return res.send 500
 
-    @app.get "/creator", (req, res) ->
-      res.render "creator/public.jade"
+          res.send html
 
     # Login and Register views, redirect if user is already logged in
     @app.get "/login", (req, res) ->
@@ -95,32 +94,9 @@ class APIViews extends APIBase
       viewData.user = req.user
       viewData.mode = config("NODE_ENV")
       viewData.intercomSecureHash = (email) ->
-        API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-        crypto.createHmac("sha256", API_SECRET)
+        crypto.createHmac("sha256", config "intercom_secret")
         .update(req.user.email).digest "hex"
 
       res.render "dashboard/views/#{req.params.view}.jade", viewData
-
-    # Creator view
-    @app.get "/views/creator/:view", (req, res) ->
-
-      # Fancypathabstractionthingthatisprobablynotthatfancybutheywhynotgg
-      if req.params.view.indexOf(":") != -1
-        req.params.view = req.params.view.split(":").join "/"
-
-      # Sanitize req.params.view
-      # TODO: figure out if this is enough
-      if req.params.view.indexOf("..") != -1
-        req.params.view = req.params.view.split("..").join ""
-
-      viewData = {}
-      viewData.user = req.user
-      viewData.mode = config("NODE_ENV")
-      viewData.intercomSecureHash = (email) ->
-        API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-        crypto.createHmac("sha256", API_SECRET)
-        .update(req.user.email).digest "hex"
-
-      res.render "creator/#{req.params.view}.jade", viewData
 
 module.exports = (app) -> new APIViews app

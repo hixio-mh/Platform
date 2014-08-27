@@ -7,11 +7,6 @@ class AdefyWatchAdTemplate extends require "./baseTemplate"
   name: "Watch Template"
   assets: "watchAssets"
 
-  androidCompresssed: [
-    path: "bg.pkm"
-    name: "bg"
-  ]
-
   manifest:
     ad: "scene.js"
     lib: "adefy.js"

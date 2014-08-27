@@ -19,7 +19,7 @@ window.AdefyLogin.controller "AdefyLoginController", ($scope, $http) ->
     username = "username=#{$scope.username}"
     password = "password=#{$scope.password}"
     $http.post("/api/v1/login?#{username}&#{password}")
-    .success(-> window.location.href = "/")
+    .success(-> window.location.href = "/home")
     .error (res) -> $scope.error = "Wrong credentials"
 
   $scope.enterSubmit = (e) ->

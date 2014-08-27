@@ -1,0 +1,38 @@
+include ../menus/ad
+
+.contents.w920.center
+  .stats.ad(ng-cloak)
+    .stat: .wrap
+      .amount.large.inner ▲ {{ ad.stats.impressions24h | number }}
+      .desc Impressions Today
+    .stat: .wrap
+      .amount.large.inner ▲ {{ ad.stats.clicks24h | number }}
+      .desc Clicks Today
+    .stat: .wrap
+      .amount.large {{ ad.stats.ctr24h | number:2 }} %
+      .desc CTR Today
+    .stat: .wrap
+      .amount.large $ {{ ad.stats.spent24h | number:2 }}
+      .desc Spent Today
+
+.graphs#ad-show
+  .graph
+    .w50
+      h3 24h Stats
+
+    .w50
+      .block
+        .w50.contents-right
+          label(for="interval") Graph Interval:
+        .w50.contents-left
+          select(ui-select-2 name="interval" ng-model="graphInterval")
+            option(value="")
+            option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}
+
+      .block
+        .w50.contents-right
+          label(for="sum") Sum:
+        .w50.contents-left
+          input(type="checkbox" name="sum" ng-model="graphSum")
+
+    div(analytics data="graphData" width="840" height="350" type="line" hover="hoverFormatter" legend="true" done="graphDone" refresh="graphRefresh")

@@ -1,6 +1,10 @@
 // Vendor CSS
 @import "../static/css/reset.css"
 @import "./fonts"
+@import "./devices"
+
+@import "./elements/cards"
+@import "./elements/nav_header"
 
 user-select()
   -webkit-user-select arguments
@@ -39,6 +43,7 @@ campaign-icon
 body
   font-family Proxima Nova, sans-serif
   color #333
+  background-color #eee
   line-height 1.6
   padding-top 52px // navbar
   padding-bottom 50px
@@ -96,6 +101,19 @@ blockquote
   font-size 14px
   font-weight 400
 
+.green
+  color #2ecc71 !important
+.red
+  color #e74c3c !important
+.gray
+  color #95a5a6 !important
+.blue
+  color #0099CC !important
+.yellow
+  color #f1c40f !important
+.orange
+  color #f39c12 !important
+
 button
   background -webkit-linear-gradient(#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
   background linear-gradient(#fff 20%,#f6f6f6 50%,#eee 52%,#f4f4f4 100%)
@@ -110,6 +128,7 @@ button
     background-image -webkit-linear-gradient(#eee 20%,#fff 80%)
     background-image linear-gradient(#eee 20%,#fff 80%)
     box-shadow 0 1px 0 #fff inset
+    cursor pointer
 
 button[disabled="disabled"]
   color #ccc !important
@@ -258,7 +277,7 @@ legend, .section
   width 100%
   margin-bottom 10px
   font-weight 300
-  color #aaa
+  color #666
   font-size 32px
   border-bottom 1px solid #ddd
   text-shadow 0 1px white
@@ -299,6 +318,34 @@ pre
 
 .error
   text-align center
+
+.creative-list .creative
+  padding-bottom 0 !important
+
+  .name
+    padding 0 0 8px 0
+    display block !important
+    text-align center
+
+    font-size 20px
+
+  .preview
+    background-size cover !important
+    width 335px
+    height 200px
+
+    margin-top 8px
+
+    border-bottom-left-radius 5px
+    border-bottom-right-radius 5px
+
+  .creative-stats
+    margin 16px 0
+
+    .creative-stat
+      width 100%
+      font-size 16px
+      text-align center
 
 header
   width 100%
@@ -400,18 +447,6 @@ header
   border-radius 4px
   border 1px solid
   vertical-align text-bottom
-  &.green
-    color #2ecc71
-  &.red
-    color #e74c3c
-  &.gray
-    color #95a5a6
-  &.blue
-    color #0099CC
-  &.yellow
-    color #f1c40f
-  &.orange
-    color #f39c12
 
   &.active
     margin inherit
@@ -741,6 +776,7 @@ fieldset
   text-shadow 0 1px white
   line-height 1
   overflow hidden
+
   .sort
     p
       float left
@@ -1097,7 +1133,8 @@ fieldset
 
 /* Dashboard info table */
 table.info
-  width 100%
+  width 100% !important
+  display table !important
   margin 20px 0
   background-color #fafafa
   color #333

@@ -1,0 +1,65 @@
+include menus/main
+
+.stacked-cards
+
+  .card.thin: .card-inner
+    .title Display Options
+
+    .info
+      .info-header View
+      .info-detail: select(ui-select2 ng-model="view")
+        option(value="graphs") Graphs
+        option(value="simple") Simple
+
+  .card-spacer My Ads
+
+  a(href="/marketplace/skittles"): .card: .card-inner
+    .title
+      | Angry Birds
+      i.fa.fa-bar-chart-o Details
+
+    .info
+      .info-header CPM
+      .info-detail.green $5.00
+
+    .info
+      .info-header Target Impressions
+      .info-detail 100,000
+
+    div.noAxes(analytics data="null" width="496" height="300")
+
+    img.icon(src="https://lh6.ggpht.com/M9q_Zs_CRt2rbA41nTMhrPqiBxhUEUN8Z1f_mn9m89_TiHbIbUF8hjnc_zwevvLsRIJy=w300-rw")
+
+  a(href="/marketplace/skittles"): .card: .card-inner
+    .title
+      | Frontback
+      i.fa.fa-bar-chart-o Details
+
+    .info
+      .info-header CPM
+      .info-detail.green $4.50
+
+    .info
+      .info-header Target Impressions
+      .info-detail 50,000
+
+    div.noAxes(analytics data="null" width="496" height="300")
+
+    img.icon(src="https://lh5.ggpht.com/K0_PUk2hLuyOevvUUJsrxgackuhKXxciU68RCpD4-Pwu6Zurqt1y98zZsaknR6A05f4=w300-rw")
+
+  a(href="/marketplace/skittles"): .card: .card-inner
+    .title
+      | Runtastic
+      i.fa.fa-bar-chart-o Details
+
+    .info
+      .info-header CPM
+      .info-detail.green $3.90
+
+    .info
+      .info-header Target Impressions
+      .info-detail 500,000
+
+    div.noAxes(analytics data="null" width="496" height="300")
+
+    img.icon(src="https://lh6.ggpht.com/2Dhsy1-lah-YSEMLmqZ2HtUYXthw9mc8pQvu7eD_YLqramjelDvJfC0dyaUUFB5Lo1A=w300-rw")

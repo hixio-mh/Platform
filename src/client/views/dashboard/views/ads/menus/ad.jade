@@ -1,0 +1,51 @@
+.stats.dashboard
+  .stat: .wrap(ng-cloak)
+    .amount.large ▲ {{ ad.stats.impressions | number }}
+    .desc Total Impressions
+  .stat: .wrap
+    .amount.large ▲ {{ ad.stats.clicks | number }}
+    .desc Total Clicks
+  .stat: .wrap
+    .amount.large {{ ad.stats.ctr | number:2 }} %
+    .desc Total CTR
+  .stat: .wrap
+    .amount.large $ {{ ad.stats.spent | number:2 }}
+    .desc Total Spent
+
+.titlebar.cf.full(ng-controller="AdefyAdMenuController")
+  .name(ng-bind="ad.name")
+
+  .menu.full
+    a(ng-href="/ads/{{ad.id}}" tab partial="false")
+      i.fa.fa-fw.fa-signal
+      | Metrics
+    a(ng-href="/ads/{{ad.id}}/native" tab)
+      i.fa.fa-fw.fa-pencil
+      | Native Creative
+    a(ng-href="/ads/{{ad.id}}/creative" tab)
+      i.fa.fa-fw.fa-pencil
+      | GLAd Creative
+    a(ng-href="/ads/{{ad.id}}/reminder" tab)
+      i.fa.fa-fw.fa-exclamation-triangle
+      | GLAd Push Notification
+    //- a(ng-ref="/editor/{{ad.id}}" target="_self")
+    //-   i.fa.fa-fw.fa-pencil
+    //-   | Editor
+    a(form-modal template="/views/dashboard/ads:ad:delete" title="Delete ad"
+          ok-button-text="Delete" form-submit="delete()" form-object="form")
+      i.fa.fa-fw.fa-trash-o
+      | Delete
+    a(ng-click="requestApproval()" ng-if="ad.status == '1'")
+      i.fa.fa-fw.fa-question
+      | Request Approval
+
+  .right
+    .label.blue(ng-if="ad.tutorial") Example
+
+    span(ng-switch="ad.status" ng-if="!ad.tutorial")
+      .label.gray(ng-switch-when="0") Pending Approval
+      .label.red(ng-switch-when="1") Rejected
+
+    div(ng-if="!ad.tutorial && ad.status == 2")
+      .label.green(ng-if="ad.getNativeStatus() != 'missing'") Native Creative
+      .label.green(ng-if="ad.getOrganicStatus() != 'missing'") Organic Creative

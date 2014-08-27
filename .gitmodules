@@ -1,0 +1,3 @@
+[submodule "src/editor"]
+	path = src/editor
+	url = git@github.com:Adefy/Editor.git

@@ -61,39 +61,48 @@ html(lang="en" ng-app="AdefyApp")
     header.navbar.cf
       a(href="/")
         #logo Adefy
-      .menu.left.full
-        a#home-tab(href="/home/publisher" alias="/home/advertiser" tab)
-          i.fa.fa-fw.fa-home
-          | Dashboard
-        //- a#news-tab(href="/news" tab)
-          i.fa.fa-fw.fa-inbox
-          | News
-        a#reports-tab(href="/reports/campaigns" tab)
-          i.fa.fa-fw.fa-signal
-          | Reports
-        a#campaigns-tab(href="/campaigns" tab)
-          i.fa.fa-fw.fa-bullhorn
-          | Campaigns
-        a#ads-tab(href="/ads" tab)
-          i.fa.fa-fw.fa-sitemap
-          | Ads
-        a#apps-tab(href="/apps" tab)
-          i.fa.fa-fw.fa-rocket
-          | Apps
+
+      if user.type == "advertiser"
+        .menu.left.full
+          a(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Advertiser
+          a(href="/campaigns" alias="/campaigns/" tab)
+            i.fa.fa-fw.fa-bullhorn
+            | Campaigns
+          a(href="/ads" alias="/creatives,/creatives/,/ads/reports" tab)
+            i.fa.fa-fw.fa-sitemap
+            | Ads &amp; Creatives
+          a(href="/publishers" alias="/publishers/" tab)
+            i.fa.fa-fw.fa-rocket
+            | Publishers
+          a(href="/marketplace/active" alias="/marketplace/" tab)
+            i.fa.fa-legal
+            | Marketplace
+
+      else if user.type == "publisher"
+        .menu.left.full
+          a(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Publisher
+          a(href="/apps" tab)
+            i.fa.fa-fw.fa-rocket
+            | Apps
+          a(href="/marketplace/active" tab)
+            i.fa.fa-fw.fa-legal
+            | Marketplace
+
+      else if user.type == "admin"
+        .menu.left.full
+          a(href="/home" tab)
+            i.fa.fa-fw.fa-home
+            | Admin
 
       .menu.right
-        a(href="/funds" tab ng-cloak) Advertiser {{ me.adFunds | currency:$ }}
-        a(href="/funds" tab ng-cloak) Publisher {{ me.pubFunds | currency:$ }}
+
         .da(dropdown, ng-click="toggleSelect()")
-          i.fa.fa-fw.fa-cogs
+          i.fa.fa-fw.fa-bars
           .dropdown(ng-show="isPopupVisible")
-            if user.admin
-              a(href="/admin/home")
-                i.fa.fa-fw.fa-user
-                | Admin
-            a(href="/funds")
-              i.fa.fa-fw.fa-dollar
-              | Payments
             a(href="/settings")
               i.fa.fa-fw.fa-wrench
               | Settings
@@ -148,9 +157,11 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/components/d3/d3.min.js")
         script(src="/components/rickshaw/rickshaw.min.js")
 
-        script(src="/js/routes/normal.js")
-
-        if user.admin
+        if user.type == "publisher"
+          script(src="/js/routes/publisher.js")
+        else if user.type == "advertiser"
+          script(src="/js/routes/advertiser.js")
+        else if user.type == "admin"
           script(src="/js/routes/admin.js")
 
         script(src="/js/controllers/root.js")
@@ -178,7 +189,6 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/directives/graph.js")
         script(src="/js/directives/analytics.js")
         script(src="/js/directives/toggle_switch.js")
-        script(src="/js/directives/creator.js")
         script(src="/js/directives/campaign_icon.js")
 
         //--
@@ -208,12 +218,31 @@ html(lang="en" ng-app="AdefyApp")
         script(src="/js/controllers/account/settings.js")
 
         //- Ads
-        script(src="/js/controllers/ads/organic.js")
-        script(src="/js/controllers/ads/native.js")
-        script(src="/js/controllers/ads/detail.js")
-        script(src="/js/controllers/ads/index.js")
-        script(src="/js/controllers/ads/menu.js")
-        script(src="/js/controllers/ads/reminder.js")
+        script(src="/js/controllers/ads/manage_ads.js")
+        script(src="/js/controllers/ads/manage_creatives.js")
+        script(src="/js/controllers/ads/menus/ad.js")
+        script(src="/js/controllers/ads/menus/creative.js")
+
+        script(src="/js/controllers/ads/creative/details.js")
+        script(src="/js/controllers/ads/creative/exports.js")
+
+        script(src="/js/controllers/ads/ad/details.js")
+        script(src="/js/controllers/ads/ad/edit_organic_creative.js")
+        script(src="/js/controllers/ads/ad/edit_native_creative.js")
+        script(src="/js/controllers/ads/ad/edit_reminder.js")
+
+        //- Publishers
+        script(src="/js/controllers/publishers/favorites.js")
+        script(src="/js/controllers/publishers/featured.js")
+        script(src="/js/controllers/publishers/search.js")
+        script(src="/js/controllers/publishers/details.js")
+
+        //- Marketplace
+        script(src="/js/controllers/marketplace/history.js")
+        script(src="/js/controllers/marketplace/messages.js")
+        script(src="/js/controllers/marketplace/pending_deals.js")
+        script(src="/js/controllers/marketplace/active_deals.js")
+        script(src="/js/controllers/marketplace/deal.js")
 
         //- Apps
         script(src="/js/controllers/apps/create.js")

@@ -1,0 +1,64 @@
+include menus/details
+
+.contents.w920.center
+  .stats.campaign(ng-cloak)
+    .stat: .wrap
+      .amount.large.inner ▲ {{ campaign.stats.impressions24h | number }}
+      .desc Impressions Today
+    .stat: .wrap
+      .amount.large.inner ▲ {{ campaign.stats.clicks24h | number }}
+      .desc Clicks Today
+    .stat: .wrap
+      .amount.large.inner {{ campaign.stats.ctr24h | number:2 }} %
+      .desc CTR Today
+    .stat: .wrap
+      .amount.large.inner $ {{ campaign.stats.spent24h | number:2 }}
+      .desc Spent Today
+
+.graphs#campaign-show
+  .graph
+    .w50
+      h3 24h Stats
+
+    .w50
+      .block
+        .w50.contents-right
+          label(for="interval") Graph Interval:
+        .w50.contents-left
+          select(ui-select2 name="interval" ng-model="graphInterval")
+            option(value="")
+            option(ng-repeat="i in intervalOptions" value="{{ i.val }}") {{ i.name }}
+
+      .block
+        .w50.contents-right
+          label(for="sum") Sum:
+        .w50.contents-left
+          input(type="checkbox" name="sum" ng-model="graphSum")
+
+    div(analytics data="graphData" width="800" height="350" type="line" hover="hoverFormatter" legend="true" done="graphDone" refresh="graphRefresh")
+
+.contents.w920.center(ng-if="adImpressionsData == null || adClicksData == null || adSpentData == null")
+  h2.loading Loading Ad performance data...
+
+.contents.w920.center(ng-show="adImpressionsData != null && adClicksData != null && adSpentData != null")
+  .section Ads Metric Performance
+    .w50.right.header-controls.campaign-reports-controls
+      .w50.contents-right
+        label(for="interval") Graph Interval:
+      .w50.contents-left
+        select(ui-select2 name="interval" ng-model="adGraphInterval")
+          option(value="")
+          option(ng-repeat="i in adIntervalOptions" value="{{ i.val }}") {{ i.name }}
+
+  div(ng-if="adImpressionsData != null && adClicksData != null && adSpentData != null")
+    .w50
+      h6.block.tcenter Impressions
+      div(analytics data="adImpressionsData" width="340" height="150" type="line" hover="hoverFormatter" legend="true")
+
+    .w50
+      h6.block.tcenter Clicks
+      div(analytics data="adClicksData" width="340" height="150" type="line" hover="hoverFormatter" legend="true")
+
+    .block
+      h6.block.tcenter Expenses
+      div(analytics data="adSpentData" width="800" height="300" type="line" hover="hoverFormatter" legend="true")

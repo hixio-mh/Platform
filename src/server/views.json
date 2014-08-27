@@ -1,11 +1,8 @@
 {
   "views": [
     "/",
-    "/home/advertiser",
-    "/home/publisher",
+    "/home",
 
-    "/reports/campaigns",
-    "/reports/ads",
     "/reports/apps",
 
     "/apps",
@@ -14,7 +11,23 @@
     "/apps/:id/edit",
     "/apps/:id/integration",
 
+    "/creatives",
+    "/creatives/:id",
+    "/creatives/:id/exports",
+
+    "/marketplace/pending",
+    "/marketplace/active",
+    "/marketplace/history",
+    "/marketplace/messages",
+    "/marketplace/:id",
+
+    "/publishers",
+    "/publishers/favorites",
+    "/publishers/featured",
+    "/publishers/:id",
+
     "/ads",
+    "/ads/reports",
     "/ads/:id",
     "/ads/:id/creative",
     "/ads/:id/native",
@@ -22,6 +35,7 @@
 
     "/campaigns",
     "/campaigns/new",
+    "/campaigns/reports",
     "/campaigns/:id",
     "/campaigns/:id/edit",
 

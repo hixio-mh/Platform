@@ -34,11 +34,11 @@ app.configure =>
     app.use express.static "#{__dirname}/../static"
 
   # Hard-code to keep sessions after restart
-  app.use express.cookieParser "rRd0udXZRb0HX5iqHUcSBFck4vNhuUkW"
+  app.use express.cookieParser config "cookie_secret"
 
   app.use express.session
     store: new RedisStore client: redis
-    secret: "4bfddfd3e630db97bffbd922aae468fa"
+    secret: config "session_secret"
 
   app.use flash()
   app.use passport.initialize()
@@ -55,10 +55,10 @@ require("./init") app, ->
   rtbEngine = require "./engine/rtb"
   fetchEngine = require("./engine/fetch")(templates, rtbEngine)
 
+  require("./api/creatives") app
   require("./api/ads") app
   require("./api/analytics") app
   require("./api/campaigns") app
-  require("./api/creator") app
   require("./api/editor") app
   require("./api/filters") app
   require("./api/news") app
