@@ -5,8 +5,6 @@ _ = require "lodash"
 APIBase = require "./base"
 aem = require "../helpers/aem"
 
-s3Host = "adefyplatformmain.s3.amazonaws.com"
-
 class APIAds extends APIBase
 
   constructor: (@app) ->

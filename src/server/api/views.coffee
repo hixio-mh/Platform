@@ -25,8 +25,7 @@ class APIViews extends APIBase
         viewData.user = req.user
         viewData.mode = config("NODE_ENV")
         viewData.intercomSecureHash = (email) ->
-          API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-          crypto.createHmac("sha256", API_SECRET)
+          crypto.createHmac("sha256", config "intercom_secret")
           .update(req.user.email).digest "hex"
 
         res.render "dashboard/layout.jade", viewData, (err, html) ->
@@ -95,8 +94,7 @@ class APIViews extends APIBase
       viewData.user = req.user
       viewData.mode = config("NODE_ENV")
       viewData.intercomSecureHash = (email) ->
-        API_SECRET = "_J_vAQD69KY9l9Ryzrbd9XZeXr03wa2bZyxpTapZ"
-        crypto.createHmac("sha256", API_SECRET)
+        crypto.createHmac("sha256", config "intercom_secret")
         .update(req.user.email).digest "hex"
 
       res.render "dashboard/views/#{req.params.view}.jade", viewData
