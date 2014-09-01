@@ -34,6 +34,8 @@ class APIServe extends APIBase
     @app.get "/api/v1/serve", (req, res) =>
       type = req.query.type || "native"
 
+      console.log "This no longer exists in the other branch"
+
       if type != "organic" and type != "native"
         return aem.send res, "500", error: "Invalid ad type"
 
