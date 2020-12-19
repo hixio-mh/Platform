@@ -36,7 +36,7 @@
     "cheerio": "~0.13.1",
     "node-cache": "~0.4.1",
     "express-validator": "~2.1.0",
-    "archiver": "~0.6.1",
+    "archiver": "~0.21.0",
     "paypal-rest-sdk": "~0.6.4",
     "newrelic": "~1.4.0",
     "hiredis": "~0.1.16",
