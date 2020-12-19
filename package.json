@@ -53,7 +53,7 @@
     "aws-sdk": "~2.0.0-rc11",
     "bson": "~0.2.7",
     "gulp-exec": "~1.0.4",
-    "powerdrill": "0.2.2",
+    "powerdrill": "0.3.0",
     "yamljs": "~0.1.4",
     "create-error": "~0.3.1",
     "qs": "~0.6.6",
