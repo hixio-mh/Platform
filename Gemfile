@@ -1,3 +1,3 @@
 source "https://rubygems.org"
 
-gem "whenever"
+gem "whenever", ">= 0.9.2"
